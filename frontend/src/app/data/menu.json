@@ -1,0 +1,8 @@
+[
+	{
+	  "displayName": "Home",
+	  "route": "/home",
+	  "iconName": "home",
+	  "profiles": []
+	}
+]
