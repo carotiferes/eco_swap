@@ -1,0 +1,36 @@
+<header>
+	<div>
+		<!-- <button type="button" id="sidebarButton">
+			<mat-icon>menu</mat-icon>
+		</button> -->
+		<div class="bar">
+			<img style="cursor: pointer; width: 40px;" alt="Logo Image - Go to home page" id="logoCenter" class="logo"
+				src="assets/favicon.ico" />
+		</div>
+	</div>
+
+	<div>
+		<button mat-button [matMenuTriggerFor]="menu">
+
+			<div id="userInfo">
+				<div style="display: flex; flex-direction: column; align-items: flex-end;">
+					<p><b>ECO SWAP</b></p>
+					<!-- <p>{{ userName }}</p> -->
+				</div>
+				<!-- <img class="userImg" src="assets/images/user.png" *ngIf="!hasPhoto" />
+				<img class="userImg2" [src]="imgUser" *ngIf="hasPhoto" /> -->
+			</div>
+		</button>
+
+		<mat-menu #menu="matMenu" xPosition="before">
+			<!-- <button mat-menu-item (click)="goToProfile()">
+				Profile
+				<mat-icon id="profileIcon">person_outline</mat-icon>
+			</button>
+			<button mat-menu-item id="logout" (click)="logout()">
+				Log Out
+				<mat-icon id="logoutIcon">logout</mat-icon>
+			</button> -->
+		</mat-menu>
+	</div>
+</header>
