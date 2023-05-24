@@ -1,12 +1,39 @@
 .header-container{
 	background-color: #86db59;
-	.div-logo {
-		width: 100px;
+	.top-header{
 		display: flex;
-		justify-content: center;
-		padding: 10px;
+		justify-content: space-between;
+		.div-logo {
+			display: flex;
+			justify-content: flex-start;
+			padding: 10px;
+		}
+		mat-form-field {
+			width: 350px;
+			margin-top: 24px;
+		}
+		#recycling-icon {
+			color: white;
+			display: flex;
+			justify-content: flex-end;
+		}
 	}
 	.tabs {
-		justify-content: center;
+		justify-content: space-between;
+		mat-icon {
+			color: white;
+		}
+		.personal-buttons {
+			color: white;
+			display: flex;
+			justify-content: flex-end;
+		}
 	}
+}
+
+/* .filler-div {
+	width: 50px;
+} */
+mat-toolbar-row div {
+	min-width: 30%;
 }

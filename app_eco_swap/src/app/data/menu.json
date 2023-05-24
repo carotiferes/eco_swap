@@ -1,0 +1,21 @@
+[{
+	"title": "Home",
+	"path": "/",
+	"type": "pages",
+	"needsLogin": false
+}, {
+	"title": "Trueques",
+	"path": "trueques",
+	"type": "pages",
+	"needsLogin": false
+}, {
+	"title": "Donaciones",
+	"path": "donaciones",
+	"type": "pages",
+	"needsLogin": false
+}, {
+	"title": "Creá tu cuenta",
+	"path": "crear-cuenta",
+	"type": "personal",
+	"needsLogin": false
+}]

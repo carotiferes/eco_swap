@@ -1,21 +1,30 @@
 <mat-toolbar class="header-container">
-	<mat-toolbar-row>
+	<mat-toolbar-row class="top-header">
 		<div class="div-logo">
 			<img style="cursor: pointer; width: 100px;" alt="Logo Eco Swap - Ir a la home" id="logoCenter" class="logo"
 				src="assets/logo_white.png" />
 		</div>
+		<div>
+			<mat-form-field>
+				<input matInput placeholder="Buscá lo que quieras trocar o donar...">
+			</mat-form-field>
+		</div>
+		<div id="recycling-icon" class="filler-div">
+			<mat-icon>recycling</mat-icon>
+		</div>
 	</mat-toolbar-row>
   
-	<!-- <mat-toolbar-row class="tabs">
-	</mat-toolbar-row> -->
+	<mat-toolbar-row class="tabs">
+		<div class="filler-div"><mat-icon>compost</mat-icon></div>
+		<div>
+			<button mat-button *ngFor="let tab of mainTabs" (click)="goTo(tab.path)">{{tab.title}}</button>
+		</div>
+		<div class="personal-buttons">
+			<button mat-button *ngFor="let tab of personalTabs" (click)="goTo(tab.path)">{{tab.title}}</button>
+		</div>
+
+	</mat-toolbar-row>
 </mat-toolbar>
-		<mat-tab-group fitInkBarToContent mat-stretch-tabs="false" mat-align-tabs="center">
-			<mat-tab *ngFor="let tab of tabs" [label]="tab.label">
-				<ng-template>
-					<app-trueque></app-trueque>
-				</ng-template>
-			</mat-tab>
-		  </mat-tab-group>
 
 
 

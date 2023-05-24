@@ -10,6 +10,7 @@ import { FooterComponent } from './layout/footer/footer.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './shared/material.module';
 import { TruequeComponent } from './pages/trueque/trueque.component';
+import { DonacionesComponent } from './pages/donaciones/donaciones.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { TruequeComponent } from './pages/trueque/trueque.component';
     HeaderComponent,
     NotFoundComponent,
     FooterComponent,
-    TruequeComponent
+    TruequeComponent,
+    DonacionesComponent
   ],
   imports: [
     BrowserModule,

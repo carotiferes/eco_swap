@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { MenuModel } from 'src/app/models/menu.model';
 import { TruequeComponent } from 'src/app/pages/trueque/trueque.component';
+const menuData = require('../../data/menu.json')
 
 @Component({
   selector: 'app-header',
@@ -9,10 +12,15 @@ import { TruequeComponent } from 'src/app/pages/trueque/trueque.component';
 export class HeaderComponent {
 
 	searchText: string = '';
-	tabs: {label: string, content: any}[] = [
-		{label: 'TRUEQUES', content: TruequeComponent},
-		{label: 'DONACIONES', content: TruequeComponent},
-		{label: 'MI PERFIL', content: TruequeComponent},
-	]
+	mainTabs: MenuModel[] = [];
+	personalTabs: MenuModel[] = [];
+	
+	constructor(private router: Router){
+		this.mainTabs = menuData.filter((item: MenuModel) => item.type == 'pages')
+		this.personalTabs = menuData.filter((item: MenuModel) => item.type == 'personal')
+	}
 
+	goTo(path: string){
+		this.router.navigateByUrl(path)
+	}
 }
