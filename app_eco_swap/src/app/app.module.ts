@@ -9,6 +9,7 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { FooterComponent } from './layout/footer/footer.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './shared/material.module';
+import { TruequeComponent } from './pages/trueque/trueque.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { MaterialModule } from './shared/material.module';
     HomeComponent,
     HeaderComponent,
     NotFoundComponent,
-    FooterComponent
+    FooterComponent,
+    TruequeComponent
   ],
   imports: [
     BrowserModule,

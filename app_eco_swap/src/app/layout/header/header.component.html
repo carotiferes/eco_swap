@@ -1,36 +1,67 @@
-<header>
-	<div>
-		<!-- <button type="button" id="sidebarButton">
-			<mat-icon>menu</mat-icon>
-		</button> -->
-		<div class="bar">
-			<img style="cursor: pointer; width: 40px;" alt="Logo Image - Go to home page" id="logoCenter" class="logo"
-				src="assets/favicon.ico" />
+<mat-toolbar class="header-container">
+	<mat-toolbar-row>
+		<div class="div-logo">
+			<img style="cursor: pointer; width: 100px;" alt="Logo Eco Swap - Ir a la home" id="logoCenter" class="logo"
+				src="assets/logo_white.png" />
 		</div>
-	</div>
+	</mat-toolbar-row>
+  
+	<!-- <mat-toolbar-row class="tabs">
+	</mat-toolbar-row> -->
+</mat-toolbar>
+		<mat-tab-group fitInkBarToContent mat-stretch-tabs="false" mat-align-tabs="center">
+			<mat-tab *ngFor="let tab of tabs" [label]="tab.label">
+				<ng-template>
+					<app-trueque></app-trueque>
+				</ng-template>
+			</mat-tab>
+		  </mat-tab-group>
 
-	<div>
-		<button mat-button [matMenuTriggerFor]="menu">
 
-			<div id="userInfo">
-				<div style="display: flex; flex-direction: column; align-items: flex-end;">
-					<p><b>ECO SWAP</b></p>
-					<!-- <p>{{ userName }}</p> -->
-				</div>
-				<!-- <img class="userImg" src="assets/images/user.png" *ngIf="!hasPhoto" />
-				<img class="userImg2" [src]="imgUser" *ngIf="hasPhoto" /> -->
+
+<!-- <header>
+	<div class="header-container">
+		<div>
+			<!-- <button type="button" id="sidebarButton">
+				<mat-icon>menu</mat-icon>
+			</button> 
+			<div class="div-logo">
+				<img style="cursor: pointer; width: 40px;" alt="Logo Image - Go to home page" id="logoCenter" class="logo"
+					src="assets/favicon.ico" />
 			</div>
-		</button>
-
-		<mat-menu #menu="matMenu" xPosition="before">
-			<!-- <button mat-menu-item (click)="goToProfile()">
-				Profile
-				<mat-icon id="profileIcon">person_outline</mat-icon>
+		</div>
+		<div>
+			<mat-tab-group>
+				<mat-tab label="First"> Content 1 </mat-tab>
+				<mat-tab label="Second"> Content 2 </mat-tab>
+				<mat-tab label="Third"> Content 3 </mat-tab>
+			  </mat-tab-group>
+		</div>
+	
+		<div>
+			<button mat-button [matMenuTriggerFor]="menu">
+	
+				<div id="userInfo">
+					<div style="display: flex; flex-direction: column; align-items: flex-end;">
+						<p><b>ECO SWAP</b></p>
+						<!-- <p>{{ userName }}</p> 
+					</div>
+					<!-- <img class="userImg" src="assets/images/user.png" *ngIf="!hasPhoto" />
+					<img class="userImg2" [src]="imgUser" *ngIf="hasPhoto" /> 
+				</div>
 			</button>
-			<button mat-menu-item id="logout" (click)="logout()">
-				Log Out
-				<mat-icon id="logoutIcon">logout</mat-icon>
-			</button> -->
-		</mat-menu>
+	
+			<mat-menu #menu="matMenu" xPosition="before">
+				<!-- <button mat-menu-item (click)="goToProfile()">
+					Profile
+					<mat-icon id="profileIcon">person_outline</mat-icon>
+				</button>
+				<button mat-menu-item id="logout" (click)="logout()">
+					Log Out
+					<mat-icon id="logoutIcon">logout</mat-icon>
+				</button> 
+			</mat-menu>
+		</div>
+
 	</div>
-</header>
+</header> -->
