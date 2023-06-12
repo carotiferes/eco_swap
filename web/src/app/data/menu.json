@@ -15,7 +15,7 @@
 	"needsLogin": false
 }, {
 	"title": "Creá tu cuenta",
-	"path": "crear-cuenta",
+	"path": "registro",
 	"type": "personal",
 	"needsLogin": false
 }]

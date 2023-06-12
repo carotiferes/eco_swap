@@ -1,6 +1,6 @@
 <mat-toolbar class="header-container">
 	<mat-toolbar-row class="top-header">
-		<div class="div-logo">
+		<div class="div-logo" (click)="goTo('/')">
 			<img style="cursor: pointer; width: 100px;" alt="Logo Eco Swap - Ir a la home" id="logoCenter" class="logo"
 				src="assets/logo_white.png" />
 		</div>
@@ -14,7 +14,7 @@
 		</div>
 	</mat-toolbar-row>
   
-	<mat-toolbar-row class="tabs">
+	<mat-toolbar-row class="tabs" >
 		<div class="filler-div"><mat-icon>compost</mat-icon></div>
 		<div>
 			<button mat-button *ngFor="let tab of mainTabs" (click)="goTo(tab.path)">{{tab.title}}</button>

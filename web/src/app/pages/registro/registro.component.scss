@@ -1,0 +1,17 @@
+#main-card {
+	width: 80%;
+    margin: 2% auto;
+
+	.form {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		align-items: center;
+		row-gap: 10px;
+		column-gap: 5%;
+	}
+
+	.buttons {
+		display: flex;
+		justify-content: center;
+	}
+}

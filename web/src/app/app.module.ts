@@ -11,16 +11,18 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './shared/material.module';
 import { TruequeComponent } from './pages/trueque/trueque.component';
 import { DonacionesComponent } from './pages/donaciones/donaciones.component';
+import { RegistroComponent } from './pages/registro/registro.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
+    //HomeComponent,
     HeaderComponent,
     NotFoundComponent,
     FooterComponent,
     TruequeComponent,
-    DonacionesComponent
+    DonacionesComponent,
+    RegistroComponent
   ],
   imports: [
     BrowserModule,
