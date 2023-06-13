@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
+const db = require('../../data/db.json')
 
 @Component({
   selector: 'app-registro',
@@ -52,8 +53,20 @@ export class RegistroComponent {
 	}
 
 	crearCuenta(){
-		console.log('registro');
-		
+		console.log('registro', db);
+		// TODO: SAVE IN REAL DB
+
+		// SAVE TO HARDCODED DATA
+		db.perfiles.push({
+			"id_perfil": 3,
+			"s_usuario": this.registroForm.controls['s_usuario'].value,
+			"s_contrasena": "1234",
+			"n_telefono": "",//this.registroForm.controls['s_usuario'],
+			"s_email": this.registroForm.controls['s_email'].value,
+			"s_direccion": this.registroForm.controls['s_direccion'].value,
+			"n_puntaje": 0
+		})
+
 	}
 
 }

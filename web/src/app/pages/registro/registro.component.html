@@ -7,42 +7,42 @@
 	</mat-card-header>
 	<mat-card-content>
 		<form [formGroup]="registroForm" class="form">
-			<div>
+			<div class="form-input">
 				<mat-form-field>
 					<mat-label>Email</mat-label>
 					<input matInput formControlName="s_email">
 				</mat-form-field>
 
 			</div>
-			<div>
+			<div class="form-input">
 				<mat-form-field>
 					<mat-label>Usuario</mat-label>
 					<input matInput formControlName="s_usuario">
 				</mat-form-field>
 
 			</div>
-			<div [hidden]="!isSwapper">
+			<div [hidden]="!isSwapper" class="form-input">
 				<mat-form-field>
 					<mat-label>Nombre</mat-label>
 					<input matInput formControlName="s_nombre">
 				</mat-form-field>
 
 			</div>
-			<div [hidden]="!isSwapper">
+			<div [hidden]="!isSwapper" class="form-input">
 				<mat-form-field>
 					<mat-label>Apellido</mat-label>
 					<input matInput formControlName="s_apellido">
 				</mat-form-field>
 
 			</div>
-			<div [hidden]="!isSwapper">
+			<div [hidden]="!isSwapper" class="form-input">
 				<mat-form-field>
 					<mat-label>Fecha de Nacimiento</mat-label>
 					<input matInput formControlName="f_nacimiento">
 				</mat-form-field>
 
 			</div>
-			<div [hidden]="isSwapper">
+			<div [hidden]="isSwapper" class="form-input">
 				<mat-form-field>
 					<mat-label>Razón Social</mat-label>
 					<input matInput formControlName="s_razon_social">

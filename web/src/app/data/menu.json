@@ -5,17 +5,22 @@
 	"needsLogin": false
 }, {
 	"title": "Trueques",
-	"path": "trueques",
+	"path": "/trueques",
 	"type": "pages",
 	"needsLogin": false
 }, {
 	"title": "Donaciones",
-	"path": "donaciones",
+	"path": "/donaciones",
 	"type": "pages",
 	"needsLogin": false
 }, {
 	"title": "Creá tu cuenta",
-	"path": "registro",
+	"path": "/registro",
 	"type": "personal",
 	"needsLogin": false
+}, {
+	"title": "Tu Perfil",
+	"path": "/perfil",
+	"type": "personal",
+	"needsLogin": true
 }]

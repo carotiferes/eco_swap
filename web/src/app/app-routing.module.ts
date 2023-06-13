@@ -4,6 +4,8 @@ import { HomeComponent } from './pages/home/home.component';
 import { TruequeComponent } from './pages/trueque/trueque.component';
 import { DonacionesComponent } from './pages/donaciones/donaciones.component';
 import { RegistroComponent } from './pages/registro/registro.component';
+import { authGuard } from './core/auth.guard';
+import { PerfilComponent } from './pages/perfil/perfil.component';
 
 const routes: Routes = [{
 	path: '',
@@ -17,6 +19,10 @@ const routes: Routes = [{
 }, {
 	path: 'registro',
 	component: RegistroComponent
+},{
+	path: 'perfil',
+	component: PerfilComponent,
+	canActivate: [authGuard]
 },{
 	path: '**',
 	component: HomeComponent
