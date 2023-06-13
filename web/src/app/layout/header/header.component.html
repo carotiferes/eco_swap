@@ -4,7 +4,7 @@
 			<img style="cursor: pointer; width: 100px;" alt="Logo Eco Swap - Ir a la home" id="logoCenter" class="logo"
 				src="assets/logo_white.png" />
 		</div>
-		<div>
+		<div *ngIf="url != '/registro'">
 			<mat-form-field>
 				<input matInput placeholder="Buscá lo que quieras trocar o donar...">
 			</mat-form-field>
@@ -14,7 +14,7 @@
 		</div>
 	</mat-toolbar-row>
   
-	<mat-toolbar-row class="tabs" >
+	<mat-toolbar-row class="tabs" *ngIf="url != '/registro'">
 		<div class="filler-div"><mat-icon>compost</mat-icon></div>
 		<div>
 			<button mat-button *ngFor="let tab of mainTabs" (click)="goTo(tab.path)">{{tab.title}}</button>
