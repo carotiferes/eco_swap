@@ -1,28 +1,36 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 import Swal from 'sweetalert2';
 const db = require('../../data/db.json')
+import { DateAdapter } from '@angular/material/core';
 
 @Component({
   selector: 'app-registro',
   templateUrl: './registro.component.html',
-  styleUrls: ['./registro.component.scss']
+  styleUrls: ['./registro.component.scss'],
+  providers: [{provide: MAT_DATE_LOCALE, useValue: 'en-GB'},]
 })
 export class RegistroComponent {
 	registroForm: FormGroup;
 
 	isSwapper: boolean = true;
+	loading = true;
 
-	constructor(private fb: FormBuilder){
+	screenWidth: number;
+
+	constructor(private fb: FormBuilder, private dateAdapter: DateAdapter<Date>){
 		this.registroForm = fb.group({
-			s_email: ['', Validators.required],
-			s_usuario: ['', Validators.required],
+			s_email: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)]],
+			//s_usuario: ['', Validators.required],
 			s_nombre: [''],
 			s_apellido: [''],
 			f_nacimiento: [''],
-			s_razon_social: [''],
+			s_razon_social: ['',],
 			s_direccion: [''] // revisar si es un string o de otra tabla
 		})
+		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+		this.dateAdapter.setLocale('es-AR'); // DD/mm/YYYY
 	}
 
 	ngOnInit(): void {
@@ -46,27 +54,44 @@ export class RegistroComponent {
 			console.log(result);
 			if(result.isConfirmed){ // FUNDACION
 				this.isSwapper = false;
+				this.registroForm.controls['s_razon_social'].addValidators(Validators.required)
 			} else { // SWAPPER
+				this.registroForm.controls['s_nombre'].addValidators(Validators.required)
+				this.registroForm.controls['s_apellido'].addValidators(Validators.required)
+				this.registroForm.controls['f_nacimiento'].addValidators(Validators.required)
 
 			}
+			console.log(this.isSwapper);
+			this.loading = false
 		})
 	}
 
-	crearCuenta(){
-		console.log('registro', db);
-		// TODO: SAVE IN REAL DB
+	crearCuenta(formValue: any){
+		console.log('registro', formValue);
+		if(this.registroForm.valid){
+			// TODO: SAVE IN REAL DB
+			
+				// IF OK THEN MESSAGE:
+				this.showMessage('¡Gracias por registrarte!',
+				`Te enviamos un email a la cuenta que ingresaste,
+				para que confirmes tu cuenta y crees un usuario y contraseña.`,
+				'No recibí el email', 'send_again', 'success')
 
-		// SAVE TO HARDCODED DATA
-		db.perfiles.push({
-			"id_perfil": 3,
-			"s_usuario": this.registroForm.controls['s_usuario'].value,
-			"s_contrasena": "1234",
-			"n_telefono": "",//this.registroForm.controls['s_usuario'],
-			"s_email": this.registroForm.controls['s_email'].value,
-			"s_direccion": this.registroForm.controls['s_direccion'].value,
-			"n_puntaje": 0
-		})
+		}
+	}
 
+	showMessage(title: string, text: string, confirm: string, origin: string,
+		icon: 'success' | 'error' | 'warning'){
+			Swal.fire({
+				title,
+				text,
+				confirmButtonText: confirm,
+				icon
+			}).then(({isConfirmed}) => {
+				if(origin == 'send_again' && isConfirmed){
+					// TODO: RESEND EMAIL
+				}
+			})
 	}
 
 }

@@ -1,57 +1,86 @@
 <app-header url="registro"></app-header>
 
-<mat-card id="main-card">
-	<mat-card-header>
-		<mat-card-title>Registrate!</mat-card-title>
-		<mat-card-subtitle>Completá tus datos para crear tu cuenta</mat-card-subtitle>
-	</mat-card-header>
-	<mat-card-content>
-		<form [formGroup]="registroForm" class="form">
-			<div class="form-input">
-				<mat-form-field>
-					<mat-label>Email</mat-label>
-					<input matInput formControlName="s_email">
-				</mat-form-field>
-
-			</div>
-			<div class="form-input">
-				<mat-form-field>
-					<mat-label>Usuario</mat-label>
-					<input matInput formControlName="s_usuario">
-				</mat-form-field>
-
-			</div>
-			<div [hidden]="!isSwapper" class="form-input">
-				<mat-form-field>
-					<mat-label>Nombre</mat-label>
-					<input matInput formControlName="s_nombre">
-				</mat-form-field>
-
-			</div>
-			<div [hidden]="!isSwapper" class="form-input">
-				<mat-form-field>
-					<mat-label>Apellido</mat-label>
-					<input matInput formControlName="s_apellido">
-				</mat-form-field>
-
-			</div>
-			<div [hidden]="!isSwapper" class="form-input">
-				<mat-form-field>
-					<mat-label>Fecha de Nacimiento</mat-label>
-					<input matInput formControlName="f_nacimiento">
-				</mat-form-field>
-
-			</div>
-			<div [hidden]="isSwapper" class="form-input">
-				<mat-form-field>
-					<mat-label>Razón Social</mat-label>
-					<input matInput formControlName="s_razon_social">
-				</mat-form-field>
-
-			</div>
-		</form>
-	</mat-card-content>
-	<mat-card-actions class="buttons"> 
-		<button mat-raised-button (click)="crearCuenta()" color="primary">CREAR CUENTA</button>
-	</mat-card-actions>
-</mat-card>
+<div id="main-container">
+	<mat-card id="main-card" *ngIf="!loading">
+		<mat-card-header>
+			<mat-card-title>Registrate!</mat-card-title>
+			<mat-card-subtitle>Completá tus datos para crear tu cuenta</mat-card-subtitle>
+		</mat-card-header>
+		<mat-card-content>
+			<form [formGroup]="registroForm" class="form" [ngClass]="screenWidth > 576 ? 'big-form':'small-form'">
+				<div class="form-input">
+					<mat-form-field>
+						<mat-label>Email</mat-label>
+						<input matInput formControlName="s_email" type="email">
+						<mat-error *ngIf="registroForm.get('s_email')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+						<mat-error *ngIf="registroForm.get('s_email')!.hasError('pattern')">
+							Email inválido
+						</mat-error>
+					</mat-form-field>
+	
+				</div>
+				<!-- <div class="form-input">
+					<mat-form-field>
+						<mat-label>Usuario</mat-label>
+						<input matInput formControlName="s_usuario">
+						<mat-error *ngIf="registroForm.get('s_email')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
+	
+				</div> -->
+				<div class="form-input" *ngIf="isSwapper">
+					<mat-form-field>
+						<mat-label>Nombre</mat-label>
+						<input matInput formControlName="s_nombre">
+						<mat-error *ngIf="registroForm.get('s_nombre')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
+	
+				</div>
+				<div *ngIf="isSwapper" class="form-input">
+					<mat-form-field>
+						<mat-label>Apellido</mat-label>
+						<input matInput formControlName="s_apellido">
+						<mat-error *ngIf="registroForm.get('s_apellido')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
+	
+				</div>
+				<div *ngIf="isSwapper" class="form-input">
+					<mat-form-field>
+						<mat-label>Fecha de Nacimiento</mat-label>
+						<input matInput formControlName="f_nacimiento" [matDatepicker]="picker">
+						<mat-hint>DD/MM/YYYY</mat-hint>
+						<mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+						<mat-datepicker #picker></mat-datepicker>
+						<mat-error *ngIf="registroForm.get('f_nacimiento')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
+	
+				</div>
+				<div *ngIf="!isSwapper" class="form-input">
+					<mat-form-field>
+						<mat-label>Razón Social</mat-label>
+						<input matInput formControlName="s_razon_social">
+						<mat-error *ngIf="registroForm.get('s_razon_social')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
+	
+				</div>
+			</form>
+		</mat-card-content>
+		<mat-card-actions class="buttons"> 
+			<button mat-raised-button color="primary"
+			(click)="crearCuenta(registroForm.value);registroForm.markAllAsTouched(); registroForm.valid">
+				CREAR CUENTA
+			</button>
+		</mat-card-actions>
+	</mat-card>
+</div>
