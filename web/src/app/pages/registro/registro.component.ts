@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import Swal from 'sweetalert2';
-const db = require('../../data/db.json')
 import { DateAdapter } from '@angular/material/core';
 
 @Component({

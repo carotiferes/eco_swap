@@ -1,0 +1,42 @@
+#main-perfil {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 2%;
+
+	.profile-img {
+		display: inline-flex;
+		width: 50px;
+		height: 50px;
+		border-radius: 50%;
+		margin: 1%;
+		background-color: var(--light-grey);
+
+		img {
+			object-fit: cover;
+			max-width: 100%;
+		}
+	}
+
+	#main-perfil-card {
+		width: 80%;
+		//margin: 2%;
+
+		.example-action-buttons {
+			padding-bottom: 20px;
+		}
+
+		.accordion .mat-expansion-panel-header-description {
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.accordion .mat-mdc-form-field+.mat-mdc-form-field {
+			margin-left: 8px;
+		}
+
+		.accordion .grid-list mat-grid-tile {
+			border-bottom: 1px solid var(--light-grey);
+		}
+	}
+}

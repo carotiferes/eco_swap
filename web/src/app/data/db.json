@@ -4,7 +4,7 @@
 			"id_perfil": 1,
 			"s_usuario": "ctiferes",
 			"s_contrasena": "1234",
-			"n_telefono": 1123456789,
+			"s_telefono": 1123456789,
 			"s_email": "ctiferes@frba.utn.edu.ar",
 			"s_direccion": "Maure 1234",
 			"n_puntaje": 0
@@ -12,7 +12,7 @@
 			"id_perfil": 2,
 			"s_usuario": "alevinas",
 			"s_contrasena": "1234",
-			"n_telefono": 1123456789,
+			"s_telefono": 1123456789,
 			"s_email": "alevinas@frba.utn.edu.ar",
 			"s_direccion": "Maure 1234",
 			"n_puntaje": 0
