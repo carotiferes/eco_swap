@@ -1,4 +1,4 @@
-<mat-toolbar class="header-container">
+<!-- <mat-toolbar class="header-container">
 	<mat-toolbar-row class="top-header">
 		<div class="div-logo" (click)="goTo('/')">
 			<img style="cursor: pointer; width: 100px;" alt="Logo Eco Swap - Ir a la home" id="logoCenter" class="logo"
@@ -24,53 +24,31 @@
 		</div>
 
 	</mat-toolbar-row>
-</mat-toolbar>
-
-
-
-<!-- <header>
-	<div class="header-container">
-		<div>
-			<!-- <button type="button" id="sidebarButton">
-				<mat-icon>menu</mat-icon>
-			</button> 
-			<div class="div-logo">
-				<img style="cursor: pointer; width: 40px;" alt="Logo Image - Go to home page" id="logoCenter" class="logo"
-					src="assets/favicon.ico" />
-			</div>
+</mat-toolbar> -->
+<nav class="navbar navbar-expand-sm d-flex justify-content-between">
+	<a class="navbar-brand" href="#">
+		<div class="div-logo" (click)="goTo('/')">
+			<img style="cursor: pointer; width: 100px;" alt="Logo Eco Swap - Ir a la home" id="logoCenter" class="logo"
+				src="assets/logo_white_small.png" />
 		</div>
-		<div>
-			<mat-tab-group>
-				<mat-tab label="First"> Content 1 </mat-tab>
-				<mat-tab label="Second"> Content 2 </mat-tab>
-				<mat-tab label="Third"> Content 3 </mat-tab>
-			  </mat-tab-group>
-		</div>
-	
-		<div>
-			<button mat-button [matMenuTriggerFor]="menu">
-	
-				<div id="userInfo">
-					<div style="display: flex; flex-direction: column; align-items: flex-end;">
-						<p><b>ECO SWAP</b></p>
-						<!-- <p>{{ userName }}</p> 
-					</div>
-					<!-- <img class="userImg" src="assets/images/user.png" *ngIf="!hasPhoto" />
-					<img class="userImg2" [src]="imgUser" *ngIf="hasPhoto" /> 
-				</div>
-			</button>
-	
-			<mat-menu #menu="matMenu" xPosition="before">
-				<!-- <button mat-menu-item (click)="goToProfile()">
-					Profile
-					<mat-icon id="profileIcon">person_outline</mat-icon>
-				</button>
-				<button mat-menu-item id="logout" (click)="logout()">
-					Log Out
-					<mat-icon id="logoutIcon">logout</mat-icon>
-				</button> 
-			</mat-menu>
-		</div>
+	</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler"
+		aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
 
+	<div class="collapse navbar-collapse" id="navbarToggler" *ngIf="url != '/registro'">
+		<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+			<li class="nav-item" *ngFor="let tab of mainTabs">
+				<a class="nav-link" [href]="tab.path"><b>{{tab.title}}</b></a>
+			</li>
+		</ul>
 	</div>
-</header> -->
+	<div class="collapse navbar-collapse justify-content-end" id="navbarToggler">
+		<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+			<li class="nav-item" *ngFor="let tab of personalTabs">
+				<a class="nav-link nav-white" [href]="tab.path"><b>{{tab.title}}</b></a>
+			</li>
+		</ul>
+	</div>
+</nav>

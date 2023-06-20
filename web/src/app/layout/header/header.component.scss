@@ -41,3 +41,25 @@
 mat-toolbar-row div {
 	min-width: 30%;
 }
+
+.navbar {
+	background-color: var(--primary-color);
+
+	.navbar-brand {
+		margin-left: 20px;
+	}
+
+	.navbar-toggler {
+		margin-right: 20px;
+	}
+
+	.navbar-collapse {
+		.navbar-nav {
+			.nav-item {
+				.nav-white {
+					color: var(--white);
+				}
+			}
+		}
+	}
+}

@@ -13,6 +13,7 @@ import { TruequeComponent } from './pages/trueque/trueque.component';
 import { DonacionesComponent } from './pages/donaciones/donaciones.component';
 import { RegistroComponent } from './pages/registro/registro.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { PerfilComponent } from './pages/perfil/perfil.component';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-	MaterialModule
+	MaterialModule,
+	NgbModule
   ],
   providers: [],
   bootstrap: [AppComponent]
