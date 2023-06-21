@@ -6,121 +6,32 @@
 	</div>
 	<h4>{{userInfo.s_nombre}} {{userInfo.s_apellido}}</h4>
 	<mat-card id="main-perfil-card">
-		<mat-accordion class="accordion" multi>
-			<mat-expansion-panel>
-				<mat-expansion-panel-header>
-					<mat-panel-title>
-						Información básica
-					</mat-panel-title>
-					<mat-panel-description>
-						<div></div>
-						<mat-icon>person</mat-icon>
-					</mat-panel-description>
-				</mat-expansion-panel-header>
-
-				<mat-grid-list [cols]="columns" rowHeight="40px" class="grid-list">
-					<mat-grid-tile colspan="1">
-						<b>Usuario</b>
-					</mat-grid-tile>
-					<mat-grid-tile colspan="1">
-						{{user.s_usuario}}
-					</mat-grid-tile>
-					<mat-grid-tile colspan="1" *ngIf="isSwapper">
-						<b>Nombre</b>
-					</mat-grid-tile>
-					<mat-grid-tile colspan="1" *ngIf="isSwapper">
-						{{userInfo.s_nombre}}
-					</mat-grid-tile>
-					<mat-grid-tile colspan="1" *ngIf="isSwapper">
-						<b>Apellido</b>
-					</mat-grid-tile>
-					<mat-grid-tile colspan="1" *ngIf="isSwapper">
-						{{userInfo.s_apellido}}
-					</mat-grid-tile>
-				</mat-grid-list>
-
-			</mat-expansion-panel>
-			<mat-expansion-panel>
-				<mat-expansion-panel-header>
-					<mat-panel-title>
-						Información de contacto
-					</mat-panel-title>
-					<mat-panel-description>
-						<div></div>
-						<mat-icon fontIcon="contacts_outline" class="material-icons-outlined"></mat-icon>
-					</mat-panel-description>
-				</mat-expansion-panel-header>
-
-				<mat-grid-list [cols]="columns" rowHeight="40px" class="grid-list">
-					<mat-grid-tile colspan="1">
-						<b>Email</b>
-					</mat-grid-tile>
-					<mat-grid-tile colspan="1">
-						{{user.s_email}}
-					</mat-grid-tile>
-					<mat-grid-tile colspan="1">
-						<b>Teléfono</b>
-					</mat-grid-tile>
-					<mat-grid-tile colspan="1">
-						{{user.s_telefono}}
-					</mat-grid-tile>
-				</mat-grid-list>
-			</mat-expansion-panel>
-
-			<mat-expansion-panel *ngIf="isSwapper">
-				<mat-expansion-panel-header>
-					<mat-panel-title>
-						Información de Swapper
-					</mat-panel-title>
-					<mat-panel-description>
-						<div></div>
-						<mat-icon fontIcon="social_distance" class="material-icons-outlined"></mat-icon>
-					</mat-panel-description>
-				</mat-expansion-panel-header>
-
-				<mat-grid-list [cols]="columns" rowHeight="40px" class="grid-list">
-					<mat-grid-tile colspan="1">
-						<b>Fecha de Nacimiento</b>
-					</mat-grid-tile>
-					<mat-grid-tile colspan="1">
-						{{userInfo.f_nacimiento}}
-					</mat-grid-tile>
-					<mat-grid-tile colspan="1">
-						<b>Puntaje</b>
-					</mat-grid-tile>
-					<mat-grid-tile colspan="1">
-						{{userInfo.n_puntaje}}
-					</mat-grid-tile>
-				</mat-grid-list>
-			</mat-expansion-panel>
-
-			<mat-expansion-panel *ngIf="!isSwapper">
-				<mat-expansion-panel-header>
-					<mat-panel-title>
-						Información de la Fundación
-					</mat-panel-title>
-					<mat-panel-description>
-						<div></div>
-						<mat-icon fontIcon="diversity_2" class="material-icons-outlined"></mat-icon>
-					</mat-panel-description>
-				</mat-expansion-panel-header>
-
-				<mat-grid-list [cols]="columns" rowHeight="40px" class="grid-list">
-					<mat-grid-tile colspan="1">
-						<b>Email</b>
-					</mat-grid-tile>
-					<mat-grid-tile colspan="1">
-						{{user.s_email}}
-					</mat-grid-tile>
-					<mat-grid-tile colspan="1">
-						<b>Teléfono</b>
-					</mat-grid-tile>
-					<mat-grid-tile colspan="1">
-						{{user.s_telefono}}
-					</mat-grid-tile>
-				</mat-grid-list>
-			</mat-expansion-panel>
-		</mat-accordion>
+		<div ngbAccordion>
+			<div ngbAccordionItem *ngFor="let accordion of showableAccordions()">
+				<h2 ngbAccordionHeader class="mb-0">
+					<button ngbAccordionButton>{{accordion.title}}</button>
+				</h2>
+				<div ngbAccordionCollapse>
+					<div ngbAccordionBody>
+						<ng-template>
+							<mat-grid-list [cols]="columns" rowHeight="40px" class="grid-list">
+								<div *ngFor="let attr of accordion.attributes">
+									<mat-grid-tile colspan="1" *ngIf="attr.value">
+										<b>{{attr.title}}</b>
+									</mat-grid-tile>
+									<mat-grid-tile colspan="1" *ngIf="attr.value && attr.name != 'n_puntaje'">
+										{{attr.name != 's_contrasena' ? attr.value : (attr.value | password)}}
+									</mat-grid-tile>
+									<mat-grid-tile colspan="1" *ngIf="attr.value && attr.name == 'n_puntaje'">
+										<mat-icon *ngFor="let i of [].constructor(attr.value)" color="primary">star</mat-icon>
+										<mat-icon *ngFor="let i of [].constructor(5-attr.value)" class="empty-star">star</mat-icon>
+									</mat-grid-tile>
+								</div>
+							</mat-grid-list>
+						</ng-template>
+					</div>
+				</div>
+			</div>
+		</div>
 	</mat-card>
-
 </div>

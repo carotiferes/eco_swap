@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @use '@angular/material' as mat;
-@import "bootstrap/scss/bootstrap";
+@import './assets/bootstrap.scss';
 
 @include mat.core();
 
@@ -28,7 +28,7 @@ $eco-swap: (
 		900: #0007a4
 	)
 );
- 
+
 $eco-swap-primary: mat.define-palette($eco-swap, 400);
 $eco-swap-accent: mat.define-palette($eco-swap, 300);// TODO: check accent color
 
@@ -57,6 +57,8 @@ $eco-swap-theme: mat.define-light-theme((
 
 	--custom-font: "Source Sans Pro";
 }
+
+
 
 /* html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; } */

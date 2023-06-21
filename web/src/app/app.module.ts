@@ -14,6 +14,7 @@ import { DonacionesComponent } from './pages/donaciones/donaciones.component';
 import { RegistroComponent } from './pages/registro/registro.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { PasswordPipe } from './pipes/password.pipe';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     TruequeComponent,
     DonacionesComponent,
     RegistroComponent,
-    PerfilComponent
+    PerfilComponent,
+    PasswordPipe
   ],
   imports: [
     BrowserModule,

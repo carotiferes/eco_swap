@@ -7,7 +7,7 @@
 			"s_telefono": 1123456789,
 			"s_email": "ctiferes@frba.utn.edu.ar",
 			"s_direccion": "Maure 1234",
-			"n_puntaje": 0
+			"n_puntaje": 4
 		}, {
 			"id_perfil": 2,
 			"s_usuario": "alevinas",
@@ -15,7 +15,7 @@
 			"s_telefono": 1123456789,
 			"s_email": "alevinas@frba.utn.edu.ar",
 			"s_direccion": "Maure 1234",
-			"n_puntaje": 0
+			"n_puntaje": 3
 		}
 	],
 	"swappers": [
@@ -31,7 +31,35 @@
 		{
 			"id_fundacion": 1,
 			"id_perfil": 2,
-			"s_razon_social": "Fundación Ale"
+			"s_nombre": "Fundación Ale"
+		}
+	],
+	"solicitudes": [
+		{
+			"id_solicitud": 1,
+			"id_fundacion": 1,
+			"s_titulo": "Ropa de abrigo",
+			"s_descripcion": "Colecta de ropa de abrigo para el invierno",
+			"f_solicitud": "2023-06-20",
+			"c_activa": true,
+			"productos": [
+				{
+					"c_tipo_producto": 1,
+					"id_publi_solic": 1,
+					"s_descripcion": "Frazada",
+					"n_cantidad_solicitada": 100,
+					"n_cantidad_recibida": 0,
+					"s_estado": "Bueno"
+				},
+				{
+					"c_tipo_producto": 1,
+					"id_publi_solic": 1,
+					"s_descripcion": "Campera",
+					"n_cantidad_solicitada": 60,
+					"n_cantidad_recibida": 5,
+					"s_estado": "Bueno"
+				}
+			]
 		}
 	]
 }

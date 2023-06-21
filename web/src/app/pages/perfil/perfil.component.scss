@@ -37,6 +37,10 @@
 
 		.accordion .grid-list mat-grid-tile {
 			border-bottom: 1px solid var(--light-grey);
+
+			.empty-star {
+				color: var(--dark-grey);
+			}
 		}
 	}
 }

@@ -25,7 +25,9 @@ export class RegistroComponent {
 			s_nombre: [''],
 			s_apellido: [''],
 			f_nacimiento: [''],
-			s_razon_social: ['',],
+			s_dni: [''],
+			s_cuit: [''],
+			//s_nombre: ['',],
 			s_direccion: [''] // revisar si es un string o de otra tabla
 		})
 		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
@@ -53,11 +55,13 @@ export class RegistroComponent {
 			console.log(result);
 			if(result.isConfirmed){ // FUNDACION
 				this.isSwapper = false;
-				this.registroForm.controls['s_razon_social'].addValidators(Validators.required)
+				this.registroForm.controls['s_nombre'].addValidators(Validators.required)
+				this.registroForm.controls['s_cuit'].addValidators(Validators.required)
 			} else { // SWAPPER
 				this.registroForm.controls['s_nombre'].addValidators(Validators.required)
 				this.registroForm.controls['s_apellido'].addValidators(Validators.required)
 				this.registroForm.controls['f_nacimiento'].addValidators(Validators.required)
+				this.registroForm.controls['s_dni'].addValidators(Validators.required)
 
 			}
 			console.log(this.isSwapper);

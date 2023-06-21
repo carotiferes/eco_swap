@@ -20,6 +20,15 @@
 						</mat-error>
 					</mat-form-field>
 				</div>
+				<div *ngIf="isSwapper" class="form-input">
+					<mat-form-field>
+						<mat-label>DNI</mat-label>
+						<input matInput formControlName="s_dni">
+						<mat-error *ngIf="registroForm.get('s_dni')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
+				</div>
 				<div class="form-input" *ngIf="isSwapper">
 					<mat-form-field>
 						<mat-label>Nombre</mat-label>
@@ -38,7 +47,6 @@
 							Campo obligatorio
 						</mat-error>
 					</mat-form-field>
-	
 				</div>
 				<div *ngIf="isSwapper" class="form-input">
 					<mat-form-field>
@@ -51,17 +59,25 @@
 							Campo obligatorio
 						</mat-error>
 					</mat-form-field>
-	
 				</div>
+				
 				<div *ngIf="!isSwapper" class="form-input">
 					<mat-form-field>
-						<mat-label>Razón Social</mat-label>
-						<input matInput formControlName="s_razon_social">
-						<mat-error *ngIf="registroForm.get('s_razon_social')!.hasError('required')">
+						<mat-label>Nombre de la Fundación</mat-label>
+						<input matInput formControlName="s_nombre">
+						<mat-error *ngIf="registroForm.get('s_nombre')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
 					</mat-form-field>
-	
+				</div>
+				<div *ngIf="!isSwapper" class="form-input">
+					<mat-form-field>
+						<mat-label>CUIT</mat-label>
+						<input matInput formControlName="s_cuit">
+						<mat-error *ngIf="registroForm.get('s_cuit')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
 				</div>
 			</form>
 		</mat-card-content>
