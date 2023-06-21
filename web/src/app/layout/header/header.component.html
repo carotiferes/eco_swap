@@ -40,14 +40,14 @@
 	<div class="collapse navbar-collapse" id="navbarToggler" *ngIf="url != '/registro'">
 		<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 			<li class="nav-item" *ngFor="let tab of mainTabs">
-				<a class="nav-link" [href]="tab.path"><b>{{tab.title}}</b></a>
+				<a class="nav-link px-2" [href]="tab.path"><b>{{tab.title}}</b></a>
 			</li>
 		</ul>
 	</div>
 	<div class="collapse navbar-collapse justify-content-end" id="navbarToggler">
 		<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 			<li class="nav-item" *ngFor="let tab of personalTabs">
-				<a class="nav-link nav-white" [href]="tab.path"><b>{{tab.title}}</b></a>
+				<a class="nav-link nav-white px-2" [href]="tab.path"><b>{{tab.title}}</b></a>
 			</li>
 		</ul>
 	</div>

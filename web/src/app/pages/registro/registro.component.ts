@@ -43,7 +43,7 @@ export class RegistroComponent {
 			necesitamos saber si te querés registrar como fundación o como Swapper`,
 			confirmButtonText: 'Represento a una fundación',
 			confirmButtonColor: '#87db59',
-			cancelButtonText: 'Quiero ser Swapper',
+			cancelButtonText: 'No soy de una fundación',
 			showCancelButton: true,
 			cancelButtonColor: '#ae59db',
 			icon: 'question',
