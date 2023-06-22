@@ -42,13 +42,14 @@
 			"s_descripcion": "Colecta de ropa de abrigo para el invierno",
 			"f_solicitud": "2023-06-20",
 			"c_activa": true,
+			"s_imagen": "assets/TEST_abrigos.jpg",
 			"productos": [
 				{
 					"c_tipo_producto": 1,
 					"id_publi_solic": 1,
 					"s_descripcion": "Frazada",
 					"n_cantidad_solicitada": 100,
-					"n_cantidad_recibida": 0,
+					"n_cantidad_recibida": 50,
 					"s_estado": "Bueno"
 				},
 				{
@@ -56,7 +57,26 @@
 					"id_publi_solic": 1,
 					"s_descripcion": "Campera",
 					"n_cantidad_solicitada": 60,
-					"n_cantidad_recibida": 5,
+					"n_cantidad_recibida": 50,
+					"s_estado": "Bueno"
+				}
+			]
+		},
+		{
+			"id_solicitud": 1,
+			"id_fundacion": 1,
+			"s_titulo": "Juguetes",
+			"s_descripcion": "Colecta de juguetes por el día del niño",
+			"f_solicitud": "2023-06-20",
+			"c_activa": true,
+			"s_imagen": "assets/TEST_juguetes.png",
+			"productos": [
+				{
+					"c_tipo_producto": 1,
+					"id_publi_solic": 1,
+					"s_descripcion": "Juguetes Varios",
+					"n_cantidad_solicitada": 1000,
+					"n_cantidad_recibida": 100,
 					"s_estado": "Bueno"
 				}
 			]

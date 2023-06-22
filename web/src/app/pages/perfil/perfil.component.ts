@@ -8,7 +8,7 @@ const db = require('../../data/db.json')
   styleUrls: ['./perfil.component.scss']
 })
 export class PerfilComponent {
-	isSwapper: boolean = false; // CHANGE WHEN BRINGING USER INFO
+	isSwapper: boolean = true; // CHANGE WHEN BRINGING USER INFO
 	user: PerfilModel;
 	userInfo: any;
 

@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { SolicitudModel } from 'src/app/models/solicitud.model';
+const db = require('../../data/db.json')
 
 @Component({
   selector: 'app-donaciones',
@@ -7,4 +9,9 @@ import { Component } from '@angular/core';
 })
 export class DonacionesComponent {
 
+	solicitudes: SolicitudModel[] = [];
+
+	constructor(){
+		this.solicitudes = db.solicitudes;
+	}
 }
