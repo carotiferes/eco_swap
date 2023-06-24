@@ -6,6 +6,7 @@ import { DonacionesComponent } from './pages/donaciones/donaciones.component';
 import { RegistroComponent } from './pages/registro/registro.component';
 import { authGuard } from './core/auth.guard';
 import { PerfilComponent } from './pages/perfil/perfil.component';
+import { SolicitudComponent } from './pages/solicitud/solicitud.component';
 
 const routes: Routes = [{
 	path: '',
@@ -22,6 +23,10 @@ const routes: Routes = [{
 },{
 	path: 'perfil',
 	component: PerfilComponent,
+	canActivate: [authGuard]
+},{
+	path: 'solicitud/:id_solicitud',
+	component: SolicitudComponent,
 	canActivate: [authGuard]
 },{
 	path: '**',

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { SolicitudModel } from 'src/app/models/solicitud.model';
 const db = require('../../data/db.json')
 
@@ -11,7 +12,11 @@ export class DonacionesComponent {
 
 	solicitudes: SolicitudModel[] = [];
 
-	constructor(){
+	constructor(private router: Router){
 		this.solicitudes = db.solicitudes;
+	}
+
+	goToSolicitud(solicitud: SolicitudModel){
+		this.router.navigateByUrl('solicitud/'+solicitud.id_solicitud)
 	}
 }
