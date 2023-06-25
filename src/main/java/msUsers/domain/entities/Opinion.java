@@ -1,4 +1,4 @@
-package domain.entities;
+package msUsers.domain.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -8,14 +8,10 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "Opiniones")
-public class Opinion {
+public class Opinion{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID idOpinion;
-
-
-    // private UUID idOpinado; Posible futura clave compuesta?
-
+    private long idOpinion;
     @NotNull
     private float valoracion;
 
@@ -24,5 +20,10 @@ public class Opinion {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_perfil", nullable = false)
-    private Perfil perfil;
+    private Perfil perfilOpina;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Perfil perfilOpinado;
+
+    // ToDo: ¿Las opiniones tendrán fecha?
 }

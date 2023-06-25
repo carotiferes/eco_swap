@@ -1,21 +1,20 @@
-package domain.entities;
+package msUsers.domain.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.Range;
 
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "Perfiles")
-@Inheritance(strategy = InheritanceType.JOINED)
 public class Perfil {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "idPerfil")
-    private UUID idPerfil;
+    private long idPerfil;
 
     @NotNull
     @Column(unique = true)
@@ -23,35 +22,33 @@ public class Perfil {
     private String username;
 
     @NotNull
+    @OneToMany(mappedBy = "perfil", cascade = CascadeType.ALL)
+    private List<Direccion> direcciones;
+
+    @NotNull
     @Size(min = 8, max = 80)
     private String password;
 
     @NotNull
     @Size(max = 10)
-    private int telefono;
+    private String telefono;
 
     @NotNull
     @Size(max = 100)
     @Column(unique = true)
     private String email;
 
+    @Range(min = 0, max = 100)
+    private String puntaje;
     @NotNull
-    private String direccion;
-    private float puntaje;
+    private boolean isSwapper; // Un enum?
 
-    @NotNull
-    private boolean swapper;
-
-    @OneToMany(mappedBy = "perfil", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "perfilOpina", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Opinion> opiniones;
 
-    public UUID getIdPerfil() {
-        return idPerfil;
-    }
+    public long getIdPerfil() {return idPerfil;}
 
-    public void setIdPerfil(UUID idPerfil) {
-        this.idPerfil = idPerfil;
-    }
+    public void setIdPerfil(long idPerfil) {this.idPerfil = idPerfil;}
 
     public String getUsername() {
         return username;
@@ -69,11 +66,11 @@ public class Perfil {
         this.password = password;
     }
 
-    public int getTelefono() {
+    public String getTelefono() {
         return telefono;
     }
 
-    public void setTelefono(int telefono) {
+    public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
 
@@ -84,30 +81,17 @@ public class Perfil {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    public String getDireccion() {
-        return direccion;
-    }
-
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
-    }
-
-    public float getPuntaje() {
+    public String getPuntaje() {
         return puntaje;
     }
 
-    public void setPuntaje(float puntaje) {
+    public void setPuntaje(String puntaje) {
         this.puntaje = puntaje;
     }
 
-    public boolean isSwapper() {
-        return swapper;
-    }
+    public boolean isSwapper() {return isSwapper;}
 
-    public void setSwapper(boolean swapper) {
-        this.swapper = swapper;
-    }
+    public void setSwapper(boolean swapper) {isSwapper = swapper;}
 
     public List<Opinion> getOpiniones() {
         return opiniones;

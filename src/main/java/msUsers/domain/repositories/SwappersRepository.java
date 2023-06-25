@@ -1,11 +1,11 @@
-package domain.repositories;
+package msUsers.domain.repositories;
 
-import domain.entities.Fundaciones;
+import msUsers.domain.entities.Swapper;
 import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
 @Repository
-public interface FundacionesRepository extends JpaRepositoryImplementation<Fundaciones, UUID> {
+public interface SwappersRepository extends JpaRepositoryImplementation<Swapper, Long> {
 }
