@@ -7,6 +7,7 @@ import { RegistroComponent } from './pages/registro/registro.component';
 import { authGuard } from './core/auth.guard';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { SolicitudComponent } from './pages/solicitud/solicitud.component';
+import { PropuestaComponent } from './pages/propuesta/propuesta.component';
 
 const routes: Routes = [{
 	path: '',
@@ -27,6 +28,10 @@ const routes: Routes = [{
 },{
 	path: 'solicitud/:id_solicitud',
 	component: SolicitudComponent,
+	canActivate: [authGuard]
+},{
+	path: 'propuesta/:id_solicitud',
+	component: PropuestaComponent,
 	canActivate: [authGuard]
 },{
 	path: '**',

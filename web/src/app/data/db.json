@@ -45,6 +45,7 @@
 			"s_imagen": "assets/TEST_abrigos.jpg",
 			"productos": [
 				{
+					"id_producto": 1,
 					"c_tipo_producto": 1,
 					"id_publi_solic": 1,
 					"s_descripcion": "Frazada",
@@ -53,6 +54,7 @@
 					"s_estado": "Bueno"
 				},
 				{
+					"id_producto": 2,
 					"c_tipo_producto": 1,
 					"id_publi_solic": 1,
 					"s_descripcion": "Campera",

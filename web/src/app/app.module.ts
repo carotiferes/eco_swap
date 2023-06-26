@@ -16,6 +16,7 @@ import { PerfilComponent } from './pages/perfil/perfil.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PasswordPipe } from './pipes/password.pipe';
 import { SolicitudComponent } from './pages/solicitud/solicitud.component';
+import { PropuestaComponent } from './pages/propuesta/propuesta.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { SolicitudComponent } from './pages/solicitud/solicitud.component';
     RegistroComponent,
     PerfilComponent,
     PasswordPipe,
-    SolicitudComponent
+    SolicitudComponent,
+    PropuestaComponent
   ],
   imports: [
     BrowserModule,

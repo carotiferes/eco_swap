@@ -1,4 +1,5 @@
 export interface ProductoModel {
+	id_producto: number,
 	c_tipo_producto: number,
 	id_publi_solic: number,
 	s_descripcion: string,
