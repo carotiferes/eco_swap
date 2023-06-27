@@ -1,5 +1,6 @@
 package msUsers.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -18,6 +19,8 @@ public class Solicitud {
     @Size(max = 50)
     @NotNull
     private String titulo;
+
+    @NotNull
     private String descripcion;
 
     @NotNull
@@ -34,6 +37,72 @@ public class Solicitud {
     @ManyToOne(cascade = CascadeType.ALL)
     private Fundacion fundacion;
 
-    @OneToMany(mappedBy = "solicitud", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_solicitud")
+    @JsonManagedReference
     private List<Producto> productos;
+
+    public long getIdSolicitud() {
+        return idSolicitud;
+    }
+
+    public void setIdSolicitud(long idSolicitud) {
+        this.idSolicitud = idSolicitud;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public LocalDate getFechaSolicitud() {
+        return fechaSolicitud;
+    }
+
+    public void setFechaSolicitud(LocalDate fechaSolicitud) {
+        this.fechaSolicitud = fechaSolicitud;
+    }
+
+    public boolean isActiva() {
+        return activa;
+    }
+
+    public void setActiva(boolean activa) {
+        this.activa = activa;
+    }
+
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
+    }
+
+    public Fundacion getFundacion() {
+        return fundacion;
+    }
+
+    public void setFundacion(Fundacion fundacion) {
+        this.fundacion = fundacion;
+    }
+
+    public List<Producto> getProductos() {
+        return productos;
+    }
+
+    public void setProductos(List<Producto> productos) {
+        this.productos = productos;
+    }
 }

@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication(scanBasePackages = {"msUsers.controllers, msUsers.domain.repositories"})
-@EntityScan(basePackages = "msUsers.domain")
+@EntityScan(basePackages = "msUsers.domain.entities")
 @EnableJpaRepositories("msUsers.domain.repositories")
 public class EcoSwapApplication {
 	public static void main(String[] args) {
