@@ -17,30 +17,37 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PasswordPipe } from './pipes/password.pipe';
 import { SolicitudComponent } from './pages/solicitud/solicitud.component';
 import { PropuestaComponent } from './pages/propuesta/propuesta.component';
+import { UsuarioService } from './services/usuario.service';
+import { HttpBackEnd } from './services/httpBackend.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HomeComponent,
-    HeaderComponent,
-    NotFoundComponent,
-    FooterComponent,
-    TruequeComponent,
-    DonacionesComponent,
-    RegistroComponent,
-    PerfilComponent,
-    PasswordPipe,
-    SolicitudComponent,
-    PropuestaComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-	MaterialModule,
-	NgbModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+	declarations: [
+		AppComponent,
+		HomeComponent,
+		HeaderComponent,
+		NotFoundComponent,
+		FooterComponent,
+		TruequeComponent,
+		DonacionesComponent,
+		RegistroComponent,
+		PerfilComponent,
+		PasswordPipe,
+		SolicitudComponent,
+		PropuestaComponent
+	],
+	imports: [
+		BrowserModule,
+		AppRoutingModule,
+		BrowserAnimationsModule,
+		MaterialModule,
+		NgbModule,
+		HttpClientModule
+	],
+	providers: [
+		HttpBackEnd,
+		UsuarioService,
+	],
+	bootstrap: [AppComponent]
 })
 export class AppModule { }
