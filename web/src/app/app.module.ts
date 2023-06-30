@@ -17,30 +17,42 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PasswordPipe } from './pipes/password.pipe';
 import { SolicitudComponent } from './pages/solicitud/solicitud.component';
 import { PropuestaComponent } from './pages/propuesta/propuesta.component';
+import { UsuarioService } from './services/usuario.service';
+import { HttpBackEnd } from './services/httpBackend.service';
+import { HttpClientModule } from '@angular/common/http';
+import { LoginComponent } from './pages/login/login.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HomeComponent,
-    HeaderComponent,
-    NotFoundComponent,
-    FooterComponent,
-    TruequeComponent,
-    DonacionesComponent,
-    RegistroComponent,
-    PerfilComponent,
-    PasswordPipe,
-    SolicitudComponent,
-    PropuestaComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-	MaterialModule,
-	NgbModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+	declarations: [
+		AppComponent,
+		HomeComponent,
+		HeaderComponent,
+		NotFoundComponent,
+		FooterComponent,
+		TruequeComponent,
+		DonacionesComponent,
+		RegistroComponent,
+		PerfilComponent,
+		PasswordPipe,
+		SolicitudComponent,
+		PropuestaComponent,
+  LoginComponent
+	],
+	imports: [
+		BrowserModule,
+		AppRoutingModule,
+		BrowserAnimationsModule,
+		MaterialModule,
+		NgbModule,
+		HttpClientModule,
+		FormsModule,
+		ReactiveFormsModule
+	],
+	providers: [
+		HttpBackEnd,
+		UsuarioService,
+	],
+	bootstrap: [AppComponent]
 })
 export class AppModule { }

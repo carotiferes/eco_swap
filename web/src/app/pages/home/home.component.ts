@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { UsuarioService } from 'src/app/services/usuario.service';
 
 @Component({
   selector: 'app-home',
@@ -7,4 +8,10 @@ import { Component } from '@angular/core';
 })
 export class HomeComponent {
 
+	constructor(private service: UsuarioService){
+		service.test().subscribe(res => {
+			console.log(res);
+			
+		})
+	}
 }

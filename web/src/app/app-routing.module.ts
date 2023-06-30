@@ -8,9 +8,13 @@ import { authGuard } from './core/auth.guard';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { SolicitudComponent } from './pages/solicitud/solicitud.component';
 import { PropuestaComponent } from './pages/propuesta/propuesta.component';
+import { LoginComponent } from './pages/login/login.component';
 
 const routes: Routes = [{
 	path: '',
+	component: LoginComponent
+}, {
+	path: 'home',
 	component: HomeComponent
 }, {
 	path: 'trueques',
