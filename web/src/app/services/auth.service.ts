@@ -6,9 +6,12 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
 
-	isUserLoggedIn: boolean = false;
+	isUserLoggedIn: boolean;
 
-	constructor(private router: Router) { }
+	constructor(private router: Router) {
+		if(this.getUserLogin()) this.isUserLoggedIn = true;
+		else this.isUserLoggedIn = false;
+	}
 
 	login(username: string, password: string) {
 		console.log(username, password);
@@ -16,6 +19,7 @@ export class AuthService {
 		this.setLocalStorage('userData', JSON.stringify({
 			userData: {
 				username,
+				idUser: 1,
 				isSwapper: username == 'swapper' ? true : false
 			}
 		}));
@@ -46,6 +50,8 @@ export class AuthService {
 	logout() {
 		this.isUserLoggedIn = false;
 		localStorage.clear();
-		this.router.navigate(['/login']);
+		this.router.navigate(['/']);
+		console.log(localStorage.getItem('userData'));
+		
 	}
 }

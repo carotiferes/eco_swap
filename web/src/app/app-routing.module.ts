@@ -23,10 +23,17 @@ const routes: Routes = [{
 	path: 'donaciones',
 	component: DonacionesComponent
 }, {
+	path: 'donaciones/:id_fundacion',
+	component: DonacionesComponent
+},{
 	path: 'registro',
 	component: RegistroComponent
 },{
 	path: 'perfil',
+	component: PerfilComponent,
+	canActivate: [authGuard]
+},{
+	path: 'perfil/:id',
 	component: PerfilComponent,
 	canActivate: [authGuard]
 },{

@@ -4,7 +4,7 @@
 	<div class="row">
 		<div ><!-- class="col-lg-6" -->
 			<div class="card-deck">
-				<div class="card row" *ngFor="let solicitud of solicitudes" (click)="goToSolicitud(solicitud)">
+				<div class="card row" *ngFor="let solicitud of showSolicitudes" (click)="goToSolicitud(solicitud)">
 					<div class="col-sm-4">
 						<img class="card-img" [src]="solicitud.s_imagen">
 					</div>
@@ -26,19 +26,4 @@
 			</div>
 		</div>
 	</div>
-	<!-- <mat-card *ngFor="let solicitud of solicitudes" class="card">
-		<mat-card-header>
-			<mat-card-title>{{solicitud.s_titulo}}</mat-card-title>
-			<mat-card-subtitle>
-			</mat-card-subtitle>
-		</mat-card-header>
-		<mat-card-content>
-			<div class="productos">
-				<div *ngFor="let producto of solicitud.productos" class="producto">{{producto.s_descripcion}} ({{producto.n_cantidad_solicitada}})</div>
-			</div>
-		</mat-card-content>
-		<mat-card-actions>
-			<button mat-button>Ok</button>
-		</mat-card-actions>
-	</mat-card> -->
 </div>
