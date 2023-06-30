@@ -1,30 +1,3 @@
-<!-- <mat-toolbar class="header-container">
-	<mat-toolbar-row class="top-header">
-		<div class="div-logo" (click)="goTo('/')">
-			<img style="cursor: pointer; width: 100px;" alt="Logo Eco Swap - Ir a la home" id="logoCenter" class="logo"
-				src="assets/logo_white.png" />
-		</div>
-		<div *ngIf="url != '/registro'">
-			<mat-form-field>
-				<input matInput placeholder="Buscá lo que quieras trocar o donar...">
-			</mat-form-field>
-		</div>
-		<div id="recycling-icon" class="filler-div">
-			<mat-icon>recycling</mat-icon>
-		</div>
-	</mat-toolbar-row>
-  
-	<mat-toolbar-row class="tabs" *ngIf="url != '/registro'">
-		<div class="filler-div"><mat-icon>compost</mat-icon></div>
-		<div>
-			<button mat-button *ngFor="let tab of mainTabs" (click)="goTo(tab.path)">{{tab.title}}</button>
-		</div>
-		<div class="personal-buttons">
-			<button mat-button *ngFor="let tab of personalTabs" (click)="goTo(tab.path)">{{tab.title}}</button>
-		</div>
-
-	</mat-toolbar-row>
-</mat-toolbar> -->
 <nav class="navbar navbar-expand-sm d-flex justify-content-between">
 	<a class="navbar-brand" href="#">
 		<div class="div-logo" (click)="goTo('/')">
@@ -47,8 +20,13 @@
 	<div class="collapse navbar-collapse justify-content-end" id="navbarToggler">
 		<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 			<li class="nav-item" *ngFor="let tab of personalTabs">
-				<a class="nav-link nav-white px-2" [href]="tab.path"><b>{{tab.title}}</b></a>
+				<a class="nav-link nav-white px-2" [href]="tab.path"
+				*ngIf="tab.path == '/registro' && isUserLoggedIn || tab.path == '/perfil' && !isUserLoggedIn"
+				><b>{{tab.title}}</b></a>
 			</li>
+			<li class="nav-item"><a class="nav-link nav-white px-2" [href]="logOut()" *ngIf="isUserLoggedIn">
+				<b>Cerrar Sesión</b>
+			</a></li>
 		</ul>
 	</div>
 </nav>

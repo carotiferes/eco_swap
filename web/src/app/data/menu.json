@@ -1,6 +1,6 @@
 [{
 	"title": "Home",
-	"path": "/",
+	"path": "/home",
 	"type": "pages",
 	"needsLogin": false
 }, {

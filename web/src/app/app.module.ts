@@ -20,6 +20,8 @@ import { PropuestaComponent } from './pages/propuesta/propuesta.component';
 import { UsuarioService } from './services/usuario.service';
 import { HttpBackEnd } from './services/httpBackend.service';
 import { HttpClientModule } from '@angular/common/http';
+import { LoginComponent } from './pages/login/login.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
 	declarations: [
@@ -34,7 +36,8 @@ import { HttpClientModule } from '@angular/common/http';
 		PerfilComponent,
 		PasswordPipe,
 		SolicitudComponent,
-		PropuestaComponent
+		PropuestaComponent,
+  LoginComponent
 	],
 	imports: [
 		BrowserModule,
@@ -42,7 +45,9 @@ import { HttpClientModule } from '@angular/common/http';
 		BrowserAnimationsModule,
 		MaterialModule,
 		NgbModule,
-		HttpClientModule
+		HttpClientModule,
+		FormsModule,
+		ReactiveFormsModule
 	],
 	providers: [
 		HttpBackEnd,
