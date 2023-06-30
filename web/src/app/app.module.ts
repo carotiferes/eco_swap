@@ -11,6 +11,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './shared/material.module';
 import { TruequeComponent } from './pages/trueque/trueque.component';
 import { DonacionesComponent } from './pages/donaciones/donaciones.component';
+import { RegistroComponent } from './pages/registro/registro.component';
+import { PerfilComponent } from './pages/perfil/perfil.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { PasswordPipe } from './pipes/password.pipe';
+import { SolicitudComponent } from './pages/solicitud/solicitud.component';
+import { PropuestaComponent } from './pages/propuesta/propuesta.component';
 
 @NgModule({
   declarations: [
@@ -20,13 +26,19 @@ import { DonacionesComponent } from './pages/donaciones/donaciones.component';
     NotFoundComponent,
     FooterComponent,
     TruequeComponent,
-    DonacionesComponent
+    DonacionesComponent,
+    RegistroComponent,
+    PerfilComponent,
+    PasswordPipe,
+    SolicitudComponent,
+    PropuestaComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-	MaterialModule
+	MaterialModule,
+	NgbModule
   ],
   providers: [],
   bootstrap: [AppComponent]

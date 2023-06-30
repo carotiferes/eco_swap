@@ -1,0 +1,40 @@
+#main-container {
+	padding: 2%;
+
+	#main-card {
+		width: 80%;
+		margin: 2% auto;
+	
+		.form {
+			display: grid;
+			align-items: center;
+			margin-top: 20px;
+	
+			&.big-form {
+				grid-template-columns: 1fr 1fr;
+				row-gap: 10px;
+				column-gap: 5%;
+			}
+	
+			&.small-form {
+				grid-template-columns: 1fr;
+				row-gap: 10px;
+				column-gap: 5%;
+			}
+	
+			.form-input {
+				display: flex;
+				justify-content: center;
+	
+				mat-form-field {
+					min-width: 250px;
+				}
+			}
+		}
+	
+		.buttons {
+			display: flex;
+			justify-content: center;
+		}
+	}
+}

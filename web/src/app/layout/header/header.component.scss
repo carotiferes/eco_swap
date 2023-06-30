@@ -1,5 +1,5 @@
 .header-container{
-	background-color: #86db59;
+	background-color: var(--primary-color);
 	.top-header{
 		display: flex;
 		justify-content: space-between;
@@ -9,8 +9,12 @@
 			padding: 10px;
 		}
 		mat-form-field {
-			width: 350px;
+			width: 100%;
 			margin-top: 24px;
+			background-color: var(--primary-color);
+		}
+		::ng-deep.mat-form-field{
+			background-color: var(--primary-color) !important;
 		}
 		#recycling-icon {
 			color: white;
@@ -36,4 +40,26 @@
 } */
 mat-toolbar-row div {
 	min-width: 30%;
+}
+
+.navbar {
+	background-color: var(--primary-color);
+
+	.navbar-brand {
+		margin-left: 20px;
+	}
+
+	.navbar-toggler {
+		margin-right: 20px;
+	}
+
+	.navbar-collapse {
+		.navbar-nav {
+			.nav-item {
+				.nav-white {
+					color: var(--white);
+				}
+			}
+		}
+	}
 }

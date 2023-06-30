@@ -1,0 +1,37 @@
+#main-solicitud {
+	padding: 2%;
+
+	.example-header-image {
+		background-image: url('../../../assets/fundacion.png');
+		background-size: cover;
+	}
+
+	mat-card {
+		mat-card-header, mat-card-content, mat-card-actions {
+			margin: 10px;
+		}
+	}
+
+	.card-content {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1rem;
+
+		.solicitud-img {
+			max-width: 80%;
+			margin: auto;
+			border-radius: 10px;
+		}
+	}
+
+	.card-button {
+		align-self: center;
+	}
+}
+
+@media (min-width: 0px) and (max-width: 576px) {
+	.card-content {
+		display: grid;
+		grid-template-columns: 1fr !important;
+	}
+}

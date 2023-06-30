@@ -1,21 +1,64 @@
 /* You can add global styles to this file, and also import other style files */
 @use '@angular/material' as mat;
+@import './assets/bootstrap.scss';
 
 @include mat.core();
 
-$my-primary: mat.define-palette(mat.$indigo-palette, 500);
-$my-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$eco-swap: (
+	50: #effae8,
+	100: #d7f3c6,
+	200: #bceba1,
+	300: #9fe27a,
+	400: #87db59,
+	500: #6fd437,
+	600: #5fc32f,
+	700: #47ae24,
+	800: #2e9a19,
+	900: #007707,
+	contrast: (
+		50: #f1e3f8,
+		100: #dcb9ef,
+		200: #c58ae5,
+		300: #ae59db,
+		400: #9c30d4,
+		500: #8800c6,
+		600: #7800c1,
+		700: #6000ba,
+		800: #4802b2,
+		900: #0007a4
+	)
+);
 
-$my-theme: mat.define-light-theme((
+$eco-swap-primary: mat.define-palette($eco-swap, 400);
+$eco-swap-accent: mat.define-palette($eco-swap, 300);// TODO: check accent color
+
+$eco-swap-theme: mat.define-light-theme((
  color: (
-   primary: $my-primary,
-   accent: $my-accent,
+   primary: $eco-swap-primary,
+   accent: $eco-swap-accent,
  ),
  typography: mat.define-typography-config(),
  density: 0,
 ));
 
-@include mat.all-component-themes($my-theme);
+@include mat.all-component-themes($eco-swap-theme);
+
+:root {
+	--primary-color: #86db59;
+	--secondary-color: #ae59db;
+
+	--white: #fff;
+	--light-grey: #ebebeb;
+	--dark-grey: #999;
+	--black: #000;
+	--grey-text: #808080;
+	--grey-background: #b2b2b2;
+	--error: #dc3545;
+
+	--custom-font: "Source Sans Pro";
+}
+
+
 
 /* html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; } */
@@ -23,4 +66,5 @@ html, body {
     height: 100%;
     box-sizing: border-box;
     margin: 0;
+	background-color: #effae8;
 }

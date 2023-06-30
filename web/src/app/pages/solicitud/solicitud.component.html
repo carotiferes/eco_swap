@@ -1,0 +1,73 @@
+<app-header></app-header>
+
+<div id="main-solicitud">
+	<mat-card>
+		<mat-card-header style="border-bottom: solid 1px var(--light-grey);">
+			<div mat-card-avatar class="example-header-image"></div>
+			<mat-card-title>{{fundacion.s_nombre}}</mat-card-title>
+			<mat-card-subtitle>
+				<mat-icon *ngFor="let i of [].constructor(perfil.n_puntaje)" color="primary">star</mat-icon>
+				<mat-icon *ngFor="let i of [].constructor(5-perfil.n_puntaje)" class="empty-star">star</mat-icon>
+			</mat-card-subtitle>
+		</mat-card-header>
+		<mat-card-content class="card-content">
+			<img mat-card-image [src]="solicitud.s_imagen" class="solicitud-img">
+			<div>
+				<h2 class="card-title">{{solicitud.s_titulo}}</h2>
+				<div class="productos">
+					<div *ngFor="let producto of solicitud.productos" class="producto">
+						{{producto.s_descripcion}}
+						<p><ngb-progressbar color="primary" [showValue]="true"
+							[value]="producto.n_cantidad_recibida*100/producto.n_cantidad_solicitada" [striped]="true"></ngb-progressbar></p>
+					</div>
+				</div>
+			</div>
+		</mat-card-content>
+		<mat-card-actions class="card-button">
+			<button mat-raised-button color="primary" (click)="donar()">QUIERO DONAR</button>
+		</mat-card-actions>
+	</mat-card>
+	<!-- <div class="card">
+		<div class="card-body">
+			<div class="col-sm-4 solicitud-img">
+				<img class="card-img" [src]="solicitud.s_imagen">
+			</div>
+
+			<div class="col-sm-4">
+				<h2 class="card-title">{{solicitud.s_titulo}}</h2>
+				<div class="productos">
+					<div *ngFor="let producto of solicitud.productos" class="producto">
+						{{producto.s_descripcion}}
+						<p><ngb-progressbar color="primary" [value]="producto.n_cantidad_recibida*100/producto.n_cantidad_solicitada" [striped]="true"></ngb-progressbar></p>
+					</div>
+				</div>
+			</div>
+
+			<div class="datos-fundacion col-sm-4">
+				<div class="card card-fundacion">
+					<div class="card-body">
+						<div class="title-fundacion">
+							<img class="img-fundacion" src="assets/fundacion.png"> 
+							<h4>Fundación Nombre</h4>
+						</div>
+						<div class="bottom-fundacion">	
+							<h4 class="puntaje">
+								Puntaje: 
+								<mat-icon *ngFor="let i of [].constructor(perfil.n_puntaje)" color="primary">star</mat-icon>
+								<mat-icon *ngFor="let i of [].constructor(5-perfil.n_puntaje)" class="empty-star">star</mat-icon>
+							</h4>
+
+							<button mat-raised-button color="primary">QUIERO DONAR</button>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+			
+			
+		</div>
+		
+	</div> -->
+
+</div>
