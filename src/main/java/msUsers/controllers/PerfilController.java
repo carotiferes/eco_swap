@@ -21,9 +21,9 @@ public class PerfilController {
     @Transactional(readOnly = true)
     public ResponseEntity<Perfil> getPerfilById(@PathVariable("id_perfil") Long id){
         final var perfil = this.perfilRepository.findById(id).
-                orElseThrow(() -> new EntityNotFoundException(new Exception("No fue encontrado el perfil: " + id)));
-        System.out.println("\u001B[32m" + "Encontrado perfil: " + perfil.getUsername());
+                orElseThrow(() -> new EntityNotFoundException("No fue encontrado el perfil: " + id));
         return ResponseEntity.ok(perfil);
     }
+
 
 }

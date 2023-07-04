@@ -1,28 +1,28 @@
 package msUsers.domain.requests;
 
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import msUsers.domain.entities.Fundacion;
-import msUsers.domain.entities.Producto;
+import lombok.Builder;
+import lombok.Data;
 
-import java.time.LocalDate;
 import java.util.List;
 
+@Builder
 public class RequestSolicitud {
 
-    @NotNull
+    @NotNull(message = "La solicitud debe contener un título.")
     @Size(max = 50)
     private String titulo;
-    @NotNull
+
+    @NotNull(message = "La solicitud debe contener una descripción.")
     private String descripcion;
-    @NotNull
+
     private long idFundacion;
-    @NotNull
+
+    @NotNull(message = "La solicitud debe tener una lista de productos.")
     private List<RequestProducto> productos;
 
-    // ToDo: Definir contra el front
-    private List<String> imagenes;
+    private String imagen;
 
     public String getTitulo() {
         return titulo;
@@ -54,5 +54,13 @@ public class RequestSolicitud {
 
     public void setProductos(List<RequestProducto> productos) {
         this.productos = productos;
+    }
+
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
     }
 }
