@@ -27,10 +27,42 @@
 	.card-button {
 		align-self: center;
 	}
+
+	.propuesta-example-header-image {
+		background-image: url('../../../assets/persona.png');
+		background-size: cover;
+	}
+	.propuesta-card-content {
+		display: grid;
+		grid-template-columns: 1fr 2fr 1fr;
+		gap: 1rem;
+
+		.imagenes {
+			img {
+				height: 65px;
+    			margin: 5px;
+			}
+		}
+
+		.propuesta-status {
+			display: flex;
+			flex-direction: column;
+
+			mat-slide-toggle {
+				margin: 5px;
+			}
+		}
+
+	}
 }
 
 @media (min-width: 0px) and (max-width: 576px) {
 	.card-content {
+		display: grid;
+		grid-template-columns: 1fr !important;
+	}
+
+	.propuesta-card-content {
 		display: grid;
 		grid-template-columns: 1fr !important;
 	}
