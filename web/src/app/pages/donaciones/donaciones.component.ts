@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FundacionModel } from 'src/app/models/fundacion.model';
 import { SolicitudModel } from 'src/app/models/solicitud.model';
+import { AuthService } from 'src/app/services/auth.service';
 const db = require('../../data/db.json')
 
 @Component({
@@ -18,14 +19,17 @@ export class DonacionesComponent implements OnInit {
 	solicitudesFundacion: SolicitudModel[] = []
 
 	showSolicitudes: SolicitudModel[] = [];
+	userData: any;
 
-	constructor(private router: Router, private route: ActivatedRoute){
+	constructor(private router: Router, private route: ActivatedRoute, private auth: AuthService){
 		this.solicitudes = db.solicitudes;
 		route.paramMap.subscribe(params => {
 			this.idFundacion = params.get('id_fundacion') || undefined;
 			this.fundacion = db.fundaciones.find((item: FundacionModel) => item.id_fundacion == Number(this.idFundacion))
 			console.log(params, this.idFundacion);
 		})
+
+		this.userData = auth.getUserData().userData
 	}
 
 	ngOnInit(): void {
@@ -40,5 +44,10 @@ export class DonacionesComponent implements OnInit {
 
 	goToSolicitud(solicitud: SolicitudModel){
 		this.router.navigateByUrl('solicitud/'+solicitud.id_solicitud)
+	}
+
+	addSolicitud(){
+		this.router.navigateByUrl('form-solicitud')
+		
 	}
 }

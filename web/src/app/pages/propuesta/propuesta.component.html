@@ -11,7 +11,7 @@
 				<div class="form-input form-col">
 					<mat-form-field>
 						<mat-label>Producto</mat-label>
-						<mat-select placeholder="Placeholder" formControlName="producto">
+						<mat-select formControlName="producto">
 							<mat-option *ngFor="let prod of solicitud.productos" [value]="prod.id_producto">
 								{{prod.s_descripcion}}
 							</mat-option>
@@ -41,22 +41,35 @@
 				</div>
 
 				<section formArrayName="caracteristicas" class="form-col">
-					<label>Caracteristicas</label>
-					<div *ngFor="let caracteristica of getCaracteristicasArray.controls; let i=index"
-						class="caracteristica" [formGroupName]="i">
-						<mat-form-field>
-							<input matInput placeholder="Descripción" formControlName="s_descripcion">
-						</mat-form-field>
+					<div>
+						<label>Caracteristicas</label>
 					</div>
-					<button type="button" (click)="agregarCaracteristica()" mat-button>
-						<mat-icon>add</mat-icon>
-						<label>Agregar Caracteristica</label>
-					</button>
-					
-					<button type="button" (click)="removeCaracteristica()" mat-icon-button color="light">
-						<mat-icon>delete</mat-icon>
-					</button>
+					<div>
+						<div *ngFor="let caracteristica of getCaracteristicasArray.controls; let i=index"
+							class="caracteristica" [formGroupName]="i">
+							<mat-form-field>
+								<input matInput placeholder="Descripción" formControlName="s_descripcion">
+							</mat-form-field>
+							<button type="button" (click)="removeCaracteristica(i)" mat-icon-button color="light"
+							style="height: 60px; margin-left: 5px;">
+								<mat-icon>delete</mat-icon>
+							</button>
+						</div>
+						<button type="button" (click)="agregarCaracteristica()" mat-button>
+							<mat-icon>add</mat-icon>
+							<label>Agregar Caracteristica</label>
+						</button>
+						
+						
+					</div>
 				</section>
+
+				<div class="form-col">
+					<mat-form-field>
+						<mat-label>Cantidad</mat-label>
+						<input matInput formControlName="n_cantidad" type="number">
+					</mat-form-field>
+				</div>
 
 			</form>
 		</mat-card-content>

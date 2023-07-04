@@ -27,19 +27,20 @@ export class PropuestaComponent {
 			console.log(params);
 			id_solicitud = params.get('id_solicitud') || '';
 		})
-		route.queryParamMap.subscribe(params => {
+		/* route.queryParamMap.subscribe(params => {
 			producto = params.get('id')
 			console.log('prod', producto);
-		})
+		}) */
 
 		this.propuestaForm = fb.group({
 			producto: [''],
 			caracteristicas: this.fb.array([]),
 			file_name: [this.fileName],
 			file: [''],
-			file_source: ['']
+			file_source: [''],
+			n_cantidad: ['']
 		})
-		this.propuestaForm.controls['producto'].setValue(producto)
+		//this.propuestaForm.controls['producto'].setValue(producto)
 		this.solicitud = db.solicitudes.find((item: SolicitudModel) => item.id_solicitud.toString() == id_solicitud)
 
 		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
@@ -63,8 +64,9 @@ export class PropuestaComponent {
 
 	}
 
-	removeCaracteristica() {
-		
+	removeCaracteristica(i: number) {
+		let caracteristicas = this.getCaracteristicasArray;
+		caracteristicas.removeAt(i);
 	}
 
 	onFileChange(event: any) {
@@ -91,5 +93,8 @@ export class PropuestaComponent {
 	removeImagen(url: string){
 		let imgIndex = this.propuestaForm.controls['file_source'].value.findIndex((item: string) => item == url)
 		this.propuestaForm.controls['file_source'].value.splice(imgIndex, 1)
+		console.log(url);
+		let imgI = this.propuestaForm.controls['file_source'].value.findIndex((item: string) => item == url)
+		this.images.splice(imgI, 1)
 	}
 }

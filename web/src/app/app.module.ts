@@ -19,9 +19,11 @@ import { SolicitudComponent } from './pages/solicitud/solicitud.component';
 import { PropuestaComponent } from './pages/propuesta/propuesta.component';
 import { UsuarioService } from './services/usuario.service';
 import { HttpBackEnd } from './services/httpBackend.service';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './pages/login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormSolicitudComponent } from './pages/form-solicitud/form-solicitud.component';
+import { HttpErrorInterceptor } from './pipes/error.interceptor';
 
 @NgModule({
 	declarations: [
@@ -37,7 +39,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 		PasswordPipe,
 		SolicitudComponent,
 		PropuestaComponent,
-  LoginComponent
+		LoginComponent,
+		FormSolicitudComponent
 	],
 	imports: [
 		BrowserModule,
@@ -52,6 +55,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 	providers: [
 		HttpBackEnd,
 		UsuarioService,
+		{
+			provide: HTTP_INTERCEPTORS,
+			useClass: HttpErrorInterceptor,
+			multi: true,
+		}
 	],
 	bootstrap: [AppComponent]
 })

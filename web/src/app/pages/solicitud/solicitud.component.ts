@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FundacionModel } from 'src/app/models/fundacion.model';
 import { PerfilModel } from 'src/app/models/perfil.model';
 import { SolicitudModel } from 'src/app/models/solicitud.model';
+import { AuthService } from 'src/app/services/auth.service';
 import Swal from 'sweetalert2';
 const db = require('../../data/db.json')
 
@@ -18,14 +19,27 @@ export class SolicitudComponent {
 	fundacion: FundacionModel;
 	perfil: PerfilModel;
 
-	constructor(private route: ActivatedRoute, private router: Router){
+	userData?: any;
+
+	constructor(private route: ActivatedRoute, private router: Router, private auth: AuthService){
 		route.paramMap.subscribe(params => {
 			console.log(params);
 			this.id_solicitud = params.get('id_solicitud') || '';
 		})
 		this.solicitud = db.solicitudes.find((item: SolicitudModel) => item.id_solicitud.toString() == this.id_solicitud)
 		this.fundacion = db.fundaciones.find((item: FundacionModel) => item.id_fundacion == this.solicitud.id_fundacion)
+		console.log(this.solicitud, this.fundacion);
+		
 		this.perfil = db.perfiles.find((item: PerfilModel) => item.id_perfil == this.fundacion.id_perfil)
+	}
+	
+	ngOnInit(): void {
+		this.userData = this.auth.getUserData().userData
+		console.log(this.userData);
+		
+		//Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+		//Add 'implements OnInit' to the class.
+		
 	}
 
 	donar() {

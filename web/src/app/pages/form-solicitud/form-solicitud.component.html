@@ -1,0 +1,119 @@
+<app-header></app-header>
+
+<div id="main-form-solicitud">
+	<mat-card id="main-card">
+		<mat-card-header style="margin-bottom: 20px;">
+			<mat-card-title>Completá los datos de tu solicitud!</mat-card-title>
+			<!-- <mat-card-subtitle>Completá tus datos para crear tu cuenta</mat-card-subtitle> -->
+		</mat-card-header>
+		<mat-card-content>
+			<form [formGroup]="solicitudForm" class="form" [ngClass]="screenWidth > 576 ? 'big-form':'small-form'">
+				<div class="form-col main-data">
+					<mat-form-field>
+						<mat-label>Título</mat-label>
+						<input matInput formControlName="s_titulo">
+					</mat-form-field>
+					<mat-form-field>
+						<mat-label>Descripción</mat-label>
+						<input matInput formControlName="s_descripcion">
+					</mat-form-field>
+				</div>
+				<section formArrayName="productos" class="form-col">
+					<div>
+						<label>Productos</label>
+					</div>
+					<div>
+						<div *ngFor="let producto of getProductosArray.controls; let i=index" class="producto"
+							[formGroupName]="i">
+							<mat-form-field>
+								<input matInput placeholder="Descripción" formControlName="s_descripcion">
+							</mat-form-field>
+							<mat-form-field>
+								<mat-label>Cantidad solicitada</mat-label>
+								<input matInput formControlName="n_cantidad_solicitada" type="number">
+							</mat-form-field>
+							<mat-form-field>
+								<mat-label>Tipo</mat-label>
+								<mat-select formControlName="tipo_producto" (selectionChange)="test()">
+									<mat-option *ngFor="let tipo of tipos_productos" [value]="tipo">
+										{{tipo}}
+									</mat-option>
+								</mat-select>
+								<!-- <mat-error *ngIf="solicitudForm.get('producto')!.hasError('required')">
+									Campo obligatorio
+								</mat-error> -->
+							</mat-form-field>
+							<!-- <mat-form-field>
+								<mat-label>Estado</mat-label>
+								<mat-select formControlName="estado_producto">
+									<mat-option *ngFor="let estado of estados_productos" [value]="estado">
+										{{estado}}
+									</mat-option>
+								</mat-select>
+								<mat-error *ngIf="solicitudForm.get('producto')!.hasError('required')">
+									Campo obligatorio
+								</mat-error> 
+							</mat-form-field> -->
+							<button type="button" (click)="removeProducto(i)" mat-icon-button color="light">
+								<mat-icon>delete</mat-icon>
+							</button>
+						</div>
+						<button type="button" (click)="agregarProducto()" mat-raised-button>
+							<mat-icon>add</mat-icon>
+							<label>Agregar Producto</label>
+						</button>
+					</div>
+				</section>
+
+				<div></div>
+
+				<div class="form-col">
+					<label for="file">Imagen de la Solicitud</label>
+					<input formControlName="file" id="file" type="file" class="form-control"
+						(change)="onFileChange($event)">
+				</div>
+
+				<div class="form-col form-imgs">
+					<div class="show-image" *ngFor='let url of images' (click)="removeImagen(url)">
+						<div class="image">
+							<div class="overlay">
+							</div>
+							<mat-icon class="update" color="primary">delete</mat-icon>
+							<img [src]="url" class="img-producto">
+						</div>
+					</div>
+				</div>
+
+			</form>
+		</mat-card-content>
+		<mat-card-actions class="buttons">
+			<button mat-raised-button color="primary"
+				(click)="confirmarPropuesta();solicitudForm.markAllAsTouched(); solicitudForm.valid">
+				CREAR SOLICITUD
+			</button>
+		</mat-card-actions>
+	</mat-card>
+</div>
+
+
+<!-- <div class="form-input form-col">
+	<mat-form-field>
+		<mat-label>Producto</mat-label>
+		<mat-select formControlName="producto">
+			<mat-option *ngFor="let prod of solicitud.productos" [value]="prod.id_producto">
+				{{prod.s_descripcion}}
+			</mat-option>
+		</mat-select>
+		<mat-error *ngIf="solicitudForm.get('producto')!.hasError('required')">
+			Campo obligatorio
+		</mat-error>
+	</mat-form-field>
+</div> -->
+
+<!-- 
+<div class="form-col">
+	<mat-form-field>
+		<mat-label>Cantidad</mat-label>
+		<input matInput formControlName="n_cantidad" type="number">
+	</mat-form-field>
+</div> -->

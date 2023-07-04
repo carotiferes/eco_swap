@@ -9,6 +9,8 @@ import { PerfilComponent } from './pages/perfil/perfil.component';
 import { SolicitudComponent } from './pages/solicitud/solicitud.component';
 import { PropuestaComponent } from './pages/propuesta/propuesta.component';
 import { LoginComponent } from './pages/login/login.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { FormSolicitudComponent } from './pages/form-solicitud/form-solicitud.component';
 
 const routes: Routes = [{
 	path: '',
@@ -37,6 +39,10 @@ const routes: Routes = [{
 	component: PerfilComponent,
 	canActivate: [authGuard]
 },{
+	path: 'form-solicitud',
+	component: FormSolicitudComponent,
+	canActivate: [authGuard]
+},{
 	path: 'solicitud/:id_solicitud',
 	component: SolicitudComponent,
 	canActivate: [authGuard]
@@ -46,7 +52,7 @@ const routes: Routes = [{
 	canActivate: [authGuard]
 },{
 	path: '**',
-	component: HomeComponent
+	component: NotFoundComponent
 }];
 
 @NgModule({
