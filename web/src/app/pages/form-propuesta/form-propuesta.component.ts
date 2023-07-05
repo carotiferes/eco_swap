@@ -6,10 +6,10 @@ const db = require('../../data/db.json')
 
 @Component({
 	selector: 'app-propuesta',
-	templateUrl: './propuesta.component.html',
-	styleUrls: ['./propuesta.component.scss']
+	templateUrl: './form-propuesta.component.html',
+	styleUrls: ['./form-propuesta.component.scss']
 })
-export class PropuestaComponent {
+export class FormPropuestaComponent {
 
 	propuestaForm: FormGroup;
 	solicitud: SolicitudModel;
@@ -33,12 +33,12 @@ export class PropuestaComponent {
 		}) */
 
 		this.propuestaForm = fb.group({
-			producto: [''],
+			producto: ['', Validators.required],
 			caracteristicas: this.fb.array([]),
 			file_name: [this.fileName],
 			file: [''],
 			file_source: [''],
-			n_cantidad: ['']
+			n_cantidad: ['', Validators.required]
 		})
 		//this.propuestaForm.controls['producto'].setValue(producto)
 		this.solicitud = db.solicitudes.find((item: SolicitudModel) => item.id_solicitud.toString() == id_solicitud)

@@ -23,21 +23,13 @@
 				</div>
 
 				<div class="form-col">
-					<label for="file">Imágenes de la donación</label>
-					<input formControlName="file" id="file" type="file" class="form-control" multiple=""
-						(change)="onFileChange($event)">
-				</div>
-
-				<div></div>
-				<div class="form-col form-imgs">
-					<div class="show-image" *ngFor='let url of images' (click)="removeImagen(url)" >
-						<div class="image" >
-							<div class="overlay">
-							</div>
-							<mat-icon class="update" color="primary">delete</mat-icon>
-							<img [src]="url" class="img-producto">
-						</div>
-					</div>
+					<mat-form-field>
+						<mat-label>Cantidad</mat-label>
+						<input matInput formControlName="n_cantidad" type="number">
+						<mat-error *ngIf="propuestaForm.get('n_cantidad')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
 				</div>
 
 				<section formArrayName="caracteristicas" class="form-col">
@@ -65,12 +57,22 @@
 				</section>
 
 				<div class="form-col">
-					<mat-form-field>
-						<mat-label>Cantidad</mat-label>
-						<input matInput formControlName="n_cantidad" type="number">
-					</mat-form-field>
+					<label for="file">Imágenes de la donación</label>
+					<input formControlName="file" id="file" type="file" class="form-control" multiple=""
+						(change)="onFileChange($event)">
 				</div>
 
+				<!-- <div></div> -->
+				<div class="form-col form-imgs">
+					<div class="show-image" *ngFor='let url of images' (click)="removeImagen(url)" >
+						<div class="image" >
+							<div class="overlay">
+							</div>
+							<mat-icon class="update" color="primary">delete</mat-icon>
+							<img [src]="url" class="img-producto">
+						</div>
+					</div>
+				</div>
 			</form>
 		</mat-card-content>
 		<mat-card-actions class="buttons">
