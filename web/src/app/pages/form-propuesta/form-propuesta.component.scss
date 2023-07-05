@@ -9,11 +9,11 @@
 		.form-col {
 			padding: 5px;
 
-			&.form-input {
+			/* &.form-input {
 				display: flex;
 				align-items: center;
 				justify-content: center;
-			}
+			} */
 			
 			&.form-imgs {
 				display: grid;
@@ -51,6 +51,10 @@
 					}
 				}
 			}
+
+			.caracteristica {
+				display: flex;
+			}
 		}
 
 		.img-producto {
@@ -61,6 +65,10 @@
 				cursor: pointer;
 			}
 		}
+	}
+	.buttons {
+		display: flex;
+    	justify-content: center;
 	}
 }
 

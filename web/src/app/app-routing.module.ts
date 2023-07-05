@@ -7,8 +7,11 @@ import { RegistroComponent } from './pages/registro/registro.component';
 import { authGuard } from './core/auth.guard';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { SolicitudComponent } from './pages/solicitud/solicitud.component';
-import { PropuestaComponent } from './pages/propuesta/propuesta.component';
+import { FormPropuestaComponent } from './pages/form-propuesta/form-propuesta.component';
 import { LoginComponent } from './pages/login/login.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { FormSolicitudComponent } from './pages/form-solicitud/form-solicitud.component';
+import { PropuestasComponent } from './pages/propuestas/propuestas.component';
 
 const routes: Routes = [{
 	path: '',
@@ -23,6 +26,9 @@ const routes: Routes = [{
 	path: 'donaciones',
 	component: DonacionesComponent
 }, {
+	path: 'donaciones/:id_fundacion',
+	component: DonacionesComponent
+},{
 	path: 'registro',
 	component: RegistroComponent
 },{
@@ -30,16 +36,28 @@ const routes: Routes = [{
 	component: PerfilComponent,
 	canActivate: [authGuard]
 },{
+	path: 'perfil/:id',
+	component: PerfilComponent,
+	canActivate: [authGuard]
+},{
+	path: 'form-solicitud',
+	component: FormSolicitudComponent,
+	canActivate: [authGuard]
+},{
 	path: 'solicitud/:id_solicitud',
 	component: SolicitudComponent,
 	canActivate: [authGuard]
 },{
 	path: 'propuesta/:id_solicitud',
-	component: PropuestaComponent,
+	component: FormPropuestaComponent,
+	canActivate: [authGuard]
+},{
+	path: 'mis-propuestas',
+	component: PropuestasComponent,
 	canActivate: [authGuard]
 },{
 	path: '**',
-	component: HomeComponent
+	component: NotFoundComponent
 }];
 
 @NgModule({

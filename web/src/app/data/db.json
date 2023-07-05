@@ -16,6 +16,14 @@
 			"s_email": "alevinas@frba.utn.edu.ar",
 			"s_direccion": "Maure 1234",
 			"n_puntaje": 3
+		}, {
+			"id_perfil": 3,
+			"s_usuario": "sil1234",
+			"s_contrasena": "1234",
+			"s_telefono": 1123456789,
+			"s_email": "sbigatti@frba.utn.edu.ar",
+			"s_direccion": "Maure 1234",
+			"n_puntaje": 3
 		}
 	],
 	"swappers": [
@@ -32,6 +40,11 @@
 			"id_fundacion": 1,
 			"id_perfil": 2,
 			"s_nombre": "Fundación Ale"
+		},
+		{
+			"id_fundacion": 4,
+			"id_perfil": 3,
+			"s_nombre": "Fundación Sil"
 		}
 	],
 	"solicitudes": [
@@ -66,7 +79,7 @@
 		},
 		{
 			"id_solicitud": 2,
-			"id_fundacion": 1,
+			"id_fundacion": 4,
 			"s_titulo": "Juguetes",
 			"s_descripcion": "Colecta de juguetes por el día del niño",
 			"f_solicitud": "2023-06-20",
