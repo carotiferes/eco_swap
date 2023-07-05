@@ -1,5 +1,6 @@
 package msUsers.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -35,6 +36,7 @@ public class Solicitud {
 
     @NotNull
     @ManyToOne(cascade = CascadeType.ALL)
+    @JsonBackReference
     private Fundacion fundacion;
 
     @OneToMany(cascade = CascadeType.ALL)

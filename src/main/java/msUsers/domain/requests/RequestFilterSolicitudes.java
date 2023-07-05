@@ -1,12 +1,10 @@
 package msUsers.domain.requests;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import msUsers.domain.entities.enums.TipoProducto;
 
 public class RequestFilterSolicitudes {
     private Long idFundacion;
-    private Long idPerfil; // Para la ubicación
+    private String codigoPostal;
     private TipoProducto tipoProducto;
 
     public Long getIdFundacion() {
@@ -17,13 +15,9 @@ public class RequestFilterSolicitudes {
         this.idFundacion = idFundacion;
     }
 
-    public Long getIdPerfil() {
-        return idPerfil;
-    }
+    public String getCodigoPostal() {   return codigoPostal;    }
 
-    public void setIdPerfil(Long idPerfil) {
-        this.idPerfil = idPerfil;
-    }
+    public void setCodigoPostal(String codigoPostal) { this.codigoPostal = codigoPostal;  }
 
     public TipoProducto getTipoProducto() {
         return tipoProducto;
