@@ -122,6 +122,8 @@ public class SolicitudController {
             responseSolicitudesList.setTituloSolicitud(solicitud.getTitulo());
             responseSolicitudesList.setFundacion(solicitud.getFundacion().getNombre());
             responseSolicitudesList.setProductos(solicitud.getProductos());
+            responseSolicitudesList.setIdSolicitud(solicitud.getIdSolicitud());
+            responseSolicitudesList.setImagen(solicitud.getImagen());
             return responseSolicitudesList;
         }).collect(Collectors.toList());
 
