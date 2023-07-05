@@ -1,17 +1,19 @@
 package msUsers.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
 @Table(name = "Solicitudes")
-public class Solicitud {
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idSolicitud")
+public class Solicitud implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,12 +38,10 @@ public class Solicitud {
 
     @NotNull
     @ManyToOne(cascade = CascadeType.ALL)
-    @JsonBackReference
     private Fundacion fundacion;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_solicitud")
-    @JsonManagedReference
     private List<Producto> productos;
 
     public long getIdSolicitud() {
