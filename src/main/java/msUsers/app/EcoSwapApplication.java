@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@SpringBootApplication(scanBasePackages = {"msUsers.controllers, msUsers.domain.repositories"})
+@SpringBootApplication(scanBasePackages = {"msUsers.controllers, msUsers.domain.repositories", "msUsers.exceptions.handler"})
 @EntityScan(basePackages = "msUsers.domain.entities")
 @EnableJpaRepositories("msUsers.domain.repositories")
 public class EcoSwapApplication {

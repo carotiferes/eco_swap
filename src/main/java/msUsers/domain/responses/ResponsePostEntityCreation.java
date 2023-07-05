@@ -1,17 +1,13 @@
 package msUsers.domain.responses;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
 public class ResponsePostEntityCreation {
     private long id;
     private String descripcion;
-
-    public ResponsePostEntityCreation(long id, String descripcion) {
-        this.id = id;
-        this.descripcion = descripcion;
-    }
-
-    public ResponsePostEntityCreation(){
-
-    }
 
     public long getId() {
         return id;

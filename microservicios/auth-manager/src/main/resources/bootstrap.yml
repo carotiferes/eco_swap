@@ -1,6 +1,0 @@
-spring:
-  application:
-    name: ms-seed
-  profiles:
-    active: local
-
