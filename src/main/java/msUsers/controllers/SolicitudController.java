@@ -129,5 +129,12 @@ public class SolicitudController {
 
         return ResponseEntity.ok(solicitudesDTO);
     }
+
+    @GetMapping(path = "/solicitud/{id_solicitud}", produces = json)
+    public ResponseEntity<Solicitud> getSolicitud(@PathVariable("id_solicitud") Long id){
+        final var solicitud = this.solicitudRepository.findById(id).
+                orElseThrow(() -> new EntityNotFoundException("No fue encontrado la solicitud: " + id));
+        return ResponseEntity.ok(solicitud);
+    }
 }
 
