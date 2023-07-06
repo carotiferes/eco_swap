@@ -15,4 +15,12 @@ export class DonacionesService {
 		
 		return test
 	}
+
+	getSolicitudes(){
+		return this.backendService.get('api/solicitudes');
+	}
+
+	getSolicitud(id_solicitud: any){
+		return this.backendService.get('api/solicitud/'+id_solicitud);
+	}
 }

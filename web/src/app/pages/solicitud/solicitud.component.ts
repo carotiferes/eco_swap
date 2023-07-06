@@ -5,6 +5,7 @@ import { PerfilModel } from 'src/app/models/perfil.model';
 import { PropuestaModel } from 'src/app/models/propuesta.model';
 import { SolicitudModel } from 'src/app/models/solicitud.model';
 import { AuthService } from 'src/app/services/auth.service';
+import { DonacionesService } from 'src/app/services/donaciones.service';
 import Swal from 'sweetalert2';
 const db = require('../../data/db.json')
 
@@ -16,68 +17,35 @@ const db = require('../../data/db.json')
 export class SolicitudComponent {
 
 	id_solicitud: string = '';
-	solicitud: SolicitudModel;
-	fundacion: FundacionModel;
-	perfil: PerfilModel;
-	propuestas: PropuestaModel[] = [{
-		id_propuesta: 1,
-		id_producto: 1,
-		id_swapper: 1,
-		descripcion: 'Frazadas',
-		estado: 'NUEVA',
-		cantidad_propuesta: 2,
-		swapper: {
-			id_swapper: 1,
-			id_perfil: 1,
-			f_nacimiento: new Date(),
-			s_nombre: 'Swapper',
-			s_apellido: 'Test'
-		},
-		imagenes: ['assets/test_prop/alim_no_perec.jpg', 'assets/test_prop/gatito1.jpeg']
-	}, {
-		id_propuesta: 1,
-		id_producto: 1,
-		id_swapper: 1,
-		descripcion: 'Frazadas',
-		estado: 'NUEVA',
-		cantidad_propuesta: 2,
-		swapper: {
-			id_swapper: 1,
-			id_perfil: 1,
-			f_nacimiento: new Date(),
-			s_nombre: 'Swapper',
-			s_apellido: 'Test'
-		},
-		imagenes: ['']
-	}];
+	solicitud?: SolicitudModel;
+	fundacion?: FundacionModel;
+	perfil?: PerfilModel;
+	propuestas: PropuestaModel[] = [];
 
 	userData?: any;
-	//imgBase64: string = ''
-	modal: any;
+	loading: boolean = true;
 
-	constructor(private route: ActivatedRoute, private router: Router, private auth: AuthService){
+	constructor(private route: ActivatedRoute, private router: Router, private auth: AuthService,
+		private donacionesService: DonacionesService){
 		route.paramMap.subscribe(params => {
 			console.log(params);
 			this.id_solicitud = params.get('id_solicitud') || '';
 		})
-		this.solicitud = db.solicitudes.find((item: SolicitudModel) => item.id_solicitud.toString() == this.id_solicitud)
-		this.fundacion = db.fundaciones.find((item: FundacionModel) => item.id_fundacion == this.solicitud.id_fundacion)
-		console.log(this.solicitud, this.fundacion);
-
-		// TODO: REPLACE ALL THESE WITH CALL TO BACKEND WITH SOLICITUD ID TO GET DATA
-		
-		this.perfil = db.perfiles.find((item: PerfilModel) => item.id_perfil == this.fundacion.id_perfil)
-		
-		this.modal = document.getElementById("myModal");
 	}
 	
 	ngOnInit(): void {
 		this.userData = this.auth.getUserData().userData
 		console.log(this.userData);
-		
-		//Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-		//Add 'implements OnInit' to the class.
-		
+		this.donacionesService.getSolicitud(this.id_solicitud).subscribe((res: any) => {
+			console.log(res);
+			this.solicitud = res;
+			this.fundacion = res.fundacion
+			this.perfil = res.fundacion.perfil
+			if(this.perfil) this.perfil.puntaje = Number(this.perfil?.puntaje)
+			this.loading = false;
+			console.log(this.fundacion, this.perfil, this.solicitud);
+
+		})
 	}
 
 	donar() {

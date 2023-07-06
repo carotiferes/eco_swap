@@ -8,7 +8,7 @@ import { HeaderComponent } from './layout/header/header.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { FooterComponent } from './layout/footer/footer.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MaterialModule } from './shared/material.module';
+import { MaterialModule } from './shared/material/material.module';
 import { TruequeComponent } from './pages/trueque/trueque.component';
 import { DonacionesComponent } from './pages/donaciones/donaciones.component';
 import { RegistroComponent } from './pages/registro/registro.component';
@@ -26,6 +26,7 @@ import { FormSolicitudComponent } from './pages/form-solicitud/form-solicitud.co
 import { HttpErrorInterceptor } from './pipes/error.interceptor';
 import { PropuestasComponent } from './pages/propuestas/propuestas.component';
 import { SharedModule } from './shared/shared.module';
+import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 
 @NgModule({
 	declarations: [
@@ -43,7 +44,8 @@ import { SharedModule } from './shared/shared.module';
 		FormPropuestaComponent,
 		LoginComponent,
 		FormSolicitudComponent,
-  		PropuestasComponent
+  		PropuestasComponent,
+    SafeHtmlPipe
 	],
 	imports: [
 		BrowserModule,
