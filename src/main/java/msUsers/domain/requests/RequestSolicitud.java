@@ -8,6 +8,7 @@ import lombok.Data;
 import java.util.List;
 
 @Builder
+@Data
 public class RequestSolicitud {
 
     @NotNull(message = "La solicitud debe contener un título.")
@@ -24,43 +25,4 @@ public class RequestSolicitud {
 
     private String imagen;
 
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public long getIdFundacion() {
-        return idFundacion;
-    }
-
-    public void setIdFundacion(long idFundacion) {
-        this.idFundacion = idFundacion;
-    }
-
-    public List<RequestProducto> getProductos() {
-        return productos;
-    }
-
-    public void setProductos(List<RequestProducto> productos) {
-        this.productos = productos;
-    }
-
-    public String getImagen() {
-        return imagen;
-    }
-
-    public void setImagen(String imagen) {
-        this.imagen = imagen;
-    }
 }

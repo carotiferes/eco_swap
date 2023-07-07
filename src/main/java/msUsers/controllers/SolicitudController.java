@@ -16,6 +16,7 @@ import msUsers.domain.responses.ResponseSolicitudesList;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@Validated
 @RequestMapping("/api")
 public class SolicitudController {
     private final SolicitudRepository solicitudRepository;
@@ -62,7 +64,7 @@ public class SolicitudController {
         solicitud.setDescripcion(requestSolicitud.getDescripcion());
         solicitud.setFundacion(fundacion);
         solicitud.setTitulo(requestSolicitud.getTitulo());
-        solicitud.setImagen("imagen.jpg");
+        solicitud.setImagen(requestSolicitud.getImagen().getBytes());
 
         List<Producto> productos = requestSolicitud.getProductos().stream()
                 .map(reqProducto -> {

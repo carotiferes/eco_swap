@@ -4,10 +4,8 @@ import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 @Data
-public class EntityNotFoundExceptionResponse {
-
+public class MethodArgumentNotValidExceptionResponse {
     private String descripcion;
     private long timestamp;
     private HttpStatus httpStatus;
-
 }
