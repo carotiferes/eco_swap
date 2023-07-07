@@ -2,26 +2,19 @@ package msUsers.controllers;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Null;
-import jakarta.websocket.Session;
-import msUsers.domain.entities.Fundacion;
-import msUsers.domain.entities.Perfil;
-import msUsers.domain.entities.Producto;
-import msUsers.domain.entities.Solicitud;
+import lombok.extern.slf4j.Slf4j;
+import msUsers.domain.entities.*;
 import msUsers.domain.repositories.FundacionesRepository;
 import msUsers.domain.repositories.PerfilRepository;
 import msUsers.domain.repositories.PropuestasRepository;
 import msUsers.domain.repositories.SolicitudRepository;
-import msUsers.domain.requests.RequestFilterSolicitudes;
+import msUsers.domain.requests.RequestComunicarPropuestaSolicitudModel;
+import msUsers.domain.requests.RequestMensajeRespuesta;
 import msUsers.domain.requests.RequestSolicitud;
 import msUsers.domain.responses.ResponsePostEntityCreation;
-import org.hibernate.query.Query;
-import org.hibernate.query.criteria.HibernateCriteriaBuilder;
+import msUsers.services.SolicitudService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,24 +27,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@Slf4j
 @RequestMapping("/api")
 public class SolicitudController {
-    private final SolicitudRepository solicitudRepository;
-    private final FundacionesRepository fundacionesRepository;
-    private final PropuestasRepository propuestasRepository;
-    private final EntityManager entityManager;
+    @Autowired SolicitudRepository solicitudRepository;
+    @Autowired FundacionesRepository fundacionesRepository;
+    @Autowired PropuestasRepository propuestasRepository;
+    @Autowired EntityManager entityManager;
 
-    private final PerfilRepository perfilRepository;
+    @Autowired
+    PerfilRepository perfilRepository;
+
+    @Autowired
+    SolicitudService solicitudService;
 
     //private UserContextService userContextService;
-
-    public SolicitudController(SolicitudRepository solicitudRepository, FundacionesRepository fundacionesRepository, PropuestasRepository propuestasRepository, EntityManager entityManager, PerfilRepository perfilRepository) {
-        this.solicitudRepository = solicitudRepository;
-        this.fundacionesRepository = fundacionesRepository;
-        this.propuestasRepository = propuestasRepository;
-        this.entityManager = entityManager;
-        this.perfilRepository = perfilRepository;
-    }
 
     private static final String json = "application/json";
 
@@ -95,6 +85,44 @@ public class SolicitudController {
         responsePostEntityCreation.setDescripcion("Solicitud creada.");
 
         return ResponseEntity.created(location).body(responsePostEntityCreation);
+    }
+
+    @PostMapping(path = "/solicitud/{idSolicitud}/comunicarPropuesta", consumes = json, produces = json)
+    @ResponseStatus(HttpStatus.CREATED)
+    @Transactional
+    public void crearComunicacionDePropuesta(RequestComunicarPropuestaSolicitudModel request) {
+        log.info(">> Request para comunicacr propuesta: {}", request.toString());
+        solicitudService.crearPropuestaComunicacion(request);
+        log.info("<< Comunicacr creado");
+    }
+
+    @PutMapping(path = "/solicitud/{idSolicitud}/comunicarPropuesta/{idComunicacion}", consumes = json, produces = json)
+    @ResponseStatus(HttpStatus.CREATED)
+    @Transactional
+    public void agregarMensajeComunicacionDePropuesta(
+            @Valid @RequestBody RequestMensajeRespuesta request) {
+        log.info(">> Request mensaje para comunicar propuesta: {}", request.toString());
+        solicitudService.agregarMensajeParaPropuestaComunicacion(request);
+        log.info("<< Mensaje añadido");
+    }
+
+    @GetMapping(path = "/solicitud/{idSolicitud}/comunicarPropuesta", consumes = json, produces = json)
+    @ResponseStatus(HttpStatus.OK)
+    @Transactional
+    public List<PropuestaSolicitud> obtenerTodasLasComunicacionesDeSolicitud(@PathVariable(required = true) Long idSolicitud) {
+        log.info(">> Request obtener todas las comunicanes de propuesta: {}", idSolicitud);
+        List<PropuestaSolicitud> propuestaSolicitudsList = solicitudService.obtenerTodasLasPropuestasComunicacion(idSolicitud);
+        log.info("<< Listado obtenido: {}", propuestaSolicitudsList);
+        return propuestaSolicitudsList;
+    }
+
+    @GetMapping(path = "/solicitud/{idSolicitud}/comunicarPropuesta/{idComunicacion}", consumes = json, produces = json)
+    @ResponseStatus(HttpStatus.OK)
+    public PropuestaSolicitud obtenerComunicacionesDeSolicitudXIdComunicacion(@PathVariable(required = true) Long idComunicacion) {
+        log.info(">> Request obtener comunicacion de propuesta x IdComunicacion: {}", idComunicacion);
+        PropuestaSolicitud propuestaSolicitud = solicitudService.obtenerPropuestasComunicacionXId(idComunicacion);
+        log.info("<< Comunicacr creado");
+        return propuestaSolicitud;
     }
 
 //    @GetMapping(path = "/solicitudes", produces = json)

@@ -4,8 +4,8 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.0'
 }
 
-group = 'eco_swap'
-version = '0.0.1-SNAPSHOT'
+group = 'ms-portal'
+version = '0.0.2-SNAPSHOT'
 sourceCompatibility = '17'
 
 repositories {
@@ -22,8 +22,13 @@ dependencies {
 	implementation 'org.springframework.security:spring-security-core:6.1.0'
 	implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
 	implementation 'org.apache.logging.log4j:log4j-api:2.20.0'
-	compileOnly 'org.projectlombok:lombok:1.18.28'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	compileOnly 'org.projectlombok:lombok:1.18.28'
+	annotationProcessor 'org.projectlombok:lombok:1.18.28'
+
+	testCompileOnly 'org.projectlombok:lombok:1.18.28'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
 
 }
 
