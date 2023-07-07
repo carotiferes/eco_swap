@@ -3,6 +3,7 @@ package msUsers.services;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.entities.MensajeRespuesta;
 import msUsers.domain.entities.PropuestaSolicitud;
+import msUsers.domain.entities.enums.EstadoPropuesta;
 import msUsers.domain.repositories.MensajeRespuestaRepository;
 import msUsers.domain.repositories.PropuestaSolicitudRepository;
 import msUsers.domain.requests.RequestComunicarPropuestaSolicitudModel;
@@ -22,10 +23,10 @@ public class SolicitudService {
 
     @Autowired
     MensajeRespuestaRepository mensajeRespuestaRepository;
-    public void crearPropuestaComunicacion(RequestComunicarPropuestaSolicitudModel request) {
+    public void crearPropuestaComunicacion(RequestComunicarPropuestaSolicitudModel request, Long idSolicitud) {
         log.info(">> Service crear comunicacion de propuesta con request: {}", request.toString());
         PropuestaSolicitud propuestaSolicitud = PropuestaSolicitud.builder()
-                .idSolicitud(request.getIdSolicitud())
+                .idSolicitud(idSolicitud)
                 .idSwapper(request.getIdPerfilEmisor())
                 .cantidadOfrecida(request.getSolicitudProductoModel().getCantidadOfrecida())
                 .caracteristicas(request.getSolicitudProductoModel().getCaracteristicas())
@@ -33,6 +34,7 @@ public class SolicitudService {
                 .tipoProducto(request.getSolicitudProductoModel().getTipoProducto())
                 .mensaje(request.getSolicitudProductoModel().getMensaje())
                 .imagenB64(request.getSolicitudProductoModel().getImagenB64())
+                .estadoPropuesta(EstadoPropuesta.PENDIENTE)
                 .build();
         propuestaSolicitudRepository.save(propuestaSolicitud);
         log.info("<< Propuesta de comunicacion guardado");
@@ -40,7 +42,9 @@ public class SolicitudService {
 
     public List<PropuestaSolicitud> obtenerTodasLasPropuestasComunicacion(Long idSolicitud) {
         log.info(">> Obtener todas las propuestas de comunicacion de una Solicitud: {}", idSolicitud);
-        return propuestaSolicitudRepository.findByIdSolicitud(idSolicitud);
+        List<PropuestaSolicitud> propuestaSolicituds = propuestaSolicitudRepository.findAllByIdSolicitud(idSolicitud);
+        log.info("<< Cantidad obtenidas: {}", propuestaSolicituds.size());
+        return propuestaSolicituds;
 
     }
 
@@ -49,17 +53,24 @@ public class SolicitudService {
         return propuestaSolicitudRepository.findById(idPropuestaComunicacion).get();
     }
 
-    public void agregarMensajeParaPropuestaComunicacion(RequestMensajeRespuesta request) {
+    public void agregarMensajeParaPropuestaComunicacion(
+            RequestMensajeRespuesta request, Long idSolicitud, Long idComunicacion) {
         log.info(">> Service crear mensaje para comunicacion de propuesta con request: {}", request.toString());
 
-        PropuestaSolicitud propuestaSolicitud = this.obtenerPropuestasComunicacionXId(request.getIdComunicacion());
-        mensajeRespuestaRepository.save(
+        PropuestaSolicitud propuestaSolicitud = this.obtenerPropuestasComunicacionXId(idComunicacion);
+        MensajeRespuesta respuesta = mensajeRespuestaRepository.save(
                 MensajeRespuesta.builder()
                         .fechaYHora(LocalDateTime.now())
-                        .propuestaSolicitud(propuestaSolicitud)
+                        .idEmisor(request.getIdEmisor())
                         .mensaje(request.getMensaje())
                         .build()
         );
         log.info("<< Mensaje para comunicacion de propuesta con CREADO");
+        propuestaSolicitud.addNuevaRespuesta(respuesta);
+        if(request.getEstadoPropuesta()!= null) {
+            propuestaSolicitud.setEstadoPropuesta(request.getEstadoPropuesta());
+        }
+        propuestaSolicitudRepository.save(propuestaSolicitud);
+        log.info("<< Mensaje añadido a la lista de propuesta id {}", idSolicitud);
     }
 }

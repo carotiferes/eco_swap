@@ -87,33 +87,48 @@ public class SolicitudController {
         return ResponseEntity.created(location).body(responsePostEntityCreation);
     }
 
+    /*
+    COMUNICACION DE PROPUESTAS
+     */
+
     @PostMapping(path = "/solicitud/{idSolicitud}/comunicarPropuesta", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public void crearComunicacionDePropuesta(RequestComunicarPropuestaSolicitudModel request) {
-        log.info(">> Request para comunicacr propuesta: {}", request.toString());
-        solicitudService.crearPropuestaComunicacion(request);
+    public void crearComunicacionDePropuesta(
+            @PathVariable(required = true) Long idSolicitud,
+            @Valid @RequestBody RequestComunicarPropuestaSolicitudModel request) {
+        log.info(">> Request para solicitud ID {} comunicacr propuesta: {}", idSolicitud, request.toString());
+        solicitudService.crearPropuestaComunicacion(request, idSolicitud);
         log.info("<< Comunicacr creado");
     }
 
-    @PutMapping(path = "/solicitud/{idSolicitud}/comunicarPropuesta/{idComunicacion}", consumes = json, produces = json)
+    @PutMapping(path = "/solicitud/{idSolicitud}/comunicarPropuesta/{idPropuestaComunicacion}", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public void agregarMensajeComunicacionDePropuesta(
+            @PathVariable(required = true) Long idSolicitud,
+            @PathVariable(required = true) Long idPropuestaComunicacion,
             @Valid @RequestBody RequestMensajeRespuesta request) {
-        log.info(">> Request mensaje para comunicar propuesta: {}", request.toString());
-        solicitudService.agregarMensajeParaPropuestaComunicacion(request);
-        log.info("<< Mensaje añadido");
+        log.info(">> Request para idPropuestaComunicacion {} con mensaje para comunicar propuesta: {}",
+                idPropuestaComunicacion, request.toString());
+        solicitudService.agregarMensajeParaPropuestaComunicacion(request, idSolicitud, idPropuestaComunicacion);
+        log.info("<< Mensaje añadido para idPropuestaComunicacion {}", idPropuestaComunicacion);
     }
 
-    @GetMapping(path = "/solicitud/{idSolicitud}/comunicarPropuesta", consumes = json, produces = json)
+    @GetMapping(path = "/solicitud/{idSolicitud}/comunicarPropuesta", produces = json)
     @ResponseStatus(HttpStatus.OK)
-    @Transactional
-    public List<PropuestaSolicitud> obtenerTodasLasComunicacionesDeSolicitud(@PathVariable(required = true) Long idSolicitud) {
+    public List<PropuestaSolicitud> obtenerTodasLasComunicacionesDeSolicitud(@PathVariable(required = true) Long idSolicitud) throws Exception {
         log.info(">> Request obtener todas las comunicanes de propuesta: {}", idSolicitud);
-        List<PropuestaSolicitud> propuestaSolicitudsList = solicitudService.obtenerTodasLasPropuestasComunicacion(idSolicitud);
-        log.info("<< Listado obtenido: {}", propuestaSolicitudsList);
-        return propuestaSolicitudsList;
+        try {
+            List<PropuestaSolicitud> propuestaSolicitudsList = solicitudService.obtenerTodasLasPropuestasComunicacion(idSolicitud);
+            log.info("<< Cantidad de propuestas obtenidas: {} para idSolicitud: {}",
+                    propuestaSolicitudsList.size(),
+                    idSolicitud);
+            return propuestaSolicitudsList;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+
     }
 
     @GetMapping(path = "/solicitud/{idSolicitud}/comunicarPropuesta/{idComunicacion}", consumes = json, produces = json)

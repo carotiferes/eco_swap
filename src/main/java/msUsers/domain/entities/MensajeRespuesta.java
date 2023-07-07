@@ -1,8 +1,10 @@
 package msUsers.domain.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -10,16 +12,18 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @Table(name = "mensajesRespuesta")
+@AllArgsConstructor
+@NoArgsConstructor
 public class MensajeRespuesta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private Long idEmisor;
+
     private String mensaje;
 
     private LocalDateTime fechaYHora;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private PropuestaSolicitud propuestaSolicitud;
 }

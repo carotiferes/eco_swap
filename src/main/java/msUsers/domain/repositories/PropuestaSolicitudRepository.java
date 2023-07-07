@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface PropuestaSolicitudRepository extends JpaRepositoryImplementation<PropuestaSolicitud, Long> {
 
-    List<PropuestaSolicitud> findByIdSolicitud(Long idSolicitud);
+    List<PropuestaSolicitud> findAllByIdSolicitud(Long idSolicitud);
 
 }
