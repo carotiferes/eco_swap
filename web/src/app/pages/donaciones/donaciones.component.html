@@ -6,7 +6,7 @@
 			<div class="card-deck">
 				<div class="card row" *ngFor="let solicitud of showSolicitudes" (click)="goToSolicitud(solicitud)">
 					<div class="col-sm-4">
-						<img class="card-img" [src]="solicitud.imagen  ? (solicitud.imagen | safeHtml) : 'assets/fundacion.png'">
+						<img class="card-img" [src]="solicitud.imagen ? solicitud.imagen : 'assets/fundacion.png'">
 					</div>
 					<div class="card-body col-sm-6">
 						<h2 class="card-title">{{solicitud.tituloSolicitud}}</h2>

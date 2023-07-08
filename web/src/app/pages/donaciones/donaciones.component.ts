@@ -4,7 +4,7 @@ import { FundacionModel } from 'src/app/models/fundacion.model';
 import { SolicitudModel } from 'src/app/models/solicitud.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
-const db = require('../../data/db.json')
+import { FundacionesService } from 'src/app/services/fundaciones.service';
 
 @Component({
   selector: 'app-donaciones',
@@ -23,15 +23,22 @@ export class DonacionesComponent implements OnInit {
 	userData: any;
 
 	constructor(private router: Router, private route: ActivatedRoute, private auth: AuthService,
-		private donacionesService: DonacionesService){
-		//this.solicitudes = db.solicitudes;
+		private donacionesService: DonacionesService, private fundacionesService: FundacionesService){
 		route.paramMap.subscribe(params => {
 			this.idFundacion = params.get('id_fundacion') || undefined;
-			this.fundacion = db.fundaciones.find((item: FundacionModel) => item.idFundacion == Number(this.idFundacion))
+			//this.fundacion = db.fundaciones.find((item: FundacionModel) => item.idFundacion == Number(this.idFundacion))
 			console.log(params, this.idFundacion);
+			if(this.idFundacion){
+				fundacionesService.getFundacion(this.idFundacion).subscribe((res:any) => {
+					this.fundacion = res
+					console.log(res);
+				})
+				console.log(this.fundacion);
+			}
 		})
+		
+		this.userData = auth.getUserData().userData;
 
-		this.userData = auth.getUserData().userData
 
 	}
 	
@@ -41,6 +48,9 @@ export class DonacionesComponent implements OnInit {
 			this.solicitudes = res;
 			this.showSolicitudes = this.solicitudes;
 
+			this.showSolicitudes.map(item => {
+				item.imagen = this.donacionesService.getImagen(item.imagen)
+			})
 		})
 		/* if(this.idFundacion){
 			// TODO: FILTER DONACIONES

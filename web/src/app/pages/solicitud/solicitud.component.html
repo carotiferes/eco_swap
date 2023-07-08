@@ -19,7 +19,7 @@
 			</div>
 		</mat-card-header>
 		<mat-card-content class="card-content">
-			<img mat-card-image [src]="solicitud.imagen"
+			<img mat-card-image [src]="solicitud.imagen ? solicitud.imagen : 'assets/fundacion.png'"
 				class="solicitud-img">
 			<div>
 				<h2 class="card-title">{{solicitud.tituloSolicitud}}</h2>

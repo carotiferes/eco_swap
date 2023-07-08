@@ -45,7 +45,6 @@ export class HeaderComponent {
 	}
 
 	logOut(){
-		console.log('out');
 		this.auth.logout();
 	}
 }
