@@ -34,7 +34,6 @@ public class PropuestaSolicitud {
     private String mensaje;
     private String caracteristicas;
     private EstadoPropuesta estadoPropuesta;
-    private byte[] imagenB64;
 
     private LocalDateTime fechaYHora;
 

@@ -1,8 +1,10 @@
-package msUsers.domain.requests;
+package msUsers.domain.requests.propuestas;
 
 import lombok.Builder;
 import lombok.Data;
 import msUsers.domain.entities.enums.EstadoPropuesta;
+
+import java.util.List;
 
 @Data
 @Builder

@@ -4,18 +4,19 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.entities.MensajeRespuesta;
 import msUsers.domain.entities.PropuestaSolicitud;
+import msUsers.domain.entities.Solicitud;
 import msUsers.domain.entities.enums.EstadoPropuesta;
 import msUsers.domain.repositories.MensajeRespuestaRepository;
 import msUsers.domain.repositories.PropuestaSolicitudRepository;
-import msUsers.domain.requests.RequestComunicarPropuestaSolicitudModel;
-import msUsers.domain.requests.RequestMensajeRespuesta;
-import msUsers.exceptions.handler.EntityNotFoundExceptionHandler;
+import msUsers.domain.repositories.SolicitudRepository;
+import msUsers.domain.requests.propuestas.RequestComunicarPropuestaSolicitudModel;
+import msUsers.domain.requests.propuestas.RequestMensajeRespuesta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -23,6 +24,10 @@ public class SolicitudService {
 
     @Autowired
     PropuestaSolicitudRepository propuestaSolicitudRepository;
+
+    @Autowired
+    SolicitudRepository solicitudRepository;
+
 
     @Autowired
     MensajeRespuestaRepository mensajeRespuestaRepository;
@@ -37,11 +42,10 @@ public class SolicitudService {
                 .fechaYHora(LocalDateTime.now())
                 .tipoProducto(request.getSolicitudProductoModel().getTipoProducto())
                 .mensaje(request.getSolicitudProductoModel().getMensaje())
-                .imagenB64(request.getSolicitudProductoModel().getImagenB64())
                 .estadoPropuesta(EstadoPropuesta.PENDIENTE)
                 .build();
-        propuestaSolicitudRepository.save(propuestaSolicitud);
-        log.info("<< Propuesta de comunicacion guardado");
+        PropuestaSolicitud creado = propuestaSolicitudRepository.save(propuestaSolicitud);
+        log.info("<< Propuesta creado con ID: {}", creado.getId());
     }
 
     public List<PropuestaSolicitud> obtenerTodasLasPropuestasComunicacion(Long idSolicitud) {
@@ -59,6 +63,7 @@ public class SolicitudService {
                         + idPropuestaComunicacion));
     }
 
+    //PUEDE ACTUALIZAR LA PROPUESTA E INCLUSO LA SOLICITUD
     public void agregarMensajeParaPropuestaComunicacion(
             RequestMensajeRespuesta request, Long idSolicitud, Long idComunicacion) {
         log.info(">> Service crear mensaje para comunicacion de propuesta con request: {}", request.toString());
@@ -79,11 +84,16 @@ public class SolicitudService {
         );
         log.info("<< Mensaje para comunicacion de propuesta con CREADO");
         propuestaSolicitud.addNuevaRespuesta(respuesta);
+
         if(request.getEstadoPropuesta()!= null) {
             propuestaSolicitud.setEstadoPropuesta(request.getEstadoPropuesta());
             if(request.getEstadoPropuesta().equals(EstadoPropuesta.RECIBIDA)) {
                 //ACTULIZA LA SOLICITUD LA CANTDIDAD YA OBTENIDA
          //       propuestaSolicitud.set
+
+                Solicitud solicitud = solicitudRepository.findById(idSolicitud).get();
+                solicitud.setActiva(false);
+                solicitudRepository.save(solicitud);
             }
         }
         propuestaSolicitudRepository.save(propuestaSolicitud);
