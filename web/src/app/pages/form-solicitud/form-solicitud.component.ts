@@ -25,6 +25,8 @@ export class FormSolicitudComponent {
 	tipos_productos: string[];
 	estados_productos: string[];
 
+	loadingImg: boolean = false;
+
 	constructor(private fb: FormBuilder, private route: ActivatedRoute, private donacionesService: DonacionesService,
 		private auth: AuthService, private router: Router) {
 
@@ -66,7 +68,7 @@ export class FormSolicitudComponent {
 		
 	}
 
-	confirmarPropuesta() {
+	crearSolicitud() {
 		console.log(this.solicitudForm.value);
 		const productos: any[] = [];
 		for (const producto of this.getProductosArray.value) {
@@ -119,6 +121,7 @@ export class FormSolicitudComponent {
 				console.log(this.images, this.solicitudForm.controls['file_source']);
 				
 			}
+			this.loadingImg = false;	
 		}
 	}
 

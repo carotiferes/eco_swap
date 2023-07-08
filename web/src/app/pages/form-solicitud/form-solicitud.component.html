@@ -71,6 +71,7 @@
 					<label for="file">Imagen de la Solicitud</label>
 					<input formControlName="file" id="file" type="file" class="form-control"
 						(change)="onFileChange($event)">
+					<app-spinner [loading]="loadingImg"></app-spinner>
 				</div>
 
 				<div class="form-col form-imgs">
@@ -88,7 +89,7 @@
 		</mat-card-content>
 		<mat-card-actions class="buttons">
 			<button mat-raised-button color="primary"
-				(click)="confirmarPropuesta();solicitudForm.markAllAsTouched(); solicitudForm.valid">
+				(click)="crearSolicitud();solicitudForm.markAllAsTouched(); solicitudForm.valid">
 				CREAR SOLICITUD
 			</button>
 		</mat-card-actions>
