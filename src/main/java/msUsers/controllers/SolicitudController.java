@@ -117,18 +117,13 @@ public class SolicitudController {
 
     @GetMapping(path = "/solicitud/{idSolicitud}/comunicarPropuesta", produces = json)
     @ResponseStatus(HttpStatus.OK)
-    public List<PropuestaSolicitud> obtenerTodasLasComunicacionesDeSolicitud(@PathVariable(required = true) Long idSolicitud) throws Exception {
+    public List<PropuestaSolicitud> obtenerTodasLasComunicacionesDeSolicitud(@PathVariable(required = true) Long idSolicitud)  {
         log.info(">> Request obtener todas las comunicanes de propuesta: {}", idSolicitud);
-        try {
-            List<PropuestaSolicitud> propuestaSolicitudsList = solicitudService.obtenerTodasLasPropuestasComunicacion(idSolicitud);
-            log.info("<< Cantidad de propuestas obtenidas: {} para idSolicitud: {}",
-                    propuestaSolicitudsList.size(),
-                    idSolicitud);
-            return propuestaSolicitudsList;
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
-
+        List<PropuestaSolicitud> propuestaSolicitudsList = solicitudService.obtenerTodasLasPropuestasComunicacion(idSolicitud);
+        log.info("<< Cantidad de propuestas obtenidas: {} para idSolicitud: {}",
+                propuestaSolicitudsList.size(),
+                idSolicitud);
+        return propuestaSolicitudsList;
     }
 
     @GetMapping(path = "/solicitud/{idSolicitud}/comunicarPropuesta/{idComunicacion}", consumes = json, produces = json)

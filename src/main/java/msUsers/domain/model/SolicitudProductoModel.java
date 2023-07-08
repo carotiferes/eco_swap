@@ -1,6 +1,8 @@
 package msUsers.domain.model;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Data;
 import msUsers.domain.entities.enums.TipoProducto;
@@ -9,14 +11,23 @@ import msUsers.domain.entities.enums.TipoProducto;
 @Data
 public class SolicitudProductoModel {
 
-    @NotNull
+    @NotNull(message = "TipoProducto debe tener un valor valido")
+    @NotBlank(message = "TipoProducto debe tener un valor valido")
     private TipoProducto tipoProducto;
-    @NotNull
+
+    @NotNull(message = "cantidadOfrecida debe tener un valor valido")
+    @NotBlank(message = "cantidadOfrecida debe tener un valor valido")
+    @Positive(message = "La cantidad ofrecida debe ser mayor a cero.")
     private Integer cantidadOfrecida;
-    @NotNull
+
+    @NotNull(message = "mensaje debe tener un valor string")
+    @NotBlank(message = "mensaje debe tener un valor string")
     private String mensaje;
-    @NotNull
+
+    @NotNull(message = "caracteristicas debe tener un valor string")
+    @NotBlank(message = "caracteristicas debe tener un valor string")
     private String caracteristicas;
+
     private byte[] imagenB64;
 
 }

@@ -6,10 +6,12 @@ import org.springframework.data.jpa.repository.support.JpaRepositoryImplementati
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PropuestaSolicitudRepository extends JpaRepositoryImplementation<PropuestaSolicitud, Long> {
 
     List<PropuestaSolicitud> findAllByIdSolicitud(Long idSolicitud);
 
+    Optional<PropuestaSolicitud> findByIdAndEstadoPropuestaNotEqual(Long idPropuesta, String estado);
 }
