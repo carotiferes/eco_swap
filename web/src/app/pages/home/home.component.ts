@@ -9,9 +9,5 @@ import { UsuarioService } from 'src/app/services/usuario.service';
 export class HomeComponent {
 
 	constructor(private service: UsuarioService){
-		service.test().subscribe(res => {
-			console.log(res);
-			
-		})
 	}
 }

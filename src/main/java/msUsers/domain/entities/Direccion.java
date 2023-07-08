@@ -22,7 +22,6 @@ public class Direccion {
 
     @Column(nullable = true)
     private String dpto;
-
     @NotNull
     private String codigoPostal;
 }

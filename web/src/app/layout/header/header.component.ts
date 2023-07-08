@@ -17,8 +17,9 @@ export class HeaderComponent {
 	mainTabs: MenuModel[] = [];
 	personalTabs: MenuModel[] = [];
 
-	//userData: any;
+	userData: any;
 	isUserLoggedIn: boolean;
+	profileType?: 'swapper' | 'fundacion';
 
 	constructor(private router: Router, private auth: AuthService){
 		this.mainTabs = menuData.filter((item: MenuModel) => item.type == 'pages')
@@ -26,13 +27,25 @@ export class HeaderComponent {
 		this.url = router.url;
 
 		this.isUserLoggedIn = auth.isUserLoggedIn
+		console.log(this.isUserLoggedIn);
+		if(this.isUserLoggedIn){
+			this.userData = auth.getUserData().userData
+			this.profileType = this.userData.isSwapper ? 'swapper' : 'fundacion';
+			console.log(this.userData, this.profileType);
+		}
+		
 	}
 
 	goTo(path: string){
 		this.router.navigateByUrl(path)
 	}
 
+	goToMy(path: string){
+		this.router.navigateByUrl(path + '/' + this.userData.idUser)
+	}
+
 	logOut(){
-		
+		console.log('out');
+		this.auth.logout();
 	}
 }

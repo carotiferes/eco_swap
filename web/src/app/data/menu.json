@@ -2,25 +2,35 @@
 	"title": "Home",
 	"path": "/home",
 	"type": "pages",
-	"needsLogin": false
+	"needsLogin": "none"
 }, {
 	"title": "Trueques",
 	"path": "/trueques",
 	"type": "pages",
-	"needsLogin": false
+	"needsLogin": "swapper"
 }, {
 	"title": "Donaciones",
 	"path": "/donaciones",
 	"type": "pages",
-	"needsLogin": false
+	"needsLogin": "none"
 }, {
 	"title": "Creá tu cuenta",
 	"path": "/registro",
 	"type": "personal",
-	"needsLogin": false
+	"needsLogin": "none"
 }, {
-	"title": "Tu Perfil",
+	"title": "Mi Perfil",
 	"path": "/perfil",
 	"type": "personal",
-	"needsLogin": true
+	"needsLogin": "none"
+}, {
+	"title": "Mis Propuestas",
+	"path": "/mis-propuestas",
+	"type": "personal",
+	"needsLogin": "swapper"
+}, {
+	"title": "Mis Solicitudes",
+	"path": "/donaciones",
+	"type": "personal",
+	"needsLogin": "fundacion"
 }]

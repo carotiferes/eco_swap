@@ -2,6 +2,8 @@
 @use '@angular/material' as mat;
 @import './assets/bootstrap.scss';
 
+@import '~maplibre-gl/dist/maplibre-gl.css';
+
 @include mat.core();
 
 $eco-swap: (
@@ -46,6 +48,7 @@ $eco-swap-theme: mat.define-light-theme((
 :root {
 	--primary-color: #86db59;
 	--secondary-color: #ae59db;
+	--warn-color: #b11f2e;
 
 	--white: #fff;
 	--light-grey: #ebebeb;

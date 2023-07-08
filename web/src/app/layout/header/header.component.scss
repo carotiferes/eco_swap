@@ -60,6 +60,10 @@ mat-toolbar-row div {
 					color: var(--white);
 				}
 			}
+
+			.nav-link {
+				cursor: pointer;
+			}
 		}
 	}
 }

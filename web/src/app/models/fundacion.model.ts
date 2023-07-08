@@ -1,5 +1,10 @@
+import { PerfilModel } from "./perfil.model";
+import { SolicitudModel } from "./solicitud.model";
+
 export interface FundacionModel {
-	id_fundacion: number,
-	id_perfil: number, // FK
-	s_nombre: string,
+	idFundacion: number,
+	nombre: string,
+	cuil: string,
+	perfil: PerfilModel,
+	solicitudes: SolicitudModel[]
 }

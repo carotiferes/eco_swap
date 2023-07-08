@@ -1,16 +1,21 @@
 package msUsers.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
+@Data
 @Table(name = "Solicitudes")
-public class Solicitud {
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idSolicitud")
+public class Solicitud implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,6 +36,8 @@ public class Solicitud {
     private boolean activa;
 
     @NotNull
+    @Lob
+    @Column(length = 100000)
     private String imagen;
 
     @NotNull
@@ -39,70 +46,6 @@ public class Solicitud {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_solicitud")
-    @JsonManagedReference
     private List<Producto> productos;
 
-    public long getIdSolicitud() {
-        return idSolicitud;
-    }
-
-    public void setIdSolicitud(long idSolicitud) {
-        this.idSolicitud = idSolicitud;
-    }
-
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public LocalDate getFechaSolicitud() {
-        return fechaSolicitud;
-    }
-
-    public void setFechaSolicitud(LocalDate fechaSolicitud) {
-        this.fechaSolicitud = fechaSolicitud;
-    }
-
-    public boolean isActiva() {
-        return activa;
-    }
-
-    public void setActiva(boolean activa) {
-        this.activa = activa;
-    }
-
-    public String getImagen() {
-        return imagen;
-    }
-
-    public void setImagen(String imagen) {
-        this.imagen = imagen;
-    }
-
-    public Fundacion getFundacion() {
-        return fundacion;
-    }
-
-    public void setFundacion(Fundacion fundacion) {
-        this.fundacion = fundacion;
-    }
-
-    public List<Producto> getProductos() {
-        return productos;
-    }
-
-    public void setProductos(List<Producto> productos) {
-        this.productos = productos;
-    }
 }

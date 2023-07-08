@@ -24,4 +24,5 @@ public class RequestSolicitud {
     private List<RequestProducto> productos;
 
     private String imagen;
+
 }

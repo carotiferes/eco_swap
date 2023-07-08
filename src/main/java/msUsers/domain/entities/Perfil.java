@@ -3,11 +3,13 @@ package msUsers.domain.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
 import java.util.List;
 
 @Entity
+@Data
 @Table(name = "Perfiles")
 public class Perfil {
 
@@ -46,58 +48,4 @@ public class Perfil {
     @OneToMany(mappedBy = "perfilOpina", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Opinion> opiniones;
 
-    public long getIdPerfil() {return idPerfil;}
-
-    public void setIdPerfil(long idPerfil) {this.idPerfil = idPerfil;}
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    public String getPuntaje() {
-        return puntaje;
-    }
-
-    public void setPuntaje(String puntaje) {
-        this.puntaje = puntaje;
-    }
-
-    public boolean isSwapper() {return isSwapper;}
-
-    public void setSwapper(boolean swapper) {isSwapper = swapper;}
-
-    public List<Opinion> getOpiniones() {
-        return opiniones;
-    }
-
-    public void setOpiniones(List<Opinion> opiniones) {
-        this.opiniones = opiniones;
-    }
 }
