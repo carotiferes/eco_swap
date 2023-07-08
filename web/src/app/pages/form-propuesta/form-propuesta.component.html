@@ -12,8 +12,8 @@
 					<mat-form-field>
 						<mat-label>Producto</mat-label>
 						<mat-select formControlName="producto">
-							<mat-option *ngFor="let prod of solicitud.productos" [value]="prod.id_producto">
-								{{prod.s_descripcion}}
+							<mat-option *ngFor="let prod of solicitud.productos" [value]="prod.idProducto">
+								{{prod.descripcion}}
 							</mat-option>
 						</mat-select>
 						<mat-error *ngIf="propuestaForm.get('producto')!.hasError('required')">

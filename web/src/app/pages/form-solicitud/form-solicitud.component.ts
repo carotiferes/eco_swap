@@ -87,7 +87,7 @@ export class FormSolicitudComponent {
 			productos,
 			imagenes: this.solicitudForm.controls['file_source'].value
 		}).subscribe((res) => {
-			console.log(res, JSON.parse(JSON.stringify(res)).descripcion);
+			//console.log(res, JSON.parse(JSON.stringify(res)).descripcion);
 			if(JSON.parse(JSON.stringify(res)).descripcion)	{
 				this.showMessage('¡Solicitud Creada!', 'La solicitud se creó exitosamente. Los Swappers te contactarán pronto!', 'success')
 				this.router.navigateByUrl('donaciones/'+ this.solicitudForm.controls['id_fundacion'].value)

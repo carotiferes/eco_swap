@@ -8,6 +8,7 @@ import {
 import { Injectable } from '@angular/core';
 import { Observable, throwError, timer } from 'rxjs';
 import { catchError, finalize, mergeMap, retryWhen } from 'rxjs/operators';
+import Swal from 'sweetalert2';
 export enum ErrorSeverity {
 	INFO = 'INFO',
 	WARNING = 'WARNING',
@@ -62,23 +63,26 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 		next: HttpHandler
 	): Observable<HttpEvent<unknown>> {
 		return next.handle(request).pipe(
-			//retryWhen(genericRetryStrategy({ excludedStatusCodes: [400] })),
 			catchError((err) => {
-				/**
-				 * Set proper backend error interface
-				 */
 				let error: BackendError = {message: '', severity: ErrorSeverity.INFO, code: ''};
 				console.log(err);
 				if (err instanceof ErrorEvent) {
 					// this is client side error
 					error = this.handleUnknownError();
-					alert('Client error: ' + err.error.message);
+					Swal.fire({
+						title: 'Error1!',
+						text: err.error.descripcion,
+						icon: 'error'
+					})
 				} else {
 					// this is server side error
 					error = this.handleBackendError(error, err);
 					console.log('Server error with code: ' + JSON.stringify(err));
-					
-					//alert('Server error with code: ' + err.status);
+					Swal.fire({
+						title: 'Error2!',
+						text: err.error.descripcion,
+						icon: 'error'
+					})
 				}
 				return throwError(() => error);
 			})

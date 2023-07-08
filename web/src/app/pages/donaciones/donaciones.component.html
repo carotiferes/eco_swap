@@ -6,15 +6,15 @@
 			<div class="card-deck">
 				<div class="card row" *ngFor="let solicitud of showSolicitudes" (click)="goToSolicitud(solicitud)">
 					<div class="col-sm-4">
-						<img class="card-img" [src]="solicitud.s_imagen">
+						<img class="card-img" [src]="solicitud.imagen  ? (solicitud.imagen | safeHtml) : 'assets/fundacion.png'">
 					</div>
 					<div class="card-body col-sm-6">
-						<h2 class="card-title">{{solicitud.s_titulo}}</h2>
+						<h2 class="card-title">{{solicitud.tituloSolicitud}}</h2>
 						<div class="productos">
 							<div *ngFor="let producto of solicitud.productos" class="producto">
-								{{producto.s_descripcion}}
+								{{producto.descripcion}}
 								<p><ngb-progressbar color="primary"
-										[value]="producto.n_cantidad_recibida*100/producto.n_cantidad_solicitada"
+										[value]="producto.cantidadRecibida*100/producto.cantidadSolicitada"
 										[striped]="true"></ngb-progressbar></p>
 							</div>
 
@@ -23,7 +23,7 @@
 					<div class="card-fundacion col-sm-2">
 						<img class="img-fundacion" src="assets/fundacion.png">
 						<!-- TODO: CHANGE TO IMAGE DE LA FUNDACION  -->
-						<h4>Fundación Nombre</h4>
+						<h4>{{solicitud.fundacion}}</h4>
 					</div>
 				</div>
 			</div>
