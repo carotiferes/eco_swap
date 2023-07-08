@@ -87,7 +87,7 @@ export class FormSolicitudComponent {
 			descripcion: this.solicitudForm.controls['s_descripcion'].value,
 			idFundacion: this.solicitudForm.controls['id_fundacion'].value,
 			productos,
-			imagenes: this.solicitudForm.controls['file_source'].value
+			imagen: this.solicitudForm.controls['file_source'].value[0]
 		}).subscribe((res) => {
 			//console.log(res, JSON.parse(JSON.stringify(res)).descripcion);
 			if(JSON.parse(JSON.stringify(res)).descripcion)	{

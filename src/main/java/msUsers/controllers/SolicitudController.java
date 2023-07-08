@@ -13,16 +13,26 @@ import msUsers.domain.requests.RequestFilterSolicitudes;
 import msUsers.domain.requests.RequestSolicitud;
 import msUsers.domain.responses.ResponsePostEntityCreation;
 import msUsers.domain.responses.ResponseSolicitudesList;
+
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -64,7 +74,32 @@ public class SolicitudController {
         solicitud.setDescripcion(requestSolicitud.getDescripcion());
         solicitud.setFundacion(fundacion);
         solicitud.setTitulo(requestSolicitud.getTitulo());
-        solicitud.setImagen(requestSolicitud.getImagen().getBytes());
+
+		String img = requestSolicitud.getImagen();
+        String[] parts = img.split(",");
+        if (parts.length > 1) {
+            img = parts[1];
+        }
+		
+        byte[] imgBytes = Base64.getDecoder().decode(img);
+        String imageName = UUID.randomUUID().toString() + ".jpeg";
+        String directorioActual = System.getProperty("user.dir");
+        String storagePath = directorioActual + "/imagenes/" + imageName;
+
+        File directory = new File(directorioActual + "/imagenes");
+        if (!directory.exists()) {
+            if (directory.mkdirs()) {
+                System.out.println("Directorio de almacenamiento creado correctamente.");
+            }
+        }
+
+        try (OutputStream outputStream = new FileOutputStream(storagePath)) {
+            outputStream.write(imgBytes);
+        } catch (IOException e) {
+            // Manejar el error de escritura de la imagen
+            e.printStackTrace();
+        }
+        solicitud.setImagen(imageName);
 
         List<Producto> productos = requestSolicitud.getProductos().stream()
                 .map(reqProducto -> {
@@ -137,6 +172,13 @@ public class SolicitudController {
         final var solicitud = this.solicitudRepository.findById(id).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrado la solicitud: " + id));
         return ResponseEntity.ok(solicitud);
+    }
+
+	@GetMapping(path = "/getImage/{img}")
+    public ResponseEntity<Resource> getImage(@PathVariable("img") String img){
+        String dir = System.getProperty("user.dir") + "\\imagenes\\";
+        Resource imagenResource = new FileSystemResource(dir + img);
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imagenResource);
     }
 }
 

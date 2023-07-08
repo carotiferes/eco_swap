@@ -2,6 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { SolicitudModel } from 'src/app/models/solicitud.model';
+import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 const db = require('../../data/db.json')
 
@@ -19,7 +20,10 @@ export class FormPropuestaComponent {
 	fileName: any = 'Subir Imagen';
 	images: any[] = [];
 
-	constructor(private fb: FormBuilder, private route: ActivatedRoute, private donacionesService: DonacionesService) {
+	userData: any;
+
+	constructor(private fb: FormBuilder, private route: ActivatedRoute,
+		private donacionesService: DonacionesService, private auth: AuthService) {
 
 		let id_solicitud: string;
 		route.paramMap.subscribe(params => {
@@ -40,6 +44,7 @@ export class FormPropuestaComponent {
 			this.solicitud = res.find((item: any) => item.idSolicitud == id_solicitud)
 		})
 		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+		this.userData = auth.getUserData().userData;
 	}
 
 	get getCaracteristicasArray() {
@@ -57,7 +62,10 @@ export class FormPropuestaComponent {
 
 	confirmarPropuesta() {
 		console.log(this.propuestaForm.value);
-
+		/* this.donacionesService.crearPropuesta(this.solicitud.idSolicitud, {
+			idPerfilEmisor: this.userData.idUser,
+			tipoProducto: 
+		}) */
 	}
 
 	removeCaracteristica(i: number) {

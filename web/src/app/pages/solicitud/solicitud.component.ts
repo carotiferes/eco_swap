@@ -25,6 +25,8 @@ export class SolicitudComponent {
 	userData?: any;
 	loading: boolean = true;
 
+	imagenTest: any;
+
 	constructor(private route: ActivatedRoute, private router: Router, private auth: AuthService,
 		private donacionesService: DonacionesService){
 		route.paramMap.subscribe(params => {
@@ -45,6 +47,7 @@ export class SolicitudComponent {
 			this.loading = false;
 			console.log(this.fundacion, this.perfil, this.solicitud);
 
+			this.getImagen()
 		})
 	}
 
@@ -75,6 +78,10 @@ export class SolicitudComponent {
 			showConfirmButton: false,
 			showCloseButton: true
 		})
+	}
+
+	getImagen(){
+		if(this.solicitud) this.solicitud.imagen = this.donacionesService.getImagen(this.solicitud.imagen)
 	}
 
 }

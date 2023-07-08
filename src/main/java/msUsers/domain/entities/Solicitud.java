@@ -38,7 +38,7 @@ public class Solicitud implements Serializable {
     @NotNull
     @Lob
     @Column(length = 100000)
-    private byte[] imagen;
+    private String imagen;
 
     @NotNull
     @ManyToOne(cascade = CascadeType.ALL)

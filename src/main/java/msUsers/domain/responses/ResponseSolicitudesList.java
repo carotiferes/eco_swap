@@ -13,6 +13,6 @@ public class ResponseSolicitudesList {
     private String tituloSolicitud;
     private List<Producto> productos;
     private int cantidadDisponible;
-    private byte[] imagen;
+    private String imagen;
 
 }

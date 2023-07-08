@@ -70,7 +70,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 					// this is client side error
 					error = this.handleUnknownError();
 					Swal.fire({
-						title: 'Error1!',
+						title: 'Ha ocurrido un error',
 						text: err.error.descripcion,
 						icon: 'error'
 					})
@@ -79,7 +79,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 					error = this.handleBackendError(error, err);
 					console.log('Server error with code: ' + JSON.stringify(err));
 					Swal.fire({
-						title: 'Error2!',
+						title: 'Ha ocurrido un error',
 						text: err.error.descripcion,
 						icon: 'error'
 					})
