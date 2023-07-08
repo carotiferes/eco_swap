@@ -3,6 +3,7 @@ package msUsers.services;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.entities.MensajeRespuesta;
+import msUsers.domain.entities.Producto;
 import msUsers.domain.entities.PropuestaSolicitud;
 import msUsers.domain.entities.Solicitud;
 import msUsers.domain.entities.enums.EstadoPropuesta;
@@ -93,6 +94,14 @@ public class SolicitudService {
 
                 Solicitud solicitud = solicitudRepository.findById(idSolicitud).get();
                 solicitud.setActiva(false);
+                Producto productoAActualizar = solicitud.getProductos()
+                        .stream()
+                        .filter(producto ->
+                                producto.getIdProducto()==propuestaSolicitud.getIdProducto())
+                        .toList().get(0);
+                Integer sumatoriaProductosSolicitados = productoAActualizar.getCantidadRecibida()
+                        + propuestaSolicitud.getCantidadOfrecida();
+                productoAActualizar.setCantidadRecibida(sumatoriaProductosSolicitados);
                 solicitudRepository.save(solicitud);
             }
         }
