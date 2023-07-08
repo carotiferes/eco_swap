@@ -33,7 +33,9 @@ public class PropuestaSolicitud {
     private String mensaje;
     private String caracteristicas;
     private EstadoPropuesta estadoPropuesta;
-    private byte[] imagenB64;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PropuestaProductos> listadoPropuestaProductos;
 
     private LocalDateTime fechaYHora;
 

@@ -13,5 +13,4 @@ public interface PropuestaSolicitudRepository extends JpaRepositoryImplementatio
 
     List<PropuestaSolicitud> findAllByIdSolicitud(Long idSolicitud);
 
-    Optional<PropuestaSolicitud> findByIdAndEstadoPropuestaNotEqual(Long idPropuesta, String estado);
 }

@@ -1,4 +1,4 @@
-package msUsers.domain.model;
+package msUsers.domain.requests.propuestas;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -7,9 +7,11 @@ import lombok.Builder;
 import lombok.Data;
 import msUsers.domain.entities.enums.TipoProducto;
 
+import java.util.List;
+
 @Builder
 @Data
-public class SolicitudProductoModel {
+public class SolicitudProductoRequest {
 
     @NotNull(message = "TipoProducto debe tener un valor valido")
     @NotBlank(message = "TipoProducto debe tener un valor valido")
