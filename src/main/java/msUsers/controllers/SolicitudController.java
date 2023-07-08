@@ -13,7 +13,6 @@ import msUsers.domain.requests.RequestFilterSolicitudes;
 import msUsers.domain.requests.RequestSolicitud;
 import msUsers.domain.responses.ResponsePostEntityCreation;
 import msUsers.domain.responses.ResponseSolicitudesList;
-
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -61,7 +60,7 @@ public class SolicitudController {
     @PostMapping(path = "/solicitud", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public ResponseEntity<ResponsePostEntityCreation> createSolicitud(@Valid @RequestBody RequestSolicitud requestSolicitud){
+    public ResponseEntity<ResponsePostEntityCreation> createSolicitud(@Valid @RequestBody RequestSolicitud requestSolicitud) {
 
         //final var perfil = this.userContextService.getPerfil();
 
@@ -75,12 +74,12 @@ public class SolicitudController {
         solicitud.setFundacion(fundacion);
         solicitud.setTitulo(requestSolicitud.getTitulo());
 
-		String img = requestSolicitud.getImagen();
+        String img = requestSolicitud.getImagen();
         String[] parts = img.split(",");
         if (parts.length > 1) {
             img = parts[1];
         }
-		
+
         byte[] imgBytes = Base64.getDecoder().decode(img);
         String imageName = UUID.randomUUID().toString() + ".jpeg";
         String directorioActual = System.getProperty("user.dir");
@@ -99,7 +98,9 @@ public class SolicitudController {
             // Manejar el error de escritura de la imagen
             e.printStackTrace();
         }
+
         solicitud.setImagen(imageName);
+
 
         List<Producto> productos = requestSolicitud.getProductos().stream()
                 .map(reqProducto -> {
@@ -134,24 +135,24 @@ public class SolicitudController {
 
         if (request.getIdFundacion() != null) {
             Join<Solicitud, Fundacion> join = from.join("fundacion");
-            predicate = cb.and(predicate, cb.equal(join.get("idFundacion"),request.getIdFundacion()));
+            predicate = cb.and(predicate, cb.equal(join.get("idFundacion"), request.getIdFundacion()));
         }
         if (request.getCodigoPostal() != null) {
             Join<Solicitud, Fundacion> fundacionJoin = from.join("fundacion");
             Join<Fundacion, Perfil> perfilJoin = fundacionJoin.join("perfil");
             Join<Perfil, Direccion> direccionJoin = perfilJoin.join("direcciones");
-            predicate = cb.and(predicate, cb.equal(direccionJoin.get("codigoPostal"),request.getCodigoPostal()));
+            predicate = cb.and(predicate, cb.equal(direccionJoin.get("codigoPostal"), request.getCodigoPostal()));
         }
 
         if (request.getTipoProducto() != null) {
             Join<Solicitud, Producto> join = from.join("productos");
-            predicate = cb.and(predicate, cb.equal(join.get("tipoProducto"),request.getTipoProducto()));
+            predicate = cb.and(predicate, cb.equal(join.get("tipoProducto"), request.getTipoProducto()));
         }
 
         query.where(predicate);
 
         List<Solicitud> solicitudes = entityManager.createQuery(query).getResultList();
-        if(solicitudes.isEmpty())
+        if (solicitudes.isEmpty())
             throw new EntityNotFoundException("No existen fundaciones con estos criterios. Intente otra búsqueda.");
 
         List<ResponseSolicitudesList> solicitudesDTO = solicitudes.stream().map(solicitud -> {
@@ -168,13 +169,13 @@ public class SolicitudController {
     }
 
     @GetMapping(path = "/solicitud/{id_solicitud}", produces = json)
-    public ResponseEntity<Solicitud> getSolicitud(@PathVariable("id_solicitud") Long id){
+    public ResponseEntity<Solicitud> getSolicitud(@PathVariable("id_solicitud") Long id) {
         final var solicitud = this.solicitudRepository.findById(id).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrado la solicitud: " + id));
         return ResponseEntity.ok(solicitud);
     }
 
-	@GetMapping(path = "/getImage/{img}")
+    @GetMapping(path = "/getImage/{img}")
     public ResponseEntity<Resource> getImage(@PathVariable("img") String img){
         String dir = System.getProperty("user.dir") + "\\imagenes\\";
         Resource imagenResource = new FileSystemResource(dir + img);
