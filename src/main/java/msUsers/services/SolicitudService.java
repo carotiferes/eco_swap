@@ -31,6 +31,7 @@ public class SolicitudService {
         PropuestaSolicitud propuestaSolicitud = PropuestaSolicitud.builder()
                 .idSolicitud(idSolicitud)
                 .idSwapper(request.getIdPerfilEmisor())
+                .idProducto(request.getSolicitudProductoModel().getProductoId())
                 .cantidadOfrecida(request.getSolicitudProductoModel().getCantidadOfrecida())
                 .caracteristicas(request.getSolicitudProductoModel().getCaracteristicas())
                 .fechaYHora(LocalDateTime.now())

@@ -12,20 +12,19 @@ import msUsers.domain.entities.enums.TipoProducto;
 public class SolicitudProductoModel {
 
     @NotNull(message = "TipoProducto debe tener un valor valido")
-    @NotBlank(message = "TipoProducto debe tener un valor valido")
     private TipoProducto tipoProducto;
 
+    @NotNull(message = "ProductoId debe tener un valor valido")
+    private Long productoId;
+
     @NotNull(message = "cantidadOfrecida debe tener un valor valido")
-    @NotBlank(message = "cantidadOfrecida debe tener un valor valido")
     @Positive(message = "La cantidad ofrecida debe ser mayor a cero.")
     private Integer cantidadOfrecida;
 
     @NotNull(message = "mensaje debe tener un valor string")
-    @NotBlank(message = "mensaje debe tener un valor string")
     private String mensaje;
 
     @NotNull(message = "caracteristicas debe tener un valor string")
-    @NotBlank(message = "caracteristicas debe tener un valor string")
     private String caracteristicas;
 
     private byte[] imagenB64;

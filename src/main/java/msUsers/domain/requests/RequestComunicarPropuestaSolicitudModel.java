@@ -9,12 +9,11 @@ import msUsers.domain.model.SolicitudProductoModel;
 @Data
 @Builder
 public class RequestComunicarPropuestaSolicitudModel {
+
     @NotNull(message = "idPerfilEmisor Debe existir un ID Pefil")
-    @NotBlank(message = "idPerfilEmisor Debe existir un ID Pefil")
     private Long idPerfilEmisor;
 
     @NotNull(message = "solicitudProductoModel Debe existir")
-    @NotBlank(message = "solicitudProductoModel Debe existir")
     private SolicitudProductoModel solicitudProductoModel;
 
 }

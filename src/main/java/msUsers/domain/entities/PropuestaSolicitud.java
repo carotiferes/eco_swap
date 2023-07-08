@@ -26,6 +26,7 @@ public class PropuestaSolicitud {
     private Long id;
 
     private Long idSolicitud;
+    private Long idProducto;
     private Long idSwapper;
 
     private TipoProducto tipoProducto;
