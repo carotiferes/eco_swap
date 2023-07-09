@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class ResponsePostEntityCreation {
     private long id;
     private String descripcion;
-
+    private String status;
 }

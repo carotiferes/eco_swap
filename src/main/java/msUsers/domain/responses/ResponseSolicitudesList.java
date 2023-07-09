@@ -10,6 +10,7 @@ public class ResponseSolicitudesList {
 
     private long idSolicitud;
     private String fundacion;
+    private long idFundacion;
     private String tituloSolicitud;
     private List<Producto> productos;
     private int cantidadDisponible;

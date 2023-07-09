@@ -32,7 +32,7 @@ public class SolicitudService {
 
     @Autowired
     MensajeRespuestaRepository mensajeRespuestaRepository;
-    public void crearPropuestaComunicacion(RequestComunicarPropuestaSolicitudModel request, Long idSolicitud) {
+    public Long crearPropuestaComunicacion(RequestComunicarPropuestaSolicitudModel request, Long idSolicitud) {
         log.info(">> Service crear comunicacion de propuesta con request: {}", request.toString());
         PropuestaSolicitud propuestaSolicitud = PropuestaSolicitud.builder()
                 .idSolicitud(idSolicitud)
@@ -47,6 +47,7 @@ public class SolicitudService {
                 .build();
         PropuestaSolicitud creado = propuestaSolicitudRepository.save(propuestaSolicitud);
         log.info("<< Propuesta creado con ID: {}", creado.getId());
+        return creado.getId();
     }
 
     public List<PropuestaSolicitud> obtenerTodasLasPropuestasComunicacion(Long idSolicitud) {
