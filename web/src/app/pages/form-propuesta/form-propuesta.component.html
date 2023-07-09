@@ -1,7 +1,8 @@
 <app-header></app-header>
 
 <div id="main-propuesta">
-	<mat-card id="main-card">
+	<app-spinner [loading]="loading"></app-spinner>
+	<mat-card id="main-card" *ngIf="!loading">
 		<mat-card-header style="margin-bottom: 20px;">
 			<mat-card-title>Completá los datos de tu propuesta!</mat-card-title>
 			<!-- <mat-card-subtitle>Completá tus datos para crear tu cuenta</mat-card-subtitle> -->
@@ -41,6 +42,9 @@
 							class="caracteristica" [formGroupName]="i">
 							<mat-form-field>
 								<input matInput placeholder="Descripción" formControlName="s_descripcion">
+								<mat-error *ngIf="(getCaracteristicasArray.at(i)).hasError('pattern')">
+									El campo no puede contener ;
+								</mat-error>
 							</mat-form-field>
 							<button type="button" (click)="removeCaracteristica(i)" mat-icon-button color="light"
 							style="height: 60px; margin-left: 5px;">
@@ -62,7 +66,7 @@
 						(change)="onFileChange($event)">
 				</div>
 
-				<!-- <div></div> -->
+				<div></div>
 				<div class="form-col form-imgs">
 					<div class="show-image" *ngFor='let url of images' (click)="removeImagen(url)" >
 						<div class="image" >
@@ -72,6 +76,18 @@
 							<img [src]="url" class="img-producto">
 						</div>
 					</div>
+				</div>
+
+				<div class="form-col mensaje-field">
+					<mat-form-field style="width: 50%;">
+						<mat-label>Mensaje Adicional</mat-label>
+						<textarea matInput
+						cdkTextareaAutosize
+						#autosize="cdkTextareaAutosize"
+						cdkAutosizeMinRows="1"
+						cdkAutosizeMaxRows="5"
+						formControlName="mensaje"></textarea>
+					</mat-form-field>
 				</div>
 			</form>
 		</mat-card-content>

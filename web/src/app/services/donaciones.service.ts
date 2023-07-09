@@ -27,12 +27,10 @@ export class DonacionesService {
 	}
 
 	crearPropuesta(id_solicitud: number, body: any){
-		return this.backendService.post('api/solicitud'+id_solicitud+'/comunicarPropuesta', body);
+		return this.backendService.post('api/solicitud/'+id_solicitud+'/comunicarPropuesta', body);
 	}
 
 	getImagen(img: string){
-		let url =  URL + 'api/getImage/' + img;
-		console.log('bbbb',url);
-		return url
+		return URL + 'api/getImage/' + img;
 	}
 }

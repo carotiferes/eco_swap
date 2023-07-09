@@ -8,7 +8,9 @@
 		
 		.form-col {
 			padding: 5px;
-
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
 			/* &.form-input {
 				display: flex;
 				align-items: center;
@@ -55,6 +57,12 @@
 			.caracteristica {
 				display: flex;
 			}
+		}
+
+		.mensaje-field {
+			grid-column: 1 / 3;
+			display: flex;
+			justify-content: center;
 		}
 
 		.img-producto {

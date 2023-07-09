@@ -23,7 +23,6 @@ public class SolicitudProductoRequest {
     @Positive(message = "La cantidad ofrecida debe ser mayor a cero.")
     private Integer cantidadOfrecida;
 
-    @NotNull(message = "mensaje debe tener un valor string")
     private String mensaje;
 
     @NotNull(message = "caracteristicas debe tener un valor string")

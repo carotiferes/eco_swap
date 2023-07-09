@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { SolicitudModel } from 'src/app/models/solicitud.model';
@@ -11,24 +11,26 @@ const db = require('../../data/db.json')
 	templateUrl: './form-propuesta.component.html',
 	styleUrls: ['./form-propuesta.component.scss']
 })
-export class FormPropuestaComponent {
+export class FormPropuestaComponent implements OnInit {
 
 	propuestaForm: FormGroup;
 	solicitud!: SolicitudModel;
 	screenWidth: number;
-	
+
 	fileName: any = 'Subir Imagen';
 	images: any[] = [];
 
 	userData: any;
 
+	loading: boolean = true;
+	id_solicitud?: string;
+
 	constructor(private fb: FormBuilder, private route: ActivatedRoute,
 		private donacionesService: DonacionesService, private auth: AuthService) {
 
-		let id_solicitud: string;
 		route.paramMap.subscribe(params => {
 			console.log(params);
-			id_solicitud = params.get('id_solicitud') || '';
+			this.id_solicitud = params.get('id_solicitud') || '';
 		})
 
 		this.propuestaForm = fb.group({
@@ -37,14 +39,19 @@ export class FormPropuestaComponent {
 			file_name: [this.fileName],
 			file: [''],
 			file_source: [''],
-			n_cantidad: ['', Validators.required]
+			n_cantidad: ['', Validators.required],
+			mensaje: ['']
 		})
 
-		donacionesService.getSolicitudes().subscribe((res: any) => {
-			this.solicitud = res.find((item: any) => item.idSolicitud == id_solicitud)
-		})
 		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 		this.userData = auth.getUserData().userData;
+	}
+
+	ngOnInit(): void {
+		this.donacionesService.getSolicitudes().subscribe((res: any) => {
+			this.solicitud = res.find((item: any) => item.idSolicitud == this.id_solicitud)
+			this.loading = false;
+		})
 	}
 
 	get getCaracteristicasArray() {
@@ -53,7 +60,7 @@ export class FormPropuestaComponent {
 
 	agregarCaracteristica(caract?: number) {
 		const caracteristica = this.fb.group({
-			s_descripcion: [''],
+			s_descripcion: ['', Validators.pattern(/[^;]/)],
 		});
 
 		let caracteristicas = this.getCaracteristicasArray;
@@ -62,10 +69,29 @@ export class FormPropuestaComponent {
 
 	confirmarPropuesta() {
 		console.log(this.propuestaForm.value);
-		/* this.donacionesService.crearPropuesta(this.solicitud.idSolicitud, {
+		let caracteristicas: any[] = this.getCaracteristicasArray.value
+		console.log('carac', caracteristicas);
+		let stringCaracteristicas = '';
+		caracteristicas.forEach(item => {
+			stringCaracteristicas += item.s_descripcion + ';'
+		})
+		const objetoToSend = {
 			idPerfilEmisor: this.userData.idUser,
-			tipoProducto: 
-		}) */
+			solicitudProductoModel: {
+				tipoProducto: "MUEBLES",
+				productoId: this.propuestaForm.controls['producto'].value,
+				cantidadOfrecida: this.propuestaForm.controls['n_cantidad'].value,
+				mensaje: this.propuestaForm.controls['mensaje'].value,
+				caracteristicas: stringCaracteristicas,
+				imagenB64: this.propuestaForm.controls['file_source'].value
+			}
+		}
+		console.log(objetoToSend);
+
+		this.donacionesService.crearPropuesta(this.solicitud.idSolicitud, objetoToSend).subscribe(res => {
+			console.log(res);
+
+		})
 	}
 
 	removeCaracteristica(i: number) {
@@ -89,12 +115,12 @@ export class FormPropuestaComponent {
 
 				reader.readAsDataURL(event.target.files[i]);
 				console.log(this.images, this.propuestaForm.controls['file_source']);
-				
+
 			}
 		}
 	}
 
-	removeImagen(url: string){
+	removeImagen(url: string) {
 		let imgIndex = this.propuestaForm.controls['file_source'].value.findIndex((item: string) => item == url)
 		this.propuestaForm.controls['file_source'].value.splice(imgIndex, 1)
 		console.log(url);
