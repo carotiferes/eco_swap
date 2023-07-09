@@ -20,7 +20,7 @@
 	<div class="collapse navbar-collapse justify-content-end" id="navbarToggler">
 		<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 			<li class="nav-item" *ngFor="let tab of personalTabs">
-				<a class="nav-link nav-white px-2" [href]="userData && tab.path != '/mis-propuestas' ? tab.path + '/' + userData.idUser : tab.path"
+				<a class="nav-link nav-white px-2" [href]="userData && tab.path != '/mis-propuestas' ? tab.path + '/' + userData.id_perfil : tab.path"
 				*ngIf="(tab.needsLogin == 'none' || profileType == tab.needsLogin) && 
 					(tab.path != '/registro' && isUserLoggedIn || tab.path != '/perfil' && !isUserLoggedIn)"
 				><b>{{tab.title}}</b></a>

@@ -26,6 +26,10 @@ export class DonacionesService {
 		return this.backendService.get('api/solicitud/'+id_solicitud);
 	}
 
+	getPropuestas(id_solicitud: any){
+		return this.backendService.get('/api/solicitud/'+id_solicitud+'/comunicarPropuesta');
+	}
+
 	crearPropuesta(id_solicitud: number, body: any){
 		return this.backendService.post('api/solicitud/'+id_solicitud+'/comunicarPropuesta', body);
 	}

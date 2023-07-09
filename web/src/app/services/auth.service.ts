@@ -27,7 +27,7 @@ export class AuthService {
 		} else {
 			userData = {
 				username,
-				id_perfil: 2,
+				id_perfil: 1,
 				id_fundacion: 1,
 				isSwapper: false
 			}

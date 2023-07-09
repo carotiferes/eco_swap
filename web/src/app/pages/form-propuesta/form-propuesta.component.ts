@@ -92,7 +92,7 @@ export class FormPropuestaComponent implements OnInit {
 			console.log(res);
 			if(JSON.parse(JSON.stringify(res)).descripcion)	{
 				this.showMessage('Propuesta Creada!', 'La propuesta se creó exitosamente. Ahora te toca a vos! Llevá tu donación a la fundación para que la puedan empezar a usar.', 'success')
-				this.router.navigateByUrl('donaciones/'+ this.id_solicitud)
+				this.router.navigateByUrl('solicitud/'+ this.id_solicitud)
 			}
 			else this.showMessage('Ocurrió un error', 'No pudimos crear la propuesta. Intentá nuevamente luego.', 'error')
 		})
