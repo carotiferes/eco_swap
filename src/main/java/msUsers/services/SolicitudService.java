@@ -46,12 +46,12 @@ public class SolicitudService {
         List<CaracteristicaPropuesta> lista = request.getSolicitudProductoModel().getCaracteristicas().stream()
                 .map(s-> CaracteristicaPropuesta.armarCarateristica(s, 1l))
                 .toList();
-     //   Swapper swapper = swappersRepository.findById(request.getIdPerfilEmisor()).get();
+        Swapper swapper = swappersRepository.findById(request.getIdPerfilEmisor()).get();
         Propuesta propuestaNueva = Propuesta.builder()
                 .cantidadPropuesta(request.getSolicitudProductoModel().getCantidadOfrecida())
                 .descripcion(request.getSolicitudProductoModel().getMensaje())
                 .estadoPropuesta(EstadoPropuesta.PENDIENTE)
-                .swapper(null)
+                .swapper(swapper)
                 .producto(producto)
                 .caracteristicaPropuesta(lista)
                 .solicitud(solicitud)
