@@ -11,11 +11,6 @@
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
-			/* &.form-input {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-			} */
 			
 			&.form-imgs {
 				display: grid;
@@ -63,6 +58,7 @@
 			grid-column: 1 / 3;
 			display: flex;
 			justify-content: center;
+			align-items: center;
 		}
 
 		.img-producto {

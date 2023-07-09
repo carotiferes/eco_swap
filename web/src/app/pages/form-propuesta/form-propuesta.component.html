@@ -42,8 +42,8 @@
 							class="caracteristica" [formGroupName]="i">
 							<mat-form-field>
 								<input matInput placeholder="Descripción" formControlName="s_descripcion">
-								<mat-error *ngIf="(getCaracteristicasArray.at(i)).hasError('pattern')">
-									El campo no puede contener ;
+								<mat-error *ngIf="getCaracteristicasArray.at(i).get('s_descripcion')?.hasError('pattern')">
+									El campo no puede contener <b>;</b>
 								</mat-error>
 							</mat-form-field>
 							<button type="button" (click)="removeCaracteristica(i)" mat-icon-button color="light"

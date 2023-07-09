@@ -60,7 +60,7 @@ export class FormPropuestaComponent implements OnInit {
 
 	agregarCaracteristica(caract?: number) {
 		const caracteristica = this.fb.group({
-			s_descripcion: ['', Validators.pattern(/[^;]/)],
+			s_descripcion: ['', Validators.pattern(/[^;]/g)],
 		});
 
 		let caracteristicas = this.getCaracteristicasArray;
