@@ -40,6 +40,9 @@ public class PropuestaSolicitud {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MensajeRespuesta> respuesta;
 
+    // Pueden ser una o muchas
+    private String imagenes;
+
     public void addNuevaRespuesta(MensajeRespuesta nuevaRespuesta) {
         this.getRespuesta().add(nuevaRespuesta);
     }
