@@ -83,7 +83,7 @@ export class FormPropuestaComponent implements OnInit {
 				cantidadOfrecida: this.propuestaForm.controls['n_cantidad'].value,
 				mensaje: this.propuestaForm.controls['mensaje'].value,
 				caracteristicas: stringCaracteristicas,
-				imagenB64: this.propuestaForm.controls['file_source'].value
+				imagenes: this.propuestaForm.controls['file_source'].value
 			}
 		}
 		console.log(objetoToSend);

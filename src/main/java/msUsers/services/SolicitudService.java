@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +30,8 @@ public class SolicitudService {
     @Autowired
     SolicitudRepository solicitudRepository;
 
+    @Autowired
+    ImageService imageService;
 
     @Autowired
     MensajeRespuestaRepository mensajeRespuestaRepository;
@@ -45,6 +48,13 @@ public class SolicitudService {
                 .mensaje(request.getSolicitudProductoModel().getMensaje())
                 .estadoPropuesta(EstadoPropuesta.PENDIENTE)
                 .build();
+
+        List<String> nombreImagenes = new ArrayList<>();
+        for(int i = 0; i < request.getSolicitudProductoModel().getImagenes().size(); i++){
+            nombreImagenes.add(imageService.saveImage(request.getSolicitudProductoModel().getImagenes().get(i)));
+        }
+
+        propuestaSolicitud.setImagenes(String.join("|", nombreImagenes));
         PropuestaSolicitud creado = propuestaSolicitudRepository.save(propuestaSolicitud);
         log.info("<< Propuesta creado con ID: {}", creado.getId());
         return creado.getId();

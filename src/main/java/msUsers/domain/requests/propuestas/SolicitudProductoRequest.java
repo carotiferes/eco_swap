@@ -28,6 +28,6 @@ public class SolicitudProductoRequest {
     @NotNull(message = "caracteristicas debe tener un valor string")
     private String caracteristicas;
 
-    private byte[] imagenB64;
+    private List<String> imagenes;
 
 }
