@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PropuestaModel } from 'src/app/models/propuesta.model';
+import { DonacionesService } from 'src/app/services/donaciones.service';
 import { MapComponent } from 'src/app/shared/map/map.component';
 import Swal from 'sweetalert2';
 
@@ -43,7 +44,7 @@ export class PropuestasComponent {
 		imagenes: ['']
 	}];
 
-	constructor(public dialog: MatDialog){
+	constructor(public dialog: MatDialog, private donacionesService: DonacionesService){
 		// TODO: GET PROPUESTAS FROM BACK
 
 		this.propuestas.map((item:any) => {
@@ -69,7 +70,7 @@ export class PropuestasComponent {
 			}
 		})
 		console.log(this.propuestas);
-		
+		//this.donacionesService.cambiarEstadoPropuesta()
 	}
 
 	openDialog() {

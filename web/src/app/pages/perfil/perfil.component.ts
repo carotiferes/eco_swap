@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { PerfilModel } from 'src/app/models/perfil.model';
+import { AuthService } from 'src/app/services/auth.service';
+import { UsuarioService } from 'src/app/services/usuario.service';
 const db = require('../../data/db.json')
 
 @Component({
@@ -23,8 +25,15 @@ export class PerfilComponent {
 		exclusive?: 'swapper' | 'fundacion'
 	}[] = []
 
-	constructor(){
+	userData: any;
+
+	constructor(private auth: AuthService, private usuarioService: UsuarioService){
 		// TODO: GET USER INFO
+		/* this.userData = auth.getUserData().userData;
+		usuarioService.getUser(this.userData.id_perfil).subscribe(res => {
+			console.log(res);
+			
+		}) */
 		this.user = db.perfiles[this.isSwapper ? 0 : 1];
 		this.userInfo = this.isSwapper ? db.swappers[0] : db.fundaciones[0];
 		this.configureColumns();

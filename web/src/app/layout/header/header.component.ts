@@ -29,7 +29,7 @@ export class HeaderComponent {
 		this.isUserLoggedIn = auth.isUserLoggedIn
 		console.log(this.isUserLoggedIn);
 		if(this.isUserLoggedIn){
-			this.userData = auth.getUserData().userData
+			this.userData = auth.getUserData()
 			this.profileType = this.userData.isSwapper ? 'swapper' : 'fundacion';
 			console.log(this.userData, this.profileType);
 		}
@@ -41,7 +41,7 @@ export class HeaderComponent {
 	}
 
 	goToMy(path: string){
-		this.router.navigateByUrl(path + '/' + this.userData.idUser)
+		this.router.navigateByUrl(path + '/' + this.userData.id_perfil)
 	}
 
 	logOut(){

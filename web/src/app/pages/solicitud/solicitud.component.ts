@@ -7,7 +7,6 @@ import { SolicitudModel } from 'src/app/models/solicitud.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import Swal from 'sweetalert2';
-const db = require('../../data/db.json')
 
 @Component({
   selector: 'app-solicitud',
@@ -36,18 +35,24 @@ export class SolicitudComponent {
 	}
 	
 	ngOnInit(): void {
-		this.userData = this.auth.getUserData().userData
+		this.userData = this.auth.getUserData();
 		console.log(this.userData);
 		this.donacionesService.getSolicitud(this.id_solicitud).subscribe((res: any) => {
 			console.log(res);
+
 			this.solicitud = res;
 			this.fundacion = res.fundacion
 			this.perfil = res.fundacion.perfil
 			if(this.perfil) this.perfil.puntaje = Number(this.perfil?.puntaje)
-			this.loading = false;
 			console.log(this.fundacion, this.perfil, this.solicitud);
-
+			
+			if(this.solicitud){
+				for (const prod of this.solicitud.productos) {
+					this.propuestas.push(...prod.propuestas)
+				}
+			}
 			this.getImagen()
+			this.loading = false;
 		})
 	}
 

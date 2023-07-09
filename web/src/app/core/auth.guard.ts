@@ -5,7 +5,10 @@ const menus = require('../data/menu.json')
 
 export const authGuard: CanActivateFn = (route, state) => {
 	console.log(route, state);
-	localStorage.getItem('user')
+	const isLoggedIn = localStorage.getItem('userLoggedIn')
+	console.log(isLoggedIn);
+	if(isLoggedIn == 'true') return true;
+	else return false;
 	//menus.find((item: MenuModel) => item.path == route.url)
-	return true;
+	//return true;
 };

@@ -1,10 +1,10 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SolicitudModel } from 'src/app/models/solicitud.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
-const db = require('../../data/db.json')
+import Swal from 'sweetalert2';
 
 @Component({
 	selector: 'app-propuesta',
@@ -25,7 +25,7 @@ export class FormPropuestaComponent implements OnInit {
 	loading: boolean = true;
 	id_solicitud?: string;
 
-	constructor(private fb: FormBuilder, private route: ActivatedRoute,
+	constructor(private fb: FormBuilder, private route: ActivatedRoute, private router: Router,
 		private donacionesService: DonacionesService, private auth: AuthService) {
 
 		route.paramMap.subscribe(params => {
@@ -44,7 +44,7 @@ export class FormPropuestaComponent implements OnInit {
 		})
 
 		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
-		this.userData = auth.getUserData().userData;
+		this.userData = auth.getUserData();
 	}
 
 	ngOnInit(): void {
@@ -76,7 +76,7 @@ export class FormPropuestaComponent implements OnInit {
 			stringCaracteristicas += item.s_descripcion + ';'
 		})
 		const objetoToSend = {
-			idPerfilEmisor: this.userData.idUser,
+			idPerfilEmisor: this.userData.id_perfil,
 			solicitudProductoModel: {
 				tipoProducto: "MUEBLES",
 				productoId: this.propuestaForm.controls['producto'].value,
@@ -90,7 +90,11 @@ export class FormPropuestaComponent implements OnInit {
 
 		this.donacionesService.crearPropuesta(this.solicitud.idSolicitud, objetoToSend).subscribe(res => {
 			console.log(res);
-
+			if(JSON.parse(JSON.stringify(res)).descripcion)	{
+				this.showMessage('Propuesta Creada!', 'La propuesta se creó exitosamente. Ahora te toca a vos! Llevá tu donación a la fundación para que la puedan empezar a usar.', 'success')
+				this.router.navigateByUrl('donaciones/'+ this.id_solicitud)
+			}
+			else this.showMessage('Ocurrió un error', 'No pudimos crear la propuesta. Intentá nuevamente luego.', 'error')
 		})
 	}
 
@@ -126,5 +130,14 @@ export class FormPropuestaComponent implements OnInit {
 		console.log(url);
 		let imgI = this.propuestaForm.controls['file_source'].value.findIndex((item: string) => item == url)
 		this.images.splice(imgI, 1)
+	}
+
+	showMessage(title: string, text: string, icon:'warning'| 'error'| 'success'| 'info'| 'question'){
+		Swal.fire({
+			title,
+			text,
+			icon,
+			confirmButtonText: '¡OK!'
+		})
 	}
 }

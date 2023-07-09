@@ -33,12 +33,12 @@ export class FormSolicitudComponent {
 		this.tipos_productos = TIPOS;
 		this.estados_productos = ESTADOS;
 
-		let userData = auth.getUserData().userData;
+		let userData = auth.getUserData();
 
 		this.solicitudForm = fb.group({
 			s_titulo: ['', Validators.required],
 			s_descripcion: [''],
-			id_fundacion: [userData.idUser || ''],
+			id_fundacion: [userData.id_fundacion || ''],
 			productos: this.fb.array([]),
 			file_name: [this.fileName],
 			file: [''],

@@ -6,7 +6,7 @@ export interface ProductoModel {
 	cantidadRecibida: number,
 	estado?: string,
 	publicacion?: number,
-	propuesta: any[]
+	propuestas: any[]
 	/* id_producto: number,
 	c_tipo_producto: number,
 	id_publi_solic: number,

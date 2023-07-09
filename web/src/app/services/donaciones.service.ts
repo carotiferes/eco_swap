@@ -33,4 +33,8 @@ export class DonacionesService {
 	getImagen(img: string){
 		return URL + 'api/getImage/' + img;
 	}
+
+	cambiarEstadoPropuesta(id_solicitud: number, id_propuesta: number, body: any){
+		return this.backendService.put('api/solicitud/'+id_solicitud+'/comunicarPropuesta/'+id_propuesta, body);
+	}
 }

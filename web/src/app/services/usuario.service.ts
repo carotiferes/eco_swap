@@ -10,7 +10,7 @@ export class UsuarioService {
 
 	constructor(private backendService: HttpBackEnd) { }
 
-	test() {
-		return this.backendService.post('api/solicitud', {});
+	getUser(id_perfil: number) {
+		return this.backendService.get('perfil/' + id_perfil);
 	}
 }

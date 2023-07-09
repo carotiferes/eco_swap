@@ -22,11 +22,12 @@ export class DonacionesComponent implements OnInit {
 	showSolicitudes: SolicitudModel[] = [];
 	userData: any;
 
+	loading: boolean = true;
+
 	constructor(private router: Router, private route: ActivatedRoute, private auth: AuthService,
 		private donacionesService: DonacionesService, private fundacionesService: FundacionesService){
 		route.paramMap.subscribe(params => {
 			this.idFundacion = params.get('id_fundacion') || undefined;
-			//this.fundacion = db.fundaciones.find((item: FundacionModel) => item.idFundacion == Number(this.idFundacion))
 			console.log(params, this.idFundacion);
 			if(this.idFundacion){
 				fundacionesService.getFundacion(this.idFundacion).subscribe((res:any) => {
@@ -37,9 +38,7 @@ export class DonacionesComponent implements OnInit {
 			}
 		})
 		
-		this.userData = auth.getUserData().userData;
-
-
+		this.userData = auth.getUserData();
 	}
 	
 	ngOnInit() {
@@ -51,14 +50,15 @@ export class DonacionesComponent implements OnInit {
 			this.showSolicitudes.map(item => {
 				item.imagen = this.donacionesService.getImagen(item.imagen)
 			})
+			if(this.idFundacion){
+				// TODO: FILTER DONACIONES
+				this.solicitudesFundacion = this.solicitudes.filter(item => item.idFundacion == Number(this.idFundacion))
+				this.showSolicitudes = this.solicitudesFundacion
+			} else {
+				this.showSolicitudes = this.solicitudes;
+			}
+			this.loading = false;
 		})
-		/* if(this.idFundacion){
-			// TODO: FILTER DONACIONES
-			this.solicitudesFundacion = this.solicitudes.filter(item => item.fundacion.idFundacion == Number(this.idFundacion))
-			this.showSolicitudes = this.solicitudesFundacion
-		} else {
-			this.showSolicitudes = this.solicitudes;
-		} */
 
 	}
 

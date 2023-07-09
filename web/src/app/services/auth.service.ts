@@ -16,13 +16,23 @@ export class AuthService {
 	login(username: string, password: string) {
 		console.log(username, password);
 		// TODO: CHANGE FROM HARDCODED DATA TO CALL BACKEND (access token)
-		this.setLocalStorage('userData', JSON.stringify({
-			userData: {
+		let userData: any;
+		if(username == 'swapper'){
+			userData = {
 				username,
-				idUser: 1,
-				isSwapper: username == 'swapper' ? true : false
+				id_perfil: 1,
+				id_swapper: 1,
+				isSwapper: true
 			}
-		}));
+		} else {
+			userData = {
+				username,
+				id_perfil: 2,
+				id_fundacion: 1,
+				isSwapper: false
+			}
+		}
+		this.setLocalStorage('userData', JSON.stringify(userData));
 		this.isUserLoggedIn = true;
 		this.setUserLoggedIn()
 	}

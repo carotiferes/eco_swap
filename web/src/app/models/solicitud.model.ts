@@ -4,6 +4,7 @@ export interface SolicitudModel {
 	idSolicitud: number,
 	tituloSolicitud: string,
 	cantidadDisponible: number,
+	idFundacion: number,
 	fundacion: string,
 	imagen: string,
 	fechaSolicitud: Date,

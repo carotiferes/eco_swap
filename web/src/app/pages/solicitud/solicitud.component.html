@@ -15,7 +15,7 @@
 						</mat-card-subtitle>
 					</div>
 				</div>
-				<div>{{solicitud.fechaSolicitud}}</div>
+				<div>{{solicitud.fechaSolicitud | date: 'dd/MM/yyyy'}}</div>
 			</div>
 		</mat-card-header>
 		<mat-card-content class="card-content">
@@ -28,7 +28,7 @@
 						{{producto.descripcion}}
 						<p><ngb-progressbar color="primary" [showValue]="true"
 								[value]="producto.cantidadRecibida*100/producto.cantidadSolicitada"
-								[striped]="true"></ngb-progressbar></p>
+								[striped]="true" [max]="producto.cantidadSolicitada"></ngb-progressbar></p>
 					</div>
 				</div>
 			</div>
@@ -38,7 +38,7 @@
 		</mat-card-actions>
 	</mat-card>
 
-	<div *ngIf="perfil && !perfil.swapper">
+	<div *ngIf="perfil && !perfil.swapper && fundacion && fundacion.idFundacion == userData.id_fundacion">
 		<!-- TODO: CHECK THAT USER ID IS THE SAME AS THE ONE THAT MADE THE SOLICITUD -->
 		<h3 style="margin: 20px 0 0 5px; font-weight: bold;">Propuestas</h3>
 		<div *ngIf="propuestas.length == 0" style="text-align: center;">Esta solicitud no tiene propuestas aún!</div>
