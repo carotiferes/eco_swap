@@ -28,24 +28,27 @@ public class Solicitud implements Serializable {
     @NotNull
     private String descripcion;
 
-    @NotNull
+  //  @NotNull
     @Column(columnDefinition = "DATE")
     private LocalDate fechaSolicitud;
 
     // ToDo: Chequear que en el DER figura en vez de boolean, como código. ¿Por qué?
     private boolean activa;
 
-    @NotNull
+ //   @NotNull
     @Lob
     @Column(length = 100000)
     private String imagen;
 
-    @NotNull
+  //  @NotNull
     @ManyToOne(cascade = CascadeType.ALL)
     private Fundacion fundacion;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_solicitud")
     private List<Producto> productos;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Propuesta> propuestas;
 
 }
