@@ -1,6 +1,7 @@
 package msUsers.exceptions.handler;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import msUsers.exceptions.responses.EntityNotFoundExceptionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
 
+@Slf4j
 @ControllerAdvice
 public class EntityNotFoundExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
@@ -20,6 +22,7 @@ public class EntityNotFoundExceptionHandler {
         Date date = new Date();
         response.setTimestamp(date.getTime());
         response.setHttpStatus(HttpStatus.NOT_FOUND);
+        log.warn(">> {}", exception.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 }
