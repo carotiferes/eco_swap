@@ -17,7 +17,6 @@ export class FormPropuestaComponent implements OnInit {
 	solicitud!: SolicitudModel;
 	screenWidth: number;
 
-	fileName: any = 'Subir Imagen';
 	images: any[] = [];
 
 	userData: any;
@@ -36,7 +35,6 @@ export class FormPropuestaComponent implements OnInit {
 		this.propuestaForm = fb.group({
 			producto: ['', Validators.required],
 			caracteristicas: this.fb.array([]),
-			file_name: [this.fileName],
 			file: [''],
 			file_source: [''],
 			n_cantidad: ['', Validators.required],
@@ -68,34 +66,34 @@ export class FormPropuestaComponent implements OnInit {
 	}
 
 	confirmarPropuesta() {
-		console.log(this.propuestaForm.value);
-		let caracteristicas: any[] = this.getCaracteristicasArray.value
-		console.log('carac', caracteristicas);
-		let stringCaracteristicas = '';
-		caracteristicas.forEach(item => {
-			stringCaracteristicas += item.s_descripcion + ';'
-		})
-		const objetoToSend = {
-			idPerfilEmisor: this.userData.id_perfil,
-			solicitudProductoModel: {
-				tipoProducto: "MUEBLES",
-				productoId: this.propuestaForm.controls['producto'].value,
-				cantidadOfrecida: this.propuestaForm.controls['n_cantidad'].value,
-				mensaje: this.propuestaForm.controls['mensaje'].value,
-				caracteristicas: stringCaracteristicas,
-				imagenes: this.propuestaForm.controls['file_source'].value
+		if(this.propuestaForm.valid){
+			let caracteristicas: any[] = this.getCaracteristicasArray.value
+			let stringCaracteristicas = '';
+			caracteristicas.forEach(item => {
+				stringCaracteristicas += item.s_descripcion + ';'
+			})
+			const objetoToSend = {
+				idPerfilEmisor: this.userData.id_perfil,
+				solicitudProductoModel: {
+					tipoProducto: "MUEBLES",
+					productoId: this.propuestaForm.controls['producto'].value,
+					cantidadOfrecida: this.propuestaForm.controls['n_cantidad'].value,
+					mensaje: this.propuestaForm.controls['mensaje'].value,
+					caracteristicas: stringCaracteristicas,
+					imagenes: this.propuestaForm.controls['file_source'].value
+				}
 			}
-		}
-		console.log(objetoToSend);
-
-		this.donacionesService.crearPropuesta(this.solicitud.idSolicitud, objetoToSend).subscribe(res => {
-			console.log(res);
-			if(JSON.parse(JSON.stringify(res)).descripcion)	{
-				this.showMessage('Propuesta Creada!', 'La propuesta se creó exitosamente. Ahora te toca a vos! Llevá tu donación a la fundación para que la puedan empezar a usar.', 'success')
-				this.router.navigateByUrl('solicitud/'+ this.id_solicitud)
-			}
-			else this.showMessage('Ocurrió un error', 'No pudimos crear la propuesta. Intentá nuevamente luego.', 'error')
-		})
+			console.log(objetoToSend);
+	
+			this.donacionesService.crearPropuesta(this.solicitud.idSolicitud, objetoToSend).subscribe(res => {
+				console.log(res);
+				if(JSON.parse(JSON.stringify(res)).descripcion)	{
+					this.showMessage('Propuesta Creada!', 'La propuesta se creó exitosamente. Ahora te toca a vos! Llevá tu donación a la fundación para que la puedan empezar a usar.', 'success')
+					this.router.navigateByUrl('solicitud/'+ this.id_solicitud)
+				}
+				else this.showMessage('Ocurrió un error', 'No pudimos crear la propuesta. Intentá nuevamente luego.', 'error')
+			})
+		} else this.showMessage('Error en los campos.', 'Revisá los campos y completalos correctamente.', 'error')
 	}
 
 	removeCaracteristica(i: number) {
@@ -112,9 +110,9 @@ export class FormPropuestaComponent implements OnInit {
 				reader.onload = (event: any) => {
 					this.images.push(event.target.result);
 
-					this.propuestaForm.patchValue({
+					/* this.propuestaForm.patchValue({
 						file_source: this.images
-					});
+					}); */
 				}
 
 				reader.readAsDataURL(event.target.files[i]);
@@ -124,12 +122,11 @@ export class FormPropuestaComponent implements OnInit {
 		}
 	}
 
-	removeImagen(url: string) {
-		let imgIndex = this.propuestaForm.controls['file_source'].value.findIndex((item: string) => item == url)
-		this.propuestaForm.controls['file_source'].value.splice(imgIndex, 1)
-		console.log(url);
-		let imgI = this.propuestaForm.controls['file_source'].value.findIndex((item: string) => item == url)
-		this.images.splice(imgI, 1)
+	removeImagen(i:number) {
+		this.images.splice(i, 1)
+		this.propuestaForm.patchValue({
+			file_source: this.images
+		});
 	}
 
 	showMessage(title: string, text: string, icon:'warning'| 'error'| 'success'| 'info'| 'question'){

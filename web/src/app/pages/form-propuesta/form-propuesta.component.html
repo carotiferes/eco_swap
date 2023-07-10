@@ -51,7 +51,7 @@
 								<mat-icon>delete</mat-icon>
 							</button>
 						</div>
-						<button type="button" (click)="agregarCaracteristica()" mat-button>
+						<button type="button" (click)="agregarCaracteristica()" mat-raised-button color="light">
 							<mat-icon>add</mat-icon>
 							<label>Agregar Caracteristica</label>
 						</button>
@@ -61,14 +61,14 @@
 				</section>
 
 				<div class="form-col">
-					<label for="file">Imágenes de la donación</label>
-					<input formControlName="file" id="file" type="file" class="form-control" multiple=""
-						(change)="onFileChange($event)">
+					<label for="file" class="file-label">Agregar imágenes de la donación</label>
+					<input formControlName="file" id="file" type="file" class="form-control hidden" multiple=""
+						(change)="onFileChange($event)" #file>
 				</div>
 
 				<div></div>
 				<div class="form-col form-imgs">
-					<div class="show-image" *ngFor='let url of images' (click)="removeImagen(url)" >
+					<div class="show-image" *ngFor='let url of images; let i = index;' (click)="removeImagen(i)" >
 						<div class="image" >
 							<div class="overlay">
 							</div>

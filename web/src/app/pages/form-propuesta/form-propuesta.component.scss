@@ -52,6 +52,15 @@
 			.caracteristica {
 				display: flex;
 			}
+
+			.file-label {
+				background: var(--light-grey);
+				padding: 15px;
+				border-radius: 5px 5px 0px 0px;
+				&:hover {
+					cursor: pointer;
+				}
+			}
 		}
 
 		.mensaje-field {
@@ -82,3 +91,7 @@
 	}
 }
 
+
+.hidden {
+	display: none;
+}
