@@ -78,10 +78,13 @@ public class SolicitudController {
         solicitud.setTitulo(requestSolicitud.getTitulo());
 
         String img = requestSolicitud.getImagen();
+        /*
         String[] parts = img.split(",");
         if (parts.length > 1) {
             img = parts[1];
         }
+
+
 
         byte[] imgBytes = Base64.getDecoder().decode(img);
         String imageName = UUID.randomUUID().toString() + ".jpeg";
@@ -104,7 +107,7 @@ public class SolicitudController {
 
         solicitud.setImagen(imageName);
 
-
+         */
         List<Producto> productos = requestSolicitud.getProductos().stream()
                 .map(reqProducto -> {
                     Producto p = new Producto();

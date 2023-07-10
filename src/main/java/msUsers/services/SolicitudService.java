@@ -43,8 +43,10 @@ public class SolicitudService {
 
         Producto producto = productoRepository.findById(request.getSolicitudProductoModel().getProductoId()).get();
         Solicitud solicitud = solicitudRepository.findById(idSolicitud).get();
-        List<CaracteristicaPropuesta> lista = request.getSolicitudProductoModel().getCaracteristicas().stream()
-                .map(s-> CaracteristicaPropuesta.armarCarateristica(s, 1l))
+        List<CaracteristicaPropuesta> lista = request.getSolicitudProductoModel()
+                .getCaracteristicas()
+                .stream()
+                .map(s-> CaracteristicaPropuesta.armarCarateristica(s, request.getIdPerfilEmisor()))
                 .toList();
         Swapper swapper = swappersRepository.findById(request.getIdPerfilEmisor()).get();
         Propuesta propuestaNueva = Propuesta.builder()
@@ -62,6 +64,15 @@ public class SolicitudService {
                 .build();
         Propuesta creado = propuestasRepository.save(propuestaNueva);
         log.info("<< Propuesta creado con ID: {}", creado.getIdPropuesta());
+        List<Propuesta> listaPropuestas = solicitud.getPropuestas();
+        listaPropuestas.add(creado);
+        solicitud.setPropuestas(listaPropuestas);
+        solicitudRepository.save(solicitud);
+        log.info("<< Solicitud actualizado con ID de propuestas: {}",
+                listaPropuestas
+                        .stream()
+                        .map(Propuesta::getIdPropuesta)
+                        .toList());
     }
 
     public List<Propuesta> obtenerTodasLasPropuestasComunicacion(Long idSolicitud) {
