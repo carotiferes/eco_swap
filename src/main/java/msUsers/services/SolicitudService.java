@@ -41,8 +41,12 @@ public class SolicitudService {
     public void crearPropuestaComunicacion(RequestComunicarPropuestaSolicitudModel request, Long idSolicitud) {
         log.info(">> Service crear comunicacion de propuesta con request: {}", request.toString());
 
-        Producto producto = productoRepository.findById(request.getSolicitudProductoModel().getProductoId()).get();
+     //   Producto producto = productoRepository.findById(request.getSolicitudProductoModel().getProductoId()).get();
         Solicitud solicitud = solicitudRepository.findById(idSolicitud).get();
+        Producto producto = solicitud.getProductos().
+                stream()
+                .filter(x->x.getIdProducto()==request.getSolicitudProductoModel().getProductoId())
+                .findAny().get();
         List<CaracteristicaPropuesta> lista = request.getSolicitudProductoModel()
                 .getCaracteristicas()
                 .stream()
