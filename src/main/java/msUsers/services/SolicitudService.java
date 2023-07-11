@@ -77,6 +77,8 @@ public class SolicitudService {
         Propuesta creado = propuestasRepository.save(propuestaNueva);
         log.info("<< Propuesta creado con ID: {}", creado.getIdPropuesta());
         List<Propuesta> listaPropuestas = solicitud.getPropuestas();
+        log.info("<< Listado de propuestas originales de solciitud ID de propuestas: {}, cantidad original {}",
+                idSolicitud, listaPropuestas.size());
         listaPropuestas.add(creado);
         solicitud.setPropuestas(listaPropuestas);
         solicitudRepository.save(solicitud);
