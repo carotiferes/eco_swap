@@ -32,6 +32,7 @@ public class Producto {
     private List<Propuesta> propuestas;
 
     @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_solicitud")
     @JsonBackReference
     private Solicitud solicitud;
 

@@ -1,8 +1,10 @@
 package msUsers.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import msUsers.domain.entities.enums.EstadoPropuesta;
@@ -14,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idPropuesta")
 public class Propuesta {
 
     @Id
@@ -36,6 +39,7 @@ public class Propuesta {
     private List<CaracteristicaPropuesta> caracteristicaPropuesta;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
     private Solicitud solicitud;
 
     private String imagenes;

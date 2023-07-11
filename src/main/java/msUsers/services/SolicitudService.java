@@ -6,21 +6,15 @@ import msUsers.domain.entities.*;
 import msUsers.domain.entities.enums.EstadoPropuesta;
 import msUsers.domain.repositories.*;
 import msUsers.domain.requests.propuestas.RequestComunicarPropuestaSolicitudModel;
-import msUsers.domain.requests.propuestas.RequestMensajeRespuesta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class SolicitudService {
-
-    @Autowired
-    PropuestaSolicitudRepository propuestaSolicitudRepository;
 
     @Autowired
     SolicitudRepository solicitudRepository;
@@ -42,51 +36,53 @@ public class SolicitudService {
     @Autowired
     CaracteristicaPropuestaRepository caracteristicaPropuestaRepository;
 
-    public Long crearPropuestaComunicacion(RequestComunicarPropuestaSolicitudModel request, Long idSolicitud) {
-        log.info(">> Service crear comunicacion de propuesta con request: {}", request.toString());
+    public void crearPropuestaComunicacion(RequestComunicarPropuestaSolicitudModel request, Long idSolicitud) {
+       try {
+           log.info(">> SERVICE: Se comenzo la creacion de propuesta para la solicitud: {}", idSolicitud);
+           Solicitud solicitud = solicitudRepository.findById(idSolicitud).get();
+           Producto producto = solicitud.getProductos().
+                   stream()
+                   .filter(x -> x.getIdProducto() == request.getSolicitudProductoModel().getProductoId())
+                   .findAny().get();
+           List<CaracteristicaPropuesta> lista = request.getSolicitudProductoModel()
+                   .getCaracteristicas()
+                   .stream()
+                   .map(s -> CaracteristicaPropuesta.armarCarateristica(s, request.getIdSwapper()))
+                   .toList();
+           Swapper swapper = swappersRepository.findById(request.getIdSwapper()).get();
 
-     //   Producto producto = productoRepository.findById(request.getSolicitudProductoModel().getProductoId()).get();
-        Solicitud solicitud = solicitudRepository.findById(idSolicitud).get();
-        Producto producto = solicitud.getProductos().
-                stream()
-                .filter(x->x.getIdProducto()==request.getSolicitudProductoModel().getProductoId())
-                .findAny().get();
-        List<CaracteristicaPropuesta> lista = request.getSolicitudProductoModel()
-                .getCaracteristicas()
-                .stream()
-                .map(s-> CaracteristicaPropuesta.armarCarateristica(s, request.getIdPerfilEmisor()))
-                .toList();
-        Swapper swapper = swappersRepository.findById(request.getIdPerfilEmisor()).get();
+           List<String> nombreImagenes = new ArrayList<>();
+           for (int i = 0; i < request.getSolicitudProductoModel().getImagenes().size(); i++) {
+               nombreImagenes.add(imageService.saveImage(request.getSolicitudProductoModel().getImagenes().get(i)));
+           }
 
-        List<String> nombreImagenes = new ArrayList<>();
-        for(int i = 0; i < request.getSolicitudProductoModel().getImagenes().size(); i++){
-            nombreImagenes.add(imageService.saveImage(request.getSolicitudProductoModel().getImagenes().get(i)));
-        }
-
-        Propuesta propuestaNueva = new Propuesta();
-        propuestaNueva.setCantidadPropuesta(request.getSolicitudProductoModel().getCantidadOfrecida());
-        propuestaNueva.setDescripcion(request.getSolicitudProductoModel().getMensaje());
-        propuestaNueva.setEstadoPropuesta(EstadoPropuesta.PENDIENTE);
-        propuestaNueva.setSwapper(swapper);
-        propuestaNueva.setProducto(producto);
-        propuestaNueva.setCaracteristicaPropuesta(lista);
-        propuestaNueva.setSolicitud(solicitud);
-        propuestaNueva.setImagenes(String.join("|", nombreImagenes));
+           Propuesta propuestaNueva = new Propuesta();
+           propuestaNueva.setCantidadPropuesta(request.getSolicitudProductoModel().getCantidadOfrecida());
+           propuestaNueva.setDescripcion(request.getSolicitudProductoModel().getMensaje());
+           propuestaNueva.setEstadoPropuesta(EstadoPropuesta.PENDIENTE);
+           propuestaNueva.setSwapper(swapper);
+           propuestaNueva.setProducto(producto);
+           propuestaNueva.setCaracteristicaPropuesta(lista);
+           propuestaNueva.setSolicitud(solicitud);
+           propuestaNueva.setImagenes(String.join("|", nombreImagenes));
 
 
-        Propuesta creado = propuestasRepository.save(propuestaNueva);
-        log.info("<< Propuesta creado con ID: {}", creado.getIdPropuesta());
-        List<Propuesta> listaPropuestas = solicitud.getPropuestas();
-        listaPropuestas.add(creado);
-        solicitud.setPropuestas(listaPropuestas);
-        solicitudRepository.save(solicitud);
-        log.info("<< Solicitud actualizado con ID de propuestas: {}",
-                listaPropuestas
-                        .stream()
-                        .map(Propuesta::getIdPropuesta)
-                        .toList());
-
-        return creado.getIdPropuesta();
+           log.info("<< Propuesta creado con ID: {}", propuestaNueva.getIdPropuesta());
+           List<Propuesta> listaPropuestas = solicitud.getPropuestas();
+           log.info("<< Listado de propuestas originales de solciitud ID de propuestas: {}, cantidad original {}",
+                   idSolicitud, listaPropuestas.size());
+           listaPropuestas.add(propuestaNueva);
+           solicitud.setPropuestas(listaPropuestas);
+           var entity = solicitudRepository.save(solicitud);
+           log.info("<< Solicitud actualizado con ID de propuestas: {}",
+                   listaPropuestas
+                           .stream()
+                           .map(Propuesta::getIdPropuesta)
+                           .toList());
+       }
+       catch (Exception e) {
+           log.error(e.getMessage());
+       }
     }
 
     public List<Propuesta> obtenerTodasLasPropuestasComunicacion(Long idSolicitud) {

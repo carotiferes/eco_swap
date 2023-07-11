@@ -71,12 +71,12 @@ export class FormPropuestaComponent implements OnInit {
 		console.log(this.propuestaForm.value);
 		let caracteristicas: any[] = this.getCaracteristicasArray.value
 		console.log('carac', caracteristicas);
-		let stringCaracteristicas = '';
+		let stringCaracteristicas: any[] = [];
 		caracteristicas.forEach(item => {
-			stringCaracteristicas += item.s_descripcion + ';'
+			stringCaracteristicas.push(item.s_descripcion)
 		})
 		const objetoToSend = {
-			idPerfilEmisor: this.userData.id_perfil,
+			idSwapper: this.userData.id_perfil,
 			solicitudProductoModel: {
 				tipoProducto: "MUEBLES",
 				productoId: this.propuestaForm.controls['producto'].value,
