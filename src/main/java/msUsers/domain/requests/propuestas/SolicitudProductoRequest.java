@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Data;
+import msUsers.domain.entities.CaracteristicaPropuesta;
 import msUsers.domain.entities.enums.TipoProducto;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class SolicitudProductoRequest {
     private String mensaje;
 
     @NotNull(message = "caracteristicas debe tener un valor string")
-    private String caracteristicas;
+    private List<String> caracteristicas;
 
     private List<String> imagenes;
 

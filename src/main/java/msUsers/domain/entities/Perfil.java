@@ -23,7 +23,7 @@ public class Perfil {
     @Size(min = 6, max = 50)
     private String username;
 
-    @NotNull
+  //  @NotNull
     @OneToMany(mappedBy = "perfil", cascade = CascadeType.ALL)
     private List<Direccion> direcciones;
 
