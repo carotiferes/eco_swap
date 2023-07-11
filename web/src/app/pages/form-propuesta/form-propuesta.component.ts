@@ -36,7 +36,7 @@ export class FormPropuestaComponent implements OnInit {
 			producto: ['', Validators.required],
 			caracteristicas: this.fb.array([]),
 			file: [''],
-			file_source: [''],
+			file_source: ['', Validators.required],
 			n_cantidad: ['', Validators.required],
 			mensaje: ['']
 		})
@@ -58,7 +58,7 @@ export class FormPropuestaComponent implements OnInit {
 
 	agregarCaracteristica(caract?: number) {
 		const caracteristica = this.fb.group({
-			s_descripcion: ['', Validators.pattern(/[^;]/g)],
+			s_descripcion: ['', [Validators.pattern(/[^;]/g), Validators.required]],
 		});
 
 		let caracteristicas = this.getCaracteristicasArray;
@@ -68,9 +68,9 @@ export class FormPropuestaComponent implements OnInit {
 	confirmarPropuesta() {
 		if(this.propuestaForm.valid){
 			let caracteristicas: any[] = this.getCaracteristicasArray.value
-			let stringCaracteristicas = '';
+			let sendCaracteristicas: string[] = [];
 			caracteristicas.forEach(item => {
-				stringCaracteristicas += item.s_descripcion + ';'
+				sendCaracteristicas.push(item.s_descripcion);
 			})
 			const objetoToSend = {
 				idPerfilEmisor: this.userData.id_perfil,
@@ -79,7 +79,7 @@ export class FormPropuestaComponent implements OnInit {
 					productoId: this.propuestaForm.controls['producto'].value,
 					cantidadOfrecida: this.propuestaForm.controls['n_cantidad'].value,
 					mensaje: this.propuestaForm.controls['mensaje'].value,
-					caracteristicas: stringCaracteristicas,
+					caracteristicas: sendCaracteristicas,
 					imagenes: this.propuestaForm.controls['file_source'].value
 				}
 			}
@@ -110,9 +110,9 @@ export class FormPropuestaComponent implements OnInit {
 				reader.onload = (event: any) => {
 					this.images.push(event.target.result);
 
-					/* this.propuestaForm.patchValue({
+					this.propuestaForm.patchValue({
 						file_source: this.images
-					}); */
+					});
 				}
 
 				reader.readAsDataURL(event.target.files[i]);

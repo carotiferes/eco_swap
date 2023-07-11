@@ -27,11 +27,11 @@ export class DonacionesService {
 	}
 
 	getPropuestas(id_solicitud: any){
-		return this.backendService.get('/api/solicitud/'+id_solicitud+'/comunicarPropuesta');
+		return this.backendService.get('/api/solicitud/'+id_solicitud+'/propuestas');
 	}
 
 	crearPropuesta(id_solicitud: number, body: any){
-		return this.backendService.post('api/solicitud/'+id_solicitud+'/comunicarPropuesta', body);
+		return this.backendService.post('api/solicitud/'+id_solicitud+'/propuestas', body);
 	}
 
 	getImagen(img: string){

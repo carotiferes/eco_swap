@@ -24,8 +24,11 @@
 			<div>
 				<h2 class="card-title">{{solicitud.tituloSolicitud}}</h2>
 				<div class="productos">
+					<div>
+						{{solicitud.descripcion}}
+					</div>
 					<div *ngFor="let producto of solicitud.productos" class="producto">
-						{{producto.descripcion}}
+						{{producto.descripcion}} ({{producto.cantidadRecibida}}/ {{producto.cantidadSolicitada}})
 						<p><ngb-progressbar color="primary" [showValue]="true"
 								[value]="producto.cantidadRecibida*100/producto.cantidadSolicitada"
 								[striped]="true" [max]="producto.cantidadSolicitada"></ngb-progressbar></p>

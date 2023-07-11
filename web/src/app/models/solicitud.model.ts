@@ -3,6 +3,7 @@ import { ProductoModel } from "./producto.model";
 export interface SolicitudModel {
 	idSolicitud: number,
 	tituloSolicitud: string,
+	descripcion: string,
 	cantidadDisponible: number,
 	idFundacion: number,
 	fundacion: string,

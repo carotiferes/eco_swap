@@ -8,33 +8,53 @@ export class AuthService {
 
 	isUserLoggedIn: boolean;
 
+	possibleUsers = ['mfernandez', 'sgomez', 'tzedaka', 'cruzroja']
+
 	constructor(private router: Router) {
 		if(this.getUserLogin()) this.isUserLoggedIn = true;
 		else this.isUserLoggedIn = false;
 	}
 
-	login(username: string, password: string) {
+	login(username: string, password?: string) {
 		console.log(username, password);
 		// TODO: CHANGE FROM HARDCODED DATA TO CALL BACKEND (access token)
 		let userData: any;
-		if(username == 'swapper'){
+		if(username == 'mfernandez'){
 			userData = {
 				username,
 				id_perfil: 1,
 				id_swapper: 1,
 				isSwapper: true
 			}
+		} else if(username == 'sgomez'){
+			userData = {
+				username,
+				id_perfil: 4,
+				id_swapper: 2,
+				isSwapper: true
+			}
+		} else if(username == 'tzedaka'){
+			userData = {
+				username,
+				id_perfil: 2,
+				id_fundacion: 1,
+				isSwapper: false
+			}
 		} else {
 			userData = {
 				username,
-				id_perfil: 1,
-				id_fundacion: 1,
+				id_perfil: 3,
+				id_fundacion: 2,
 				isSwapper: false
 			}
 		}
 		this.setLocalStorage('userData', JSON.stringify(userData));
 		this.isUserLoggedIn = true;
 		this.setUserLoggedIn()
+	}
+
+	get getPossibleUsers(){
+		return this.possibleUsers
 	}
 
 	setLocalStorage(key: string, data: string) {
