@@ -19,7 +19,7 @@ export class AuthService {
 		console.log(username, password);
 		// TODO: CHANGE FROM HARDCODED DATA TO CALL BACKEND (access token)
 		let userData: any;
-		if(username == 'mfernandez'){
+		if(username == 'mromero'){
 			userData = {
 				username,
 				id_perfil: 1,

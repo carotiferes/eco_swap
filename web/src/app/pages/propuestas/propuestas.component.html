@@ -16,16 +16,16 @@
 		<mat-card-content class="propuesta-card-content">
 			<div>
 				<h2 class="card-title">{{propuesta.descripcion}}</h2>
-				<p>Cantidad: {{propuesta.cantidad_propuesta}}</p>
-				<p [class.propuesta-aceptada]="propuesta.estado == 'ACEPTADA'"
-				[class.propuesta-rechazada]="propuesta.estado == 'RECHAZADA'">Estado: {{propuesta.estado}}</p>
+				<p>Cantidad: {{propuesta.cantidadPropuesta}}</p>
+				<p [class.propuesta-aceptada]="propuesta.estadoPropuesta == 'ACEPTADA'"
+				[class.propuesta-rechazada]="propuesta.estadoPropuesta == 'RECHAZADA'">Estado: {{propuesta.estadoPropuesta}}</p>
 			</div>
 			<div class="imagenes">
 				<img [src]="img" *ngFor="let img of propuesta.imagenes" (click)="zoomImage(img)"/>
 			</div>
 			<div class="propuesta-status">
-				Desactivar<mat-slide-toggle [checked]="propuesta.estado != 'CANCELADA'"
-				[disabled]="propuesta.estado == 'ACEPTADA' || propuesta.estado == 'EN_ESPERA'" 
+				Desactivar<mat-slide-toggle [checked]="propuesta.estadoPropuesta != 'CANCELADA'"
+				[disabled]="propuesta.estadoPropuesta == 'ACEPTADA' || propuesta.estadoPropuesta == 'EN_ESPERA'" 
 				(change)="changeEstadoPropuesta(propuesta, $event)">Activar</mat-slide-toggle>
 			</div>
 		</mat-card-content>

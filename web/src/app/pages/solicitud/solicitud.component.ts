@@ -51,6 +51,15 @@ export class SolicitudComponent {
 					this.propuestas.push(...prod.propuestas)
 				}
 			}
+			
+			if(this.userData.isSwapper){
+				this.propuestas = this.propuestas.filter(item => item.swapper.idSwapper == this.userData.id_swapper)
+			}
+
+			this.propuestas.forEach(propuesta => {
+				propuesta.imagenes = propuesta.imagenes.split('|')
+			})
+			
 			this.getImagen()
 			this.loading = false;
 		})
@@ -70,8 +79,8 @@ export class SolicitudComponent {
 	changeEstadoPropuesta(propuesta: PropuestaModel, status: string){
 		this.propuestas.map(item => {
 			if(item == propuesta) {
-				if(item.estado != status) item.estado = status;
-				else item.estado = 'NUEVA'
+				if(item.estadoPropuesta != status) item.estadoPropuesta = status;
+				else item.estadoPropuesta = 'NUEVA'
 			}
 		})
 		//TODO: CHANGE STATUS IN BACKEND
@@ -79,7 +88,7 @@ export class SolicitudComponent {
 
 	zoomImage(img: string){
 		Swal.fire({
-			html: `<img src="${img}" style="width: 100%"/>`,
+			html: `<img src="${this.getImage(img)}" style="width: 100%"/>`,
 			showConfirmButton: false,
 			showCloseButton: true
 		})
@@ -91,13 +100,10 @@ export class SolicitudComponent {
 
 	showDireccion(perfil: any){
 		console.log( perfil.direcciones);
-		let stringDir: string = 'Salguero 1876'
+		let stringDir: string = ''
 		for (const dir of perfil.direcciones) {
-			
 			if(dir.direccion) {
-				console.log(dir);
-				if(stringDir == 'Salguero 1876') stringDir = '';
-				stringDir += dir.direccion
+				stringDir += (dir.direccion + ' '+ dir.altura)
 			}
 		}
 		console.log(stringDir);
@@ -112,6 +118,14 @@ export class SolicitudComponent {
 			//iconHtml: `<span class="material-icons-outlined"> place </span>`
 			icon: 'info'
 		})
+	}
+
+	getImage(image: any ){
+		return this.donacionesService.getImagen(image)
+	}
+
+	isArray(item:any){
+		return item.constructor === Array;
 	}
 
 }

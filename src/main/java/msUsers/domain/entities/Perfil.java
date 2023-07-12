@@ -1,5 +1,6 @@
 package msUsers.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -25,6 +26,7 @@ public class Perfil {
 
   //  @NotNull
     @OneToMany(mappedBy = "perfil", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Direccion> direcciones;
 
     @NotNull

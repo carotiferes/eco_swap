@@ -12,7 +12,7 @@ import Swal from 'sweetalert2';
 })
 export class PropuestasComponent {
 
-	propuestas: PropuestaModel[] = [{
+	propuestas: PropuestaModel[] = [/* {
 		id_propuesta: 1,
 		id_producto: 1,
 		id_swapper: 1,
@@ -42,7 +42,7 @@ export class PropuestasComponent {
 			s_apellido: 'Test'
 		},
 		imagenes: ['']
-	}];
+	} */];
 
 	constructor(public dialog: MatDialog, private donacionesService: DonacionesService){
 		// TODO: GET PROPUESTAS FROM BACK

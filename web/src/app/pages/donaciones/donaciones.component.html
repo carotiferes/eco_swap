@@ -1,8 +1,8 @@
-<app-header title="Donaciones"></app-header>
+<app-header [title]="idFundacion ? 'Mis solicitudes' : 'Donaciones'"></app-header>
 
 <div id="main-donaciones">
 	<app-spinner [loading]="loading"></app-spinner>
-	<div class="row">
+	<div class="row" *ngIf="!loading">
 		<div *ngIf="showSolicitudes.length==0" style="text-align: center;">No hay solicitudes para mostrar</div>
 		<div><!-- class="col-lg-6" -->
 			<div class="card-deck">
