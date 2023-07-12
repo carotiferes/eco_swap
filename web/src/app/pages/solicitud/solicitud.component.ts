@@ -89,4 +89,29 @@ export class SolicitudComponent {
 		if(this.solicitud) this.solicitud.imagen = this.donacionesService.getImagen(this.solicitud.imagen)
 	}
 
+	showDireccion(perfil: any){
+		console.log( perfil.direcciones);
+		let stringDir: string = 'Salguero 1876'
+		for (const dir of perfil.direcciones) {
+			
+			if(dir.direccion) {
+				console.log(dir);
+				if(stringDir == 'Salguero 1876') stringDir = '';
+				stringDir += dir.direccion
+			}
+		}
+		console.log(stringDir);
+
+		const dirArray = stringDir.split(' ')
+		Swal.fire({
+			title: 'Dirección de la fundación',
+			text: stringDir + ' https://www.google.com/maps/search/?api=1&query='+dirArray[0]+'+'+dirArray[1],
+			html: `
+			<p style="font-weight: 500;">${stringDir}</p>
+			<a href="https://www.google.com/maps/search/?api=1&query=${dirArray[0]}+${dirArray[1]}" target="_blank">Ver en Google Maps</a>`,
+			//iconHtml: `<span class="material-icons-outlined"> place </span>`
+			icon: 'info'
+		})
+	}
+
 }

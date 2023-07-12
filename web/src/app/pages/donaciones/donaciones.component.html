@@ -1,4 +1,4 @@
-<app-header></app-header>
+<app-header title="Donaciones"></app-header>
 
 <div id="main-donaciones">
 	<app-spinner [loading]="loading"></app-spinner>
@@ -6,7 +6,7 @@
 		<div><!-- class="col-lg-6" -->
 			<div class="card-deck">
 				<div class="card row" *ngFor="let solicitud of showSolicitudes" (click)="goToSolicitud(solicitud)">
-					<div class="col-sm-4">
+					<div class="col-sm-4" style="display: flex; justify-content: center;">
 						<img class="card-img" [src]="solicitud.imagen ? solicitud.imagen : 'assets/fundacion.png'">
 					</div>
 					<div class="card-body col-sm-6">

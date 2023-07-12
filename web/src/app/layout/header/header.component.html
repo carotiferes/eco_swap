@@ -25,7 +25,7 @@
 					(tab.path != '/registro' && isUserLoggedIn || tab.path != '/perfil' && !isUserLoggedIn)"
 				><b>{{tab.title}}</b></a>
 			</li> -->
-			<li class="nav-item"><a class="nav-link nav-white px-2" *ngIf="isUserLoggedIn && !userData.isSwapper" [href]="'/donaciones/'+ userData.id_perfil">
+			<li class="nav-item"><a class="nav-link nav-white px-2" *ngIf="isUserLoggedIn && !userData.isSwapper" [href]="'/donaciones/'+ userData.id_fundacion">
 				<b>Mis solicitudes</b>
 				<!--TODO: <b>Cerrar Sesión</b> -->
 			</a></li>
@@ -36,3 +36,4 @@
 		</ul>
 	</div>
 </nav>
+<h3 style="margin: 20px; font-weight: bold;">{{title}}</h3>

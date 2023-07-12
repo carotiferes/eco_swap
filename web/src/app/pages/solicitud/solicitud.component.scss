@@ -22,6 +22,16 @@
 		.header-info {
 			display: flex;
 			align-items: center;
+
+			.address {
+				color: var(--dark-grey);
+				margin-left: 10px;
+
+				&:hover {
+					color: var(--grey-text);
+					cursor: pointer;
+				}
+			}
 		}
 	}
 
@@ -34,6 +44,12 @@
 			max-width: 40%;
 			margin: auto;
 			border-radius: 10px;
+		}
+
+		.descripcion {
+			font-weight: 500;
+			font-size: 16px;
+			margin-bottom: 15px;
 		}
 	}
 

@@ -57,6 +57,7 @@ export class FormSolicitudComponent {
 			s_descripcion: [''],
 			n_cantidad_solicitada: [''],
 			tipo_producto: [''],
+			estado: ['-']
 		});
 
 		let productos = this.getProductosArray;
@@ -78,6 +79,7 @@ export class FormSolicitudComponent {
 				tipoProducto: producto.tipo_producto,
 				cantidadRequerida: producto.n_cantidad_solicitada,
 				descripcion: producto.s_descripcion,
+				estado: producto.estado
 			})
 		}
 		console.log('prdos', productos);

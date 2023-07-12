@@ -43,6 +43,9 @@
 									Campo obligatorio
 								</mat-error> -->
 							</mat-form-field>
+							<mat-form-field [hidden]="true">
+								<input matInput formControlName="estado" type="text" [hidden]="true">
+							</mat-form-field>
 							<!-- <mat-form-field>
 								<mat-label>Estado</mat-label>
 								<mat-select formControlName="estado_producto">

@@ -67,7 +67,7 @@ export class FormPropuestaComponent implements OnInit {
 
 	confirmarPropuesta() {
 		if(this.propuestaForm.valid){
-			let caracteristicas: any[] = this.getCaracteristicasArray.value
+			let caracteristicas: any[] = this.getCaracteristicasArray.value || [];
 			let sendCaracteristicas: string[] = [];
 			caracteristicas.forEach(item => {
 				sendCaracteristicas.push(item.s_descripcion);

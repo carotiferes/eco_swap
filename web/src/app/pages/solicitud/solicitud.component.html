@@ -8,7 +8,10 @@
 				<div class="header-info">
 					<div mat-card-avatar class="example-header-image"></div>
 					<div>
-						<mat-card-title>{{fundacion.nombre}}</mat-card-title>
+						<mat-card-title style="display: flex; align-items: center;">
+							{{fundacion.nombre}}
+							<mat-icon class="address" (click)="showDireccion(fundacion.perfil)">place</mat-icon>
+						</mat-card-title>
 						<mat-card-subtitle>
 							<mat-icon *ngFor="let i of [].constructor(perfil.puntaje)" color="primary">star</mat-icon>
 							<mat-icon *ngFor="let i of [].constructor(5-perfil.puntaje)" class="empty-star">star</mat-icon>
@@ -22,11 +25,11 @@
 			<img mat-card-image [src]="solicitud.imagen ? solicitud.imagen : 'assets/fundacion.png'"
 				class="solicitud-img">
 			<div>
-				<h2 class="card-title">{{solicitud.tituloSolicitud}}</h2>
+				<h2 class="card-title">{{solicitud.titulo}}</h2>
+				<div class="descripcion">
+					{{solicitud.descripcion}}
+				</div>
 				<div class="productos">
-					<div>
-						{{solicitud.descripcion}}
-					</div>
 					<div *ngFor="let producto of solicitud.productos" class="producto">
 						{{producto.descripcion}} ({{producto.cantidadRecibida}}/ {{producto.cantidadSolicitada}})
 						<p><ngb-progressbar color="primary" [showValue]="true"
