@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import msUsers.exceptions.responses.MethodArgumentNotValidExceptionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -20,6 +21,12 @@ public class GlobalExceptionHandler{
         log.error("500 INTERNAL SERVER ERROR: {}", exception.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("500 INTERNAL SERVER ERROR: " + exception.getMessage());
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> handleHttpMessageNotReadable(HttpMessageNotReadableException exception) {
+        log.error("ERROR - Problemas al recibir la request: {}", exception.getMessage());
+        return ResponseEntity.badRequest().body(exception.getLocalizedMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
