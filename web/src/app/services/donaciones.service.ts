@@ -14,7 +14,7 @@ export class DonacionesService {
 		console.log(body);
 		const test = this.backendService.post('api/solicitud', body);
 		console.log('aaaa', test);
-		
+
 		return test
 	}
 
@@ -39,6 +39,6 @@ export class DonacionesService {
 	}
 
 	cambiarEstadoPropuesta(id_solicitud: number, id_propuesta: number, body: any){
-		return this.backendService.put('api/solicitud/'+id_solicitud+'/comunicarPropuesta/'+id_propuesta, body);
+		return this.backendService.put('api/solicitud/'+id_solicitud+'/propuestas/'+id_propuesta, body);
 	}
 }

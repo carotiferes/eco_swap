@@ -35,6 +35,7 @@ public class ImageController {
             } else if (extension.equalsIgnoreCase("bmp")) {
                 mediaType = MediaType.parseMediaType("image/bmp");
             };
+            log.info(">> Se retorna la imagen: {}", img);
             return ResponseEntity.ok().contentType(mediaType).body(imagenResource);
 
         } else {

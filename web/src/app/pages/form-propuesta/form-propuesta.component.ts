@@ -73,7 +73,7 @@ export class FormPropuestaComponent implements OnInit {
 				sendCaracteristicas.push(item.s_descripcion);
 			})
 			const objetoToSend = {
-				idPerfilEmisor: this.userData.id_perfil,
+				idSwapper: this.userData.id_perfil,
 				solicitudProductoModel: {
 					tipoProducto: "MUEBLES",
 					productoId: this.propuestaForm.controls['producto'].value,

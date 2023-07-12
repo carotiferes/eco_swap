@@ -110,14 +110,14 @@ public class SolicitudController {
     @Transactional
     public ResponseEntity<ResponsePostEntityCreation> crearComunicacionDePropuesta(
             @PathVariable(required = true) Long idSolicitud,
-            @Valid @RequestBody RequestComunicarPropuestaSolicitudModel request) {
+            @Valid @RequestBody RequestComunicarPropuestaSolicitudModel request) throws Exception {
         log.info(">> Request para solicitud ID {} comunicar propuesta: {}", idSolicitud, request.toString());
-        Long idCreacion = solicitudService.crearPropuestaComunicacion(request, idSolicitud);
+        solicitudService.crearPropuestaComunicacion(request, idSolicitud);
         ResponsePostEntityCreation response = new ResponsePostEntityCreation();
-        response.setId(idCreacion);
+        response.setId(idSolicitud);
         response.setDescripcion("Comunicación creada.");
         response.setStatus(HttpStatus.OK.name());
-        log.info("<< Comunicacion creada");
+        log.info("<< Comunicacion creada en la solicitud: {}", idSolicitud);
         return ResponseEntity.ok(response);
     }
 

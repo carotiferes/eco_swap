@@ -1,6 +1,7 @@
 package msUsers.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -32,7 +33,6 @@ public class Solicitud implements Serializable {
     @Column(columnDefinition = "DATE")
     private LocalDate fechaSolicitud;
 
-    // ToDo: Chequear que en el DER figura en vez de boolean, como código. ¿Por qué?
     private boolean activa;
 
  //   @NotNull
@@ -44,11 +44,12 @@ public class Solicitud implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL)
     private Fundacion fundacion;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_solicitud")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "solicitud")
+    @JsonManagedReference
     private List<Producto> productos;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "solicitud")
+    @JsonManagedReference
     private List<Propuesta> propuestas;
 
 }

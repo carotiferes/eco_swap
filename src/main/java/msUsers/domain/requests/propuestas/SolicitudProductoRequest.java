@@ -1,17 +1,17 @@
 package msUsers.domain.requests.propuestas;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Data;
-import msUsers.domain.entities.CaracteristicaPropuesta;
+import lombok.ToString;
 import msUsers.domain.entities.enums.TipoProducto;
 
 import java.util.List;
 
 @Builder
 @Data
+@ToString(exclude = "imagenes")
 public class SolicitudProductoRequest {
 
     @NotNull(message = "TipoProducto debe tener un valor valido")
