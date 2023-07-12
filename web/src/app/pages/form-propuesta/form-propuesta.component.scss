@@ -15,10 +15,12 @@
 			&.form-imgs {
 				display: grid;
 				grid-template-columns: 1fr 1fr 1fr;
+				padding: 0;
 
 				.show-image {
 					width: fit-content;
 					cursor: pointer;
+					padding-top: 5px;
 				
 					.image {
 						position:relative;
@@ -49,6 +51,23 @@
 				}
 			}
 
+			.caract-label {
+				font-weight: 500;
+				font-size: large;
+				display: flex;
+				align-items: center;
+
+				mat-icon {
+					color: var(--grey-text);
+					margin: 5px;
+
+					&:hover {
+						cursor: pointer;
+						color: var(--dark-grey );
+					}
+				}
+			}
+
 			.caracteristica {
 				display: flex;
 			}
@@ -68,6 +87,10 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
+
+			mat-form-field {
+				width: 50%;
+			}
 		}
 
 		.img-producto {
@@ -88,6 +111,12 @@
 @media (min-width: 0px) and (max-width: 576px) {
 	.form {
 		grid-template-columns: 1fr !important;
+	}
+	.mensaje-field {
+		grid-column: 1 !important;
+		mat-form-field {
+			width: 100% !important;
+		}
 	}
 }
 

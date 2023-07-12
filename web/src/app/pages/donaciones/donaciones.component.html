@@ -3,6 +3,7 @@
 <div id="main-donaciones">
 	<app-spinner [loading]="loading"></app-spinner>
 	<div class="row">
+		<div *ngIf="showSolicitudes.length==0" style="text-align: center;">No hay solicitudes para mostrar</div>
 		<div><!-- class="col-lg-6" -->
 			<div class="card-deck">
 				<div class="card row" *ngFor="let solicitud of showSolicitudes" (click)="goToSolicitud(solicitud)">
