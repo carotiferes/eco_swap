@@ -37,7 +37,6 @@ public class SolicitudService {
     CaracteristicaPropuestaRepository caracteristicaPropuestaRepository;
 
     public void crearPropuestaComunicacion(RequestComunicarPropuestaSolicitudModel request, Long idSolicitud) {
-       try {
            log.info(">> SERVICE: Se comenzo la creacion de propuesta para la solicitud: {}", idSolicitud);
            Solicitud solicitud = solicitudRepository.findById(idSolicitud).get();
            Producto producto = solicitud.getProductos().
@@ -79,10 +78,6 @@ public class SolicitudService {
                            .stream()
                            .map(Propuesta::getIdPropuesta)
                            .toList());
-       }
-       catch (Exception e) {
-           log.error(e.getMessage());
-       }
     }
 
     public List<Propuesta> obtenerTodasLasPropuestasComunicacion(Long idSolicitud) {
