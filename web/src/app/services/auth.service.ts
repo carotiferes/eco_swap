@@ -8,7 +8,7 @@ export class AuthService {
 
 	isUserLoggedIn: boolean;
 
-	possibleUsers = ['mfernandez', 'sgomez', 'tzedaka', 'cruzroja']
+	possibleUsers = ['mromero', 'sgomez', 'tzedaka', 'cruzroja']
 
 	constructor(private router: Router) {
 		if(this.getUserLogin()) this.isUserLoggedIn = true;
