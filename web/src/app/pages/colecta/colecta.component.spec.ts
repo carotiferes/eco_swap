@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SolicitudComponent } from './solicitud.component';
+import { ColectaComponent } from './colecta.component';
 
-describe('SolicitudComponent', () => {
-  let component: SolicitudComponent;
-  let fixture: ComponentFixture<SolicitudComponent>;
+describe('ColectaComponent', () => {
+  let component: ColectaComponent;
+  let fixture: ComponentFixture<ColectaComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [SolicitudComponent]
+      declarations: [ColectaComponent]
     });
-    fixture = TestBed.createComponent(SolicitudComponent);
+    fixture = TestBed.createComponent(ColectaComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

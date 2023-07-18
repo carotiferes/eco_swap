@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-sm d-flex justify-content-between">
-	<a class="navbar-brand" href="donaciones">
-		<div class="div-logo" (click)="goTo('donaciones')">
+	<a class="navbar-brand" href="colectas">
+		<div class="div-logo" (click)="goTo('colectas')">
 			<img style="cursor: pointer; width: 100px;" alt="Logo Eco Swap - Ir a la home" id="logoCenter" class="logo"
 				src="assets/logo_white_small.png" />
 		</div>
@@ -19,15 +19,21 @@
 	</div>
 	<div class="collapse navbar-collapse justify-content-end" id="navbarToggler">
 		<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-			<li class="nav-item" *ngFor="let tab of personalTabs">
-				<a class="nav-link nav-white px-2" [href]="userData && tab.path != '/mis-propuestas' ? tab.path + '/' + userData.id_perfil : tab.path"
+			<!-- <li class="nav-item" *ngFor="let tab of personalTabs">
+				<a class="nav-link nav-white px-2" [href]="userData && tab.path != '/mis-donaciones' ? tab.path + '/' + userData.id_perfil : tab.path"
 				*ngIf="(tab.needsLogin == 'none' || profileType == tab.needsLogin) && 
 					(tab.path != '/registro' && isUserLoggedIn || tab.path != '/perfil' && !isUserLoggedIn)"
 				><b>{{tab.title}}</b></a>
-			</li>
+			</li> -->
+			<li class="nav-item"><a class="nav-link nav-white px-2" *ngIf="isUserLoggedIn && !userData.isSwapper" [href]="'/colectas/'+ userData.id_fundacion">
+				<b>Mis colectas</b>
+				<!--TODO: <b>Cerrar Sesión</b> -->
+			</a></li>
 			<li class="nav-item"><a class="nav-link nav-white px-2" *ngIf="isUserLoggedIn" (click)="logOut()">
-				<b>Cerrar Sesión</b>
+				<b>Cambiar de perfil</b>
+				<!--TODO: <b>Cerrar Sesión</b> -->
 			</a></li>
 		</ul>
 	</div>
 </nav>
+<h3 style="margin: 20px; font-weight: bold;">{{title}}</h3>

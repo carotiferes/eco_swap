@@ -29,6 +29,7 @@ public class SolicitudProductoRequest {
     @NotNull(message = "caracteristicas debe tener un valor string")
     private List<String> caracteristicas;
 
+    @NotNull(message = "Las propuestas deben contener imagenes")
     private List<String> imagenes;
 
 }

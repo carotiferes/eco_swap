@@ -9,8 +9,8 @@
 	"type": "pages",
 	"needsLogin": "swapper"
 }, {
-	"title": "Donaciones",
-	"path": "/donaciones",
+	"title": "Colectas",
+	"path": "/colectas",
 	"type": "pages",
 	"needsLogin": "none"
 }, {
@@ -29,8 +29,8 @@
 	"type": "personal",
 	"needsLogin": "swapper"
 }, {
-	"title": "Mis Solicitudes",
-	"path": "/donaciones",
+	"title": "Mis Colectas",
+	"path": "/colectas",
 	"type": "personal",
 	"needsLogin": "fundacion"
 }]

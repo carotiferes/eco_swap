@@ -1,23 +1,23 @@
 <app-header></app-header>
 
-<div id="main-propuesta">
+<div id="main-donacion">
 	<app-spinner [loading]="loading"></app-spinner>
 	<mat-card id="main-card" *ngIf="!loading">
 		<mat-card-header style="margin-bottom: 20px;">
-			<mat-card-title>Completá los datos de tu propuesta!</mat-card-title>
+			<mat-card-title>Completá los datos de tu donación!</mat-card-title>
 			<!-- <mat-card-subtitle>Completá tus datos para crear tu cuenta</mat-card-subtitle> -->
 		</mat-card-header>
 		<mat-card-content>
-			<form [formGroup]="propuestaForm" class="form" [ngClass]="screenWidth > 576 ? 'big-form':'small-form'">
+			<form [formGroup]="donacionForm" class="form" [ngClass]="screenWidth > 576 ? 'big-form':'small-form'">
 				<div class="form-input form-col">
 					<mat-form-field>
 						<mat-label>Producto</mat-label>
 						<mat-select formControlName="producto">
-							<mat-option *ngFor="let prod of solicitud.productos" [value]="prod.idProducto">
+							<mat-option *ngFor="let prod of colecta.productos" [value]="prod.idProducto">
 								{{prod.descripcion}}
 							</mat-option>
 						</mat-select>
-						<mat-error *ngIf="propuestaForm.get('producto')!.hasError('required')">
+						<mat-error *ngIf="donacionForm.get('producto')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
 					</mat-form-field>
@@ -27,7 +27,7 @@
 					<mat-form-field>
 						<mat-label>Cantidad</mat-label>
 						<input matInput formControlName="n_cantidad" type="number">
-						<mat-error *ngIf="propuestaForm.get('n_cantidad')!.hasError('required')">
+						<mat-error *ngIf="donacionForm.get('n_cantidad')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
 					</mat-form-field>
@@ -35,7 +35,13 @@
 
 				<section formArrayName="caracteristicas" class="form-col">
 					<div>
-						<label>Caracteristicas</label>
+						<label class="caract-label">
+							Caracteristicas
+							<mat-icon class="material-icons-outlined"
+							matTooltip="Por favor incluir medidas, estado del producto,  material del producto y cualquier característica que identifique a tu producto">
+								info
+							</mat-icon>
+						</label>
 					</div>
 					<div>
 						<div *ngFor="let caracteristica of getCaracteristicasArray.controls; let i=index"
@@ -51,35 +57,37 @@
 								<mat-icon>delete</mat-icon>
 							</button>
 						</div>
-						<button type="button" (click)="agregarCaracteristica()" mat-button>
+						<button type="button" (click)="agregarCaracteristica()" mat-raised-button color="light" style="width: 100%;">
 							<mat-icon>add</mat-icon>
 							<label>Agregar Caracteristica</label>
 						</button>
-						
-						
 					</div>
 				</section>
 
 				<div class="form-col">
-					<label for="file">Imágenes de la donación</label>
-					<input formControlName="file" id="file" type="file" class="form-control" multiple=""
-						(change)="onFileChange($event)">
-				</div>
-
-				<div></div>
-				<div class="form-col form-imgs">
-					<div class="show-image" *ngFor='let url of images' (click)="removeImagen(url)" >
-						<div class="image" >
-							<div class="overlay">
+					<div>
+						<label style="font-weight: 500; font-size: large; margin: 7px 0;">Imágenes</label>
+					</div>
+					<button type="button" mat-raised-button color="light">
+						<mat-icon>add</mat-icon>
+						<label for="file">Agregar Imagen</label>
+					</button>
+					<input formControlName="file" id="file" type="file" class="form-control hidden" multiple=""
+						(change)="onFileChange($event)" #file>
+					<div class="form-col form-imgs">
+						<div class="show-image" *ngFor='let url of images; let i = index;' (click)="removeImagen(i)" >
+							<div class="image" >
+								<div class="overlay">
+								</div>
+								<mat-icon class="update" color="primary">delete</mat-icon>
+								<img [src]="url" class="img-producto">
 							</div>
-							<mat-icon class="update" color="primary">delete</mat-icon>
-							<img [src]="url" class="img-producto">
 						</div>
 					</div>
 				</div>
 
 				<div class="form-col mensaje-field">
-					<mat-form-field style="width: 50%;">
+					<mat-form-field>
 						<mat-label>Mensaje Adicional</mat-label>
 						<textarea matInput
 						cdkTextareaAutosize
@@ -93,7 +101,7 @@
 		</mat-card-content>
 		<mat-card-actions class="buttons">
 			<button mat-raised-button color="primary"
-				(click)="confirmarPropuesta();propuestaForm.markAllAsTouched(); propuestaForm.valid">
+				(click)="confirmarPropuesta();donacionForm.markAllAsTouched(); donacionForm.valid">
 				CONFIRMAR PROPUESTA
 			</button>
 		</mat-card-actions>

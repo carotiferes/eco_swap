@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SolicitudModel } from 'src/app/models/solicitud.model';
+import { ColectaModel } from 'src/app/models/colecta.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import Swal from 'sweetalert2';
@@ -10,13 +10,13 @@ const TIPOS = ['COLCHONES_Y_FRAZADAS','LIBROS','MUEBLES','OTROS','SALUD','TECNOL
 const ESTADOS = ['BUEN_ESTADO','ROTO_PERO_UTIL','ROTO']
 
 @Component({
-  selector: 'app-form-solicitud',
-  templateUrl: './form-solicitud.component.html',
-  styleUrls: ['./form-solicitud.component.scss']
+  selector: 'app-form-colecta',
+  templateUrl: './form-colecta.component.html',
+  styleUrls: ['./form-colecta.component.scss']
 })
-export class FormSolicitudComponent {
+export class FormColectaComponent  {
 
-	solicitudForm: FormGroup;
+	colectaForm: FormGroup;
 	screenWidth: number;
 	
 	fileName: any = 'Subir Imagen';
@@ -35,7 +35,7 @@ export class FormSolicitudComponent {
 
 		let userData = auth.getUserData();
 
-		this.solicitudForm = fb.group({
+		this.colectaForm = fb.group({
 			s_titulo: ['', Validators.required],
 			s_descripcion: [''],
 			id_fundacion: [userData.id_fundacion || ''],
@@ -49,7 +49,7 @@ export class FormSolicitudComponent {
 	}
 
 	get getProductosArray() {
-		return <FormArray>this.solicitudForm.get('productos');
+		return <FormArray>this.colectaForm.get('productos');
 	}
 
 	agregarProducto(caract?: number) {
@@ -57,6 +57,7 @@ export class FormSolicitudComponent {
 			s_descripcion: [''],
 			n_cantidad_solicitada: [''],
 			tipo_producto: [''],
+			estado: ['-']
 		});
 
 		let productos = this.getProductosArray;
@@ -68,8 +69,8 @@ export class FormSolicitudComponent {
 		
 	}
 
-	crearSolicitud() {
-		console.log(this.solicitudForm.value);
+	crearColecta() {
+		console.log(this.colectaForm.value);
 		const productos: any[] = [];
 		for (const producto of this.getProductosArray.value) {
 			console.log('PROD', producto);
@@ -78,23 +79,24 @@ export class FormSolicitudComponent {
 				tipoProducto: producto.tipo_producto,
 				cantidadRequerida: producto.n_cantidad_solicitada,
 				descripcion: producto.s_descripcion,
+				estado: producto.estado
 			})
 		}
 		console.log('prdos', productos);
 		
-		this.donacionesService.crearSolicitud({
-			titulo: this.solicitudForm.controls['s_titulo'].value,
-			descripcion: this.solicitudForm.controls['s_descripcion'].value,
-			idFundacion: this.solicitudForm.controls['id_fundacion'].value,
+		this.donacionesService.crearColecta({
+			titulo: this.colectaForm.controls['s_titulo'].value,
+			descripcion: this.colectaForm.controls['s_descripcion'].value,
+			idFundacion: this.colectaForm.controls['id_fundacion'].value,
 			productos,
-			imagen: this.solicitudForm.controls['file_source'].value[0]
+			imagen: this.colectaForm.controls['file_source'].value[0]
 		}).subscribe((res) => {
 			//console.log(res, JSON.parse(JSON.stringify(res)).descripcion);
 			if(JSON.parse(JSON.stringify(res)).descripcion)	{
-				this.showMessage('¡Solicitud Creada!', 'La solicitud se creó exitosamente. Los Swappers te contactarán pronto!', 'success')
-				this.router.navigateByUrl('donaciones/'+ this.solicitudForm.controls['id_fundacion'].value)
+				this.showMessage('¡Colecta Creada!', 'La colecta se creó exitosamente. Los Swappers te contactarán pronto!', 'success')
+				this.router.navigateByUrl('colectas/'+ this.colectaForm.controls['id_fundacion'].value)
 			}
-			else this.showMessage('Ocurrió un error', 'No pudimos crear la solicitud. Intentá nuevamente luego.', 'error')
+			else this.showMessage('Ocurrió un error', 'No pudimos crear la colecta. Intentá nuevamente luego.', 'error')
 		})
 	}
 
@@ -112,13 +114,13 @@ export class FormSolicitudComponent {
 				reader.onload = (event: any) => {
 					this.images.push(event.target.result);
 
-					this.solicitudForm.patchValue({
+					this.colectaForm.patchValue({
 						file_source: this.images
 					});
 				}
 
 				reader.readAsDataURL(event.target.files[i]);
-				console.log(this.images, this.solicitudForm.controls['file_source']);
+				console.log(this.images, this.colectaForm.controls['file_source']);
 				
 			}
 			this.loadingImg = false;	
@@ -126,8 +128,8 @@ export class FormSolicitudComponent {
 	}
 
 	removeImagen(url: string){
-		let imgIndex = this.solicitudForm.controls['file_source'].value.findIndex((item: string) => item == url)
-		this.solicitudForm.controls['file_source'].value.splice(imgIndex, 1)
+		let imgIndex = this.colectaForm.controls['file_source'].value.findIndex((item: string) => item == url)
+		this.colectaForm.controls['file_source'].value.splice(imgIndex, 1)
 		console.log(url);
 		
 	}

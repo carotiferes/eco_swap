@@ -1,43 +1,39 @@
-#main-donaciones {
-	padding: 2%;
-	.card {
-		margin: 5px;
+.donacion-example-header-image {
+	background-image: url('../../../assets/fundacion.png');
+	background-size: cover;
+}
+.donacion-card-content {
+	display: grid;
+	grid-template-columns: 1fr 2fr 1fr;
+	gap: 1rem;
+	padding: 16px;
+
+	.donacion-aceptada {
+		font-weight: bold;
+		color: var(--primary-color);
+	}
+	.donacion-rechazada {
+		font-weight: bold;
+		color: var(--warn-color);
+	}
+
+	.imagenes {
+		img {
+			height: 65px;
+			margin: 5px;
+			&:hover {
+				cursor: pointer;
+			}
+		}
+	}
+
+	.donacion-status {
 		display: flex;
-		flex-direction: row;
 		align-items: center;
 
-		&:hover {
-			cursor: pointer;
-		}
-
-		.card-img {
-			max-width: 100%;
-		}
-
-		.productos {
-			display: flex;
-
-			.producto {
-				margin: 5px 10px;
-				min-width: 100px;
-			}
-		}
-
-		.card-fundacion {
-			text-align: center;
-			/* display: flex;
-			flex-direction: column;
-			align-items: center; */
-
-			.img-fundacion {
-				width: 30px;
-			}
+		mat-slide-toggle {
+			margin: 5px;
 		}
 	}
 
-	.floating-button-container {
-		position: fixed;
-		right: 25px;
-		bottom: 40px;
-	}
 }

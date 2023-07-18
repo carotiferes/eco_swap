@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuModel } from 'src/app/models/menu.model';
 import { AuthService } from 'src/app/services/auth.service';
@@ -10,6 +10,8 @@ const menuData = require('../../data/menu.json')
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent {
+
+	@Input() title!: string;
 
 	url: string = 'home';
 

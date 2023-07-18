@@ -1,38 +1,33 @@
 <app-header></app-header>
 
-<div id="main-donaciones">
-	<app-spinner [loading]="loading"></app-spinner>
-	<div class="row">
-		<div><!-- class="col-lg-6" -->
-			<div class="card-deck">
-				<div class="card row" *ngFor="let solicitud of showSolicitudes" (click)="goToSolicitud(solicitud)">
-					<div class="col-sm-4">
-						<img class="card-img" [src]="solicitud.imagen ? solicitud.imagen : 'assets/fundacion.png'">
-					</div>
-					<div class="card-body col-sm-6">
-						<h2 class="card-title">{{solicitud.tituloSolicitud}}</h2>
-						<div class="productos">
-							<div *ngFor="let producto of solicitud.productos" class="producto">
-								{{producto.descripcion}}
-								<p><ngb-progressbar color="primary"
-										[value]="producto.cantidadRecibida*100/producto.cantidadSolicitada"
-										[striped]="true"></ngb-progressbar></p>
-							</div>
-
-						</div>
-					</div>
-					<div class="card-fundacion col-sm-2">
-						<img class="img-fundacion" src="assets/fundacion.png">
-						<!-- TODO: CHANGE TO IMAGE DE LA FUNDACION  -->
-						<h4>{{solicitud.fundacion}}</h4>
-					</div>
-				</div>
+<div>
+	<h3 style="margin: 20px 0 0 5px;">Propuestas</h3>
+	<mat-card *ngFor="let donacion of donaciones" style="margin: 10px;">
+		<mat-card-header style="border-bottom: solid 1px var(--light-grey);">
+			<div mat-card-avatar class="donacion-example-header-image"></div>
+			datos de la fundacion
+			<!-- <mat-card-title>{{donacion.swapper.s_nombre}} {{donacion.swapper.s_apellido}}</mat-card-title>
+			<mat-card-subtitle>
+				<mat-icon *ngFor="let i of [].constructor(perfil.n_puntaje)" color="primary">star</mat-icon>
+				<mat-icon *ngFor="let i of [].constructor(5-perfil.n_puntaje)" class="empty-star">star</mat-icon>
+			</mat-card-subtitle> -->
+			<!-- <button mat-raised-button (click)="openDialog()"> VER EN EL MAPA</button> -->
+		</mat-card-header>
+		<mat-card-content class="donacion-card-content">
+			<div>
+				<h2 class="card-title">{{donacion.descripcion}}</h2>
+				<p>Cantidad: {{donacion.cantidadPropuesta}}</p>
+				<p [class.donacion-aceptada]="donacion.estadoPropuesta == 'ACEPTADA'"
+				[class.donacion-rechazada]="donacion.estadoPropuesta == 'RECHAZADA'">Estado: {{donacion.estadoPropuesta}}</p>
 			</div>
-		</div>
-	</div>
-	<div class="floating-button-container" *ngIf="!userData.isSwapper">
-		<button mat-fab color="primary" aria-label="Agregar Solicitud de donación" (click)="addSolicitud()">
-			<mat-icon>add</mat-icon>
-		</button>
-	</div>
+			<div class="imagenes">
+				<img [src]="img" *ngFor="let img of donacion.imagenes" (click)="zoomImage(img)"/>
+			</div>
+			<div class="donacion-status">
+				Desactivar<mat-slide-toggle [checked]="donacion.estadoPropuesta != 'CANCELADA'"
+				[disabled]="donacion.estadoPropuesta == 'ACEPTADA' || donacion.estadoPropuesta == 'EN_ESPERA'" 
+				(change)="changeEstadoPropuesta(donacion, $event)">Activar</mat-slide-toggle>
+			</div>
+		</mat-card-content>
+	</mat-card>
 </div>

@@ -1,4 +1,4 @@
-#main-propuesta {
+#main-donacion {
 	padding: 2%;
 
 	.form {
@@ -15,10 +15,12 @@
 			&.form-imgs {
 				display: grid;
 				grid-template-columns: 1fr 1fr 1fr;
+				padding: 0;
 
 				.show-image {
 					width: fit-content;
 					cursor: pointer;
+					padding-top: 5px;
 				
 					.image {
 						position:relative;
@@ -49,8 +51,34 @@
 				}
 			}
 
+			.caract-label {
+				font-weight: 500;
+				font-size: large;
+				display: flex;
+				align-items: center;
+
+				mat-icon {
+					color: var(--grey-text);
+					margin: 5px;
+
+					&:hover {
+						cursor: pointer;
+						color: var(--dark-grey );
+					}
+				}
+			}
+
 			.caracteristica {
 				display: flex;
+			}
+
+			.file-label {
+				background: var(--light-grey);
+				padding: 15px;
+				border-radius: 5px 5px 0px 0px;
+				&:hover {
+					cursor: pointer;
+				}
 			}
 		}
 
@@ -59,6 +87,10 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
+
+			mat-form-field {
+				width: 50%;
+			}
 		}
 
 		.img-producto {
@@ -80,5 +112,15 @@
 	.form {
 		grid-template-columns: 1fr !important;
 	}
+	.mensaje-field {
+		grid-column: 1 !important;
+		mat-form-field {
+			width: 100% !important;
+		}
+	}
 }
 
+
+.hidden {
+	display: none;
+}

@@ -72,6 +72,8 @@ public class SolicitudController {
         solicitud.setFundacion(fundacion);
         solicitud.setTitulo(requestSolicitud.getTitulo());
 
+        // ToDo: En el caso de que la solicitud falle por alguna razón, la imagen se sigue guardando. CORREGIR.
+
         String img = requestSolicitud.getImagen();
         solicitud.setImagen(imageService.saveImage(img));
 
@@ -110,7 +112,7 @@ public class SolicitudController {
     @Transactional
     public ResponseEntity<ResponsePostEntityCreation> crearComunicacionDePropuesta(
             @PathVariable(required = true) Long idSolicitud,
-            @Valid @RequestBody RequestComunicarPropuestaSolicitudModel request) throws Exception {
+            @Valid @RequestBody RequestComunicarPropuestaSolicitudModel request){
         log.info(">> Request para solicitud ID {} comunicar propuesta: {}", idSolicitud, request.toString());
         solicitudService.crearPropuestaComunicacion(request, idSolicitud);
         ResponsePostEntityCreation response = new ResponsePostEntityCreation();

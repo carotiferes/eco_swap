@@ -3,12 +3,14 @@ package msUsers.domain.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
 @Table(name = "Swappers")
+@Data
 public class Swapper{
 
     @Id

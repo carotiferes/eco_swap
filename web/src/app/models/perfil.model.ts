@@ -6,5 +6,6 @@ export interface PerfilModel {
 	password: string,
 	puntaje: number,
 	telefono: string,
-	opiniones: any[]
+	opiniones: any[],
+	direcciones: any[]
 }

@@ -1,5 +1,7 @@
 package msUsers.domain.requests;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -11,16 +13,17 @@ import java.util.List;
 @Data
 public class RequestSolicitud {
 
-    @NotNull(message = "La solicitud debe contener un título.")
+    @NotBlank(message = "La solicitud debe contener un título.")
     @Size(max = 50)
     private String titulo;
 
-    @NotNull(message = "La solicitud debe contener una descripción.")
+    @NotBlank(message = "La solicitud debe contener una descripción.")
     private String descripcion;
 
     private long idFundacion;
 
     @NotNull(message = "La solicitud debe tener una lista de productos.")
+    @Valid
     private List<RequestProducto> productos;
 
     private String imagen;

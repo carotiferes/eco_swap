@@ -2,16 +2,16 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
 import { TruequeComponent } from './pages/trueque/trueque.component';
-import { DonacionesComponent } from './pages/donaciones/donaciones.component';
+import { ColectasComponent } from './pages/colectas/colectas.component';
 import { RegistroComponent } from './pages/registro/registro.component';
 import { authGuard } from './core/auth.guard';
 import { PerfilComponent } from './pages/perfil/perfil.component';
-import { SolicitudComponent } from './pages/solicitud/solicitud.component';
-import { FormPropuestaComponent } from './pages/form-propuesta/form-propuesta.component';
+import { ColectaComponent } from './pages/colecta/colecta.component';
+import { FormDonacionComponent } from './pages/form-donacion/form-donacion.component';
 import { LoginComponent } from './pages/login/login.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
-import { FormSolicitudComponent } from './pages/form-solicitud/form-solicitud.component';
-import { PropuestasComponent } from './pages/propuestas/propuestas.component';
+import { FormColectaComponent } from './pages/form-colecta/form-colecta.component';
+import { DonacionesComponent } from './pages/donaciones/donaciones.component';
 
 const routes: Routes = [{
 	path: '',
@@ -23,11 +23,11 @@ const routes: Routes = [{
 	path: 'trueques',
 	component: TruequeComponent
 }, {
-	path: 'donaciones',
-	component: DonacionesComponent
+	path: 'colectas',
+	component: ColectasComponent
 }, {
-	path: 'donaciones/:id_fundacion',
-	component: DonacionesComponent
+	path: 'colectas/:id_fundacion',
+	component: ColectasComponent
 },{
 	path: 'registro',
 	component: RegistroComponent
@@ -40,20 +40,20 @@ const routes: Routes = [{
 	component: PerfilComponent,
 	canActivate: [authGuard]
 },{
-	path: 'form-solicitud',
-	component: FormSolicitudComponent,
+	path: 'form-colecta',
+	component: FormColectaComponent,
 	canActivate: [authGuard]
 },{
-	path: 'solicitud/:id_solicitud',
-	component: SolicitudComponent,
+	path: 'colecta/:id_solicitud',
+	component: ColectaComponent,
 	canActivate: [authGuard]
 },{
 	path: 'propuesta/:id_solicitud',
-	component: FormPropuestaComponent,
+	component: FormDonacionComponent,
 	canActivate: [authGuard]
 },{
-	path: 'mis-propuestas',
-	component: PropuestasComponent,
+	path: 'mis-donaciones',
+	component: DonacionesComponent,
 	canActivate: [authGuard]
 },{
 	path: '**',

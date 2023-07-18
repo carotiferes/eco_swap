@@ -1,73 +1,86 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FundacionModel } from 'src/app/models/fundacion.model';
-import { SolicitudModel } from 'src/app/models/solicitud.model';
-import { AuthService } from 'src/app/services/auth.service';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { DonacionModel } from 'src/app/models/donacion.model';
 import { DonacionesService } from 'src/app/services/donaciones.service';
-import { FundacionesService } from 'src/app/services/fundaciones.service';
+import { MapComponent } from 'src/app/shared/map/map.component';
+import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-donaciones',
-  templateUrl: './donaciones.component.html',
-  styleUrls: ['./donaciones.component.scss']
+	selector: 'app-donaciones',
+	templateUrl: './donaciones.component.html',
+	styleUrls: ['./donaciones.component.scss']
 })
-export class DonacionesComponent implements OnInit {
+export class DonacionesComponent {
 
-	solicitudes: SolicitudModel[] = [];
-	fundacion?: FundacionModel;
+	donaciones: DonacionModel[] = [/* {
+		id_propuesta: 1,
+		id_producto: 1,
+		id_swapper: 1,
+		descripcion: 'Frazadas',
+		estado: 'NUEVA',
+		cantidad_propuesta: 2,
+		swapper: {
+			id_swapper: 1,
+			id_perfil: 1,
+			f_nacimiento: new Date(),
+			s_nombre: 'Swapper',
+			s_apellido: 'Test'
+		},
+		imagenes: ['assets/test_prop/alim_no_perec.jpg', 'assets/test_prop/gatito1.jpeg']
+	}, {
+		id_propuesta: 1,
+		id_producto: 1,
+		id_swapper: 1,
+		descripcion: 'Frazadas',
+		estado: 'ACEPTADA',
+		cantidad_propuesta: 2,
+		swapper: {
+			id_swapper: 1,
+			id_perfil: 1,
+			f_nacimiento: new Date(),
+			s_nombre: 'Swapper',
+			s_apellido: 'Test'
+		},
+		imagenes: ['']
+	} */];
 
-	idFundacion?: string;
-	solicitudesFundacion: SolicitudModel[] = []
+	constructor(public dialog: MatDialog, private donacionesService: DonacionesService){
+		// TODO: GET PROPUESTAS FROM BACK
 
-	showSolicitudes: SolicitudModel[] = [];
-	userData: any;
+		this.donaciones.map((item:any) => {
+			item['last_status'] = item.estado
+		})
+	}
 
-	loading: boolean = true;
+	zoomImage(img: string){
+		Swal.fire({
+			html: `<img src="${img}" style="width: 100%"/>`,
+			showConfirmButton: false,
+			showCloseButton: true
+		})
+	}
 
-	constructor(private router: Router, private route: ActivatedRoute, private auth: AuthService,
-		private donacionesService: DonacionesService, private fundacionesService: FundacionesService){
-		route.paramMap.subscribe(params => {
-			this.idFundacion = params.get('id_fundacion') || undefined;
-			console.log(params, this.idFundacion);
-			if(this.idFundacion){
-				fundacionesService.getFundacion(this.idFundacion).subscribe((res:any) => {
-					this.fundacion = res
-					console.log(res);
-				})
-				console.log(this.fundacion);
+	changeEstadoPropuesta(donacion: DonacionModel, event: any){
+		console.log(donacion, event);
+		
+		this.donaciones.map((item: any) => {
+			if(item == donacion) {
+				if(event.checked) item.estado = item['last_status'];
+				else item.estado = 'CANCELADA'
 			}
 		})
-		
-		this.userData = auth.getUserData();
-	}
-	
-	ngOnInit() {
-		this.donacionesService.getSolicitudes().subscribe((res:any) => {
-			console.log(res);
-			this.solicitudes = res;
-			this.showSolicitudes = this.solicitudes;
-
-			this.showSolicitudes.map(item => {
-				item.imagen = this.donacionesService.getImagen(item.imagen)
-			})
-			if(this.idFundacion){
-				// TODO: FILTER DONACIONES
-				this.solicitudesFundacion = this.solicitudes.filter(item => item.idFundacion == Number(this.idFundacion))
-				this.showSolicitudes = this.solicitudesFundacion
-			} else {
-				this.showSolicitudes = this.solicitudes;
-			}
-			this.loading = false;
-		})
-
+		console.log(this.donaciones);
+		//this.donacionesService.cambiarEstadoPropuesta()
 	}
 
-	goToSolicitud(solicitud: SolicitudModel){
-		this.router.navigateByUrl('solicitud/'+solicitud.idSolicitud)
-	}
+	openDialog() {
+		this.dialog.open(MapComponent, {
+			maxWidth: '70vw',
+			maxHeight: '60vh',
+			height: '100%',
+			width: '100%',
+			panelClass: 'full-screen-modal'
+		  });
+	  }
 
-	addSolicitud(){
-		this.router.navigateByUrl('form-solicitud')
-		
-	}
 }

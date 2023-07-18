@@ -10,21 +10,21 @@ import { FooterComponent } from './layout/footer/footer.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './shared/material/material.module';
 import { TruequeComponent } from './pages/trueque/trueque.component';
-import { DonacionesComponent } from './pages/donaciones/donaciones.component';
+import { ColectasComponent } from './pages/colectas/colectas.component';
 import { RegistroComponent } from './pages/registro/registro.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PasswordPipe } from './pipes/password.pipe';
-import { SolicitudComponent } from './pages/solicitud/solicitud.component';
-import { FormPropuestaComponent } from './pages/form-propuesta/form-propuesta.component';
+import { ColectaComponent } from './pages/colecta/colecta.component';
+import { FormDonacionComponent } from './pages/form-donacion/form-donacion.component';
 import { UsuarioService } from './services/usuario.service';
 import { HttpBackEnd } from './services/httpBackend.service';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './pages/login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormSolicitudComponent } from './pages/form-solicitud/form-solicitud.component';
+import { FormColectaComponent } from './pages/form-colecta/form-colecta.component';
 import { HttpErrorInterceptor } from './pipes/error.interceptor';
-import { PropuestasComponent } from './pages/propuestas/propuestas.component';
+import { DonacionesComponent } from './pages/donaciones/donaciones.component';
 import { SharedModule } from './shared/shared.module';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 
@@ -36,16 +36,16 @@ import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 		NotFoundComponent,
 		FooterComponent,
 		TruequeComponent,
-		DonacionesComponent,
+		ColectasComponent,
 		RegistroComponent,
 		PerfilComponent,
 		PasswordPipe,
-		SolicitudComponent,
-		FormPropuestaComponent,
+		ColectaComponent,
+		FormDonacionComponent,
 		LoginComponent,
-		FormSolicitudComponent,
-  		PropuestasComponent,
-    SafeHtmlPipe
+		FormColectaComponent,
+  		DonacionesComponent,
+    	SafeHtmlPipe
 	],
 	imports: [
 		BrowserModule,

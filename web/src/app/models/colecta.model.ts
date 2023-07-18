@@ -1,8 +1,10 @@
 import { ProductoModel } from "./producto.model";
 
-export interface SolicitudModel {
+export interface ColectaModel {
 	idSolicitud: number,
+	titulo: string,
 	tituloSolicitud: string,
+	descripcion: string,
 	cantidadDisponible: number,
 	idFundacion: number,
 	fundacion: string,
