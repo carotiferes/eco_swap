@@ -1,0 +1,74 @@
+<app-header></app-header>
+
+<div id="main-solicitud">
+	<app-spinner [loading]="loading"></app-spinner>
+	<mat-card *ngIf="!loading && fundacion && perfil && solicitud">
+		<mat-card-header style="border-bottom: solid 1px var(--light-grey); padding-bottom: 10px;">
+			<div class="div-header">
+				<div class="header-info">
+					<div mat-card-avatar class="example-header-image"></div>
+					<div>
+						<mat-card-title>{{fundacion.nombre}}</mat-card-title>
+						<mat-card-subtitle>
+							<mat-icon *ngFor="let i of [].constructor(perfil.puntaje)" color="primary">star</mat-icon>
+							<mat-icon *ngFor="let i of [].constructor(5-perfil.puntaje)" class="empty-star">star</mat-icon>
+						</mat-card-subtitle>
+					</div>
+				</div>
+				<div>{{solicitud.fechaSolicitud | date: 'dd/MM/yyyy'}}</div>
+			</div>
+		</mat-card-header>
+		<mat-card-content class="card-content">
+			<img mat-card-image [src]="solicitud.imagen ? solicitud.imagen : 'assets/fundacion.png'"
+				class="solicitud-img">
+			<div>
+				<h2 class="card-title">{{solicitud.tituloSolicitud}}</h2>
+				<div class="productos">
+					<div *ngFor="let producto of solicitud.productos" class="producto">
+						{{producto.descripcion}}
+						<p><ngb-progressbar color="primary" [showValue]="true"
+								[value]="producto.cantidadRecibida*100/producto.cantidadSolicitada"
+								[striped]="true" [max]="producto.cantidadSolicitada"></ngb-progressbar></p>
+					</div>
+				</div>
+			</div>
+		</mat-card-content>
+		<mat-card-actions class="card-button" *ngIf="userData.isSwapper">
+			<button mat-raised-button color="primary" (click)="donar()">QUIERO DONAR</button>
+		</mat-card-actions>
+	</mat-card>
+
+	<div *ngIf="perfil && !perfil.swapper && fundacion && fundacion.idFundacion == userData.id_fundacion">
+		<!-- TODO: CHECK THAT USER ID IS THE SAME AS THE ONE THAT MADE THE SOLICITUD -->
+		<h3 style="margin: 20px 0 0 5px; font-weight: bold;">Propuestas</h3>
+		<div *ngIf="propuestas.length == 0" style="text-align: center;">Esta solicitud no tiene propuestas aún!</div>
+		<mat-card *ngFor="let propuesta of propuestas" style="margin: 10px;">
+			<mat-card-header style="border-bottom: solid 1px var(--light-grey);">
+				<div mat-card-avatar class="propuesta-example-header-image"></div>
+				<mat-card-title>{{propuesta.swapper.s_nombre}} {{propuesta.swapper.s_apellido}}</mat-card-title>
+				<mat-card-subtitle>
+					<mat-icon *ngFor="let i of [].constructor(perfil.puntaje)" color="primary">star</mat-icon>
+					<mat-icon *ngFor="let i of [].constructor(5-perfil.puntaje)" class="empty-star">star</mat-icon>
+				</mat-card-subtitle>
+			</mat-card-header>
+			<mat-card-content class="propuesta-card-content">
+				<div>
+					<h2 class="card-title">{{propuesta.descripcion}}</h2>
+					<p>Cantidad: {{propuesta.cantidad_propuesta}}</p>
+					<p>Estado: {{propuesta.estado}}</p>
+				</div>
+				<div class="imagenes">
+					<img [src]="img" *ngFor="let img of propuesta.imagenes" (click)="zoomImage(img)" />
+				</div>
+				<div class="propuesta-status">
+					<mat-slide-toggle [checked]="propuesta.estado =='APROBADA'"
+						(toggleChange)="changeEstadoPropuesta(propuesta, 'APROBADA')"
+						[disabled]="propuesta.estado != 'NUEVA' && propuesta.estado != 'APROBADA'">Aprobar</mat-slide-toggle>
+					<mat-slide-toggle [checked]="propuesta.estado =='RECHAZADA'" color="warn"
+						(toggleChange)="changeEstadoPropuesta(propuesta, 'RECHAZADA')"
+						[disabled]="propuesta.estado != 'NUEVA' && propuesta.estado != 'RECHAZADA'">Rechazar</mat-slide-toggle>
+				</div>
+			</mat-card-content>
+		</mat-card>
+	</div>
+</div>

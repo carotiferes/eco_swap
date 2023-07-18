@@ -1,0 +1,46 @@
+package msUsers.domain.entities;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import msUsers.domain.entities.enums.EstadoPropuesta;
+
+import java.util.List;
+
+@Entity
+@Table(name = "Propuestas")
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idPropuesta")
+public class Propuesta {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long idPropuesta;
+
+    private String descripcion;
+    private int cantidadPropuesta;
+
+    @Enumerated(value = EnumType.STRING)
+    private EstadoPropuesta estadoPropuesta;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Swapper swapper;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Producto producto;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<CaracteristicaPropuesta> caracteristicaPropuesta;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
+    private Solicitud solicitud;
+
+    private String imagenes;
+}

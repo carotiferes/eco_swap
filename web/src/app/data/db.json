@@ -1,0 +1,100 @@
+{
+	"perfiles": [
+		{
+			"id_perfil": 1,
+			"s_usuario": "ctiferes",
+			"s_contrasena": "1234",
+			"s_telefono": 1123456789,
+			"s_email": "ctiferes@frba.utn.edu.ar",
+			"s_direccion": "Maure 1234",
+			"n_puntaje": 4
+		}, {
+			"id_perfil": 2,
+			"s_usuario": "alevinas",
+			"s_contrasena": "1234",
+			"s_telefono": 1123456789,
+			"s_email": "alevinas@frba.utn.edu.ar",
+			"s_direccion": "Maure 1234",
+			"n_puntaje": 3
+		}, {
+			"id_perfil": 3,
+			"s_usuario": "sil1234",
+			"s_contrasena": "1234",
+			"s_telefono": 1123456789,
+			"s_email": "sbigatti@frba.utn.edu.ar",
+			"s_direccion": "Maure 1234",
+			"n_puntaje": 3
+		}
+	],
+	"swappers": [
+		{
+			"id_swapper": 1,
+			"id_perfil": 1,
+			"s_nombre": "Caro",
+			"s_apellido": "Tiferes",
+			"f_nacimiento": "1998-12-09"
+		}
+	],
+	"fundaciones": [
+		{
+			"id_fundacion": 1,
+			"id_perfil": 2,
+			"s_nombre": "Fundación Ale"
+		},
+		{
+			"id_fundacion": 4,
+			"id_perfil": 3,
+			"s_nombre": "Fundación Sil"
+		}
+	],
+	"solicitudes": [
+		{
+			"id_solicitud": 1,
+			"id_fundacion": 1,
+			"s_titulo": "Ropa de abrigo",
+			"s_descripcion": "Colecta de ropa de abrigo para el invierno",
+			"f_solicitud": "2023-06-20",
+			"c_activa": true,
+			"s_imagen": "assets/TEST_abrigos.jpg",
+			"productos": [
+				{
+					"id_producto": 1,
+					"c_tipo_producto": 1,
+					"id_publi_solic": 1,
+					"s_descripcion": "Frazada",
+					"n_cantidad_solicitada": 100,
+					"n_cantidad_recibida": 50,
+					"s_estado": "Bueno"
+				},
+				{
+					"id_producto": 2,
+					"c_tipo_producto": 1,
+					"id_publi_solic": 1,
+					"s_descripcion": "Campera",
+					"n_cantidad_solicitada": 60,
+					"n_cantidad_recibida": 50,
+					"s_estado": "Bueno"
+				}
+			]
+		},
+		{
+			"id_solicitud": 2,
+			"id_fundacion": 4,
+			"s_titulo": "Juguetes",
+			"s_descripcion": "Colecta de juguetes por el día del niño",
+			"f_solicitud": "2023-06-20",
+			"c_activa": true,
+			"s_imagen": "assets/TEST_juguetes.png",
+			"productos": [
+				{
+					"c_tipo_producto": 1,
+					"id_publi_solic": 1,
+					"s_descripcion": "Juguetes Varios",
+					"n_cantidad_solicitada": 1000,
+					"n_cantidad_recibida": 100,
+					"s_estado": "Bueno"
+				}
+			]
+		}
+	]
+}

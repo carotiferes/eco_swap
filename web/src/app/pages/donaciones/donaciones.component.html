@@ -1,1 +1,38 @@
-<p>donaciones works!</p>
+<app-header></app-header>
+
+<div id="main-donaciones">
+	<app-spinner [loading]="loading"></app-spinner>
+	<div class="row">
+		<div><!-- class="col-lg-6" -->
+			<div class="card-deck">
+				<div class="card row" *ngFor="let solicitud of showSolicitudes" (click)="goToSolicitud(solicitud)">
+					<div class="col-sm-4">
+						<img class="card-img" [src]="solicitud.imagen ? solicitud.imagen : 'assets/fundacion.png'">
+					</div>
+					<div class="card-body col-sm-6">
+						<h2 class="card-title">{{solicitud.tituloSolicitud}}</h2>
+						<div class="productos">
+							<div *ngFor="let producto of solicitud.productos" class="producto">
+								{{producto.descripcion}}
+								<p><ngb-progressbar color="primary"
+										[value]="producto.cantidadRecibida*100/producto.cantidadSolicitada"
+										[striped]="true"></ngb-progressbar></p>
+							</div>
+
+						</div>
+					</div>
+					<div class="card-fundacion col-sm-2">
+						<img class="img-fundacion" src="assets/fundacion.png">
+						<!-- TODO: CHANGE TO IMAGE DE LA FUNDACION  -->
+						<h4>{{solicitud.fundacion}}</h4>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="floating-button-container" *ngIf="!userData.isSwapper">
+		<button mat-fab color="primary" aria-label="Agregar Solicitud de donación" (click)="addSolicitud()">
+			<mat-icon>add</mat-icon>
+		</button>
+	</div>
+</div>

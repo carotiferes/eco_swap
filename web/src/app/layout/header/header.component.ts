@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuModel } from 'src/app/models/menu.model';
-import { TruequeComponent } from 'src/app/pages/trueque/trueque.component';
+import { AuthService } from 'src/app/services/auth.service';
 const menuData = require('../../data/menu.json')
 
 @Component({
@@ -11,16 +11,40 @@ const menuData = require('../../data/menu.json')
 })
 export class HeaderComponent {
 
+	url: string = 'home';
+
 	searchText: string = '';
 	mainTabs: MenuModel[] = [];
 	personalTabs: MenuModel[] = [];
-	
-	constructor(private router: Router){
+
+	userData: any;
+	isUserLoggedIn: boolean;
+	profileType?: 'swapper' | 'fundacion';
+
+	constructor(private router: Router, private auth: AuthService){
 		this.mainTabs = menuData.filter((item: MenuModel) => item.type == 'pages')
 		this.personalTabs = menuData.filter((item: MenuModel) => item.type == 'personal')
+		this.url = router.url;
+
+		this.isUserLoggedIn = auth.isUserLoggedIn
+		console.log(this.isUserLoggedIn);
+		if(this.isUserLoggedIn){
+			this.userData = auth.getUserData()
+			this.profileType = this.userData.isSwapper ? 'swapper' : 'fundacion';
+			console.log(this.userData, this.profileType);
+		}
+		
 	}
 
 	goTo(path: string){
 		this.router.navigateByUrl(path)
+	}
+
+	goToMy(path: string){
+		this.router.navigateByUrl(path + '/' + this.userData.id_perfil)
+	}
+
+	logOut(){
+		this.auth.logout();
 	}
 }

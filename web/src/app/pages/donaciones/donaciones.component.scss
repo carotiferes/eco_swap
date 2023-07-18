@@ -1,0 +1,43 @@
+#main-donaciones {
+	padding: 2%;
+	.card {
+		margin: 5px;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+
+		&:hover {
+			cursor: pointer;
+		}
+
+		.card-img {
+			max-width: 100%;
+		}
+
+		.productos {
+			display: flex;
+
+			.producto {
+				margin: 5px 10px;
+				min-width: 100px;
+			}
+		}
+
+		.card-fundacion {
+			text-align: center;
+			/* display: flex;
+			flex-direction: column;
+			align-items: center; */
+
+			.img-fundacion {
+				width: 30px;
+			}
+		}
+	}
+
+	.floating-button-container {
+		position: fixed;
+		right: 25px;
+		bottom: 40px;
+	}
+}
