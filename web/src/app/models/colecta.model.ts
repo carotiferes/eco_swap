@@ -1,6 +1,6 @@
 import { ProductoModel } from "./producto.model";
 
-export interface SolicitudModel {
+export interface ColectaModel {
 	idSolicitud: number,
 	titulo: string,
 	tituloSolicitud: string,

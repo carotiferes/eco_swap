@@ -1,19 +1,19 @@
-<app-header [title]="idFundacion ? 'Mis solicitudes' : 'Colectas'"></app-header>
+<app-header [title]="idFundacion ? 'Mis Colectas' : 'Colectas'"></app-header>
 
 <div id="main-donaciones">
 	<app-spinner [loading]="loading"></app-spinner>
 	<div class="row" *ngIf="!loading">
-		<div *ngIf="showSolicitudes.length==0" style="text-align: center;">No hay solicitudes para mostrar</div>
+		<div *ngIf="showColectas.length==0" style="text-align: center;">No hay colectas para mostrar</div>
 		<div><!-- class="col-lg-6" -->
 			<div class="card-deck">
-				<div class="card row" *ngFor="let solicitud of showSolicitudes" (click)="goToSolicitud(solicitud)">
+				<div class="card row" *ngFor="let colecta of showColectas" (click)="goToColecta(colecta)">
 					<div class="col-sm-4" style="display: flex; justify-content: center;">
-						<img class="card-img" [src]="solicitud.imagen ? solicitud.imagen : 'assets/fundacion.png'">
+						<img class="card-img" [src]="colecta.imagen ? colecta.imagen : 'assets/fundacion.png'">
 					</div>
 					<div class="card-body col-sm-6">
-						<h2 class="card-title">{{solicitud.tituloSolicitud}}</h2>
+						<h2 class="card-title">{{colecta.tituloSolicitud}}</h2>
 						<div class="productos">
-							<div *ngFor="let producto of solicitud.productos" class="producto">
+							<div *ngFor="let producto of colecta.productos" class="producto">
 								{{producto.descripcion}}
 								<p><ngb-progressbar color="primary"
 										[value]="producto.cantidadRecibida*100/producto.cantidadSolicitada"
@@ -25,14 +25,14 @@
 					<div class="card-fundacion col-sm-2">
 						<img class="img-fundacion" src="assets/fundacion.png">
 						<!-- TODO: CHANGE TO IMAGE DE LA FUNDACION  -->
-						<h4>{{solicitud.fundacion}}</h4>
+						<h4>{{colecta.fundacion}}</h4>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div class="floating-button-container" *ngIf="!userData.isSwapper">
-		<button mat-fab color="primary" aria-label="Agregar Solicitud de donación" (click)="addSolicitud()">
+		<button mat-fab color="primary" aria-label="Agregar Colecta de donación" (click)="addColecta()">
 			<mat-icon>add</mat-icon>
 		</button>
 	</div>

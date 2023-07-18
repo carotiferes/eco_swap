@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SolicitudModel } from 'src/app/models/solicitud.model';
+import { ColectaModel } from 'src/app/models/colecta.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import Swal from 'sweetalert2';
@@ -14,7 +14,7 @@ import Swal from 'sweetalert2';
 export class FormPropuestaComponent implements OnInit {
 
 	propuestaForm: FormGroup;
-	solicitud!: SolicitudModel;
+	colecta!: ColectaModel;
 	screenWidth: number;
 
 	images: any[] = [];
@@ -46,8 +46,8 @@ export class FormPropuestaComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this.donacionesService.getSolicitudes().subscribe((res: any) => {
-			this.solicitud = res.find((item: any) => item.idSolicitud == this.id_solicitud)
+		this.donacionesService.getColectas().subscribe((res: any) => {
+			this.colecta = res.find((item: any) => item.idSolicitud == this.id_solicitud)
 			this.loading = false;
 		})
 	}
@@ -85,11 +85,11 @@ export class FormPropuestaComponent implements OnInit {
 			}
 			console.log(objetoToSend);
 	
-			this.donacionesService.crearPropuesta(this.solicitud.idSolicitud, objetoToSend).subscribe(res => {
+			this.donacionesService.crearPropuesta(this.colecta.idSolicitud, objetoToSend).subscribe(res => {
 				console.log(res);
 				if(JSON.parse(JSON.stringify(res)).descripcion)	{
 					this.showMessage('Propuesta Creada!', 'La propuesta se creó exitosamente. Ahora te toca a vos! Llevá tu donación a la fundación para que la puedan empezar a usar.', 'success')
-					this.router.navigateByUrl('solicitud/'+ this.id_solicitud)
+					this.router.navigateByUrl('colecta/'+ this.id_solicitud)
 				}
 				else this.showMessage('Ocurrió un error', 'No pudimos crear la propuesta. Intentá nuevamente luego.', 'error')
 			})

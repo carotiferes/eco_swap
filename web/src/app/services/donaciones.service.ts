@@ -10,7 +10,7 @@ export class DonacionesService {
 
 	constructor(private backendService: HttpBackEnd) { }
 
-	crearSolicitud(body: any) {
+	crearColecta(body: any) {
 		console.log(body);
 		const test = this.backendService.post('api/solicitud', body);
 		console.log('aaaa', test);
@@ -18,11 +18,11 @@ export class DonacionesService {
 		return test
 	}
 
-	getSolicitudes(){
+	getColectas(){
 		return this.backendService.get('api/solicitudes');
 	}
 
-	getSolicitud(id_solicitud: any){
+	getColecta(id_solicitud: any){
 		return this.backendService.get('api/solicitud/'+id_solicitud);
 	}
 

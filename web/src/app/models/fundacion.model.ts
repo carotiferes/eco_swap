@@ -1,10 +1,10 @@
 import { PerfilModel } from "./perfil.model";
-import { SolicitudModel } from "./solicitud.model";
+import { ColectaModel } from "./colecta.model";
 
 export interface FundacionModel {
 	idFundacion: number,
 	nombre: string,
 	cuil: string,
 	perfil: PerfilModel,
-	solicitudes: SolicitudModel[]
+	solicitudes: ColectaModel[]
 }

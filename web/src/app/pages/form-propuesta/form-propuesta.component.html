@@ -13,7 +13,7 @@
 					<mat-form-field>
 						<mat-label>Producto</mat-label>
 						<mat-select formControlName="producto">
-							<mat-option *ngFor="let prod of solicitud.productos" [value]="prod.idProducto">
+							<mat-option *ngFor="let prod of colecta.productos" [value]="prod.idProducto">
 								{{prod.descripcion}}
 							</mat-option>
 						</mat-select>

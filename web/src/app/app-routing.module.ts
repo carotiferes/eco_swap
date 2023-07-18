@@ -6,11 +6,11 @@ import { ColectasComponent } from './pages/colectas/colectas.component';
 import { RegistroComponent } from './pages/registro/registro.component';
 import { authGuard } from './core/auth.guard';
 import { PerfilComponent } from './pages/perfil/perfil.component';
-import { SolicitudComponent } from './pages/solicitud/solicitud.component';
+import { ColectaComponent } from './pages/colecta/colecta.component';
 import { FormPropuestaComponent } from './pages/form-propuesta/form-propuesta.component';
 import { LoginComponent } from './pages/login/login.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
-import { FormSolicitudComponent } from './pages/form-solicitud/form-solicitud.component';
+import { FormColectaComponent } from './pages/form-colecta/form-colecta.component';
 import { PropuestasComponent } from './pages/propuestas/propuestas.component';
 
 const routes: Routes = [{
@@ -40,12 +40,12 @@ const routes: Routes = [{
 	component: PerfilComponent,
 	canActivate: [authGuard]
 },{
-	path: 'form-solicitud',
-	component: FormSolicitudComponent,
+	path: 'form-colecta',
+	component: FormColectaComponent,
 	canActivate: [authGuard]
 },{
-	path: 'solicitud/:id_solicitud',
-	component: SolicitudComponent,
+	path: 'colecta/:id_solicitud',
+	component: ColectaComponent,
 	canActivate: [authGuard]
 },{
 	path: 'propuesta/:id_solicitud',

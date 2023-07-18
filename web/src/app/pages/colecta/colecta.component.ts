@@ -3,20 +3,20 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FundacionModel } from 'src/app/models/fundacion.model';
 import { PerfilModel } from 'src/app/models/perfil.model';
 import { PropuestaModel } from 'src/app/models/propuesta.model';
-import { SolicitudModel } from 'src/app/models/solicitud.model';
+import { ColectaModel } from 'src/app/models/colecta.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-solicitud',
-  templateUrl: './solicitud.component.html',
-  styleUrls: ['./solicitud.component.scss']
+  selector: 'app-colecta',
+  templateUrl: './colecta.component.html',
+  styleUrls: ['./colecta.component.scss']
 })
-export class SolicitudComponent {
+export class ColectaComponent {
 
 	id_solicitud: string = '';
-	solicitud?: SolicitudModel;
+	colecta?: ColectaModel;
 	fundacion?: FundacionModel;
 	perfil?: PerfilModel;
 	propuestas: PropuestaModel[] = [];
@@ -37,17 +37,17 @@ export class SolicitudComponent {
 	ngOnInit(): void {
 		this.userData = this.auth.getUserData();
 		console.log(this.userData);
-		this.donacionesService.getSolicitud(this.id_solicitud).subscribe((res: any) => {
+		this.donacionesService.getColecta(this.id_solicitud).subscribe((res: any) => {
 			console.log(res);
 
-			this.solicitud = res;
+			this.colecta = res;
 			this.fundacion = res.fundacion
 			this.perfil = res.fundacion.perfil
 			if(this.perfil) this.perfil.puntaje = Number(this.perfil?.puntaje)
-			console.log(this.fundacion, this.perfil, this.solicitud);
+			console.log(this.fundacion, this.perfil, this.colecta);
 			
-			if(this.solicitud){
-				for (const prod of this.solicitud.productos) {
+			if(this.colecta){
+				for (const prod of this.colecta.productos) {
 					this.propuestas.push(...prod.propuestas)
 				}
 			}
@@ -98,7 +98,7 @@ export class SolicitudComponent {
 	}
 
 	getImagen(){
-		if(this.solicitud) this.solicitud.imagen = this.donacionesService.getImagen(this.solicitud.imagen)
+		if(this.colecta) this.colecta.imagen = this.donacionesService.getImagen(this.colecta.imagen)
 	}
 
 	showDireccion(perfil: any){

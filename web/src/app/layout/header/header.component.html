@@ -26,7 +26,7 @@
 				><b>{{tab.title}}</b></a>
 			</li> -->
 			<li class="nav-item"><a class="nav-link nav-white px-2" *ngIf="isUserLoggedIn && !userData.isSwapper" [href]="'/colectas/'+ userData.id_fundacion">
-				<b>Mis solicitudes</b>
+				<b>Mis colectas</b>
 				<!--TODO: <b>Cerrar Sesión</b> -->
 			</a></li>
 			<li class="nav-item"><a class="nav-link nav-white px-2" *ngIf="isUserLoggedIn" (click)="logOut()">

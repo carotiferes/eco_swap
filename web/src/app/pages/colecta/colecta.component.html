@@ -1,8 +1,8 @@
 <app-header></app-header>
 
-<div id="main-solicitud">
+<div id="main-colecta">
 	<app-spinner [loading]="loading"></app-spinner>
-	<mat-card *ngIf="!loading && fundacion && perfil && solicitud">
+	<mat-card *ngIf="!loading && fundacion && perfil && colecta">
 		<mat-card-header style="border-bottom: solid 1px var(--light-grey); padding-bottom: 10px;">
 			<div class="div-header">
 				<div class="header-info">
@@ -18,19 +18,19 @@
 						</mat-card-subtitle>
 					</div>
 				</div>
-				<div>{{solicitud.fechaSolicitud | date: 'dd/MM/yyyy'}}</div>
+				<div>{{colecta.fechaSolicitud | date: 'dd/MM/yyyy'}}</div>
 			</div>
 		</mat-card-header>
 		<mat-card-content class="card-content">
-			<img mat-card-image [src]="solicitud.imagen ? solicitud.imagen : 'assets/fundacion.png'"
-				class="solicitud-img">
+			<img mat-card-image [src]="colecta.imagen ? colecta.imagen : 'assets/fundacion.png'"
+				class="colecta-img">
 			<div>
-				<h2 class="card-title">{{solicitud.titulo}}</h2>
+				<h2 class="card-title">{{colecta.titulo}}</h2>
 				<div class="descripcion">
-					{{solicitud.descripcion}}
+					{{colecta.descripcion}}
 				</div>
 				<div class="productos">
-					<div *ngFor="let producto of solicitud.productos" class="producto">
+					<div *ngFor="let producto of colecta.productos" class="producto">
 						{{producto.descripcion}} ({{producto.cantidadRecibida}}/ {{producto.cantidadSolicitada}})
 						<p><ngb-progressbar color="primary" [showValue]="true"
 								[value]="producto.cantidadRecibida*100/producto.cantidadSolicitada"
@@ -47,7 +47,7 @@
 	<div *ngIf="(perfil && !perfil.swapper && fundacion && fundacion.idFundacion == userData.id_fundacion) || 
 				(this.userData.isSwapper && perfil) && !loading">
 		<h3 style="margin: 20px 0 0 5px; font-weight: bold;">{{this.userData.isSwapper ? 'Mi propuesta' : 'Propuestas'}}</h3>
-		<div *ngIf="propuestas.length == 0 && !loading" style="text-align: center;">Esta solicitud no tiene propuestas aún!</div>
+		<div *ngIf="propuestas.length == 0 && !loading" style="text-align: center;">Esta colecta no tiene propuestas aún!</div>
 		<mat-card *ngFor="let propuesta of propuestas" style="margin: 10px;">
 			<mat-card-header style="border-bottom: solid 1px var(--light-grey);">
 				<div mat-card-avatar class="propuesta-example-header-image"></div>

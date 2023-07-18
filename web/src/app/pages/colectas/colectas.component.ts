@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FundacionModel } from 'src/app/models/fundacion.model';
-import { SolicitudModel } from 'src/app/models/solicitud.model';
+import { ColectaModel } from 'src/app/models/colecta.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import { FundacionesService } from 'src/app/services/fundaciones.service';
@@ -13,13 +13,13 @@ import { FundacionesService } from 'src/app/services/fundaciones.service';
 })
 export class ColectasComponent implements OnInit {
 
-	solicitudes: SolicitudModel[] = [];
+	colectas: ColectaModel[] = [];
 	fundacion?: FundacionModel;
 
 	idFundacion?: string;
-	solicitudesFundacion: SolicitudModel[] = []
+	colectasFundacion: ColectaModel[] = []
 
-	showSolicitudes: SolicitudModel[] = [];
+	showColectas: ColectaModel[] = [];
 	userData: any;
 
 	loading: boolean = true;
@@ -42,32 +42,32 @@ export class ColectasComponent implements OnInit {
 	}
 	
 	ngOnInit() {
-		this.donacionesService.getSolicitudes().subscribe((res:any) => {
+		this.donacionesService.getColectas().subscribe((res:any) => {
 			console.log(res);
-			this.solicitudes = res;
-			this.showSolicitudes = this.solicitudes;
+			this.colectas = res;
+			this.showColectas = this.colectas;
 
-			this.showSolicitudes.map(item => {
+			this.showColectas.map(item => {
 				item.imagen = this.donacionesService.getImagen(item.imagen)
 			})
 			if(this.idFundacion){
 				// TODO: FILTER DONACIONES
-				this.solicitudesFundacion = this.solicitudes.filter(item => item.idFundacion == Number(this.idFundacion))
-				this.showSolicitudes = this.solicitudesFundacion
+				this.colectasFundacion = this.colectas.filter(item => item.idFundacion == Number(this.idFundacion))
+				this.showColectas = this.colectasFundacion
 			} else {
-				this.showSolicitudes = this.solicitudes;
+				this.showColectas = this.colectas;
 			}
 			this.loading = false;
 		})
 
 	}
 
-	goToSolicitud(solicitud: SolicitudModel){
-		this.router.navigateByUrl('solicitud/'+solicitud.idSolicitud)
+	goToColecta(colecta: ColectaModel){
+		this.router.navigateByUrl('colecta/'+colecta.idSolicitud)
 	}
 
-	addSolicitud(){
-		this.router.navigateByUrl('form-solicitud')
+	addColecta(){
+		this.router.navigateByUrl('form-colecta')
 		
 	}
 }

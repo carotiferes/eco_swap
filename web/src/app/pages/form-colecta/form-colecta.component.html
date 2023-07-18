@@ -1,13 +1,13 @@
 <app-header></app-header>
 
-<div id="main-form-solicitud">
+<div id="main-form-colecta">
 	<mat-card id="main-card">
 		<mat-card-header style="margin-bottom: 20px;">
-			<mat-card-title>Completá los datos de tu solicitud!</mat-card-title>
+			<mat-card-title>Completá los datos de tu colecta!</mat-card-title>
 			<!-- <mat-card-subtitle>Completá tus datos para crear tu cuenta</mat-card-subtitle> -->
 		</mat-card-header>
 		<mat-card-content>
-			<form [formGroup]="solicitudForm" class="form" [ngClass]="screenWidth > 576 ? 'big-form':'small-form'">
+			<form [formGroup]="colectaForm" class="form" [ngClass]="screenWidth > 576 ? 'big-form':'small-form'">
 				<div class="form-col main-data">
 					<mat-form-field>
 						<mat-label>Título</mat-label>
@@ -71,7 +71,7 @@
 				<div></div>
 
 				<div class="form-col">
-					<label for="file">Imagen de la Solicitud</label>
+					<label for="file">Imagen de la Colecta</label>
 					<input formControlName="file" id="file" type="file" class="form-control"
 						(change)="onFileChange($event)">
 					<app-spinner [loading]="loadingImg"></app-spinner>
@@ -92,8 +92,8 @@
 		</mat-card-content>
 		<mat-card-actions class="buttons">
 			<button mat-raised-button color="primary"
-				(click)="crearSolicitud();solicitudForm.markAllAsTouched(); solicitudForm.valid">
-				CREAR SOLICITUD
+				(click)="crearColecta();colectaForm.markAllAsTouched(); colectaForm.valid">
+				CREAR COLECTA
 			</button>
 		</mat-card-actions>
 	</mat-card>
