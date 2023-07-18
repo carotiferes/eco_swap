@@ -51,14 +51,17 @@ export class SolicitudComponent {
 					this.propuestas.push(...prod.propuestas)
 				}
 			}
+
+			console.log(this.propuestas);
+			
 			
 			if(this.userData.isSwapper){
 				this.propuestas = this.propuestas.filter(item => item.swapper.idSwapper == this.userData.id_swapper)
 			}
 
-			this.propuestas.forEach(propuesta => {
-				propuesta.imagenes = propuesta.imagenes.split('|')
-			})
+			/* this.propuestas.map(propuesta => {
+				if(propuesta.imagenes) propuesta.imagenes = propuesta.imagenes.split('|')
+			}) */
 			
 			this.getImagen()
 			this.loading = false;

@@ -94,7 +94,7 @@ export class FormSolicitudComponent {
 			//console.log(res, JSON.parse(JSON.stringify(res)).descripcion);
 			if(JSON.parse(JSON.stringify(res)).descripcion)	{
 				this.showMessage('¡Solicitud Creada!', 'La solicitud se creó exitosamente. Los Swappers te contactarán pronto!', 'success')
-				this.router.navigateByUrl('donaciones/'+ this.solicitudForm.controls['id_fundacion'].value)
+				this.router.navigateByUrl('colectas/'+ this.solicitudForm.controls['id_fundacion'].value)
 			}
 			else this.showMessage('Ocurrió un error', 'No pudimos crear la solicitud. Intentá nuevamente luego.', 'error')
 		})

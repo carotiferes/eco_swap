@@ -10,7 +10,7 @@ import { FooterComponent } from './layout/footer/footer.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './shared/material/material.module';
 import { TruequeComponent } from './pages/trueque/trueque.component';
-import { DonacionesComponent } from './pages/donaciones/donaciones.component';
+import { ColectasComponent } from './pages/colectas/colectas.component';
 import { RegistroComponent } from './pages/registro/registro.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -36,7 +36,7 @@ import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 		NotFoundComponent,
 		FooterComponent,
 		TruequeComponent,
-		DonacionesComponent,
+		ColectasComponent,
 		RegistroComponent,
 		PerfilComponent,
 		PasswordPipe,

@@ -35,7 +35,7 @@ export class LoginComponent {
 				//TODO: then and catch
 				let userData = this.auth.getUserData()
 	
-				userData.isSwapper ? this.router.navigateByUrl('/donaciones') : this.router.navigateByUrl('/donaciones')
+				userData.isSwapper ? this.router.navigateByUrl('/colectas') : this.router.navigateByUrl('/colectas')
 			}
 		}
 	}

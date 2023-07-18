@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
 import { TruequeComponent } from './pages/trueque/trueque.component';
-import { DonacionesComponent } from './pages/donaciones/donaciones.component';
+import { ColectasComponent } from './pages/colectas/colectas.component';
 import { RegistroComponent } from './pages/registro/registro.component';
 import { authGuard } from './core/auth.guard';
 import { PerfilComponent } from './pages/perfil/perfil.component';
@@ -23,11 +23,11 @@ const routes: Routes = [{
 	path: 'trueques',
 	component: TruequeComponent
 }, {
-	path: 'donaciones',
-	component: DonacionesComponent
+	path: 'colectas',
+	component: ColectasComponent
 }, {
-	path: 'donaciones/:id_fundacion',
-	component: DonacionesComponent
+	path: 'colectas/:id_fundacion',
+	component: ColectasComponent
 },{
 	path: 'registro',
 	component: RegistroComponent

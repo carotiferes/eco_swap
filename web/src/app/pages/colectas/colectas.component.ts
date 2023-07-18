@@ -7,11 +7,11 @@ import { DonacionesService } from 'src/app/services/donaciones.service';
 import { FundacionesService } from 'src/app/services/fundaciones.service';
 
 @Component({
-  selector: 'app-donaciones',
-  templateUrl: './donaciones.component.html',
-  styleUrls: ['./donaciones.component.scss']
+  selector: 'app-colectas',
+  templateUrl: './colectas.component.html',
+  styleUrls: ['./colectas.component.scss']
 })
-export class DonacionesComponent implements OnInit {
+export class ColectasComponent implements OnInit {
 
 	solicitudes: SolicitudModel[] = [];
 	fundacion?: FundacionModel;
