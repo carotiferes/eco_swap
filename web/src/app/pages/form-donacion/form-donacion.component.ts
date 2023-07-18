@@ -7,13 +7,13 @@ import { DonacionesService } from 'src/app/services/donaciones.service';
 import Swal from 'sweetalert2';
 
 @Component({
-	selector: 'app-propuesta',
-	templateUrl: './form-propuesta.component.html',
-	styleUrls: ['./form-propuesta.component.scss']
+	selector: 'app-donacion',
+	templateUrl: './form-donacion.component.html',
+	styleUrls: ['./form-donacion.component.scss']
 })
-export class FormPropuestaComponent implements OnInit {
+export class FormDonacionComponent implements OnInit {
 
-	propuestaForm: FormGroup;
+	donacionForm: FormGroup;
 	colecta!: ColectaModel;
 	screenWidth: number;
 
@@ -32,7 +32,7 @@ export class FormPropuestaComponent implements OnInit {
 			this.id_solicitud = params.get('id_solicitud') || '';
 		})
 
-		this.propuestaForm = fb.group({
+		this.donacionForm = fb.group({
 			producto: ['', Validators.required],
 			caracteristicas: this.fb.array([]),
 			file: [''],
@@ -53,7 +53,7 @@ export class FormPropuestaComponent implements OnInit {
 	}
 
 	get getCaracteristicasArray() {
-		return <FormArray>this.propuestaForm.get('caracteristicas');
+		return <FormArray>this.donacionForm.get('caracteristicas');
 	}
 
 	agregarCaracteristica(caract?: number) {
@@ -66,7 +66,7 @@ export class FormPropuestaComponent implements OnInit {
 	}
 
 	confirmarPropuesta() {
-		if(this.propuestaForm.valid){
+		if(this.donacionForm.valid){
 			let caracteristicas: any[] = this.getCaracteristicasArray.value || [];
 			let sendCaracteristicas: string[] = [];
 			caracteristicas.forEach(item => {
@@ -76,11 +76,11 @@ export class FormPropuestaComponent implements OnInit {
 				idSwapper: this.userData.id_swapper,
 				solicitudProductoModel: {
 					tipoProducto: "MUEBLES",
-					productoId: this.propuestaForm.controls['producto'].value,
-					cantidadOfrecida: this.propuestaForm.controls['n_cantidad'].value,
-					mensaje: this.propuestaForm.controls['mensaje'].value,
+					productoId: this.donacionForm.controls['producto'].value,
+					cantidadOfrecida: this.donacionForm.controls['n_cantidad'].value,
+					mensaje: this.donacionForm.controls['mensaje'].value,
 					caracteristicas: sendCaracteristicas,
-					imagenes: this.propuestaForm.controls['file_source'].value
+					imagenes: this.donacionForm.controls['file_source'].value
 				}
 			}
 			console.log(objetoToSend);
@@ -88,10 +88,10 @@ export class FormPropuestaComponent implements OnInit {
 			this.donacionesService.crearPropuesta(this.colecta.idSolicitud, objetoToSend).subscribe(res => {
 				console.log(res);
 				if(JSON.parse(JSON.stringify(res)).descripcion)	{
-					this.showMessage('Propuesta Creada!', 'La propuesta se creó exitosamente. Ahora te toca a vos! Llevá tu donación a la fundación para que la puedan empezar a usar.', 'success')
+					this.showMessage('Propuesta Creada!', 'La donacion se creó exitosamente. Ahora te toca a vos! Llevá tu donación a la fundación para que la puedan empezar a usar.', 'success')
 					this.router.navigateByUrl('colecta/'+ this.id_solicitud)
 				}
-				else this.showMessage('Ocurrió un error', 'No pudimos crear la propuesta. Intentá nuevamente luego.', 'error')
+				else this.showMessage('Ocurrió un error', 'No pudimos crear la donacion. Intentá nuevamente luego.', 'error')
 			})
 		} else this.showMessage('Error en los campos.', 'Revisá los campos y completalos correctamente.', 'error')
 	}
@@ -110,13 +110,13 @@ export class FormPropuestaComponent implements OnInit {
 				reader.onload = (event: any) => {
 					this.images.push(event.target.result);
 
-					this.propuestaForm.patchValue({
+					this.donacionForm.patchValue({
 						file_source: this.images
 					});
 				}
 
 				reader.readAsDataURL(event.target.files[i]);
-				console.log(this.images, this.propuestaForm.controls['file_source']);
+				console.log(this.images, this.donacionForm.controls['file_source']);
 
 			}
 		}
@@ -124,7 +124,7 @@ export class FormPropuestaComponent implements OnInit {
 
 	removeImagen(i:number) {
 		this.images.splice(i, 1)
-		this.propuestaForm.patchValue({
+		this.donacionForm.patchValue({
 			file_source: this.images
 		});
 	}

@@ -1,4 +1,4 @@
-import { PropuestaModel } from "./propuesta.model";
+import { DonacionModel } from "./donacion.model";
 
 export interface SwapperModel {
 	idSwapper: number,
@@ -9,5 +9,5 @@ export interface SwapperModel {
 	cuil: string,
 	fechaNacimiento: Date,
 	tipoDocumento: string,
-	propuestas: PropuestaModel[]
+	propuestas: DonacionModel[]
 }

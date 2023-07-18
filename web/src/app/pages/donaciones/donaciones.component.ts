@@ -1,18 +1,18 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { PropuestaModel } from 'src/app/models/propuesta.model';
+import { DonacionModel } from 'src/app/models/donacion.model';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import { MapComponent } from 'src/app/shared/map/map.component';
 import Swal from 'sweetalert2';
 
 @Component({
-	selector: 'app-propuestas',
-	templateUrl: './propuestas.component.html',
-	styleUrls: ['./propuestas.component.scss']
+	selector: 'app-donaciones',
+	templateUrl: './donaciones.component.html',
+	styleUrls: ['./donaciones.component.scss']
 })
-export class PropuestasComponent {
+export class DonacionesComponent {
 
-	propuestas: PropuestaModel[] = [/* {
+	donaciones: DonacionModel[] = [/* {
 		id_propuesta: 1,
 		id_producto: 1,
 		id_swapper: 1,
@@ -47,7 +47,7 @@ export class PropuestasComponent {
 	constructor(public dialog: MatDialog, private donacionesService: DonacionesService){
 		// TODO: GET PROPUESTAS FROM BACK
 
-		this.propuestas.map((item:any) => {
+		this.donaciones.map((item:any) => {
 			item['last_status'] = item.estado
 		})
 	}
@@ -60,16 +60,16 @@ export class PropuestasComponent {
 		})
 	}
 
-	changeEstadoPropuesta(propuesta: PropuestaModel, event: any){
-		console.log(propuesta, event);
+	changeEstadoPropuesta(donacion: DonacionModel, event: any){
+		console.log(donacion, event);
 		
-		this.propuestas.map((item: any) => {
-			if(item == propuesta) {
+		this.donaciones.map((item: any) => {
+			if(item == donacion) {
 				if(event.checked) item.estado = item['last_status'];
 				else item.estado = 'CANCELADA'
 			}
 		})
-		console.log(this.propuestas);
+		console.log(this.donaciones);
 		//this.donacionesService.cambiarEstadoPropuesta()
 	}
 

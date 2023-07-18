@@ -1,18 +1,18 @@
-.propuesta-example-header-image {
+.donacion-example-header-image {
 	background-image: url('../../../assets/fundacion.png');
 	background-size: cover;
 }
-.propuesta-card-content {
+.donacion-card-content {
 	display: grid;
 	grid-template-columns: 1fr 2fr 1fr;
 	gap: 1rem;
 	padding: 16px;
 
-	.propuesta-aceptada {
+	.donacion-aceptada {
 		font-weight: bold;
 		color: var(--primary-color);
 	}
-	.propuesta-rechazada {
+	.donacion-rechazada {
 		font-weight: bold;
 		color: var(--warn-color);
 	}
@@ -27,7 +27,7 @@
 		}
 	}
 
-	.propuesta-status {
+	.donacion-status {
 		display: flex;
 		align-items: center;
 

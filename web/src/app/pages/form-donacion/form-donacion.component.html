@@ -1,14 +1,14 @@
 <app-header></app-header>
 
-<div id="main-propuesta">
+<div id="main-donacion">
 	<app-spinner [loading]="loading"></app-spinner>
 	<mat-card id="main-card" *ngIf="!loading">
 		<mat-card-header style="margin-bottom: 20px;">
-			<mat-card-title>Completá los datos de tu propuesta!</mat-card-title>
+			<mat-card-title>Completá los datos de tu donación!</mat-card-title>
 			<!-- <mat-card-subtitle>Completá tus datos para crear tu cuenta</mat-card-subtitle> -->
 		</mat-card-header>
 		<mat-card-content>
-			<form [formGroup]="propuestaForm" class="form" [ngClass]="screenWidth > 576 ? 'big-form':'small-form'">
+			<form [formGroup]="donacionForm" class="form" [ngClass]="screenWidth > 576 ? 'big-form':'small-form'">
 				<div class="form-input form-col">
 					<mat-form-field>
 						<mat-label>Producto</mat-label>
@@ -17,7 +17,7 @@
 								{{prod.descripcion}}
 							</mat-option>
 						</mat-select>
-						<mat-error *ngIf="propuestaForm.get('producto')!.hasError('required')">
+						<mat-error *ngIf="donacionForm.get('producto')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
 					</mat-form-field>
@@ -27,7 +27,7 @@
 					<mat-form-field>
 						<mat-label>Cantidad</mat-label>
 						<input matInput formControlName="n_cantidad" type="number">
-						<mat-error *ngIf="propuestaForm.get('n_cantidad')!.hasError('required')">
+						<mat-error *ngIf="donacionForm.get('n_cantidad')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
 					</mat-form-field>
@@ -101,7 +101,7 @@
 		</mat-card-content>
 		<mat-card-actions class="buttons">
 			<button mat-raised-button color="primary"
-				(click)="confirmarPropuesta();propuestaForm.markAllAsTouched(); propuestaForm.valid">
+				(click)="confirmarPropuesta();donacionForm.markAllAsTouched(); donacionForm.valid">
 				CONFIRMAR PROPUESTA
 			</button>
 		</mat-card-actions>

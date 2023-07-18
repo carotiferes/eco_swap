@@ -1,7 +1,7 @@
 import { ProductoModel } from "./producto.model"
 import { SwapperModel } from "./swapper.model"
 
-export interface PropuestaModel {
+export interface DonacionModel {
 	idPropuesta: number,
 	descripcion: string,
 	cantidadPropuesta: number,

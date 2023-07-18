@@ -7,11 +7,11 @@ import { RegistroComponent } from './pages/registro/registro.component';
 import { authGuard } from './core/auth.guard';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { ColectaComponent } from './pages/colecta/colecta.component';
-import { FormPropuestaComponent } from './pages/form-propuesta/form-propuesta.component';
+import { FormDonacionComponent } from './pages/form-donacion/form-donacion.component';
 import { LoginComponent } from './pages/login/login.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { FormColectaComponent } from './pages/form-colecta/form-colecta.component';
-import { PropuestasComponent } from './pages/propuestas/propuestas.component';
+import { DonacionesComponent } from './pages/donaciones/donaciones.component';
 
 const routes: Routes = [{
 	path: '',
@@ -49,11 +49,11 @@ const routes: Routes = [{
 	canActivate: [authGuard]
 },{
 	path: 'propuesta/:id_solicitud',
-	component: FormPropuestaComponent,
+	component: FormDonacionComponent,
 	canActivate: [authGuard]
 },{
-	path: 'mis-propuestas',
-	component: PropuestasComponent,
+	path: 'mis-donaciones',
+	component: DonacionesComponent,
 	canActivate: [authGuard]
 },{
 	path: '**',

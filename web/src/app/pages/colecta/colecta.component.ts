@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FundacionModel } from 'src/app/models/fundacion.model';
 import { PerfilModel } from 'src/app/models/perfil.model';
-import { PropuestaModel } from 'src/app/models/propuesta.model';
+import { PropuestaModel } from 'src/app/models/donacion.model';
 import { ColectaModel } from 'src/app/models/colecta.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
@@ -19,7 +19,7 @@ export class ColectaComponent {
 	colecta?: ColectaModel;
 	fundacion?: FundacionModel;
 	perfil?: PerfilModel;
-	propuestas: PropuestaModel[] = [];
+	donaciones: PropuestaModel[] = [];
 
 	userData?: any;
 	loading: boolean = true;
@@ -48,18 +48,18 @@ export class ColectaComponent {
 			
 			if(this.colecta){
 				for (const prod of this.colecta.productos) {
-					this.propuestas.push(...prod.propuestas)
+					this.donaciones.push(...prod.donaciones)
 				}
 			}
 
-			console.log(this.propuestas);
+			console.log(this.donaciones);
 			
 			
 			if(this.userData.isSwapper){
-				this.propuestas = this.propuestas.filter(item => item.swapper.idSwapper == this.userData.id_swapper)
+				this.donaciones = this.donaciones.filter(item => item.swapper.idSwapper == this.userData.id_swapper)
 			}
 
-			/* this.propuestas.map(propuesta => {
+			/* this.donaciones.map(propuesta => {
 				if(propuesta.imagenes) propuesta.imagenes = propuesta.imagenes.split('|')
 			}) */
 			
@@ -80,7 +80,7 @@ export class ColectaComponent {
 	}
 
 	changeEstadoPropuesta(propuesta: PropuestaModel, status: string){
-		this.propuestas.map(item => {
+		this.donaciones.map(item => {
 			if(item == propuesta) {
 				if(item.estadoPropuesta != status) item.estadoPropuesta = status;
 				else item.estadoPropuesta = 'NUEVA'

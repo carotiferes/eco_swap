@@ -46,33 +46,33 @@
 
 	<div *ngIf="(perfil && !perfil.swapper && fundacion && fundacion.idFundacion == userData.id_fundacion) || 
 				(this.userData.isSwapper && perfil) && !loading">
-		<h3 style="margin: 20px 0 0 5px; font-weight: bold;">{{this.userData.isSwapper ? 'Mi propuesta' : 'Propuestas'}}</h3>
-		<div *ngIf="propuestas.length == 0 && !loading" style="text-align: center;">Esta colecta no tiene propuestas aún!</div>
-		<mat-card *ngFor="let propuesta of propuestas" style="margin: 10px;">
+		<h3 style="margin: 20px 0 0 5px; font-weight: bold;">{{this.userData.isSwapper ? 'Mi donacion' : 'Propuestas'}}</h3>
+		<div *ngIf="donaciones.length == 0 && !loading" style="text-align: center;">Esta colecta no tiene donaciones aún!</div>
+		<mat-card *ngFor="let donacion of donaciones" style="margin: 10px;">
 			<mat-card-header style="border-bottom: solid 1px var(--light-grey);">
-				<div mat-card-avatar class="propuesta-example-header-image"></div>
-				<mat-card-title>{{propuesta.swapper.nombre}} {{propuesta.swapper.apellido}}</mat-card-title>
+				<div mat-card-avatar class="donacion-example-header-image"></div>
+				<mat-card-title>{{donacion.swapper.nombre}} {{donacion.swapper.apellido}}</mat-card-title>
 				<mat-card-subtitle>
 					<mat-icon *ngFor="let i of [].constructor(perfil.puntaje)" color="primary">star</mat-icon>
 					<mat-icon *ngFor="let i of [].constructor(5-perfil.puntaje)" class="empty-star">star</mat-icon>
 				</mat-card-subtitle>
 			</mat-card-header>
-			<mat-card-content class="propuesta-card-content">
+			<mat-card-content class="donacion-card-content">
 				<div>
-					<h2 class="card-title">{{propuesta.producto.descripcion}}</h2>
-					<p>Cantidad: {{propuesta.cantidadPropuesta}}</p>
-					<p>Estado: {{propuesta.estadoPropuesta}}</p>
+					<h2 class="card-title">{{donacion.producto.descripcion}}</h2>
+					<p>Cantidad: {{donacion.cantidadPropuesta}}</p>
+					<p>Estado: {{donacion.estadoPropuesta}}</p>
 				</div>
 				<!-- <div class="imagenes" >
-					<img [src]="getImage(img)" *ngFor="let img of propuesta.imagenes" (click)="zoomImage(img)" />
+					<img [src]="getImage(img)" *ngFor="let img of donacion.imagenes" (click)="zoomImage(img)" />
 				</div> -->
-				<!-- <div class="propuesta-status">
-					<mat-slide-toggle [checked]="propuesta.estadoPropuesta =='APROBADA'"
-						(toggleChange)="changeEstadoPropuesta(propuesta, 'APROBADA')"
-						[disabled]="propuesta.estadoPropuesta != 'NUEVA' && propuesta.estadoPropuesta != 'APROBADA'">Aprobar</mat-slide-toggle>
-					<mat-slide-toggle [checked]="propuesta.estadoPropuesta =='RECHAZADA'" color="warn"
-						(toggleChange)="changeEstadoPropuesta(propuesta, 'RECHAZADA')"
-						[disabled]="propuesta.estadoPropuesta != 'NUEVA' && propuesta.estadoPropuesta != 'RECHAZADA'">Rechazar</mat-slide-toggle>
+				<!-- <div class="donacion-status">
+					<mat-slide-toggle [checked]="donacion.estadoPropuesta =='APROBADA'"
+						(toggleChange)="changeEstadoPropuesta(donacion, 'APROBADA')"
+						[disabled]="donacion.estadoPropuesta != 'NUEVA' && donacion.estadoPropuesta != 'APROBADA'">Aprobar</mat-slide-toggle>
+					<mat-slide-toggle [checked]="donacion.estadoPropuesta =='RECHAZADA'" color="warn"
+						(toggleChange)="changeEstadoPropuesta(donacion, 'RECHAZADA')"
+						[disabled]="donacion.estadoPropuesta != 'NUEVA' && donacion.estadoPropuesta != 'RECHAZADA'">Rechazar</mat-slide-toggle>
 				</div> -->
 			</mat-card-content>
 		</mat-card>
