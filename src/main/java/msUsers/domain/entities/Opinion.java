@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.util.UUID;
-
 @Entity
 @Table(name = "Opiniones")
 public class Opinion{
@@ -20,10 +18,10 @@ public class Opinion{
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_perfil", nullable = false)
-    private Perfil perfilOpina;
+    private Usuario usuarioOpina;
 
     @OneToOne(cascade = CascadeType.ALL)
-    private Perfil perfilOpinado;
+    private Usuario usuarioOpinado;
 
     // ToDo: ¿Las opiniones tendrán fecha?
 }

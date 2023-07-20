@@ -14,13 +14,13 @@ import java.util.List;
 
 @Entity
 @Data
-@Table(name = "Solicitudes")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idSolicitud")
-public class Solicitud implements Serializable {
+@Table(name = "Colectas")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idColecta")
+public class Colecta implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long idSolicitud;
+    private long idColecta;
 
     @Size(max = 50)
     @NotNull
@@ -44,12 +44,12 @@ public class Solicitud implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL)
     private Fundacion fundacion;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "solicitud")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "colecta")
     @JsonManagedReference
     private List<Producto> productos;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "solicitud")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "colecta")
     @JsonManagedReference
-    private List<Propuesta> propuestas;
+    private List<Donacion> donaciones;
 
 }

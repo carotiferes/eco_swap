@@ -25,16 +25,16 @@ public class Producto {
     private int cantidadSolicitada;
     private int cantidadRecibida;
 
-    //ToDo: Chequear si esto es un enum. (El mismo de EstadoPropuesta?)
+    //ToDo: Chequear si esto es un enum. (El mismo de EstadoDonacion?)
     private String estado;
 
     @OneToMany(mappedBy = "producto",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Propuesta> propuestas;
+    private List<Donacion> donaciones;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_solicitud")
     @JsonBackReference
-    private Solicitud solicitud;
+    private Colecta colecta;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Publicacion publicacion;

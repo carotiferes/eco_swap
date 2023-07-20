@@ -11,13 +11,13 @@ import java.util.List;
 
 @Entity
 @Data
-@Table(name = "Perfiles")
-public class Perfil {
+@Table(name = "Usuarios")
+public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "idPerfil")
-    private long idPerfil;
+    @Column(name = "idUsuario")
+    private long idUsuario;
 
     @NotNull
     @Column(unique = true)
@@ -25,7 +25,7 @@ public class Perfil {
     private String username;
 
     //  @NotNull
-    @OneToMany(mappedBy = "perfil", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<Direccion> direcciones;
 
@@ -44,10 +44,11 @@ public class Perfil {
 
     @Range(min = 0, max = 100)
     private String puntaje;
-    @NotNull
-    private boolean isSwapper; // Un enum?
 
-    @OneToMany(mappedBy = "perfilOpina", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @NotNull
+    private boolean isSwapper;
+
+    @OneToMany(mappedBy = "usuarioOpina", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Opinion> opiniones;
 
 }

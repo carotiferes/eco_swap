@@ -21,8 +21,8 @@ public class Fundacion implements Serializable{
     private long idFundacion;
 
     @OneToOne
-    @JoinColumn(name = "id_perfil")
-    private Perfil perfil;
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
 
     @NotNull
     @Size(max = 60)
@@ -36,6 +36,6 @@ public class Fundacion implements Serializable{
     private boolean baja;
 
     @OneToMany(mappedBy = "fundacion", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Solicitud> solicitudes;
+    private List<Colecta> solicitudes;
 
 }

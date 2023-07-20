@@ -16,7 +16,7 @@ public class Direccion {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JsonBackReference
-    private Perfil perfil;
+    private Usuario usuario;
 
     @NotNull
     private String direccion;

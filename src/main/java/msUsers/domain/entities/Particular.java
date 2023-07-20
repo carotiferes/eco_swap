@@ -9,17 +9,17 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "Swappers")
+@Table(name = "Particulares")
 @Data
-public class Swapper{
+public class Particular {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long idSwapper;
+    private long idParticular;
 
     @OneToOne
-    @JoinColumn(name = "id_perfil")
-    private Perfil perfil;
+    @JoinColumn(name = "id_particular")
+    private Usuario usuario;
 
     @NotNull
     @Size(max = 40)
@@ -43,9 +43,9 @@ public class Swapper{
     @OneToOne(cascade = CascadeType.ALL)
     private TipoDocumento tipoDocumento;
 
-    @OneToMany(mappedBy = "swapper",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "particular",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Publicacion> publicaciones;
-    @OneToMany(mappedBy = "swapper",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Propuesta> propuestas;
+    @OneToMany(mappedBy = "particular",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Donacion> donaciones;
 }
 
