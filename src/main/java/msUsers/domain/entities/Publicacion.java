@@ -23,7 +23,7 @@ public class Publicacion {
     private EstadoPublicacion estadoPublicacion;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    private Swapper swapper;
+    private Particular particular;
 
     @OneToMany(mappedBy = "publicacion", fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private List<Producto> productos;

@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@SpringBootApplication(scanBasePackages = {"msUsers.controllers, " +
+@SpringBootApplication(scanBasePackages = {"msUsers.controllers",
 		"msUsers.domain.repositories",
 		"msUsers.exceptions.handler",
 		"msUsers.services",

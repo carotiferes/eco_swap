@@ -1,12 +1,9 @@
 package msUsers.domain.repositories;
 
-import msUsers.domain.entities.Propuesta;
+import msUsers.domain.entities.Particular;
 import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface PropuestasRepository extends JpaRepositoryImplementation<Propuesta, Long> {
-
+public interface ParticularRepository extends JpaRepositoryImplementation<Particular, Long> {
 }
