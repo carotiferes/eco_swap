@@ -10,7 +10,6 @@ import org.springframework.validation.annotation.Validated;
 
 @Builder
 @Data
-@Validated
 public class RequestProducto {
 
     @NotNull(message = "El producto debe tener un tipo que lo especifique.")
@@ -23,7 +22,8 @@ public class RequestProducto {
     @Positive(message = "La cantidad requerida debe ser mayor a cero.")
     private Integer cantidadRequerida;
 
-    @NotNull(message = "El producto debe tener un estado asignado.")
-    private String estado;
+    //ToDo: Chequear este estado (no figura como input en el front)
+//    @NotNull(message = "El producto debe tener un estado asignado.")
+      private String estado;
 
 }

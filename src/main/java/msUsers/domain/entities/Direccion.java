@@ -1,16 +1,21 @@
 package msUsers.domain.entities;
 
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
 
 @Entity
 @Table(name = "Direcciones")
+@Data
 public class Direccion {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long idDireccion;
 
     @ManyToOne(cascade = CascadeType.ALL)
+    @JsonBackReference
     private Perfil perfil;
 
     @NotNull
