@@ -54,9 +54,9 @@ export class FormColectaComponent  {
 
 	agregarProducto(caract?: number) {
 		const producto = this.fb.group({
-			s_descripcion: [''],
+			s_descripcion: ['', Validators.required],
 			n_cantidad_solicitada: [''],
-			tipo_producto: [''],
+			tipo_producto: ['', Validators.required],
 			estado: ['-']
 		});
 
