@@ -1,9 +1,10 @@
 package msUsers.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
 
 @Entity
 @Table(name = "Direcciones")
@@ -15,7 +16,7 @@ public class Direccion {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JsonBackReference
-    private Perfil perfil;
+    private Usuario usuario;
 
     @NotNull
     private String direccion;

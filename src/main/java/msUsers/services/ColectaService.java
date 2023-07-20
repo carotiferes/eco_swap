@@ -3,7 +3,7 @@ package msUsers.services;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.entities.*;
-import msUsers.domain.entities.enums.EstadoPropuesta;
+import msUsers.domain.entities.enums.EstadoDonacion;
 import msUsers.domain.repositories.*;
 import msUsers.domain.requests.propuestas.RequestComunicarPropuestaSolicitudModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,22 +14,22 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class SolicitudService {
+public class ColectaService {
 
     @Autowired
-    SolicitudRepository solicitudRepository;
+    ColectaRepository colectaRepository;
 
     @Autowired
     ImageService imageService;
 
     @Autowired
-    SwappersRepository swappersRepository;
+    ParticularRepository particularRepository;
 
     @Autowired
     ProductoRepository productoRepository;
 
     @Autowired
-    PropuestasRepository propuestasRepository;
+    DonacionesRepository donacionesRepository;
 
     @Autowired
     MensajeRespuestaRepository mensajeRespuestaRepository;
@@ -37,9 +37,9 @@ public class SolicitudService {
     CaracteristicaPropuestaRepository caracteristicaPropuestaRepository;
 
     public void crearPropuestaComunicacion(RequestComunicarPropuestaSolicitudModel request, Long idSolicitud) {
-           log.info(">> SERVICE: Se comenzo la creacion de propuesta para la solicitud: {}", idSolicitud);
-           Solicitud solicitud = solicitudRepository.findById(idSolicitud).get();
-           Producto producto = solicitud.getProductos().
+           log.info(">> SERVICE: Se comenzo la creacion de propuesta para la colecta: {}", idSolicitud);
+           Colecta colecta = colectaRepository.findById(idSolicitud).get();
+           Producto producto = colecta.getProductos().
                    stream()
                    .filter(x -> x.getIdProducto() == request.getSolicitudProductoModel().getProductoId())
                    .findAny().get();
@@ -48,49 +48,49 @@ public class SolicitudService {
                    .stream()
                    .map(s -> CaracteristicaPropuesta.armarCarateristica(s, request.getIdSwapper()))
                    .toList();
-           Swapper swapper = swappersRepository.findById(request.getIdSwapper()).get();
+           Particular particular = particularRepository.findById(request.getIdSwapper()).get();
 
            List<String> nombreImagenes = new ArrayList<>();
            for (int i = 0; i < request.getSolicitudProductoModel().getImagenes().size(); i++) {
                nombreImagenes.add(imageService.saveImage(request.getSolicitudProductoModel().getImagenes().get(i)));
            }
 
-           Propuesta propuestaNueva = new Propuesta();
-           propuestaNueva.setCantidadPropuesta(request.getSolicitudProductoModel().getCantidadOfrecida());
-           propuestaNueva.setDescripcion(request.getSolicitudProductoModel().getMensaje());
-           propuestaNueva.setEstadoPropuesta(EstadoPropuesta.PENDIENTE);
-           propuestaNueva.setSwapper(swapper);
-           propuestaNueva.setProducto(producto);
-           propuestaNueva.setCaracteristicaPropuesta(lista);
-           propuestaNueva.setSolicitud(solicitud);
-           propuestaNueva.setImagenes(String.join("|", nombreImagenes));
+           Donacion donacionNueva = new Donacion();
+           donacionNueva.setCantidadDonacion(request.getSolicitudProductoModel().getCantidadOfrecida());
+           donacionNueva.setDescripcion(request.getSolicitudProductoModel().getMensaje());
+           donacionNueva.setEstadoDonacion(EstadoDonacion.PENDIENTE);
+           donacionNueva.setParticular(particular);
+           donacionNueva.setProducto(producto);
+           donacionNueva.setCaracteristicaPropuesta(lista);
+           donacionNueva.setColecta(colecta);
+           donacionNueva.setImagenes(String.join("|", nombreImagenes));
 
 
-           log.info("<< Propuesta creado con ID: {}", propuestaNueva.getIdPropuesta());
-           List<Propuesta> listaPropuestas = solicitud.getPropuestas();
+           log.info("<< Donacion creado con ID: {}", donacionNueva.getIdDonacion());
+           List<Donacion> listaDonaciones = colecta.getDonaciones();
            log.info("<< Listado de propuestas originales de solciitud ID de propuestas: {}, cantidad original {}",
-                   idSolicitud, listaPropuestas.size());
-           listaPropuestas.add(propuestaNueva);
-           solicitud.setPropuestas(listaPropuestas);
-           var entity = solicitudRepository.save(solicitud);
-           log.info("<< Solicitud actualizado con ID de propuestas: {}",
-                   listaPropuestas
+                   idSolicitud, listaDonaciones.size());
+           listaDonaciones.add(donacionNueva);
+           colecta.setDonaciones(listaDonaciones);
+           var entity = colectaRepository.save(colecta);
+           log.info("<< Colecta actualizado con ID de propuestas: {}",
+                   listaDonaciones
                            .stream()
-                           .map(Propuesta::getIdPropuesta)
+                           .map(Donacion::getIdDonacion)
                            .toList());
     }
 
-    public List<Propuesta> obtenerTodasLasPropuestasComunicacion(Long idSolicitud) {
-        log.info(">> Obtener todas las propuestas de comunicacion de una Solicitud: {}", idSolicitud);
-        List<Propuesta> propuestaSolicituds = solicitudRepository.findById(idSolicitud).get().getPropuestas();
-        log.info("<< Cantidad obtenidas: {}", propuestaSolicituds.size());
-        return propuestaSolicituds;
+    public List<Donacion> obtenerTodasLasPropuestasComunicacion(Long idSolicitud) {
+        log.info(">> Obtener todas las propuestas de comunicacion de una Colecta: {}", idSolicitud);
+        List<Donacion> donacionSolicitudes = colectaRepository.findById(idSolicitud).get().getDonaciones();
+        log.info("<< Cantidad obtenidas: {}", donacionSolicitudes.size());
+        return donacionSolicitudes;
 
     }
 
-    public Propuesta obtenerPropuestasComunicacionXId(Long idPropuestaComunicacion) {
+    public Donacion obtenerPropuestasComunicacionXId(Long idPropuestaComunicacion) {
         log.info(">> Obtener 1 propuesta de comunicacion de solicitud x id: {}", idPropuestaComunicacion);
-        return propuestasRepository.findById(idPropuestaComunicacion).
+        return donacionesRepository.findById(idPropuestaComunicacion).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrado la comunicacion de propuesta con ID: "
                         + idPropuestaComunicacion));
     }
@@ -100,7 +100,7 @@ public class SolicitudService {
             RequestMensajeRespuesta request, Long idSolicitud, Long idPropuesta) {
         log.info(">> Service crear mensaje para comunicacion de propuesta con request: {}", request.toString());
 
-        Propuesta propuesta = propuestasRepository.findById(idPropuesta).get();
+        Donacion propuesta = donacionesRepository.findById(idPropuesta).get();
         propuesta.setCaracteristicaPropuesta();
 
         MensajeRespuesta respuesta = caracteristicaPropuestaRepository.save(
@@ -113,13 +113,13 @@ public class SolicitudService {
         log.info("<< Mensaje para comunicacion de propuesta con CREADO");
         caracteristicaPropuestaRepository.addNuevaRespuesta(respuesta);
 
-        if(request.getEstadoPropuesta()!= null) {
-            propuestaSolicitud.setEstadoPropuesta(request.getEstadoPropuesta());
-            if(request.getEstadoPropuesta().equals(EstadoPropuesta.RECIBIDA)) {
+        if(request.getEstadoDonacion()!= null) {
+            propuestaSolicitud.setEstadoDonacion(request.getEstadoDonacion());
+            if(request.getEstadoDonacion().equals(EstadoDonacion.RECIBIDA)) {
                 //ACTULIZA LA SOLICITUD LA CANTDIDAD YA OBTENIDA
          //       propuestaSolicitud.set
 
-                Solicitud solicitud = solicitudRepository.findById(idSolicitud).get();
+                Colecta solicitud = colectaRepository.findById(idSolicitud).get();
                 solicitud.setActiva(false);
                 Producto productoAActualizar = solicitud.getProductos()
                         .stream()
@@ -129,7 +129,7 @@ public class SolicitudService {
                 Integer sumatoriaProductosSolicitados = productoAActualizar.getCantidadRecibida()
                         + propuestaSolicitud.getCantidadOfrecida();
                 productoAActualizar.setCantidadRecibida(sumatoriaProductosSolicitados);
-                solicitudRepository.save(solicitud);
+                colectaRepository.save(solicitud);
             }
         }
         propuestaSolicitudRepository.save(propuestaSolicitud);

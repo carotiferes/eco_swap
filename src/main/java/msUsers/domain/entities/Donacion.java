@@ -7,30 +7,30 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import msUsers.domain.entities.enums.EstadoPropuesta;
+import msUsers.domain.entities.enums.EstadoDonacion;
 
 import java.util.List;
 
 @Entity
-@Table(name = "Propuestas")
+@Table(name = "Donaciones")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idPropuesta")
-public class Propuesta {
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idDonacion")
+public class Donacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long idPropuesta;
+    private long idDonacion;
 
     private String descripcion;
-    private int cantidadPropuesta;
+    private int cantidadDonacion;
 
     @Enumerated(value = EnumType.STRING)
-    private EstadoPropuesta estadoPropuesta;
+    private EstadoDonacion estadoDonacion;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    private Swapper swapper;
+    private Particular particular;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Producto producto;
@@ -40,7 +40,7 @@ public class Propuesta {
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonBackReference
-    private Solicitud solicitud;
+    private Colecta colecta;
 
     private String imagenes;
 }

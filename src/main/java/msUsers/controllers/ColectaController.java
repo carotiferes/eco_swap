@@ -7,17 +7,16 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import jakarta.persistence.criteria.*;
 import msUsers.domain.entities.*;
+import msUsers.domain.repositories.ColectaRepository;
+import msUsers.domain.repositories.DonacionesRepository;
 import msUsers.domain.repositories.FundacionesRepository;
-import msUsers.domain.repositories.PerfilRepository;
-import msUsers.domain.repositories.PropuestasRepository;
-import msUsers.domain.repositories.SolicitudRepository;
+import msUsers.domain.repositories.UsuarioRepository;
 import msUsers.domain.requests.RequestFilterSolicitudes;
 import msUsers.domain.requests.propuestas.RequestComunicarPropuestaSolicitudModel;
-import msUsers.domain.requests.propuestas.RequestMensajeRespuesta;
 import msUsers.domain.requests.RequestSolicitud;
 import msUsers.domain.responses.ResponsePostEntityCreation;
+import msUsers.services.ColectaService;
 import msUsers.services.ImageService;
-import msUsers.services.SolicitudService;
 import org.springframework.beans.factory.annotation.Autowired;
 import msUsers.domain.responses.ResponseSolicitudesList;
 import org.springframework.http.HttpStatus;
@@ -37,15 +36,17 @@ import java.util.stream.Collectors;
 @Slf4j
 @Validated
 @RequestMapping("/api")
-public class SolicitudController {
-    @Autowired SolicitudRepository solicitudRepository;
+public class ColectaController {
+    @Autowired
+    ColectaRepository colectaRepository;
     @Autowired FundacionesRepository fundacionesRepository;
-    @Autowired PropuestasRepository propuestasRepository;
+    @Autowired
+    DonacionesRepository donacionesRepository;
     @Autowired EntityManager entityManager;
     @Autowired
-    PerfilRepository perfilRepository;
+    UsuarioRepository usuarioRepository;
     @Autowired
-    SolicitudService solicitudService;
+    ColectaService colectaService;
     @Autowired
     ImageService imageService;
 
@@ -59,46 +60,46 @@ public class SolicitudController {
     @Transactional
     public ResponseEntity<ResponsePostEntityCreation> createSolicitud(@Valid @RequestBody RequestSolicitud requestSolicitud) {
 
-        //final var perfil = this.userContextService.getPerfil();
-        log.info(">> Request de creación de solicitud: {}", requestSolicitud.getTitulo());
+        //final var perfil = this.userContextService.getUsuario();
+        log.info(">> Request de creación de colecta: {}", requestSolicitud.getTitulo());
 
         var fundacionOptional = this.fundacionesRepository.findById(requestSolicitud.getIdFundacion());
         Fundacion fundacion = fundacionOptional.orElseThrow(() -> new EntityNotFoundException("¡La fundacion no existe!"));
 
-        Solicitud solicitud = new Solicitud();
-        solicitud.setFechaSolicitud(LocalDate.now());
-        solicitud.setActiva(true);
-        solicitud.setDescripcion(requestSolicitud.getDescripcion());
-        solicitud.setFundacion(fundacion);
-        solicitud.setTitulo(requestSolicitud.getTitulo());
+        Colecta colecta = new Colecta();
+        colecta.setFechaSolicitud(LocalDate.now());
+        colecta.setActiva(true);
+        colecta.setDescripcion(requestSolicitud.getDescripcion());
+        colecta.setFundacion(fundacion);
+        colecta.setTitulo(requestSolicitud.getTitulo());
 
-        // ToDo: En el caso de que la solicitud falle por alguna razón, la imagen se sigue guardando. CORREGIR.
+        // ToDo: En el caso de que la colecta falle por alguna razón, la imagen se sigue guardando. CORREGIR.
 
         String img = requestSolicitud.getImagen();
-        solicitud.setImagen(imageService.saveImage(img));
+        colecta.setImagen(imageService.saveImage(img));
 
         List<Producto> productos = requestSolicitud.getProductos().stream()
                 .map(reqProducto -> {
                     Producto p = new Producto();
-                    p.setSolicitud(solicitud);
+                    p.setColecta(colecta);
                     p.setDescripcion(reqProducto.getDescripcion());
                     p.setCantidadSolicitada(reqProducto.getCantidadRequerida());
                     p.setTipoProducto(reqProducto.getTipoProducto());
                     return p;
                 }).collect(Collectors.toList());
 
-        solicitud.setProductos(productos);
+        colecta.setProductos(productos);
 
-        // Guardo la solicitud y me quedo con el id generada en la base de datos
-        var entity = this.solicitudRepository.save(solicitud);
+        // Guardo la colecta y me quedo con el id generada en la base de datos
+        var entity = this.colectaRepository.save(colecta);
 
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUri();
 
         ResponsePostEntityCreation responsePostEntityCreation = new ResponsePostEntityCreation();
-        responsePostEntityCreation.setId(entity.getIdSolicitud());
-        responsePostEntityCreation.setDescripcion("Solicitud creada.");
+        responsePostEntityCreation.setId(entity.getIdColecta());
+        responsePostEntityCreation.setDescripcion("Colecta creada.");
         responsePostEntityCreation.setStatus(HttpStatus.OK.name());
-        log.info("<< Solicitud creada con ID: {}", entity.getIdSolicitud());
+        log.info("<< Colecta creada con ID: {}", entity.getIdColecta());
 
         return ResponseEntity.created(location).body(responsePostEntityCreation);
     }
@@ -114,7 +115,7 @@ public class SolicitudController {
             @PathVariable(required = true) Long idSolicitud,
             @Valid @RequestBody RequestComunicarPropuestaSolicitudModel request){
         log.info(">> Request para solicitud ID {} comunicar propuesta: {}", idSolicitud, request.toString());
-        solicitudService.crearPropuestaComunicacion(request, idSolicitud);
+        colectaService.crearPropuestaComunicacion(request, idSolicitud);
         ResponsePostEntityCreation response = new ResponsePostEntityCreation();
         response.setId(idSolicitud);
         response.setDescripcion("Comunicación creada.");
@@ -133,7 +134,7 @@ public class SolicitudController {
             @Valid @RequestBody RequestMensajeRespuesta request) {
         log.info(">> Request para idPropuestaComunicacion {} con mensaje para comunicar propuesta: {}",
                 idPropuestaComunicacion, request.toString());
-        solicitudService.agregarMensajeParaPropuestaComunicacion(request, idSolicitud, idPropuestaComunicacion);
+        colectaService.agregarMensajeParaPropuestaComunicacion(request, idSolicitud, idPropuestaComunicacion);
         log.info("<< Mensaje añadido para idPropuestaComunicacion {}", idPropuestaComunicacion);
         return ResponseEntity.ok().build();
     }
@@ -141,22 +142,22 @@ public class SolicitudController {
 
     @GetMapping(path = "/solicitud/{idSolicitud}/propuestas", produces = json)
     @ResponseStatus(HttpStatus.OK)
-    public List<Propuesta> obtenerTodasLasComunicacionesDeSolicitud(@PathVariable(required = true) Long idSolicitud)  {
+    public List<Donacion> obtenerTodasLasComunicacionesDeSolicitud(@PathVariable(required = true) Long idSolicitud)  {
         log.info(">> Request obtener todas las comunicanes de propuesta: {}", idSolicitud);
-        List<Propuesta> propuestaSolicitudsList = solicitudService.obtenerTodasLasPropuestasComunicacion(idSolicitud);
+        List<Donacion> donacionSolicitudesList = colectaService.obtenerTodasLasPropuestasComunicacion(idSolicitud);
         log.info("<< Cantidad de propuestas obtenidas: {} para idSolicitud: {}",
-                propuestaSolicitudsList.size(),
+                donacionSolicitudesList.size(),
                 idSolicitud);
-        return propuestaSolicitudsList;
+        return donacionSolicitudesList;
     }
 
     @GetMapping(path = "/solicitud/{idSolicitud}/propuestas/{idPropuesta}", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.OK)
-    public Propuesta obtenerComunicacionesDeSolicitudXIdComunicacion(@PathVariable(required = true) Long idPropuesta) {
+    public Donacion obtenerComunicacionesDeSolicitudXIdComunicacion(@PathVariable(required = true) Long idPropuesta) {
         log.info(">> Request obtener comunicacion de propuesta x idPropuesta: {}", idPropuesta);
-        Propuesta propuestaSolicitud = solicitudService.obtenerPropuestasComunicacionXId(idPropuesta);
-        log.info("<< Propuesta obtenido: {}", propuestaSolicitud);
-        return propuestaSolicitud;
+        Donacion donacionSolicitud = colectaService.obtenerPropuestasComunicacionXId(idPropuesta);
+        log.info("<< Donacion obtenido: {}", donacionSolicitud);
+        return donacionSolicitud;
     }
 
     @GetMapping(path = "/solicitudes", produces = json)
@@ -164,36 +165,36 @@ public class SolicitudController {
         log.info(">> Se realiza listado de solicitudes con los parametros: {}", request);
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Solicitud> query = cb.createQuery(Solicitud.class);
-        Root<Solicitud> from = query.from(Solicitud.class);
+        CriteriaQuery<Colecta> query = cb.createQuery(Colecta.class);
+        Root<Colecta> from = query.from(Colecta.class);
         Predicate predicate = cb.conjunction();
 
         if (request.getIdFundacion() != null) {
-            Join<Solicitud, Fundacion> join = from.join("fundacion");
+            Join<Colecta, Fundacion> join = from.join("fundacion");
             predicate = cb.and(predicate, cb.equal(join.get("idFundacion"), request.getIdFundacion()));
         }
         if (request.getCodigoPostal() != null) {
-            Join<Solicitud, Fundacion> fundacionJoin = from.join("fundacion");
-            Join<Fundacion, Perfil> perfilJoin = fundacionJoin.join("perfil");
-            Join<Perfil, Direccion> direccionJoin = perfilJoin.join("direcciones");
+            Join<Colecta, Fundacion> fundacionJoin = from.join("fundacion");
+            Join<Fundacion, Usuario> perfilJoin = fundacionJoin.join("perfil");
+            Join<Usuario, Direccion> direccionJoin = perfilJoin.join("direcciones");
             predicate = cb.and(predicate, cb.equal(direccionJoin.get("codigoPostal"), request.getCodigoPostal()));
         }
 
         if (request.getTipoProducto() != null) {
-            Join<Solicitud, Producto> join = from.join("productos");
+            Join<Colecta, Producto> join = from.join("productos");
             predicate = cb.and(predicate, cb.equal(join.get("tipoProducto"), request.getTipoProducto()));
         }
 
         query.where(predicate);
 
-        List<Solicitud> solicitudes = entityManager.createQuery(query).getResultList();
+        List<Colecta> solicitudes = entityManager.createQuery(query).getResultList();
 
         List<ResponseSolicitudesList> solicitudesDTO = solicitudes.stream().map(solicitud -> {
             ResponseSolicitudesList responseSolicitudesList = new ResponseSolicitudesList();
             responseSolicitudesList.setTituloSolicitud(solicitud.getTitulo());
             responseSolicitudesList.setFundacion(solicitud.getFundacion().getNombre());
             responseSolicitudesList.setProductos(solicitud.getProductos());
-            responseSolicitudesList.setIdSolicitud(solicitud.getIdSolicitud());
+            responseSolicitudesList.setIdSolicitud(solicitud.getIdColecta());
             responseSolicitudesList.setImagen(solicitud.getImagen());
             responseSolicitudesList.setIdFundacion(solicitud.getFundacion().getIdFundacion());
             return responseSolicitudesList;
@@ -204,8 +205,8 @@ public class SolicitudController {
     }
 
     @GetMapping(path = "/solicitud/{id_solicitud}", produces = json)
-    public ResponseEntity<Solicitud> getSolicitud(@PathVariable("id_solicitud") Long id) {
-        final var solicitud = this.solicitudRepository.findById(id).
+    public ResponseEntity<Colecta> getSolicitud(@PathVariable("id_solicitud") Long id) {
+        final var solicitud = this.colectaRepository.findById(id).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrado la solicitud: " + id));
         return ResponseEntity.ok(solicitud);
     }
