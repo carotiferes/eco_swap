@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FundacionModel } from 'src/app/models/fundacion.model';
 import { PerfilModel } from 'src/app/models/perfil.model';
-import { PropuestaModel } from 'src/app/models/donacion.model';
+import { DonacionModel } from 'src/app/models/donacion.model';
 import { ColectaModel } from 'src/app/models/colecta.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
@@ -19,7 +19,7 @@ export class ColectaComponent {
 	colecta?: ColectaModel;
 	fundacion?: FundacionModel;
 	perfil?: PerfilModel;
-	donaciones: PropuestaModel[] = [];
+	donaciones: DonacionModel[] = [];
 
 	userData?: any;
 	loading: boolean = true;
@@ -48,7 +48,7 @@ export class ColectaComponent {
 			
 			if(this.colecta){
 				for (const prod of this.colecta.productos) {
-					this.donaciones.push(...prod.donaciones)
+					this.donaciones.push(...prod.propuestas)
 				}
 			}
 
@@ -79,22 +79,24 @@ export class ColectaComponent {
 		})
 	}
 
-	changeEstadoPropuesta(propuesta: PropuestaModel, status: string){
+	changeEstadoPropuesta(propuesta: DonacionModel, status: string){
 		this.donaciones.map(item => {
 			if(item == propuesta) {
 				if(item.estadoPropuesta != status) item.estadoPropuesta = status;
-				else item.estadoPropuesta = 'NUEVA'
+				else item.estadoPropuesta = 'PENDIENTE'
 			}
 		})
 		//TODO: CHANGE STATUS IN BACKEND
 	}
 
-	zoomImage(img: string){
-		Swal.fire({
-			html: `<img src="${this.getImage(img)}" style="width: 100%"/>`,
-			showConfirmButton: false,
-			showCloseButton: true
-		})
+	zoomImage(img?: string){
+		if(img){
+			Swal.fire({
+				html: `<img src="${this.getImage(img)}" style="width: 100%"/>`,
+				showConfirmButton: false,
+				showCloseButton: true
+			})
+		}
 	}
 
 	getImagen(){
@@ -102,7 +104,7 @@ export class ColectaComponent {
 	}
 
 	showDireccion(perfil: any){
-		console.log( perfil.direcciones);
+		console.log( perfil);
 		let stringDir: string = ''
 		for (const dir of perfil.direcciones) {
 			if(dir.direccion) {
@@ -113,10 +115,11 @@ export class ColectaComponent {
 
 		const dirArray = stringDir.split(' ')
 		Swal.fire({
-			title: 'Dirección de la fundación',
+			title: 'Información de la fundación',
 			text: stringDir + ' https://www.google.com/maps/search/?api=1&query='+dirArray[0]+'+'+dirArray[1],
 			html: `
-			<p style="font-weight: 500;">${stringDir}</p>
+			<p style="font-weight: 400;"><b>Email: </b>${perfil.email}</p>
+			<p style="font-weight: 500;"><b>Dirección: </b>${stringDir}</p>
 			<a href="https://www.google.com/maps/search/?api=1&query=${dirArray[0]}+${dirArray[1]}" target="_blank">Ver en Google Maps</a>`,
 			//iconHtml: `<span class="material-icons-outlined"> place </span>`
 			icon: 'info'
