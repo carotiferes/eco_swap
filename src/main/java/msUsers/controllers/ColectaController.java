@@ -112,7 +112,7 @@ public class ColectaController {
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public ResponseEntity<ResponsePostEntityCreation> crearComunicacionDeDonacion(
-            @PathVariable(required = true) Long idColecta,
+            @PathVariable(required = true, name = "id_colecta") Long idColecta,
             @Valid @RequestBody RequestComunicarDonacionColectaModel request){
         log.info(">> Request para colecta ID {} comunicar donacion: {}", idColecta, request.toString());
         colectaService.crearDonacionComunicacion(request, idColecta);
@@ -142,7 +142,7 @@ public class ColectaController {
 
     @GetMapping(path = "/colecta/{id_colecta}/donaciones", produces = json)
     @ResponseStatus(HttpStatus.OK)
-    public List<Donacion> obtenerTodasLasComunicacionesDeColecta(@PathVariable(required = true) Long idColecta)  {
+    public List<Donacion> obtenerTodasLasComunicacionesDeColecta(@PathVariable(required = true, name = "id_colecta") Long idColecta)  {
         log.info(">> Request obtener todas las comunicaciones de donacion: {}", idColecta);
         List<Donacion> donacionColectaesList = colectaService.obtenerTodasLasdonacionesComunicacion(idColecta);
         log.info("<< Cantidad de donaciones obtenidas: {} para idColecta: {}",
