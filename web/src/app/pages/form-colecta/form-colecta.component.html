@@ -102,11 +102,11 @@
 	<mat-form-field>
 		<mat-label>Producto</mat-label>
 		<mat-select formControlName="producto">
-			<mat-option *ngFor="let prod of solicitud.productos" [value]="prod.id_producto">
+			<mat-option *ngFor="let prod of colecta.productos" [value]="prod.id_producto">
 				{{prod.s_descripcion}}
 			</mat-option>
 		</mat-select>
-		<mat-error *ngIf="solicitudForm.get('producto')!.hasError('required')">
+		<mat-error *ngIf="colectaForm.get('producto')!.hasError('required')">
 			Campo obligatorio
 		</mat-error>
 	</mat-form-field>

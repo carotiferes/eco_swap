@@ -65,7 +65,9 @@ export class FormDonacionComponent implements OnInit {
 		caracteristicas.push(caracteristica);
 	}
 
-	confirmarPropuesta() {
+	confirmarDonacion() {
+		console.log(this.donacionForm.value);
+		
 		if(this.donacionForm.valid){
 			let caracteristicas: any[] = this.getCaracteristicasArray.value || [];
 			let sendCaracteristicas: string[] = [];
@@ -73,8 +75,8 @@ export class FormDonacionComponent implements OnInit {
 				sendCaracteristicas.push(item.s_descripcion);
 			})
 			const objetoToSend = {
-				idSwapper: this.userData.id_particular,
-				solicitudProductoModel: {
+				idParticular: this.userData.id_particular,
+				colectaProductoModel: {
 					tipoProducto: "MUEBLES",
 					productoId: this.donacionForm.controls['producto'].value,
 					cantidadOfrecida: this.donacionForm.controls['n_cantidad'].value,
@@ -85,7 +87,7 @@ export class FormDonacionComponent implements OnInit {
 			}
 			console.log(objetoToSend);
 	
-			this.donacionesService.crearPropuesta(this.colecta.idColecta, objetoToSend).subscribe(res => {
+			this.donacionesService.crearDonacion(this.colecta.idColecta, objetoToSend).subscribe(res => {
 				console.log(res);
 				if(JSON.parse(JSON.stringify(res)).descripcion)	{
 					this.showMessage('Donación Creada!', 'La donacion se creó exitosamente. Ahora te toca a vos! Llevá tu donación a la fundación para que la puedan empezar a usar.', 'success')

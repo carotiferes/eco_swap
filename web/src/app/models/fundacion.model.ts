@@ -6,5 +6,5 @@ export interface FundacionModel {
 	nombre: string,
 	cuil: string,
 	usuario: UsuarioModel,
-	solicitudes: ColectaModel[]
+	colectas: ColectaModel[]
 }

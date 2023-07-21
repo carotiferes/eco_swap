@@ -26,11 +26,11 @@ export class DonacionesService {
 		return this.backendService.get('api/colecta/'+id_colecta);
 	}
 
-	getPropuestas(id_colecta: any){
+	getDonaciones(id_colecta: any){
 		return this.backendService.get('/api/colecta/'+id_colecta+'/donaciones');
 	}
 
-	crearPropuesta(id_colecta: number, body: any){
+	crearDonacion(id_colecta: number, body: any){
 		return this.backendService.post('api/colecta/'+id_colecta+'/donaciones', body);
 	}
 
@@ -38,7 +38,7 @@ export class DonacionesService {
 		return URL + 'api/getImage/' + img;
 	}
 
-	cambiarEstadoPropuesta(id_colecta: number, id_donacion: number, body: any){
+	cambiarEstadoDonacion(id_colecta: number, id_donacion: number, body: any){
 		return this.backendService.put('api/colecta/'+id_colecta+'/donaciones/'+id_donacion, body);
 	}
 }

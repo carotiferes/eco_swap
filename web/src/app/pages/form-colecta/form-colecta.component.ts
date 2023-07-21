@@ -93,7 +93,7 @@ export class FormColectaComponent  {
 		}).subscribe((res) => {
 			//console.log(res, JSON.parse(JSON.stringify(res)).descripcion);
 			if(JSON.parse(JSON.stringify(res)).descripcion)	{
-				this.showMessage('¡Colecta Creada!', 'La colecta se creó exitosamente. Los Swappers te contactarán pronto!', 'success')
+				this.showMessage('¡Colecta Creada!', 'La colecta se creó exitosamente. Los particulars te contactarán pronto!', 'success')
 				this.router.navigateByUrl('colectas/'+ this.colectaForm.controls['id_fundacion'].value)
 			}
 			else this.showMessage('Ocurrió un error', 'No pudimos crear la colecta. Intentá nuevamente luego.', 'error')

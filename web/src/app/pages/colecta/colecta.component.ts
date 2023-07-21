@@ -54,16 +54,16 @@ export class ColectaComponent {
 
 			console.log(this.donaciones);
 			
-			
+			// TODO: ACA SE ROMPE 
 			if(this.userData.isSwapper){
 				this.donaciones = this.donaciones.filter(item => item.particular.idParticular == this.userData.id_particular)
 			}
 
-			/* this.donaciones.map(propuesta => {
-				if(propuesta.imagenes) propuesta.imagenes = propuesta.imagenes.split('|')
-			}) */
+			this.donaciones.map(donacion => {
+				if(donacion.imagenes) donacion.parsedImagenes = donacion.imagenes.split('|')
+			})
 			
-			this.getImagen()
+			if(this.colecta) this.colecta.imagen = this.getImage(this.colecta.imagen)
 			this.loading = false;
 		})
 	}
@@ -79,7 +79,7 @@ export class ColectaComponent {
 		})
 	}
 
-	changeEstadoPropuesta(donacion: DonacionModel, status: string){
+	changeEstadoDonacion(donacion: DonacionModel, status: string){
 		this.donaciones.map(item => {
 			if(item == donacion) {
 				if(item.estadoDonacion != status) item.estadoDonacion = status;
@@ -99,9 +99,9 @@ export class ColectaComponent {
 		}
 	}
 
-	getImagen(){
+	/* getImagen(){
 		if(this.colecta) this.colecta.imagen = this.donacionesService.getImagen(this.colecta.imagen)
-	}
+	} */
 
 	showDireccion(usuario: any){
 		console.log( usuario);

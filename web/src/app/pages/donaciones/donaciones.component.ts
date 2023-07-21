@@ -30,7 +30,7 @@ export class DonacionesComponent {
 		})
 	}
 
-	changeEstadoPropuesta(donacion: DonacionModel, event: any){
+	changeEstadoDonacion(donacion: DonacionModel, event: any){
 		console.log(donacion, event);
 		
 		this.donaciones.map((item: any) => {
@@ -40,7 +40,7 @@ export class DonacionesComponent {
 			}
 		})
 		console.log(this.donaciones);
-		//this.donacionesService.cambiarEstadoPropuesta()
+		//this.donacionesService.cambiarEstadoDonacion()
 	}
 
 	openDialog() {

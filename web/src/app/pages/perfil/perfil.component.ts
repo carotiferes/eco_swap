@@ -22,7 +22,7 @@ export class PerfilComponent {
 		title: string,
 		icon: string,
 		attributes: {title: string, name: string, value: any}[],
-		exclusive?: 'swapper' | 'fundacion'
+		exclusive?: 'particular' | 'fundacion'
 	}[] = []
 
 	userData: any;
@@ -35,7 +35,7 @@ export class PerfilComponent {
 			
 		}) */
 		this.user = db.perfiles[this.isSwapper ? 0 : 1];
-		this.userInfo = this.isSwapper ? db.swappers[0] : db.fundaciones[0];
+		this.userInfo = this.isSwapper ? db.particulars[0] : db.fundaciones[0];
 		this.configureColumns();
 	}
 	
@@ -58,13 +58,13 @@ export class PerfilComponent {
 				{title: 'Teléfono', name: 's_telefono', value: this.user.telefono},
 			]
 		}, {
-			title: 'Información de Swapper',
+			title: 'Información de Particular',
 			icon: 'social_distance',
 			attributes: [
 				{title: 'Fecha de Nacimiento', name: 'f_nacimiento', value: this.userInfo.f_nacimiento},
 				{title: 'Puntaje', name: 'n_puntaje', value: this.user.puntaje},
 			],
-			exclusive: 'swapper'
+			exclusive: 'particular'
 		}, {
 			title: 'Información de la Fundación',
 			icon: 'diversity_2',
@@ -78,7 +78,7 @@ export class PerfilComponent {
 
 	showableAccordions(){
 		return this.accordions.filter(item => 
-			(this.isSwapper && item.exclusive == 'swapper') || (!this.isSwapper && item.exclusive == 'fundacion') || !item.exclusive
+			(this.isSwapper && item.exclusive == 'particular') || (!this.isSwapper && item.exclusive == 'fundacion') || !item.exclusive
 		)
 	}
 }

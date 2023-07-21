@@ -6,7 +6,7 @@
 		<mat-card-header style="border-bottom: solid 1px var(--light-grey);">
 			<div mat-card-avatar class="donacion-example-header-image"></div>
 			datos de la fundacion
-			<!-- <mat-card-title>{{donacion.swapper.s_nombre}} {{donacion.swapper.s_apellido}}</mat-card-title>
+			<!-- <mat-card-title>{{donacion.particular.s_nombre}} {{donacion.particular.s_apellido}}</mat-card-title>
 			<mat-card-subtitle>
 				<mat-icon *ngFor="let i of [].constructor(perfil.n_puntaje)" color="primary">star</mat-icon>
 				<mat-icon *ngFor="let i of [].constructor(5-perfil.n_puntaje)" class="empty-star">star</mat-icon>
@@ -26,7 +26,7 @@
 			<div class="donacion-status">
 				Desactivar<mat-slide-toggle [checked]="donacion.estadoDonacion != 'CANCELADA'"
 				[disabled]="donacion.estadoDonacion == 'ACEPTADA' || donacion.estadoDonacion == 'EN_ESPERA'" 
-				(change)="changeEstadoPropuesta(donacion, $event)">Activar</mat-slide-toggle>
+				(change)="changeEstadoDonacion(donacion, $event)">Activar</mat-slide-toggle>
 			</div>
 		</mat-card-content>
 	</mat-card>

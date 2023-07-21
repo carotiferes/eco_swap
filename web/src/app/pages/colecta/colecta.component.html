@@ -41,7 +41,7 @@
 		</mat-card-actions>
 	</mat-card>
 
-	<div *ngIf="(usuario && !usuario.swapper && fundacion && fundacion.idFundacion == userData.id_fundacion) || 
+	<div *ngIf="(usuario && !usuario.particular && fundacion && fundacion.idFundacion == userData.id_fundacion) || 
 				(this.userData.isSwapper && usuario) && !loading">
 		<h3 style="margin: 20px 0 0 5px; font-weight: bold;">{{this.userData.isSwapper ? 'Mi donación' : 'Donaciones'}}</h3>
 		<div *ngIf="donaciones.length == 0 && !loading" style="text-align: center;">Esta colecta no tiene donaciones aún!</div>
@@ -62,15 +62,15 @@
 					[class.rechazada]="donacion.estadoDonacion == 'RECHAZADA'">Estado: {{donacion.estadoDonacion}}</p>
 				</div>
 				<div class="imagenes" >
-					<img [src]="getImage(donacion.imagenes)" (click)="zoomImage(donacion.imagenes)" />
+					<img [src]="getImage(img)" *ngFor="let img of donacion.parsedImagenes" (click)="zoomImage(img)" />
 				</div><!-- *ngFor="let img of donacion.imagenes" -->
 				<div class="donacion-status">
-					<button mat-raised-button color="primary" (click)="changeEstadoPropuesta(donacion, 'APROBADA')"
+					<button mat-raised-button color="primary" (click)="changeEstadoDonacion(donacion, 'APROBADA')"
 					[disabled]="donacion.estadoDonacion != 'PENDIENTE'">
 						<mat-icon>check</mat-icon>
 						ACEPTAR
 					</button>
-					<button mat-raised-button color="warn" (click)="changeEstadoPropuesta(donacion, 'RECHAZADA')"
+					<button mat-raised-button color="warn" (click)="changeEstadoDonacion(donacion, 'RECHAZADA')"
 					[disabled]="donacion.estadoDonacion != 'PENDIENTE'">
 						<mat-icon>close</mat-icon>
 						RECHAZAR

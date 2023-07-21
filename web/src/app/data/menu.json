@@ -7,7 +7,7 @@
 	"title": "Trueques",
 	"path": "/trueques",
 	"type": "pages",
-	"needsLogin": "swapper"
+	"needsLogin": "particular"
 }, {
 	"title": "Colectas",
 	"path": "/colectas",
@@ -27,7 +27,7 @@
 	"title": "Mis Donaciones",
 	"path": "/mis-donaciones",
 	"type": "personal",
-	"needsLogin": "swapper"
+	"needsLogin": "particular"
 }, {
 	"title": "Mis Colectas",
 	"path": "/colectas",

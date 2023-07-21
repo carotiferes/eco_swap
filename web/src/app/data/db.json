@@ -1,16 +1,16 @@
 {
 	"perfiles": [
 		{
-			"is_swapper" : 1,
+			"is_particular" : 1,
 			"id_perfil" : 1,
 			"telefono" : "1122334455",
-			"username" : "swapper1",
+			"username" : "particular1",
 			"password" : "1234",
-			"email" : "swapper1@gmail.com",
+			"email" : "particular1@gmail.com",
 			"puntaje" : "3"
 		},
 		{
-			"is_swapper" : 0,
+			"is_particular" : 0,
 			"id_perfil" : 2,
 			"telefono" : "1166778899",
 			"username" : "fundacion",
@@ -19,7 +19,7 @@
 			"puntaje" : "3"
 		},
 		{
-			"is_swapper" : 0,
+			"is_particular" : 0,
 			"id_perfil" : 3,
 			"telefono" : "1166778899",
 			"username" : "fundacion2",
@@ -28,16 +28,16 @@
 			"puntaje" : "3"
 		},
 		{
-			"is_swapper" : 1,
+			"is_particular" : 1,
 			"id_perfil" : 4,
 			"telefono" : "1122334455",
-			"username" : "swapper2",
+			"username" : "particular2",
 			"password" : "1234",
-			"email" : "swapper2@gmail.com",
+			"email" : "particular2@gmail.com",
 			"puntaje" : "3"
 		}
 	],
-	"swappers": [
+	"particulars": [
 		{
 			"fecha_nacimiento" : "2023-02-05",
 			"dni" : "41552336",

@@ -42,7 +42,7 @@ export class RegistroComponent {
 		Swal.fire({
 			title: '¡Te damos la bienvenida!',
 			text: `Nos alegra que te sumes a nuestra comunidad, antes de seguir, 
-			necesitamos saber si te querés registrar como fundación o como Swapper`,
+			necesitamos saber si te querés registrar como fundación o como Particular`,
 			confirmButtonText: 'Represento a una fundación',
 			confirmButtonColor: '#87db59',
 			cancelButtonText: 'No soy de una fundación',
