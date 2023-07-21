@@ -18,7 +18,7 @@ public class Particular {
     private long idParticular;
 
     @OneToOne
-    @JoinColumn(name = "id_particular")
+    @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
     @NotNull

@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.entities.*;
 import msUsers.domain.entities.enums.EstadoDonacion;
 import msUsers.domain.repositories.*;
-import msUsers.domain.requests.propuestas.RequestComunicarPropuestaSolicitudModel;
+import msUsers.domain.requests.donaciones.RequestComunicarDonacionColectaModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,28 +36,28 @@ public class ColectaService {
     @Autowired
     CaracteristicaPropuestaRepository caracteristicaPropuestaRepository;
 
-    public void crearPropuestaComunicacion(RequestComunicarPropuestaSolicitudModel request, Long idSolicitud) {
+    public void crearPropuestaComunicacion(RequestComunicarDonacionColectaModel request, Long idSolicitud) {
            log.info(">> SERVICE: Se comenzo la creacion de propuesta para la colecta: {}", idSolicitud);
            Colecta colecta = colectaRepository.findById(idSolicitud).get();
            Producto producto = colecta.getProductos().
                    stream()
-                   .filter(x -> x.getIdProducto() == request.getSolicitudProductoModel().getProductoId())
+                   .filter(x -> x.getIdProducto() == request.getColectaProductoModel().getProductoId())
                    .findAny().get();
-           List<CaracteristicaPropuesta> lista = request.getSolicitudProductoModel()
+           List<CaracteristicaPropuesta> lista = request.getColectaProductoModel()
                    .getCaracteristicas()
                    .stream()
-                   .map(s -> CaracteristicaPropuesta.armarCarateristica(s, request.getIdSwapper()))
+                   .map(s -> CaracteristicaPropuesta.armarCarateristica(s, request.getIdParticular()))
                    .toList();
-           Particular particular = particularRepository.findById(request.getIdSwapper()).get();
+           Particular particular = particularRepository.findById(request.getIdParticular()).get();
 
            List<String> nombreImagenes = new ArrayList<>();
-           for (int i = 0; i < request.getSolicitudProductoModel().getImagenes().size(); i++) {
-               nombreImagenes.add(imageService.saveImage(request.getSolicitudProductoModel().getImagenes().get(i)));
+           for (int i = 0; i < request.getColectaProductoModel().getImagenes().size(); i++) {
+               nombreImagenes.add(imageService.saveImage(request.getColectaProductoModel().getImagenes().get(i)));
            }
 
            Donacion donacionNueva = new Donacion();
-           donacionNueva.setCantidadDonacion(request.getSolicitudProductoModel().getCantidadOfrecida());
-           donacionNueva.setDescripcion(request.getSolicitudProductoModel().getMensaje());
+           donacionNueva.setCantidadDonacion(request.getColectaProductoModel().getCantidadOfrecida());
+           donacionNueva.setDescripcion(request.getColectaProductoModel().getMensaje());
            donacionNueva.setEstadoDonacion(EstadoDonacion.PENDIENTE);
            donacionNueva.setParticular(particular);
            donacionNueva.setProducto(producto);

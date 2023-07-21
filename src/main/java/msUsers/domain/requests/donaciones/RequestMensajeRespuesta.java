@@ -1,4 +1,4 @@
-package msUsers.domain.requests.propuestas;
+package msUsers.domain.requests.donaciones;
 
 import lombok.Builder;
 import lombok.Data;

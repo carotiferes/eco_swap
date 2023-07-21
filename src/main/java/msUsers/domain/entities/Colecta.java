@@ -31,7 +31,7 @@ public class Colecta implements Serializable {
 
   //  @NotNull
     @Column(columnDefinition = "DATE")
-    private LocalDate fechaSolicitud;
+    private LocalDate fechaColecta;
 
     private boolean activa;
 
