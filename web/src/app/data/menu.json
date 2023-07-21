@@ -24,8 +24,8 @@
 	"type": "personal",
 	"needsLogin": "none"
 }, {
-	"title": "Mis Propuestas",
-	"path": "/mis-propuestas",
+	"title": "Mis Donaciones",
+	"path": "/mis-donaciones",
 	"type": "personal",
 	"needsLogin": "swapper"
 }, {

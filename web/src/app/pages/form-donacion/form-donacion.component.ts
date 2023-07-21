@@ -22,14 +22,14 @@ export class FormDonacionComponent implements OnInit {
 	userData: any;
 
 	loading: boolean = true;
-	id_solicitud?: string;
+	id_colecta?: string;
 
 	constructor(private fb: FormBuilder, private route: ActivatedRoute, private router: Router,
 		private donacionesService: DonacionesService, private auth: AuthService) {
 
 		route.paramMap.subscribe(params => {
 			console.log(params);
-			this.id_solicitud = params.get('id_solicitud') || '';
+			this.id_colecta = params.get('id_colecta') || '';
 		})
 
 		this.donacionForm = fb.group({
@@ -47,7 +47,7 @@ export class FormDonacionComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.donacionesService.getColectas().subscribe((res: any) => {
-			this.colecta = res.find((item: any) => item.idColecta == this.id_solicitud)
+			this.colecta = res.find((item: any) => item.idColecta == this.id_colecta)
 			this.loading = false;
 		})
 	}
@@ -88,8 +88,8 @@ export class FormDonacionComponent implements OnInit {
 			this.donacionesService.crearPropuesta(this.colecta.idColecta, objetoToSend).subscribe(res => {
 				console.log(res);
 				if(JSON.parse(JSON.stringify(res)).descripcion)	{
-					this.showMessage('Propuesta Creada!', 'La donacion se creó exitosamente. Ahora te toca a vos! Llevá tu donación a la fundación para que la puedan empezar a usar.', 'success')
-					this.router.navigateByUrl('colecta/'+ this.id_solicitud)
+					this.showMessage('Donación Creada!', 'La donacion se creó exitosamente. Ahora te toca a vos! Llevá tu donación a la fundación para que la puedan empezar a usar.', 'success')
+					this.router.navigateByUrl('colecta/'+ this.id_colecta)
 				}
 				else this.showMessage('Ocurrió un error', 'No pudimos crear la donacion. Intentá nuevamente luego.', 'error')
 			})

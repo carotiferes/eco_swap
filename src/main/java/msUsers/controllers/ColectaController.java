@@ -160,8 +160,8 @@ public class ColectaController {
         return donacionSolicitud;
     }
 
-    @GetMapping(path = "/donaciones", produces = json)
-    public ResponseEntity<List<ResponseColectasList>> listSolicitudes(@ModelAttribute RequestFilterColectas request) {
+    @GetMapping(path = "/colectas", produces = json)
+    public ResponseEntity<List<ResponseColectasList>> listColectas(@ModelAttribute RequestFilterColectas request) {
         log.info(">> Se realiza listado de donaciones con los parametros: {}", request);
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -191,7 +191,7 @@ public class ColectaController {
 
         List<ResponseColectasList> solicitudesDTO = solicitudes.stream().map(solicitud -> {
             ResponseColectasList responseColectasList = new ResponseColectasList();
-            responseColectasList.setTituloColecta(solicitud.getTitulo());
+            responseColectasList.setTitulo(solicitud.getTitulo());
             responseColectasList.setFundacion(solicitud.getFundacion().getNombre());
             responseColectasList.setProductos(solicitud.getProductos());
             responseColectasList.setIdColecta(solicitud.getIdColecta());
@@ -205,7 +205,7 @@ public class ColectaController {
     }
 
     @GetMapping(path = "/colecta/{id_colecta}", produces = json)
-    public ResponseEntity<Colecta> getColecta(@PathVariable("id_solicitud") Long id) {
+    public ResponseEntity<Colecta> getColecta(@PathVariable("id_colecta") Long id) {
         final var solicitud = this.colectaRepository.findById(id).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrado la solicitud: " + id));
         return ResponseEntity.ok(solicitud);

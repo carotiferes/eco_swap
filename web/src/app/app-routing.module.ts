@@ -48,7 +48,7 @@ const routes: Routes = [{
 	component: ColectaComponent,
 	canActivate: [authGuard]
 },{
-	path: 'propuesta/:id_colecta',
+	path: 'donacion/:id_colecta',
 	component: FormDonacionComponent,
 	canActivate: [authGuard]
 },{

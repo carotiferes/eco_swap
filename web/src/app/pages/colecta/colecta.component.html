@@ -2,7 +2,7 @@
 
 <div id="main-colecta">
 	<app-spinner [loading]="loading"></app-spinner>
-	<mat-card *ngIf="!loading && fundacion && perfil && colecta">
+	<mat-card *ngIf="!loading && fundacion && usuario && colecta">
 		<mat-card-header style="border-bottom: solid 1px var(--light-grey); padding-bottom: 10px;">
 			<div class="div-header">
 				<div class="header-info">
@@ -13,8 +13,8 @@
 							<mat-icon class="address" (click)="showDireccion(fundacion.usuario)">place</mat-icon>
 						</mat-card-title>
 						<mat-card-subtitle>
-							<mat-icon *ngFor="let i of [].constructor(perfil.puntaje)" color="primary">star</mat-icon>
-							<mat-icon *ngFor="let i of [].constructor(5-perfil.puntaje)" class="empty-star">star</mat-icon>
+							<mat-icon *ngFor="let i of [].constructor(usuario.puntaje)" color="primary">star</mat-icon>
+							<mat-icon *ngFor="let i of [].constructor(5-usuario.puntaje)" class="empty-star">star</mat-icon>
 						</mat-card-subtitle>
 					</div>
 				</div>
@@ -41,17 +41,17 @@
 		</mat-card-actions>
 	</mat-card>
 
-	<div *ngIf="(perfil && !perfil.swapper && fundacion && fundacion.idFundacion == userData.id_fundacion) || 
-				(this.userData.isSwapper && perfil) && !loading">
-		<h3 style="margin: 20px 0 0 5px; font-weight: bold;">{{this.userData.isSwapper ? 'Mi donacion' : 'Propuestas'}}</h3>
+	<div *ngIf="(usuario && !usuario.swapper && fundacion && fundacion.idFundacion == userData.id_fundacion) || 
+				(this.userData.isSwapper && usuario) && !loading">
+		<h3 style="margin: 20px 0 0 5px; font-weight: bold;">{{this.userData.isSwapper ? 'Mi donación' : 'Donaciones'}}</h3>
 		<div *ngIf="donaciones.length == 0 && !loading" style="text-align: center;">Esta colecta no tiene donaciones aún!</div>
 		<mat-card *ngFor="let donacion of donaciones" style="margin: 10px;">
 			<mat-card-header style="border-bottom: solid 1px var(--light-grey);">
 				<div mat-card-avatar class="donacion-example-header-image"></div>
 				<mat-card-title>{{donacion.particular.nombre}} {{donacion.particular.apellido}}</mat-card-title>
 				<mat-card-subtitle>
-					<mat-icon *ngFor="let i of [].constructor(perfil.puntaje)" color="primary">star</mat-icon>
-					<mat-icon *ngFor="let i of [].constructor(5-perfil.puntaje)" class="empty-star">star</mat-icon>
+					<mat-icon *ngFor="let i of [].constructor(usuario.puntaje)" color="primary">star</mat-icon>
+					<mat-icon *ngFor="let i of [].constructor(5-usuario.puntaje)" class="empty-star">star</mat-icon>
 				</mat-card-subtitle>
 			</mat-card-header>
 			<mat-card-content class="donacion-card-content">

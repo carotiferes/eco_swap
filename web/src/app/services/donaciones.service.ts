@@ -12,33 +12,33 @@ export class DonacionesService {
 
 	crearColecta(body: any) {
 		console.log(body);
-		const test = this.backendService.post('api/solicitud', body);
+		const test = this.backendService.post('api/colecta', body);
 		console.log('aaaa', test);
 
 		return test
 	}
 
 	getColectas(){
-		return this.backendService.get('api/solicitudes');
+		return this.backendService.get('api/colectas');
 	}
 
-	getColecta(id_solicitud: any){
-		return this.backendService.get('api/solicitud/'+id_solicitud);
+	getColecta(id_colecta: any){
+		return this.backendService.get('api/colecta/'+id_colecta);
 	}
 
-	getPropuestas(id_solicitud: any){
-		return this.backendService.get('/api/solicitud/'+id_solicitud+'/propuestas');
+	getPropuestas(id_colecta: any){
+		return this.backendService.get('/api/colecta/'+id_colecta+'/donaciones');
 	}
 
-	crearPropuesta(id_solicitud: number, body: any){
-		return this.backendService.post('api/solicitud/'+id_solicitud+'/propuestas', body);
+	crearPropuesta(id_colecta: number, body: any){
+		return this.backendService.post('api/colecta/'+id_colecta+'/donaciones', body);
 	}
 
 	getImagen(img: string){
 		return URL + 'api/getImage/' + img;
 	}
 
-	cambiarEstadoPropuesta(id_solicitud: number, id_propuesta: number, body: any){
-		return this.backendService.put('api/solicitud/'+id_solicitud+'/propuestas/'+id_propuesta, body);
+	cambiarEstadoPropuesta(id_colecta: number, id_donacion: number, body: any){
+		return this.backendService.put('api/colecta/'+id_colecta+'/donaciones/'+id_donacion, body);
 	}
 }

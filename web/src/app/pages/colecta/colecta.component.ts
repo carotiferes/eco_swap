@@ -18,7 +18,7 @@ export class ColectaComponent {
 	id_colecta: string = '';
 	colecta?: ColectaModel;
 	fundacion?: FundacionModel;
-	perfil?: UsuarioModel;
+	usuario?: UsuarioModel;
 	donaciones: DonacionModel[] = [];
 
 	userData?: any;
@@ -42,9 +42,9 @@ export class ColectaComponent {
 
 			this.colecta = res;
 			this.fundacion = res.fundacion
-			this.perfil = res.fundacion.perfil
-			if(this.perfil) this.perfil.puntaje = Number(this.perfil?.puntaje)
-			console.log(this.fundacion, this.perfil, this.colecta);
+			this.usuario = res.fundacion.usuario
+			if(this.usuario) this.usuario.puntaje = Number(this.usuario?.puntaje)
+			console.log(this.fundacion, this.usuario, this.colecta);
 			
 			if(this.colecta){
 				for (const prod of this.colecta.productos) {
@@ -75,13 +75,13 @@ export class ColectaComponent {
 			icon: 'info',
 			confirmButtonText: '¡VAMOS!' //'Confirmar'
 		}).then(({isConfirmed, value}) => {
-			this.router.navigate(['propuesta/'+this.id_colecta])
+			this.router.navigate(['donacion/'+this.id_colecta])
 		})
 	}
 
-	changeEstadoPropuesta(propuesta: DonacionModel, status: string){
+	changeEstadoPropuesta(donacion: DonacionModel, status: string){
 		this.donaciones.map(item => {
-			if(item == propuesta) {
+			if(item == donacion) {
 				if(item.estadoDonacion != status) item.estadoDonacion = status;
 				else item.estadoDonacion = 'PENDIENTE'
 			}
@@ -103,10 +103,10 @@ export class ColectaComponent {
 		if(this.colecta) this.colecta.imagen = this.donacionesService.getImagen(this.colecta.imagen)
 	}
 
-	showDireccion(perfil: any){
-		console.log( perfil);
+	showDireccion(usuario: any){
+		console.log( usuario);
 		let stringDir: string = ''
-		for (const dir of perfil.direcciones) {
+		for (const dir of usuario.direcciones) {
 			if(dir.direccion) {
 				stringDir += (dir.direccion + ' '+ dir.altura)
 			}
@@ -118,7 +118,7 @@ export class ColectaComponent {
 			title: 'Información de la fundación',
 			text: stringDir + ' https://www.google.com/maps/search/?api=1&query='+dirArray[0]+'+'+dirArray[1],
 			html: `
-			<p style="font-weight: 400;"><b>Email: </b>${perfil.email}</p>
+			<p style="font-weight: 400;"><b>Email: </b>${usuario.email}</p>
 			<p style="font-weight: 500;"><b>Dirección: </b>${stringDir}</p>
 			<a href="https://www.google.com/maps/search/?api=1&query=${dirArray[0]}+${dirArray[1]}" target="_blank">Ver en Google Maps</a>`,
 			//iconHtml: `<span class="material-icons-outlined"> place </span>`
