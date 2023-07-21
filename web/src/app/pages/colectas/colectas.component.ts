@@ -63,7 +63,9 @@ export class ColectasComponent implements OnInit {
 	}
 
 	goToColecta(colecta: ColectaModel){
-		this.router.navigateByUrl('colecta/'+colecta.idSolicitud)
+		console.log(colecta);
+		
+		this.router.navigateByUrl('colecta/'+colecta.idColecta)
 	}
 
 	addColecta(){

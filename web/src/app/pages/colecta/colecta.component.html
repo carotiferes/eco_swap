@@ -10,7 +10,7 @@
 					<div>
 						<mat-card-title style="display: flex; align-items: center;">
 							{{fundacion.nombre}}
-							<mat-icon class="address" (click)="showDireccion(fundacion.perfil)">place</mat-icon>
+							<mat-icon class="address" (click)="showDireccion(fundacion.usuario)">place</mat-icon>
 						</mat-card-title>
 						<mat-card-subtitle>
 							<mat-icon *ngFor="let i of [].constructor(perfil.puntaje)" color="primary">star</mat-icon>
@@ -48,7 +48,7 @@
 		<mat-card *ngFor="let donacion of donaciones" style="margin: 10px;">
 			<mat-card-header style="border-bottom: solid 1px var(--light-grey);">
 				<div mat-card-avatar class="donacion-example-header-image"></div>
-				<mat-card-title>{{donacion.swapper.nombre}} {{donacion.swapper.apellido}}</mat-card-title>
+				<mat-card-title>{{donacion.particular.nombre}} {{donacion.particular.apellido}}</mat-card-title>
 				<mat-card-subtitle>
 					<mat-icon *ngFor="let i of [].constructor(perfil.puntaje)" color="primary">star</mat-icon>
 					<mat-icon *ngFor="let i of [].constructor(5-perfil.puntaje)" class="empty-star">star</mat-icon>
@@ -57,21 +57,21 @@
 			<mat-card-content class="donacion-card-content">
 				<div>
 					<h2 class="card-title">{{donacion.producto.descripcion}}</h2>
-					<p>Cantidad: {{donacion.cantidadPropuesta}}</p>
-					<p [class.aprobada]="donacion.estadoPropuesta == 'APROBADA'"
-					[class.rechazada]="donacion.estadoPropuesta == 'RECHAZADA'">Estado: {{donacion.estadoPropuesta}}</p>
+					<p>Cantidad: {{donacion.cantidadDonacion}}</p>
+					<p [class.aprobada]="donacion.estadoDonacion == 'APROBADA'"
+					[class.rechazada]="donacion.estadoDonacion == 'RECHAZADA'">Estado: {{donacion.estadoDonacion}}</p>
 				</div>
 				<div class="imagenes" >
 					<img [src]="getImage(donacion.imagenes)" (click)="zoomImage(donacion.imagenes)" />
 				</div><!-- *ngFor="let img of donacion.imagenes" -->
 				<div class="donacion-status">
 					<button mat-raised-button color="primary" (click)="changeEstadoPropuesta(donacion, 'APROBADA')"
-					[disabled]="donacion.estadoPropuesta != 'PENDIENTE'">
+					[disabled]="donacion.estadoDonacion != 'PENDIENTE'">
 						<mat-icon>check</mat-icon>
 						ACEPTAR
 					</button>
 					<button mat-raised-button color="warn" (click)="changeEstadoPropuesta(donacion, 'RECHAZADA')"
-					[disabled]="donacion.estadoPropuesta != 'PENDIENTE'">
+					[disabled]="donacion.estadoDonacion != 'PENDIENTE'">
 						<mat-icon>close</mat-icon>
 						RECHAZAR
 					</button>

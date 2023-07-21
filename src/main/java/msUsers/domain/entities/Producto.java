@@ -32,7 +32,7 @@ public class Producto {
     private List<Donacion> donaciones;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_solicitud")
+    @JoinColumn(name = "id_colecta")
     @JsonBackReference
     private Colecta colecta;
 

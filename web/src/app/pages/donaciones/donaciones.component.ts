@@ -12,37 +12,7 @@ import Swal from 'sweetalert2';
 })
 export class DonacionesComponent {
 
-	donaciones: DonacionModel[] = [/* {
-		id_propuesta: 1,
-		id_producto: 1,
-		id_swapper: 1,
-		descripcion: 'Frazadas',
-		estado: 'NUEVA',
-		cantidad_propuesta: 2,
-		swapper: {
-			id_swapper: 1,
-			id_perfil: 1,
-			f_nacimiento: new Date(),
-			s_nombre: 'Swapper',
-			s_apellido: 'Test'
-		},
-		imagenes: ['assets/test_prop/alim_no_perec.jpg', 'assets/test_prop/gatito1.jpeg']
-	}, {
-		id_propuesta: 1,
-		id_producto: 1,
-		id_swapper: 1,
-		descripcion: 'Frazadas',
-		estado: 'ACEPTADA',
-		cantidad_propuesta: 2,
-		swapper: {
-			id_swapper: 1,
-			id_perfil: 1,
-			f_nacimiento: new Date(),
-			s_nombre: 'Swapper',
-			s_apellido: 'Test'
-		},
-		imagenes: ['']
-	} */];
+	donaciones: DonacionModel[] = [];
 
 	constructor(public dialog: MatDialog, private donacionesService: DonacionesService){
 		// TODO: GET PROPUESTAS FROM BACK

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { PerfilModel } from 'src/app/models/perfil.model';
+import { UsuarioModel } from 'src/app/models/usuario.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 const db = require('../../data/db.json')
@@ -11,7 +11,7 @@ const db = require('../../data/db.json')
 })
 export class PerfilComponent {
 	isSwapper: boolean = true; // CHANGE WHEN BRINGING USER INFO
-	user: PerfilModel;
+	user: UsuarioModel;
 	userInfo: any;
 
 	columns: number = 2;

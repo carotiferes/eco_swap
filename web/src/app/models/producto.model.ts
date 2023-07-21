@@ -1,3 +1,5 @@
+import { DonacionModel } from "./donacion.model";
+
 export interface ProductoModel {
 	idProducto: number,
 	descripcion: string,
@@ -6,7 +8,8 @@ export interface ProductoModel {
 	cantidadRecibida: number,
 	estado?: string,
 	publicacion?: number,
-	propuestas: any[]
+	colecta: number,
+	donaciones: DonacionModel[]
 	/* id_producto: number,
 	c_tipo_producto: number,
 	id_publi_solic: number,

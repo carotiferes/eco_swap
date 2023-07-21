@@ -23,14 +23,14 @@ export class AuthService {
 			userData = {
 				username,
 				id_perfil: 1,
-				id_swapper: 1,
+				id_particular: 1,
 				isSwapper: true
 			}
 		} else if(username == 'sgomez'){
 			userData = {
 				username,
 				id_perfil: 4,
-				id_swapper: 2,
+				id_particular: 2,
 				isSwapper: true
 			}
 		} else if(username == 'tzedaka'){

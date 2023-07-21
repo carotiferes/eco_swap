@@ -1,14 +1,13 @@
 import { ProductoModel } from "./producto.model"
-import { SwapperModel } from "./swapper.model"
+import { ParticularModel } from "./particular.model"
 
 export interface DonacionModel {
-	idPropuesta: number,
+	idDonacion: number,
 	descripcion: string,
-	cantidadPropuesta: number,
-	estadoPropuesta: string,
-	swapper: SwapperModel
+	cantidadDonacion: number,
+	estadoDonacion: string,
+	particular: ParticularModel
 	producto: ProductoModel,
-	id_swapper: number,
 	caracteristicaPropuesta: string[],
 	imagenes: any,
 }

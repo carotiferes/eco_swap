@@ -47,7 +47,7 @@ export class FormDonacionComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.donacionesService.getColectas().subscribe((res: any) => {
-			this.colecta = res.find((item: any) => item.idSolicitud == this.id_solicitud)
+			this.colecta = res.find((item: any) => item.idColecta == this.id_solicitud)
 			this.loading = false;
 		})
 	}
@@ -73,7 +73,7 @@ export class FormDonacionComponent implements OnInit {
 				sendCaracteristicas.push(item.s_descripcion);
 			})
 			const objetoToSend = {
-				idSwapper: this.userData.id_swapper,
+				idSwapper: this.userData.id_particular,
 				solicitudProductoModel: {
 					tipoProducto: "MUEBLES",
 					productoId: this.donacionForm.controls['producto'].value,
@@ -85,7 +85,7 @@ export class FormDonacionComponent implements OnInit {
 			}
 			console.log(objetoToSend);
 	
-			this.donacionesService.crearPropuesta(this.colecta.idSolicitud, objetoToSend).subscribe(res => {
+			this.donacionesService.crearPropuesta(this.colecta.idColecta, objetoToSend).subscribe(res => {
 				console.log(res);
 				if(JSON.parse(JSON.stringify(res)).descripcion)	{
 					this.showMessage('Propuesta Creada!', 'La donacion se creó exitosamente. Ahora te toca a vos! Llevá tu donación a la fundación para que la puedan empezar a usar.', 'success')

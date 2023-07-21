@@ -16,16 +16,16 @@
 		<mat-card-content class="donacion-card-content">
 			<div>
 				<h2 class="card-title">{{donacion.descripcion}}</h2>
-				<p>Cantidad: {{donacion.cantidadPropuesta}}</p>
-				<p [class.donacion-aceptada]="donacion.estadoPropuesta == 'ACEPTADA'"
-				[class.donacion-rechazada]="donacion.estadoPropuesta == 'RECHAZADA'">Estado: {{donacion.estadoPropuesta}}</p>
+				<p>Cantidad: {{donacion.cantidadDonacion}}</p>
+				<p [class.donacion-aceptada]="donacion.estadoDonacion == 'ACEPTADA'"
+				[class.donacion-rechazada]="donacion.estadoDonacion == 'RECHAZADA'">Estado: {{donacion.estadoDonacion}}</p>
 			</div>
 			<div class="imagenes">
 				<img [src]="img" *ngFor="let img of donacion.imagenes" (click)="zoomImage(img)"/>
 			</div>
 			<div class="donacion-status">
-				Desactivar<mat-slide-toggle [checked]="donacion.estadoPropuesta != 'CANCELADA'"
-				[disabled]="donacion.estadoPropuesta == 'ACEPTADA' || donacion.estadoPropuesta == 'EN_ESPERA'" 
+				Desactivar<mat-slide-toggle [checked]="donacion.estadoDonacion != 'CANCELADA'"
+				[disabled]="donacion.estadoDonacion == 'ACEPTADA' || donacion.estadoDonacion == 'EN_ESPERA'" 
 				(change)="changeEstadoPropuesta(donacion, $event)">Activar</mat-slide-toggle>
 			</div>
 		</mat-card-content>

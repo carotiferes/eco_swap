@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FundacionModel } from 'src/app/models/fundacion.model';
-import { PerfilModel } from 'src/app/models/perfil.model';
+import { UsuarioModel } from 'src/app/models/usuario.model';
 import { DonacionModel } from 'src/app/models/donacion.model';
 import { ColectaModel } from 'src/app/models/colecta.model';
 import { AuthService } from 'src/app/services/auth.service';
@@ -15,10 +15,10 @@ import Swal from 'sweetalert2';
 })
 export class ColectaComponent {
 
-	id_solicitud: string = '';
+	id_colecta: string = '';
 	colecta?: ColectaModel;
 	fundacion?: FundacionModel;
-	perfil?: PerfilModel;
+	perfil?: UsuarioModel;
 	donaciones: DonacionModel[] = [];
 
 	userData?: any;
@@ -30,14 +30,14 @@ export class ColectaComponent {
 		private donacionesService: DonacionesService){
 		route.paramMap.subscribe(params => {
 			console.log(params);
-			this.id_solicitud = params.get('id_solicitud') || '';
+			this.id_colecta = params.get('id_colecta') || '';
 		})
 	}
 	
 	ngOnInit(): void {
 		this.userData = this.auth.getUserData();
 		console.log(this.userData);
-		this.donacionesService.getColecta(this.id_solicitud).subscribe((res: any) => {
+		this.donacionesService.getColecta(this.id_colecta).subscribe((res: any) => {
 			console.log(res);
 
 			this.colecta = res;
@@ -48,7 +48,7 @@ export class ColectaComponent {
 			
 			if(this.colecta){
 				for (const prod of this.colecta.productos) {
-					this.donaciones.push(...prod.propuestas)
+					this.donaciones.push(...prod.donaciones)
 				}
 			}
 
@@ -56,7 +56,7 @@ export class ColectaComponent {
 			
 			
 			if(this.userData.isSwapper){
-				this.donaciones = this.donaciones.filter(item => item.swapper.idSwapper == this.userData.id_swapper)
+				this.donaciones = this.donaciones.filter(item => item.particular.idParticular == this.userData.id_particular)
 			}
 
 			/* this.donaciones.map(propuesta => {
@@ -75,15 +75,15 @@ export class ColectaComponent {
 			icon: 'info',
 			confirmButtonText: '¡VAMOS!' //'Confirmar'
 		}).then(({isConfirmed, value}) => {
-			this.router.navigate(['propuesta/'+this.id_solicitud])
+			this.router.navigate(['propuesta/'+this.id_colecta])
 		})
 	}
 
 	changeEstadoPropuesta(propuesta: DonacionModel, status: string){
 		this.donaciones.map(item => {
 			if(item == propuesta) {
-				if(item.estadoPropuesta != status) item.estadoPropuesta = status;
-				else item.estadoPropuesta = 'PENDIENTE'
+				if(item.estadoDonacion != status) item.estadoDonacion = status;
+				else item.estadoDonacion = 'PENDIENTE'
 			}
 		})
 		//TODO: CHANGE STATUS IN BACKEND
