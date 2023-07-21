@@ -64,7 +64,7 @@
 				<div class="imagenes" >
 					<img [src]="getImage(img)" *ngFor="let img of donacion.parsedImagenes" (click)="zoomImage(img)" />
 				</div><!-- *ngFor="let img of donacion.imagenes" -->
-				<div class="donacion-status">
+				<div class="donacion-status" *ngIf="usuario && !usuario.particular && fundacion && fundacion.idFundacion == userData.id_fundacion">
 					<button mat-raised-button color="primary" (click)="changeEstadoDonacion(donacion, 'APROBADA')"
 					[disabled]="donacion.estadoDonacion != 'PENDIENTE'">
 						<mat-icon>check</mat-icon>

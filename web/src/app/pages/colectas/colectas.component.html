@@ -2,6 +2,35 @@
 
 <div id="main-donaciones">
 	<app-spinner [loading]="loading"></app-spinner>
+	<div class="row">
+		<form [formGroup]="formFiltros" id="form-filtros">
+			<mat-form-field class="example-full-width">
+				<mat-label>Fundación</mat-label>
+				<input type="text" matInput formControlName="fundacion" [matAutocomplete]="auto">
+				<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+				<mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+					{{option.name}}
+				</mat-option>
+				</mat-autocomplete>
+			</mat-form-field>
+			<mat-form-field>
+				<mat-label>Código Postal</mat-label>
+				<input matInput formControlName="codigoPostal" type="number">
+			</mat-form-field>
+			<mat-form-field>
+				<mat-label>Tipo del Producto</mat-label>
+				<mat-select formControlName="tipoProducto">
+					<mat-option *ngFor="let tipo of tipos_productos" [value]="tipo">
+						{{tipo}}
+					</mat-option>
+				</mat-select>
+				<!-- <input matInput formControlName="tipoProducto"> -->
+			</mat-form-field>
+			<div>
+				<button mat-raised-button (click)="filtrarColectas()">FILTRAR</button>
+			</div>
+		</form>
+	</div>
 	<div class="row" *ngIf="!loading">
 		<div *ngIf="showColectas.length==0" style="text-align: center;">No hay colectas para mostrar</div>
 		<div><!-- class="col-lg-6" -->

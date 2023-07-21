@@ -1,5 +1,16 @@
 #main-donaciones {
 	padding: 2%;
+
+	#form-filtros {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		justify-items: center;
+		
+		mat-form-field {
+			max-width: 200px;
+		}
+	}
+
 	.card {
 		margin: 5px;
 		display: flex;
@@ -44,5 +55,11 @@
 		position: fixed;
 		right: 25px;
 		bottom: 40px;
+	}
+}
+
+@media (min-width: 0px) and (max-width: 576px) {
+	#form-filtros {
+		grid-template-columns: 1fr !important;
 	}
 }

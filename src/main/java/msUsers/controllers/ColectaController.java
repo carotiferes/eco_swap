@@ -175,8 +175,8 @@ public class ColectaController {
         }
         if (request.getCodigoPostal() != null) {
             Join<Colecta, Fundacion> fundacionJoin = from.join("fundacion");
-            Join<Fundacion, Usuario> perfilJoin = fundacionJoin.join("perfil");
-            Join<Usuario, Direccion> direccionJoin = perfilJoin.join("direcciones");
+            Join<Fundacion, Usuario> usuarioJoin = fundacionJoin.join("usuario");
+            Join<Usuario, Direccion> direccionJoin = usuarioJoin.join("direcciones");
             predicate = cb.and(predicate, cb.equal(direccionJoin.get("codigoPostal"), request.getCodigoPostal()));
         }
 

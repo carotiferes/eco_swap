@@ -18,8 +18,8 @@ export class DonacionesService {
 		return test
 	}
 
-	getColectas(){
-		return this.backendService.get('api/colectas');
+	getColectas(filtros?: any){
+		return this.backendService.get('api/colectas', filtros);
 	}
 
 	getColecta(id_colecta: any){
