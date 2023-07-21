@@ -29,7 +29,7 @@ public class ColectaProductoRequest {
     @NotNull(message = "caracteristicas debe tener un valor string")
     private List<String> caracteristicas;
 
-    @NotNull(message = "Las propuestas deben contener imagenes")
+    @NotNull(message = "Las donaciones deben contener imagenes")
     private List<String> imagenes;
 
 }

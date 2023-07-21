@@ -8,16 +8,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
-@Table(name = "CaracteristicaPropuestas")
+@Table(name = "CaracteristicaDonaciones")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class CaracteristicaPropuesta {
+public class CaracteristicaDonacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -26,8 +24,8 @@ public class CaracteristicaPropuesta {
     private Long userId;
     private String caracteristica;
 
-    public static CaracteristicaPropuesta armarCarateristica(String caracteristica, Long userId) {
-        return CaracteristicaPropuesta.builder()
+    public static CaracteristicaDonacion armarCarateristica(String caracteristica, Long userId) {
+        return CaracteristicaDonacion.builder()
                 .userId(userId)
                 .caracteristica(caracteristica)
                 .build();

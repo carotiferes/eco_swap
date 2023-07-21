@@ -58,7 +58,7 @@ public class ColectaController {
     @PostMapping(path = "/colecta", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public ResponseEntity<ResponsePostEntityCreation> createSolicitud(@Valid @RequestBody RequestColecta requestColecta) {
+    public ResponseEntity<ResponsePostEntityCreation> createColecta(@Valid @RequestBody RequestColecta requestColecta) {
 
         //final var perfil = this.userContextService.getUsuario();
         log.info(">> Request de creación de colecta: {}", requestColecta.getTitulo());
@@ -115,27 +115,27 @@ public class ColectaController {
             @PathVariable(required = true) Long idColecta,
             @Valid @RequestBody RequestComunicarDonacionColectaModel request){
         log.info(">> Request para colecta ID {} comunicar donacion: {}", idColecta, request.toString());
-        colectaService.crearPropuestaComunicacion(request, idColecta);
+        colectaService.crearDonacionComunicacion(request, idColecta);
         ResponsePostEntityCreation response = new ResponsePostEntityCreation();
         response.setId(idColecta);
         response.setDescripcion("Comunicación creada.");
         response.setStatus(HttpStatus.OK.name());
-        log.info("<< Comunicacion creada en la solicitud: {}", idColecta);
+        log.info("<< Comunicacion creada en la colecta: {}", idColecta);
         return ResponseEntity.ok(response);
     }
 
     /* POSTERGAMOS ESTE DESARROLLO
-    @PutMapping(path = "/solicitud/{idSolicitud}/propuestas/{idPropuestaComunicacion}", consumes = json, produces = json)
+    @PutMapping(path = "/colecta/{idColecta}/donaciones/{idDonacionComunicacion}", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public ResponseEntity<Object> agregarMensajeComunicacionDePropuesta(
-            @PathVariable(required = true) Long idSolicitud,
-            @PathVariable(required = true) Long idPropuestaComunicacion,
+    public ResponseEntity<Object> agregarMensajeComunicacionDeDonacion(
+            @PathVariable(required = true) Long idColecta,
+            @PathVariable(required = true) Long idDonacionComunicacion,
             @Valid @RequestBody RequestMensajeRespuesta request) {
-        log.info(">> Request para idPropuestaComunicacion {} con mensaje para comunicar propuesta: {}",
-                idPropuestaComunicacion, request.toString());
-        colectaService.agregarMensajeParaPropuestaComunicacion(request, idSolicitud, idPropuestaComunicacion);
-        log.info("<< Mensaje añadido para idPropuestaComunicacion {}", idPropuestaComunicacion);
+        log.info(">> Request para idDonacionComunicacion {} con mensaje para comunicar donacion: {}",
+                idDonacionComunicacion, request.toString());
+        colectaService.agregarMensajeParaDonacionComunicacion(request, idColecta, idDonacionComunicacion);
+        log.info("<< Mensaje añadido para idDonacionComunicacion {}", idDonacionComunicacion);
         return ResponseEntity.ok().build();
     }
      */
@@ -144,24 +144,24 @@ public class ColectaController {
     @ResponseStatus(HttpStatus.OK)
     public List<Donacion> obtenerTodasLasComunicacionesDeColecta(@PathVariable(required = true) Long idColecta)  {
         log.info(">> Request obtener todas las comunicaciones de donacion: {}", idColecta);
-        List<Donacion> donacionSolicitudesList = colectaService.obtenerTodasLasPropuestasComunicacion(idColecta);
+        List<Donacion> donacionColectaesList = colectaService.obtenerTodasLasdonacionesComunicacion(idColecta);
         log.info("<< Cantidad de donaciones obtenidas: {} para idColecta: {}",
-                donacionSolicitudesList.size(),
+                donacionColectaesList.size(),
                 idColecta);
-        return donacionSolicitudesList;
+        return donacionColectaesList;
     }
 
     @GetMapping(path = "/colecta/{id_colecta}/donaciones/{idDonacion}", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.OK)
     public Donacion obtenerComunicacionesDeColectaXIdDonacion(@PathVariable(required = true) Long idDonacion) {
         log.info(">> Request obtener comunicacion de donacion x idDonacion: {}", idDonacion);
-        Donacion donacionSolicitud = colectaService.obtenerPropuestasComunicacionXId(idDonacion);
-        log.info("<< Donacion obtenido: {}", donacionSolicitud);
-        return donacionSolicitud;
+        Donacion donacionColecta = colectaService.obtenerdonacionesComunicacionXId(idDonacion);
+        log.info("<< Donacion obtenido: {}", donacionColecta);
+        return donacionColecta;
     }
 
-    @GetMapping(path = "/donaciones", produces = json)
-    public ResponseEntity<List<ResponseColectasList>> listSolicitudes(@ModelAttribute RequestFilterColectas request) {
+    @GetMapping(path = "/colectas", produces = json)
+    public ResponseEntity<List<ResponseColectasList>> listColectas(@ModelAttribute RequestFilterColectas request) {
         log.info(">> Se realiza listado de donaciones con los parametros: {}", request);
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -187,28 +187,28 @@ public class ColectaController {
 
         query.where(predicate);
 
-        List<Colecta> solicitudes = entityManager.createQuery(query).getResultList();
+        List<Colecta> colectas = entityManager.createQuery(query).getResultList();
 
-        List<ResponseColectasList> solicitudesDTO = solicitudes.stream().map(solicitud -> {
+        List<ResponseColectasList> colectasDTO = colectas.stream().map(colecta -> {
             ResponseColectasList responseColectasList = new ResponseColectasList();
-            responseColectasList.setTituloColecta(solicitud.getTitulo());
-            responseColectasList.setFundacion(solicitud.getFundacion().getNombre());
-            responseColectasList.setProductos(solicitud.getProductos());
-            responseColectasList.setIdColecta(solicitud.getIdColecta());
-            responseColectasList.setImagen(solicitud.getImagen());
-            responseColectasList.setIdFundacion(solicitud.getFundacion().getIdFundacion());
+            responseColectasList.setTitulo(colecta.getTitulo());
+            responseColectasList.setFundacion(colecta.getFundacion().getNombre());
+            responseColectasList.setProductos(colecta.getProductos());
+            responseColectasList.setIdColecta(colecta.getIdColecta());
+            responseColectasList.setImagen(colecta.getImagen());
+            responseColectasList.setIdFundacion(colecta.getFundacion().getIdFundacion());
             return responseColectasList;
         }).collect(Collectors.toList());
 
-        log.info("<< {} solicitudes encontradas.", solicitudesDTO.size());
-        return ResponseEntity.ok(solicitudesDTO);
+        log.info("<< {} colectas encontradas.", colectasDTO.size());
+        return ResponseEntity.ok(colectasDTO);
     }
 
     @GetMapping(path = "/colecta/{id_colecta}", produces = json)
-    public ResponseEntity<Colecta> getColecta(@PathVariable("id_solicitud") Long id) {
-        final var solicitud = this.colectaRepository.findById(id).
-                orElseThrow(() -> new EntityNotFoundException("No fue encontrado la solicitud: " + id));
-        return ResponseEntity.ok(solicitud);
+    public ResponseEntity<Colecta> getColecta(@PathVariable("id_colecta") Long id) {
+        final var colecta = this.colectaRepository.findById(id).
+                orElseThrow(() -> new EntityNotFoundException("No fue encontrado la colecta: " + id));
+        return ResponseEntity.ok(colecta);
     }
 
 }
