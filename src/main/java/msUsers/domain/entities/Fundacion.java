@@ -36,6 +36,6 @@ public class Fundacion implements Serializable{
     private boolean baja;
 
     @OneToMany(mappedBy = "fundacion", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Colecta> solicitudes;
+    private List<Colecta> colectas;
 
 }

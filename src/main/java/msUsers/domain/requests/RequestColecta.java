@@ -13,16 +13,16 @@ import java.util.List;
 @Data
 public class RequestColecta {
 
-    @NotBlank(message = "La solicitud debe contener un título.")
+    @NotBlank(message = "La colecta debe contener un título.")
     @Size(max = 50)
     private String titulo;
 
-    @NotBlank(message = "La solicitud debe contener una descripción.")
+    @NotBlank(message = "La colecta debe contener una descripción.")
     private String descripcion;
 
     private long idFundacion;
 
-    @NotNull(message = "La solicitud debe tener una lista de productos.")
+    @NotNull(message = "La colecta debe tener una lista de productos.")
     @Valid
     private List<RequestProducto> productos;
 

@@ -36,7 +36,7 @@ public class Donacion {
     private Producto producto;
 
     @OneToMany(cascade = CascadeType.ALL)
-    private List<CaracteristicaPropuesta> caracteristicaPropuesta;
+    private List<CaracteristicaDonacion> caracteristicaDonacion;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonBackReference
