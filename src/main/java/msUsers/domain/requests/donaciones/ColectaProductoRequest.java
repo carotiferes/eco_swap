@@ -1,4 +1,4 @@
-package msUsers.domain.requests.propuestas;
+package msUsers.domain.requests.donaciones;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @Data
 @ToString(exclude = "imagenes")
-public class SolicitudProductoRequest {
+public class ColectaProductoRequest {
 
     @NotNull(message = "TipoProducto debe tener un valor valido")
     private TipoProducto tipoProducto;

@@ -6,12 +6,12 @@ import msUsers.domain.entities.Producto;
 import java.util.List;
 
 @Data
-public class ResponseSolicitudesList {
+public class ResponseColectasList {
 
-    private long idSolicitud;
+    private long idColecta;
     private String fundacion;
     private long idFundacion;
-    private String tituloSolicitud;
+    private String tituloColecta;
     private List<Producto> productos;
     private int cantidadDisponible;
     private String imagen;

@@ -12,7 +12,7 @@ import msUsers.domain.entities.enums.TipoProducto;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RequestFilterSolicitudes {
+public class RequestFilterColectas {
     private Long idFundacion;
     private String codigoPostal;
     private TipoProducto tipoProducto;

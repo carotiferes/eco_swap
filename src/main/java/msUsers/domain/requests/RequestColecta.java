@@ -11,7 +11,7 @@ import java.util.List;
 
 @Builder
 @Data
-public class RequestSolicitud {
+public class RequestColecta {
 
     @NotBlank(message = "La solicitud debe contener un título.")
     @Size(max = 50)
