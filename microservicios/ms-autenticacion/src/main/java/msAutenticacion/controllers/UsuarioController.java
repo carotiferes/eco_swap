@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping
+@RequestMapping("/ms-autenticacion/api/v1")
 @Slf4j
 public class UsuarioController {
 
@@ -54,9 +54,9 @@ public class UsuarioController {
         return ResponseEntity.ok(HttpStatus.ACCEPTED);
     }
 
-    @PostMapping(path = "/usuario/login", produces = json)
+    @PatchMapping(path = "/usuario/login", produces = json)
     @Transactional(readOnly = true)
-    public ResponseEntity<Boolean> postLogin(@RequestBody RequestLogin body){
+    public ResponseEntity<Boolean> patchLogin(@RequestBody RequestLogin body){
         log.info("postLogin: Intento de login para usuario: "+ body.getUsername());
         Boolean resultadoLogin = usuarioService.login(body);
         log.info("postLogin: Resultado del Login para usuario: "+ body.getUsername() + " con resultado: " + resultadoLogin);
