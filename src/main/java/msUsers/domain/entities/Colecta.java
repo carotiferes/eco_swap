@@ -33,6 +33,12 @@ public class Colecta implements Serializable {
     @Column(columnDefinition = "DATE")
     private LocalDate fechaColecta;
 
+    @Column(columnDefinition = "DATE")
+    private LocalDate fechaInicio;
+
+    @Column(columnDefinition = "DATE")
+    private LocalDate fechaFin;
+
     private boolean activa;
 
  //   @NotNull
@@ -48,8 +54,5 @@ public class Colecta implements Serializable {
     @JsonManagedReference
     private List<Producto> productos;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "colecta")
-    @JsonManagedReference
-    private List<Donacion> donaciones;
 
 }

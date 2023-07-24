@@ -1,6 +1,7 @@
 package msUsers.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class Producto {
 
     @NotNull
     private String descripcion;
+
     private int cantidadSolicitada;
     private int cantidadRecibida;
 
@@ -29,6 +31,7 @@ public class Producto {
     private String estado;
 
     @OneToMany(mappedBy = "producto",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<Donacion> donaciones;
 
     @ManyToOne(cascade = CascadeType.ALL)

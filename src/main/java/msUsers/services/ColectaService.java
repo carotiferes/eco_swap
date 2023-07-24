@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -36,9 +37,9 @@ public class ColectaService {
     @Autowired
     CaracteristicaDonacionRepository caracteristicaDonacionRepository;
 
-    public void crearDonacionComunicacion(RequestComunicarDonacionColectaModel request, Long idcolecta) {
-           log.info(">> SERVICE: Se comenzo la creacion de donacion para la colecta: {}", idcolecta);
-           Colecta colecta = colectaRepository.findById(idcolecta).get();
+    public void crearDonacionComunicacion(RequestComunicarDonacionColectaModel request, Long idColecta) {
+           log.info(">> SERVICE: Se comenzo la creacion de donacion para la colecta: {}", idColecta);
+           Colecta colecta = colectaRepository.findById(idColecta).get();
            Producto producto = colecta.getProductos().
                    stream()
                    .filter(x -> x.getIdProducto() == request.getColectaProductoModel().getProductoId())
@@ -50,6 +51,7 @@ public class ColectaService {
                    .toList();
            Particular particular = particularRepository.findById(request.getIdParticular()).get();
 
+           //TODO: Revisar que no se creen las imagenes si falla la creación de la donación
            List<String> nombreImagenes = new ArrayList<>();
            for (int i = 0; i < request.getColectaProductoModel().getImagenes().size(); i++) {
                nombreImagenes.add(imageService.saveImage(request.getColectaProductoModel().getImagenes().get(i)));
@@ -62,17 +64,15 @@ public class ColectaService {
            donacionNueva.setParticular(particular);
            donacionNueva.setProducto(producto);
            donacionNueva.setCaracteristicaDonacion(lista);
-           donacionNueva.setColecta(colecta);
            donacionNueva.setImagenes(String.join("|", nombreImagenes));
 
+           var entity = this.donacionesRepository.save(donacionNueva);
 
-           log.info("<< Donacion creado con ID: {}", donacionNueva.getIdDonacion());
-           List<Donacion> listaDonaciones = colecta.getDonaciones();
+           log.info("<< Donacion creado con ID: {}", entity.getIdDonacion());
+           List<Donacion> listaDonaciones = colecta.getProductos().stream().flatMap(prod -> prod.getDonaciones().stream()).toList();
            log.info("<< Listado de donaciones originales de solciitud ID de donaciones: {}, cantidad original {}",
-                   idcolecta, listaDonaciones.size());
-           listaDonaciones.add(donacionNueva);
-           colecta.setDonaciones(listaDonaciones);
-           var entity = colectaRepository.save(colecta);
+                   idColecta, listaDonaciones.size());
+
            log.info("<< Colecta actualizado con ID de donaciones: {}",
                    listaDonaciones
                            .stream()
@@ -80,9 +80,10 @@ public class ColectaService {
                            .toList());
     }
 
-    public List<Donacion> obtenerTodasLasdonacionesComunicacion(Long idcolecta) {
+    public List<Donacion> obtenerTodasLasDonacionesComunicacion(Long idcolecta) {
         log.info(">> Obtener todas las donaciones de comunicacion de una Colecta: {}", idcolecta);
-        List<Donacion> donacioncolectas = colectaRepository.findById(idcolecta).get().getDonaciones();
+        List<Donacion> donacioncolectas = colectaRepository.findById(idcolecta).get().getProductos().
+                stream().flatMap(prod -> prod.getDonaciones().stream()).toList();;
         log.info("<< Cantidad obtenidas: {}", donacioncolectas.size());
         return donacioncolectas;
 

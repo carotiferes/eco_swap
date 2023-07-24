@@ -144,16 +144,16 @@ public class ColectaController {
     @ResponseStatus(HttpStatus.OK)
     public List<Donacion> obtenerTodasLasComunicacionesDeColecta(@PathVariable(required = true, name = "id_colecta") Long idColecta)  {
         log.info(">> Request obtener todas las comunicaciones de donacion: {}", idColecta);
-        List<Donacion> donacionColectaesList = colectaService.obtenerTodasLasdonacionesComunicacion(idColecta);
+        List<Donacion> donacionColectaesList = colectaService.obtenerTodasLasDonacionesComunicacion(idColecta);
         log.info("<< Cantidad de donaciones obtenidas: {} para idColecta: {}",
                 donacionColectaesList.size(),
                 idColecta);
         return donacionColectaesList;
     }
 
-    @GetMapping(path = "/colecta/{id_colecta}/donaciones/{idDonacion}", consumes = json, produces = json)
+    @GetMapping(path = "/colecta/{id_colecta}/donaciones/{id_donacion}", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.OK)
-    public Donacion obtenerComunicacionesDeColectaXIdDonacion(@PathVariable(required = true) Long idDonacion) {
+    public Donacion obtenerComunicacionesDeColectaXIdDonacion(@PathVariable(required = true, name = "id_colecta") Long idDonacion) {
         log.info(">> Request obtener comunicacion de donacion x idDonacion: {}", idDonacion);
         Donacion donacionColecta = colectaService.obtenerdonacionesComunicacionXId(idDonacion);
         log.info("<< Donacion obtenido: {}", donacionColecta);
@@ -175,8 +175,8 @@ public class ColectaController {
         }
         if (request.getCodigoPostal() != null) {
             Join<Colecta, Fundacion> fundacionJoin = from.join("fundacion");
-            Join<Fundacion, Usuario> perfilJoin = fundacionJoin.join("perfil");
-            Join<Usuario, Direccion> direccionJoin = perfilJoin.join("direcciones");
+            Join<Fundacion, Usuario> usuarioJoin = fundacionJoin.join("usuario");
+            Join<Usuario, Direccion> direccionJoin = usuarioJoin.join("direcciones");
             predicate = cb.and(predicate, cb.equal(direccionJoin.get("codigoPostal"), request.getCodigoPostal()));
         }
 
