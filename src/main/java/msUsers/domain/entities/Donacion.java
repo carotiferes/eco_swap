@@ -30,17 +30,15 @@ public class Donacion {
     private EstadoDonacion estadoDonacion;
 
     @ManyToOne(cascade = CascadeType.ALL)
+    @JsonBackReference
     private Particular particular;
 
     @ManyToOne(cascade = CascadeType.ALL)
+    @JsonBackReference
     private Producto producto;
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<CaracteristicaDonacion> caracteristicaDonacion;
-
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonBackReference
-    private Colecta colecta;
 
     private String imagenes;
 }

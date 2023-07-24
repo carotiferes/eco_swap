@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Builder
@@ -25,6 +26,11 @@ public class RequestColecta {
     @NotNull(message = "La colecta debe tener una lista de productos.")
     @Valid
     private List<RequestProducto> productos;
+
+    //@NotNull(message = "La colecta debe tener una fecha de fin") // A DEFINIR
+    private LocalDate fechaInicio;
+
+    private LocalDate fechaFin;
 
     private String imagen;
 
