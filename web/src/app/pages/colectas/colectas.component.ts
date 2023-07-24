@@ -33,7 +33,7 @@ export class ColectasComponent implements OnInit {
 	formFiltros: FormGroup;
 	tipos_productos: string[];
 
-	options: any[] = [{ name: 'Mary' }, { name: 'Shelley' }, { name: 'Igor' }];
+	options: any[] = [{ id: 1, name: 'Tzedaka' }, { id: 2, name: 'Cruz Roja' }];
 	filteredOptions: Observable<any[]>;
 
 	filtros: any = {};
@@ -99,8 +99,19 @@ export class ColectasComponent implements OnInit {
 
 	}
 
-	filtrarColectas(){
+	filtrarColectas(hasFiltros: boolean = false){
+		//if(!filtros) filtros = this.filtros
 		console.log(this.formFiltros.value);
+		this.loading = true;
+		this.filtros = {};
+		const idFundacion = this.formFiltros.controls['fundacion'].value ? this.formFiltros.controls['fundacion'].value.id : undefined;
+		const codigoPostal = this.formFiltros.controls['codigoPostal'].value;
+		const tipoProducto = this.formFiltros.controls['tipoProducto'].value;
+
+		if(idFundacion) this.filtros['idFundacion'] = idFundacion;
+		if(codigoPostal) this.filtros['codigoPostal'] = codigoPostal;
+		if(tipoProducto) this.filtros['tipoProducto'] = tipoProducto;
+		console.log(this.filtros);
 		this.donacionesService.getColectas(this.filtros).subscribe((res: any) => {
 			console.log(res);
 			this.colectas = res;
@@ -118,5 +129,10 @@ export class ColectasComponent implements OnInit {
 			}
 			this.loading = false;
 		})
+	}
+
+	limpiarFiltros(){
+		this.formFiltros.reset()
+		this.filtrarColectas(false)
 	}
 }

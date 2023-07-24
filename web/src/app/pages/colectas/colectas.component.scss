@@ -3,11 +3,16 @@
 
 	#form-filtros {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: 1fr 1fr 1fr 1fr;
 		justify-items: center;
+		align-items: center;
 		
 		mat-form-field {
 			max-width: 200px;
+		}
+
+		button {
+			margin: 2px;
 		}
 	}
 
@@ -55,6 +60,12 @@
 		position: fixed;
 		right: 25px;
 		bottom: 40px;
+	}
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+	#form-filtros {
+		grid-template-columns: 1fr 1fr !important;
 	}
 }
 

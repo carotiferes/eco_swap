@@ -1,9 +1,8 @@
 <app-header [title]="idFundacion ? 'Mis Colectas' : 'Colectas'"></app-header>
 
 <div id="main-donaciones">
-	<app-spinner [loading]="loading"></app-spinner>
 	<div class="row">
-		<form [formGroup]="formFiltros" id="form-filtros">
+		<form [formGroup]="formFiltros" id="form-filtros" *ngIf="!idFundacion">
 			<mat-form-field class="example-full-width">
 				<mat-label>Fundación</mat-label>
 				<input type="text" matInput formControlName="fundacion" [matAutocomplete]="auto">
@@ -27,10 +26,12 @@
 				<!-- <input matInput formControlName="tipoProducto"> -->
 			</mat-form-field>
 			<div>
-				<button mat-raised-button (click)="filtrarColectas()">FILTRAR</button>
+				<button mat-raised-button color="primary" (click)="filtrarColectas(true)">FILTRAR</button>
+				<button mat-raised-button (click)="limpiarFiltros()">LIMPIAR</button>
 			</div>
 		</form>
 	</div>
+	<app-spinner [loading]="loading"></app-spinner>
 	<div class="row" *ngIf="!loading">
 		<div *ngIf="showColectas.length==0" style="text-align: center;">No hay colectas para mostrar</div>
 		<div><!-- class="col-lg-6" -->
