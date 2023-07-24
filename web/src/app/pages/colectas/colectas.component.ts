@@ -121,7 +121,6 @@ export class ColectasComponent implements OnInit {
 				item.imagen = this.donacionesService.getImagen(item.imagen)
 			})
 			if (this.idFundacion) {
-				// TODO: FILTER DONACIONES
 				this.colectasFundacion = this.colectas.filter(item => item.idFundacion == Number(this.idFundacion))
 				this.showColectas = this.colectasFundacion
 			} else {

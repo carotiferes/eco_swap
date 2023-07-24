@@ -1,18 +1,22 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ColectaModel } from 'src/app/models/colecta.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import Swal from 'sweetalert2';
-
+import { DateAdapter } from '@angular/material/core';
 const TIPOS = ['COLCHONES_Y_FRAZADAS','LIBROS','MUEBLES','OTROS','SALUD','TECNOLOGIA']
 const ESTADOS = ['BUEN_ESTADO','ROTO_PERO_UTIL','ROTO']
 
 @Component({
   selector: 'app-form-colecta',
   templateUrl: './form-colecta.component.html',
-  styleUrls: ['./form-colecta.component.scss']
+  styleUrls: ['./form-colecta.component.scss'],
+  providers: [
+	{provide: MAT_DATE_LOCALE, useValue: 'en-GB'},
+  ]
 })
 export class FormColectaComponent  {
 
@@ -28,8 +32,9 @@ export class FormColectaComponent  {
 	loadingImg: boolean = false;
 
 	constructor(private fb: FormBuilder, private route: ActivatedRoute, private donacionesService: DonacionesService,
-		private auth: AuthService, private router: Router) {
+		private auth: AuthService, private router: Router, private dateAdapter: DateAdapter<Date>) {
 
+		this.dateAdapter.setLocale('es');
 		this.tipos_productos = TIPOS;
 		this.estados_productos = ESTADOS;
 
@@ -43,6 +48,8 @@ export class FormColectaComponent  {
 			file_name: [this.fileName],
 			file: [''],
 			file_source: [''],
+			fecha_inicio: ['', Validators.required],
+			fecha_fin: ['', Validators.required]
 		})
 
 		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;

@@ -19,10 +19,21 @@
 					<mat-form-field>
 						<mat-label>Descripción</mat-label>
 						<input matInput formControlName="s_descripcion">
-						<!-- <mat-error *ngIf="colectaForm.get('s_descripcion')!.hasError('required')">
-							Campo obligatorio
-						</mat-error> -->
 					</mat-form-field>
+					<mat-form-field class="datepicker-form-field">
+						<mat-label>Vigencia</mat-label>
+						<mat-date-range-input [rangePicker]="picker">
+						  <input matStartDate formControlName="fecha_inicio" placeholder="Inicio">
+						  <input matEndDate formControlName="fecha_fin" placeholder="Fin">
+						</mat-date-range-input>
+						<mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+						<mat-date-range-picker #picker></mat-date-range-picker>
+						<mat-error *ngIf="colectaForm.get('fecha_inicio')!.hasError('required') || colectaForm.get('fecha_fin')!.hasError('required')">
+							Las fechas de inicio y fin son obligatorias
+						</mat-error>
+						<mat-error *ngIf="colectaForm.controls['fecha_inicio'].hasError('matStartDateInvalid')">Fecha de inicio inválida</mat-error>
+						<mat-error *ngIf="colectaForm.controls['fecha_fin'].hasError('matEndDateInvalid')">Fecha de fin inválida</mat-error>
+					  </mat-form-field>
 				</div>
 				<section formArrayName="productos" class="form-col">
 					<div>

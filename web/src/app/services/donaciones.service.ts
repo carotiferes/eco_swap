@@ -27,7 +27,7 @@ export class DonacionesService {
 	}
 
 	getDonaciones(id_colecta: any){
-		return this.backendService.get('/api/colecta/'+id_colecta+'/donaciones');
+		return this.backendService.get('api/colecta/'+id_colecta+'/donaciones');
 	}
 
 	crearDonacion(id_colecta: number, body: any){
