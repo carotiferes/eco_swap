@@ -30,6 +30,10 @@ export class DonacionesService {
 		return this.backendService.get('api/colecta/'+id_colecta+'/donaciones');
 	}
 
+	getAllDonaciones(id_particular: any){
+		return this.backendService.get('api/'+id_particular+'/donaciones');
+	}
+
 	crearDonacion(id_colecta: number, body: any){
 		return this.backendService.post('api/colecta/'+id_colecta+'/donaciones', body);
 	}

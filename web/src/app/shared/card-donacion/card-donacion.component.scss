@@ -1,0 +1,61 @@
+.card-content {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 1rem;
+
+	.colecta-img {
+		max-width: 40%;
+		margin: auto;
+		border-radius: 10px;
+		box-shadow: 2px 2px 5px var(--dark-grey);
+
+	}
+
+	.descripcion {
+		font-weight: 500;
+		font-size: 16px;
+		margin-bottom: 15px;
+	}
+}
+
+.card-button {
+	align-self: center;
+}
+
+.donacion-example-header-image {
+	background-image: url('../../../assets/persona.png');
+	background-size: cover;
+}
+.donacion-card-content {
+	display: grid;
+	grid-template-columns: 1fr 2fr 1fr;//1fr 2fr 1fr;
+	gap: 1rem;
+
+	.imagenes {
+		img {
+			height: 65px;
+			margin: 5px;
+			border-radius: 5px;
+			box-shadow: 2px 2px 5px var(--dark-grey);
+		}
+	}
+
+	.donacion-status {
+		display: flex;
+		flex-direction: column;
+
+		button {
+			margin: 5px auto;
+			width: 150px;
+			text-transform: uppercase;
+		}
+	}
+
+	.aprobada {
+		color: var(--primary-color);
+		font-weight: 500;
+	}
+	.rechazada {
+		color: var(--warn-color);
+	}
+}

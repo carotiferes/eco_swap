@@ -24,7 +24,7 @@ export class ColectaComponent {
 	userData?: any;
 	loading: boolean = true;
 
-	imagenTest: any;
+	buttonsCard: {name: string, icon: string, color: string, status: string, disabled: string}[] = []
 
 	constructor(private route: ActivatedRoute, private router: Router, private auth: AuthService,
 		private donacionesService: DonacionesService){
@@ -56,6 +56,9 @@ export class ColectaComponent {
 			}) */
 			if(this.colecta){
 				for (const prod of this.colecta.productos) {
+					for (const donacion of prod.donaciones) {
+						donacion['nombreProducto'] = prod.descripcion;
+					}
 					this.donaciones.push(...prod.donaciones)
 				}
 				this.donaciones.map(donacion => {
@@ -63,10 +66,9 @@ export class ColectaComponent {
 				})
 			}
 			console.log(this.donaciones);
-			/* TODO: ACA SE ROMPE 
 			if(this.userData.isSwapper){
 				this.donaciones = this.donaciones.filter(item => item.particular.idParticular == this.userData.id_particular)
-			} */
+			}
 		})
 	}
 
@@ -81,22 +83,6 @@ export class ColectaComponent {
 		})
 	}
 
-	changeEstadoDonacion(donacion: DonacionModel, status: string){
-		//TODO: CHANGE STATUS IN BACKEND
-		this.donacionesService.cambiarEstadoDonacion(this.id_colecta, donacion.idDonacion, {
-			nuevoEstado: status
-		}).subscribe(res => {
-			console.log(res);
-			
-			this.donaciones.map(item => {
-				if(item == donacion) {
-					if(item.estadoDonacion != status) item.estadoDonacion = status;
-					else item.estadoDonacion = 'PENDIENTE'
-				}
-			})
-		})
-	}
-
 	zoomImage(img?: string){
 		if(img){
 			Swal.fire({
@@ -106,10 +92,6 @@ export class ColectaComponent {
 			})
 		}
 	}
-
-	/* getImagen(){
-		if(this.colecta) this.colecta.imagen = this.donacionesService.getImagen(this.colecta.imagen)
-	} */
 
 	showDireccion(usuario: any){
 		console.log( usuario);

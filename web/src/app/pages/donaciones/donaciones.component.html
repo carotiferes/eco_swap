@@ -1,33 +1,6 @@
-<app-header></app-header>
+<app-header title="Mis Donaciones"></app-header>
 
 <div>
-	<h3 style="margin: 20px 0 0 5px;">Donaciones</h3>
-	<mat-card *ngFor="let donacion of donaciones" style="margin: 10px;">
-		<mat-card-header style="border-bottom: solid 1px var(--light-grey);">
-			<div mat-card-avatar class="donacion-example-header-image"></div>
-			datos de la fundacion
-			<!-- <mat-card-title>{{donacion.particular.s_nombre}} {{donacion.particular.s_apellido}}</mat-card-title>
-			<mat-card-subtitle>
-				<mat-icon *ngFor="let i of [].constructor(perfil.n_puntaje)" color="primary">star</mat-icon>
-				<mat-icon *ngFor="let i of [].constructor(5-perfil.n_puntaje)" class="empty-star">star</mat-icon>
-			</mat-card-subtitle> -->
-			<!-- <button mat-raised-button (click)="openDialog()"> VER EN EL MAPA</button> -->
-		</mat-card-header>
-		<mat-card-content class="donacion-card-content">
-			<div>
-				<h2 class="card-title">{{donacion.descripcion}}</h2>
-				<p>Cantidad: {{donacion.cantidadDonacion}}</p>
-				<p [class.donacion-aceptada]="donacion.estadoDonacion == 'ACEPTADA'"
-				[class.donacion-rechazada]="donacion.estadoDonacion == 'RECHAZADA'">Estado: {{donacion.estadoDonacion}}</p>
-			</div>
-			<div class="imagenes">
-				<img [src]="img" *ngFor="let img of donacion.imagenes" (click)="zoomImage(img)"/>
-			</div>
-			<div class="donacion-status">
-				Desactivar<mat-slide-toggle [checked]="donacion.estadoDonacion != 'CANCELADA'"
-				[disabled]="donacion.estadoDonacion == 'ACEPTADA' || donacion.estadoDonacion == 'EN_ESPERA'" 
-				(change)="changeEstadoDonacion(donacion, $event)">Activar</mat-slide-toggle>
-			</div>
-		</mat-card-content>
-	</mat-card>
+	<app-card-donacion *ngFor="let donacion of donaciones" [donacion]="donacion"
+	[usuarioHeader]="{usuario:{puntaje: 4}}" [buttons]="[{name: 'cancelar', icon: 'close', color: 'warn', status: 'CANCELADA', disabled: donacion.estadoDonacion != 'PENDIENTE'}]"></app-card-donacion>
 </div>

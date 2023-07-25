@@ -10,5 +10,6 @@ export interface DonacionModel {
 	producto: ProductoModel,
 	caracteristicaDonacion: string[],
 	imagenes: any,
-	parsedImagenes: string[]
+	parsedImagenes: string[],
+	nombreProducto?: string
 }
