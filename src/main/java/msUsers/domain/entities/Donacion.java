@@ -1,8 +1,7 @@
 package msUsers.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idDonacion")
 public class Donacion {
 
     @Id
@@ -30,7 +28,7 @@ public class Donacion {
     private EstadoDonacion estadoDonacion;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JsonBackReference
+    @JsonManagedReference
     private Particular particular;
 
     @ManyToOne(cascade = CascadeType.ALL)
