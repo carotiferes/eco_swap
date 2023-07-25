@@ -45,26 +45,28 @@ export class ColectaComponent {
 			this.usuario = res.fundacion.usuario
 			if(this.usuario) this.usuario.puntaje = Number(this.usuario?.puntaje)
 			console.log(this.fundacion, this.usuario, this.colecta);
-			
+
+			if(this.colecta) this.colecta.imagen = this.getImage(this.colecta.imagen)
+			this.loading = false;
+
+			/* TODO: usar esto si cambiamos la logica y traemos x separado las donaciones
+			this.donacionesService.getDonaciones(this.id_colecta).subscribe((resDonaciones: any) => {
+				console.log(resDonaciones);
+				this.donaciones = resDonaciones
+			}) */
 			if(this.colecta){
 				for (const prod of this.colecta.productos) {
 					this.donaciones.push(...prod.donaciones)
 				}
+				this.donaciones.map(donacion => {
+					if(donacion.imagenes) donacion.parsedImagenes = donacion.imagenes.split('|')
+				})
 			}
-
 			console.log(this.donaciones);
-			
-			// TODO: ACA SE ROMPE 
+			/* TODO: ACA SE ROMPE 
 			if(this.userData.isSwapper){
 				this.donaciones = this.donaciones.filter(item => item.particular.idParticular == this.userData.id_particular)
-			}
-
-			this.donaciones.map(donacion => {
-				if(donacion.imagenes) donacion.parsedImagenes = donacion.imagenes.split('|')
-			})
-			
-			if(this.colecta) this.colecta.imagen = this.getImage(this.colecta.imagen)
-			this.loading = false;
+			} */
 		})
 	}
 
@@ -80,13 +82,19 @@ export class ColectaComponent {
 	}
 
 	changeEstadoDonacion(donacion: DonacionModel, status: string){
-		this.donaciones.map(item => {
-			if(item == donacion) {
-				if(item.estadoDonacion != status) item.estadoDonacion = status;
-				else item.estadoDonacion = 'PENDIENTE'
-			}
-		})
 		//TODO: CHANGE STATUS IN BACKEND
+		this.donacionesService.cambiarEstadoDonacion(this.id_colecta, donacion.idDonacion, {
+			nuevoEstado: status
+		}).subscribe(res => {
+			console.log(res);
+			
+			this.donaciones.map(item => {
+				if(item == donacion) {
+					if(item.estadoDonacion != status) item.estadoDonacion = status;
+					else item.estadoDonacion = 'PENDIENTE'
+				}
+			})
+		})
 	}
 
 	zoomImage(img?: string){
