@@ -33,7 +33,7 @@ export class ColectasComponent implements OnInit {
 	formFiltros: FormGroup;
 	tipos_productos: string[];
 
-	options: any[] = [{ id: 1, name: 'Tzedaka' }, { id: 2, name: 'Cruz Roja' }];
+	optionsFundaciones: any[] = [/* { idFundacion: 1, nombre: 'Tzedaka' }, { idFundacion: 2, nombre: 'Cruz Roja' } */];
 	filteredOptions: Observable<any[]>;
 
 	filtros: any = {};
@@ -64,28 +64,28 @@ export class ColectasComponent implements OnInit {
 
 		this.userData = auth.getUserData();
 
+		this.getFundaciones()
 		this.filteredOptions = this.formFiltros.controls['fundacion'].valueChanges.pipe(
 			startWith(''),
 			map(value => {
-				const name = typeof value === 'string' ? value : value?.name;
-				return name ? this._filter(name as string) : this.options.slice();
+				const nombre = typeof value === 'string' ? value : value?.nombre;
+				return nombre ? this._filter(nombre as string) : this.optionsFundaciones.slice();
 			}),
 		);
 	}
 
 	ngOnInit() {
 		this.filtrarColectas()
-
 	}
 
 	displayFn(fundacion: any): string {
-		return fundacion && fundacion.name ? fundacion.name : '';
+		return fundacion && fundacion.nombre ? fundacion.nombre : '';
 	}
 
-	private _filter(name: string): any[] {
-		const filterValue = name.toLowerCase();
+	private _filter(nombre: string): any[] {
+		const filterValue = nombre.toLowerCase();
 
-		return this.options.filter(option => option.name.toLowerCase().includes(filterValue));
+		return this.optionsFundaciones.filter(option => option.nombre.toLowerCase().includes(filterValue));
 	}
 
 	goToColecta(colecta: ColectaModel) {
@@ -104,7 +104,7 @@ export class ColectasComponent implements OnInit {
 		console.log(this.formFiltros.value);
 		this.loading = true;
 		this.filtros = {};
-		const idFundacion = this.formFiltros.controls['fundacion'].value ? this.formFiltros.controls['fundacion'].value.id : undefined;
+		const idFundacion = this.formFiltros.controls['fundacion'].value ? this.formFiltros.controls['fundacion'].value.idFundacion : undefined;
 		const codigoPostal = this.formFiltros.controls['codigoPostal'].value;
 		const tipoProducto = this.formFiltros.controls['tipoProducto'].value;
 
@@ -133,5 +133,12 @@ export class ColectasComponent implements OnInit {
 	limpiarFiltros(){
 		this.formFiltros.reset()
 		this.filtrarColectas(false)
+	}
+
+	getFundaciones(){
+		this.fundacionesService.getFundaciones().subscribe((res: any) => {
+			console.log(res);
+			this.optionsFundaciones = res;
+		})
 	}
 }

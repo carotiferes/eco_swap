@@ -11,4 +11,8 @@ export class FundacionesService {
 	getFundacion(id_fundacion: any) {
 		return this.backendService.get('fundacion/' + id_fundacion);
 	}
+
+	getFundaciones() {
+		return this.backendService.get('fundaciones');
+	}
 }

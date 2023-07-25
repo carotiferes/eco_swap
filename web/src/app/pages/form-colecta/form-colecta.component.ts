@@ -96,7 +96,9 @@ export class FormColectaComponent  {
 			descripcion: this.colectaForm.controls['s_descripcion'].value,
 			idFundacion: this.colectaForm.controls['id_fundacion'].value,
 			productos,
-			imagen: this.colectaForm.controls['file_source'].value[0]
+			imagen: this.colectaForm.controls['file_source'].value[0],
+			fechaInicio: this.colectaForm.controls['fecha_inicio'].value,
+			fechaFin: this.colectaForm.controls['fecha_fin'].value
 		}).subscribe((res) => {
 			//console.log(res, JSON.parse(JSON.stringify(res)).descripcion);
 			if(JSON.parse(JSON.stringify(res)).descripcion)	{
