@@ -27,7 +27,6 @@ export class HttpBackEnd {
   }
 
   put(endpoint: string, body: any) {
-	//const headers = new HttpHeaders().set('Content-Type', 'application/json').set('Access-Control-Allow-Origin', '*')
     return this.httpClient.put(URL + endpoint, body,  );
   }
 
