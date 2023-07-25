@@ -27,9 +27,10 @@ public class RequestColecta {
     @Valid
     private List<RequestProducto> productos;
 
-    //@NotNull(message = "La colecta debe tener una fecha de fin") // A DEFINIR
+    @NotNull(message = "La colecta debe tener una fecha de inicio.")
     private LocalDate fechaInicio;
 
+    @NotNull(message = "La colecta debe tener una fecha de fin.")
     private LocalDate fechaFin;
 
     private String imagen;

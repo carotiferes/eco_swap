@@ -29,10 +29,6 @@ public class Colecta implements Serializable {
     @NotNull
     private String descripcion;
 
-  //  @NotNull
-    @Column(columnDefinition = "DATE")
-    private LocalDate fechaColecta;
-
     @Column(columnDefinition = "DATE")
     private LocalDate fechaInicio;
 
