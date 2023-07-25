@@ -3,6 +3,7 @@ package msUsers.controllers;
 import jakarta.persistence.EntityNotFoundException;
 import msUsers.domain.entities.Fundacion;
 import msUsers.domain.repositories.FundacionesRepository;
+import msUsers.domain.responses.DTOs.FundacionDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,9 +30,14 @@ public class FundacionesController {
         return ResponseEntity.ok(fundacion);
     }
     @GetMapping(path = "/fundaciones", produces = json)
-    public ResponseEntity<List<String>> listFundaciones(){
-        final var fundations = this.fundacionesRepository.findAll();
-        List<String> fundaciones = fundations.stream().map(Fundacion::getNombre).collect(Collectors.toList());
-        return ResponseEntity.ok(fundaciones);
+    public ResponseEntity<List<FundacionDTO>> listFundaciones(){
+        final var fundaciones = this.fundacionesRepository.findAll();
+        List<FundacionDTO> fundacionesDTOS = fundaciones.stream().map(fundacion -> {
+            FundacionDTO f = new FundacionDTO();
+            f.setIdFundacion(fundacion.getIdFundacion());
+            f.setNombre(fundacion.getNombre());
+            return f;
+        }).collect(Collectors.toList());
+        return ResponseEntity.ok(fundacionesDTOS);
     }
 }

@@ -67,7 +67,8 @@ public class ColectaController {
         Fundacion fundacion = fundacionOptional.orElseThrow(() -> new EntityNotFoundException("¡La fundacion no existe!"));
 
         Colecta colecta = new Colecta();
-        colecta.setFechaColecta(LocalDate.now());
+        colecta.setFechaInicio(requestColecta.getFechaInicio());
+        colecta.setFechaFin(requestColecta.getFechaFin());
         colecta.setActiva(true);
         colecta.setDescripcion(requestColecta.getDescripcion());
         colecta.setFundacion(fundacion);

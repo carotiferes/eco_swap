@@ -18,8 +18,6 @@ public class RequestProducto {
     @NotNull(message = "El producto debe poseer una descripción.")
     private String descripcion;
 
-    @NotNull(message = "Se debe especificar una cantidad requerida.")
-    @Positive(message = "La cantidad requerida debe ser mayor a cero.")
     private Integer cantidadRequerida;
 
     //ToDo: Chequear este estado (no figura como input en el front)
