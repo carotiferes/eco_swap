@@ -32,7 +32,7 @@ export class DonacionesComponent {
 
 			this.donaciones = res;
 			this.donaciones.map((donacion: any) => {
-				donacion['last_status'] = donacion.estado;
+				if(donacion.idDonacion) donacion['last_status'] = donacion.estado;
 				if(donacion.imagenes) donacion.parsedImagenes = donacion.imagenes.split('|')
 			})
 		})

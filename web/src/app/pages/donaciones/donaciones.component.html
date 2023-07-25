@@ -1,6 +1,8 @@
 <app-header title="Mis Donaciones"></app-header>
 
 <div>
-	<app-card-donacion *ngFor="let donacion of donaciones" [donacion]="donacion"
-	[usuarioHeader]="{usuario:{puntaje: 4}}" [buttons]="[{name: 'cancelar', icon: 'close', color: 'warn', status: 'CANCELADA', disabled: donacion.estadoDonacion != 'PENDIENTE'}]"></app-card-donacion>
+	<div *ngFor="let donacion of donaciones">
+		<app-card-donacion [donacion]="donacion" *ngIf="donacion.idDonacion"
+		[usuarioHeader]="donacion.producto.colecta.fundacion" [buttons]="[{name: 'cancelar', icon: 'close', color: 'warn', status: 'CANCELADA', disabled: donacion.estadoDonacion != 'PENDIENTE'}]"></app-card-donacion>
+	</div>
 </div>

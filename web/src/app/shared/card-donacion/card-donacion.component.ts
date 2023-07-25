@@ -20,13 +20,17 @@ export class CardDonacionComponent implements OnInit{
 	@Output() statusChanged = new EventEmitter<any>();
 
 	userData: any
+	caracteristicas: string = '';
 
 	constructor(private auth: AuthService, private donacionesService: DonacionesService){
 		this.userData = auth.getUserData();
 	}
 	
 	ngOnInit(): void {
-		console.log(this.donacion, this.usuarioHeader);
+		console.log(this.donacion, this.usuarioHeader,this.donacion.caracteristicaDonacion);
+		for (const caract of this.donacion.caracteristicaDonacion) {
+			if(caract.caracteristica) this.caracteristicas += ' '+caract.caracteristica
+		}
 	}
 
 	getImage(image: any) {

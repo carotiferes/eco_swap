@@ -1,3 +1,4 @@
+import { ColectaModel } from "./colecta.model";
 import { DonacionModel } from "./donacion.model";
 
 export interface ProductoModel {
@@ -8,7 +9,7 @@ export interface ProductoModel {
 	cantidadRecibida: number,
 	estado?: string,
 	publicacion?: number,
-	colecta: number,
+	colecta: ColectaModel,
 	donaciones: DonacionModel[]
 	/* id_producto: number,
 	c_tipo_producto: number,

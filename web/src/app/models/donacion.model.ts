@@ -8,7 +8,7 @@ export interface DonacionModel {
 	estadoDonacion: string,
 	particular: ParticularModel
 	producto: ProductoModel,
-	caracteristicaDonacion: string[],
+	caracteristicaDonacion: any[],
 	imagenes: any,
 	parsedImagenes: string[],
 	nombreProducto?: string
