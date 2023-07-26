@@ -45,7 +45,9 @@
 			margin: auto;
 			border-radius: 10px;
 			box-shadow: 2px 2px 5px var(--dark-grey);
-
+			&:hover {
+				cursor: pointer;
+			}
 		}
 
 		.descripcion {
