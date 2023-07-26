@@ -8,9 +8,8 @@ import { FundacionesService } from 'src/app/services/fundaciones.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { MatOptionSelectionChange } from '@angular/material/core';
-
-const TIPOS = ['COLCHONES_Y_FRAZADAS', 'LIBROS', 'MUEBLES', 'OTROS', 'SALUD', 'TECNOLOGIA']
+import { ProductosService } from 'src/app/services/productos.service';
+import Swal from 'sweetalert2';
 
 @Component({
 	selector: 'app-colectas',
@@ -31,7 +30,7 @@ export class ColectasComponent implements OnInit {
 	loading: boolean = true;
 
 	formFiltros: FormGroup;
-	tipos_productos: string[];
+	tipos_productos: any[] = [];
 
 	optionsFundaciones: any[] = [/* { idFundacion: 1, nombre: 'Tzedaka' }, { idFundacion: 2, nombre: 'Cruz Roja' } */];
 	filteredOptions: Observable<any[]>;
@@ -40,23 +39,19 @@ export class ColectasComponent implements OnInit {
 
 	constructor(private router: Router, private route: ActivatedRoute, private auth: AuthService,
 		private donacionesService: DonacionesService, private fundacionesService: FundacionesService,
-		private fb: FormBuilder) {
+		private fb: FormBuilder, private productosService: ProductosService) {
+		
+		// si tiene fundacion en el param, es MIS COLECTAS, sino COLECTAS
 		route.paramMap.subscribe(params => {
 			this.idFundacion = params.get('id_fundacion') || undefined;
-			console.log(params, this.idFundacion);
 			if (this.idFundacion) {
 				fundacionesService.getFundacion(this.idFundacion).subscribe((res: any) => {
-					this.fundacion = res
-					console.log(res);
+					this.fundacion = res;
 				})
-				console.log(this.fundacion);
 			}
 		});
-		this.tipos_productos = TIPOS;
 
 		this.formFiltros = fb.group({
-			/* idFundacion: [''],
-			nombreFundacion: [''], */
 			fundacion: [''],
 			codigoPostal: [''],
 			tipoProducto: ['']
@@ -64,7 +59,9 @@ export class ColectasComponent implements OnInit {
 
 		this.userData = auth.getUserData();
 
-		this.getFundaciones()
+		this.getFundaciones();
+		this.getTiposProductos();
+		
 		this.filteredOptions = this.formFiltros.controls['fundacion'].valueChanges.pipe(
 			startWith(''),
 			map(value => {
@@ -140,5 +137,23 @@ export class ColectasComponent implements OnInit {
 			console.log(res);
 			this.optionsFundaciones = res;
 		})
+	}
+
+	getTiposProductos(){
+		this.productosService.getTiposProductos().subscribe({
+			next: (v: any) => {
+				console.log('next',v);
+				this.tipos_productos = v;
+			},
+			error: (e) => {
+				console.error('error',e);
+				//Swal.fire('Error!','Ha ocurrido un error al traer ')
+			},
+			complete: () => console.info('complete') 
+		})/* .subscribe((res:any) => {
+			console.log(res);
+			this.tipos_productos = res;
+			
+		}) */
 	}
 }

@@ -3,29 +3,29 @@
 <div id="main-donaciones">
 	<div class="row">
 		<form [formGroup]="formFiltros" id="form-filtros" *ngIf="!idFundacion">
-			<mat-form-field class="example-full-width">
+			<mat-form-field class="example-full-width" appearance="outline">
 				<mat-label>Fundación</mat-label>
-				<input type="text" matInput formControlName="fundacion" [matAutocomplete]="auto">
+				<input type="text" matInput formControlName="fundacion" [matAutocomplete]="auto" style="border: 1px solid red">
 				<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
 				<mat-option *ngFor="let option of filteredOptions | async" [value]="option">
 					{{option.nombre}}
 				</mat-option>
 				</mat-autocomplete>
 			</mat-form-field>
-			<mat-form-field>
+			<mat-form-field appearance="outline">
 				<mat-label>Código Postal</mat-label>
 				<input matInput formControlName="codigoPostal" type="number">
 			</mat-form-field>
-			<mat-form-field>
+			<mat-form-field appearance="outline">
 				<mat-label>Tipo del Producto</mat-label>
-				<mat-select formControlName="tipoProducto">
-					<mat-option *ngFor="let tipo of tipos_productos" [value]="tipo">
-						{{tipo}}
+				<mat-select formControlName="tipoProducto" panelClass="example-panel">
+					<mat-option *ngFor="let tipo of tipos_productos" [value]="tipo.nombre">
+						{{tipo.descripcion}}
 					</mat-option>
 				</mat-select>
 				<!-- <input matInput formControlName="tipoProducto"> -->
 			</mat-form-field>
-			<div>
+			<div style="text-align: center;">
 				<button mat-raised-button color="primary" (click)="filtrarColectas(true)">FILTRAR</button>
 				<button mat-raised-button (click)="limpiarFiltros()">LIMPIAR</button>
 			</div>

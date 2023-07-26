@@ -1,14 +1,14 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { Map, Marker, NavigationControl } from 'maplibre-gl';
+//import { Map, Marker, NavigationControl } from 'maplibre-gl';
 
 @Component({
 	selector: 'app-map',
 	templateUrl: './map.component.html',
 	styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements AfterViewInit {
+export class MapComponent /* implements AfterViewInit */ {
 
-	map: Map | undefined;
+	/* map: Map | undefined;
 	@ViewChild('map')
 	private mapContainer!: ElementRef<HTMLElement>;
 
@@ -25,5 +25,5 @@ export class MapComponent implements AfterViewInit {
 		this.map.addControl(new NavigationControl(), 'top-right');
 		new Marker({ color: "#FF0000" }).setLngLat([ -58.44,-34.57]).addTo(this.map);
 
-	}
+	} */
 }
