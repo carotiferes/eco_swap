@@ -1,20 +1,18 @@
-package msUsers.domain.entities;
+package msAutenticacion.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
-import msUsers.domain.entities.enums.TipoProducto;
+import msAutenticacion.domain.entities.enums.TipoProducto;
 
 import java.util.List;
 
 @Entity
 @Data
 @Table(name = "Productos")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idProducto")
+@Builder
 public class Producto {
 
     @Id
@@ -26,7 +24,6 @@ public class Producto {
 
     @NotNull
     private String descripcion;
-
     private int cantidadSolicitada;
     private int cantidadRecibida;
 
@@ -34,12 +31,11 @@ public class Producto {
     private String estado;
 
     @OneToMany(mappedBy = "producto",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
     private List<Donacion> donaciones;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_colecta")
-//   @JsonBackReference
+    @JoinColumn(name = "id_solicitud")
+    @JsonBackReference
     private Colecta colecta;
 
     @ManyToOne(cascade = CascadeType.ALL)
