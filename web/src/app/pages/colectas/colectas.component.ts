@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { ProductosService } from 'src/app/services/productos.service';
 import Swal from 'sweetalert2';
+import { ShowErrorService } from 'src/app/services/show-error.service';
 
 @Component({
 	selector: 'app-colectas',
@@ -39,7 +40,8 @@ export class ColectasComponent implements OnInit {
 
 	constructor(private router: Router, private route: ActivatedRoute, private auth: AuthService,
 		private donacionesService: DonacionesService, private fundacionesService: FundacionesService,
-		private fb: FormBuilder, private productosService: ProductosService) {
+		private fb: FormBuilder, private productosService: ProductosService,
+		private showErrorService: ShowErrorService) {
 		
 		// si tiene fundacion en el param, es MIS COLECTAS, sino COLECTAS
 		route.paramMap.subscribe(params => {
@@ -147,7 +149,7 @@ export class ColectasComponent implements OnInit {
 			},
 			error: (e) => {
 				console.error('error',e);
-				//Swal.fire('Error!','Ha ocurrido un error al traer ')
+				this.showErrorService.show('Error!','Ha ocurrido un error al traer los tipos de producto')
 			},
 			complete: () => console.info('complete') 
 		})/* .subscribe((res:any) => {

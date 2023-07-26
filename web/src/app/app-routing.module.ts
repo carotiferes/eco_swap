@@ -12,6 +12,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { FormColectaComponent } from './pages/form-colecta/form-colecta.component';
 import { DonacionesComponent } from './pages/donaciones/donaciones.component';
+import { ErrorComponent } from './pages/error/error.component';
 
 const routes: Routes = [{
 	path: '',
@@ -55,6 +56,9 @@ const routes: Routes = [{
 	path: 'mis-donaciones',
 	component: DonacionesComponent,
 	canActivate: [authGuard]
+},{
+	path: 'error',
+	component: ErrorComponent
 },{
 	path: '**',
 	component: NotFoundComponent
