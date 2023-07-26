@@ -1,22 +1,16 @@
+import { DonacionModel } from "./donacion.model";
 import { ProductoModel } from "./producto.model";
 
 export interface ColectaModel {
-	idSolicitud: number,
+	idColecta: number,
 	titulo: string,
-	tituloSolicitud: string,
+	//tituloSolicitud: string,
 	descripcion: string,
-	cantidadDisponible: number,
+	//cantidadDisponible: number,
 	idFundacion: number,
 	fundacion: string,
 	imagen: string,
 	fechaSolicitud: Date,
-	productos: ProductoModel[]
-	/* id_solicitud: number,
-	id_fundacion: number, // FK
-	s_titulo: string,
-	s_descripcion: string,
-	f_solicitud: Date,
-	c_activa: boolean,
-	s_imagen: string,
-	productos: ProductoModel[] */
+	productos: ProductoModel[],
+	donaciones: DonacionModel[]
 }

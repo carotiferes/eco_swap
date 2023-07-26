@@ -44,6 +44,10 @@
 			max-width: 40%;
 			margin: auto;
 			border-radius: 10px;
+			box-shadow: 2px 2px 5px var(--dark-grey);
+			&:hover {
+				cursor: pointer;
+			}
 		}
 
 		.descripcion {
@@ -57,31 +61,41 @@
 		align-self: center;
 	}
 
-	.propuesta-example-header-image {
+	.donacion-example-header-image {
 		background-image: url('../../../assets/persona.png');
 		background-size: cover;
 	}
-	.propuesta-card-content {
+	.donacion-card-content {
 		display: grid;
-		grid-template-columns: 2fr 2fr;//1fr 2fr 1fr;
+		grid-template-columns: 1fr 2fr 1fr;//1fr 2fr 1fr;
 		gap: 1rem;
 
 		.imagenes {
 			img {
 				height: 65px;
     			margin: 5px;
+				border-radius: 5px;
+				box-shadow: 2px 2px 5px var(--dark-grey);
 			}
 		}
 
-		.propuesta-status {
+		.donacion-status {
 			display: flex;
 			flex-direction: column;
 
-			mat-slide-toggle {
-				margin: 5px;
+			button {
+				margin: 5px auto;
+				width: 150px;
 			}
 		}
 
+		.aprobada {
+			color: var(--primary-color);
+			font-weight: 500;
+		}
+		.rechazada {
+			color: var(--warn-color);
+		}
 	}
 }
 
@@ -91,7 +105,7 @@
 		grid-template-columns: 1fr !important;
 	}
 
-	.propuesta-card-content {
+	.donacion-card-content {
 		display: grid;
 		grid-template-columns: 1fr !important;
 	}

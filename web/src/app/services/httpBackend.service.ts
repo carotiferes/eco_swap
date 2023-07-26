@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
 const properties = require('../core/properties.json')
@@ -27,7 +27,7 @@ export class HttpBackEnd {
   }
 
   put(endpoint: string, body: any) {
-    return this.httpClient.put(URL + endpoint, body);
+    return this.httpClient.put(URL + endpoint, body,  );
   }
 
   patch(endpoint: string, body: any) {

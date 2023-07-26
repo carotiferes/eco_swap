@@ -9,6 +9,7 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError, timer } from 'rxjs';
 import { catchError, finalize, mergeMap, retryWhen } from 'rxjs/operators';
 import Swal from 'sweetalert2';
+import { ShowErrorService } from '../services/show-error.service';
 export enum ErrorSeverity {
 	INFO = 'INFO',
 	WARNING = 'WARNING',
@@ -58,31 +59,24 @@ export const genericRetryStrategy =
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
+	constructor(private showErrorService: ShowErrorService){}
 	intercept(
 		request: HttpRequest<unknown>,
 		next: HttpHandler
 	): Observable<HttpEvent<unknown>> {
 		return next.handle(request).pipe(
 			catchError((err) => {
-				let error: BackendError = {message: '', severity: ErrorSeverity.INFO, code: ''};
-				console.log(err);
+				let error: BackendError = { message: '', severity: ErrorSeverity.INFO, code: '' };
 				if (err instanceof ErrorEvent) {
 					// this is client side error
 					error = this.handleUnknownError();
-					Swal.fire({
-						title: 'Ha ocurrido un error',
-						text: err.error.descripcion,
-						icon: 'error'
-					})
+					console.log('Error del lado del cliente', JSON.stringify(err));
+					this.showErrorService.show('Error!', err.error.descripcion)
 				} else {
 					// this is server side error
 					error = this.handleBackendError(error, err);
 					console.log('Server error with code: ' + JSON.stringify(err));
-					Swal.fire({
-						title: 'Ha ocurrido un error',
-						text: err.error.descripcion,
-						icon: 'error'
-					})
+					this.showErrorService.show('Error!', err.error.descripcion)
 				}
 				return throwError(() => error);
 			})

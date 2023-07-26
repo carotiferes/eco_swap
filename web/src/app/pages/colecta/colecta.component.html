@@ -2,7 +2,7 @@
 
 <div id="main-colecta">
 	<app-spinner [loading]="loading"></app-spinner>
-	<mat-card *ngIf="!loading && fundacion && perfil && colecta">
+	<mat-card *ngIf="!loading && fundacion && usuario && colecta">
 		<mat-card-header style="border-bottom: solid 1px var(--light-grey); padding-bottom: 10px;">
 			<div class="div-header">
 				<div class="header-info">
@@ -10,11 +10,11 @@
 					<div>
 						<mat-card-title style="display: flex; align-items: center;">
 							{{fundacion.nombre}}
-							<mat-icon class="address" (click)="showDireccion(fundacion.perfil)">place</mat-icon>
+							<mat-icon class="address" (click)="showDireccion(fundacion.usuario)">place</mat-icon>
 						</mat-card-title>
 						<mat-card-subtitle>
-							<mat-icon *ngFor="let i of [].constructor(perfil.puntaje)" color="primary">star</mat-icon>
-							<mat-icon *ngFor="let i of [].constructor(5-perfil.puntaje)" class="empty-star">star</mat-icon>
+							<mat-icon *ngFor="let i of [].constructor(usuario.puntaje)" color="primary">star</mat-icon>
+							<mat-icon *ngFor="let i of [].constructor(5-usuario.puntaje)" class="empty-star">star</mat-icon>
 						</mat-card-subtitle>
 					</div>
 				</div>
@@ -23,7 +23,7 @@
 		</mat-card-header>
 		<mat-card-content class="card-content">
 			<img mat-card-image [src]="colecta.imagen ? colecta.imagen : 'assets/fundacion.png'"
-				class="colecta-img">
+				class="colecta-img" (click)="zoomImage(colecta.imagen ? colecta.imagen.split('/').at(-1) : 'assets/fundacion.png')">
 			<div>
 				<h2 class="card-title">{{colecta.titulo}}</h2>
 				<div class="descripcion">
@@ -31,10 +31,7 @@
 				</div>
 				<div class="productos">
 					<div *ngFor="let producto of colecta.productos" class="producto">
-						{{producto.descripcion}} ({{producto.cantidadRecibida}}/ {{producto.cantidadSolicitada}})
-						<p><ngb-progressbar color="primary" [showValue]="true"
-								[value]="producto.cantidadRecibida*100/producto.cantidadSolicitada"
-								[striped]="true" [max]="producto.cantidadSolicitada"></ngb-progressbar></p>
+						{{producto.descripcion}}: {{producto.cantidadRecibida}}
 					</div>
 				</div>
 			</div>
@@ -44,37 +41,18 @@
 		</mat-card-actions>
 	</mat-card>
 
-	<div *ngIf="(perfil && !perfil.swapper && fundacion && fundacion.idFundacion == userData.id_fundacion) || 
-				(this.userData.isSwapper && perfil) && !loading">
-		<h3 style="margin: 20px 0 0 5px; font-weight: bold;">{{this.userData.isSwapper ? 'Mi donacion' : 'Propuestas'}}</h3>
+	<div *ngIf="(usuario && !usuario.particular && fundacion && fundacion.idFundacion == userData.id_fundacion) || 
+				(this.userData.isSwapper && usuario) && !loading">
+		<h3 style="margin: 20px 0 0 5px; font-weight: bold;">{{this.userData.isSwapper ? 'Mi donación' : 'Donaciones'}}</h3>
 		<div *ngIf="donaciones.length == 0 && !loading" style="text-align: center;">Esta colecta no tiene donaciones aún!</div>
-		<mat-card *ngFor="let donacion of donaciones" style="margin: 10px;">
-			<mat-card-header style="border-bottom: solid 1px var(--light-grey);">
-				<div mat-card-avatar class="donacion-example-header-image"></div>
-				<mat-card-title>{{donacion.swapper.nombre}} {{donacion.swapper.apellido}}</mat-card-title>
-				<mat-card-subtitle>
-					<mat-icon *ngFor="let i of [].constructor(perfil.puntaje)" color="primary">star</mat-icon>
-					<mat-icon *ngFor="let i of [].constructor(5-perfil.puntaje)" class="empty-star">star</mat-icon>
-				</mat-card-subtitle>
-			</mat-card-header>
-			<mat-card-content class="donacion-card-content">
-				<div>
-					<h2 class="card-title">{{donacion.producto.descripcion}}</h2>
-					<p>Cantidad: {{donacion.cantidadPropuesta}}</p>
-					<p>Estado: {{donacion.estadoPropuesta}}</p>
-				</div>
-				<!-- <div class="imagenes" >
-					<img [src]="getImage(img)" *ngFor="let img of donacion.imagenes" (click)="zoomImage(img)" />
-				</div> -->
-				<!-- <div class="donacion-status">
-					<mat-slide-toggle [checked]="donacion.estadoPropuesta =='APROBADA'"
-						(toggleChange)="changeEstadoPropuesta(donacion, 'APROBADA')"
-						[disabled]="donacion.estadoPropuesta != 'NUEVA' && donacion.estadoPropuesta != 'APROBADA'">Aprobar</mat-slide-toggle>
-					<mat-slide-toggle [checked]="donacion.estadoPropuesta =='RECHAZADA'" color="warn"
-						(toggleChange)="changeEstadoPropuesta(donacion, 'RECHAZADA')"
-						[disabled]="donacion.estadoPropuesta != 'NUEVA' && donacion.estadoPropuesta != 'RECHAZADA'">Rechazar</mat-slide-toggle>
-				</div> -->
-			</mat-card-content>
-		</mat-card>
+		<app-card-donacion *ngFor="let donacion of donaciones" [donacion]="donacion"
+			[usuarioHeader]="donacion.particular"
+			[buttons]="this.userData.isSwapper ? 
+			[{name: 'cancelar', icon: 'close', color: 'warn', status: 'CANCELADA', disabled: donacion.estadoDonacion != 'PENDIENTE'}]
+			: [
+				{name: 'aceptar', icon: 'check', color: 'primary', status: 'APROBADA', disabled: donacion.estadoDonacion != 'PENDIENTE'},
+				{name: 'rechazar', icon: 'close', color: 'warn', status: 'RECHAZADA', disabled: donacion.estadoDonacion != 'PENDIENTE'},
+				{name: 'recibida', icon: 'done_all', color: 'primary', status: 'RECIBIDA', disabled: donacion.estadoDonacion != 'APROBADA'},
+			]"></app-card-donacion>
 	</div>
 </div>

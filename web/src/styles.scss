@@ -2,7 +2,7 @@
 @use '@angular/material' as mat;
 @import './assets/bootstrap.scss';
 
-@import '~maplibre-gl/dist/maplibre-gl.css';
+/* @import '~maplibre-gl/dist/maplibre-gl.css'; */
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined");
 
 @include mat.core();
@@ -71,4 +71,8 @@ html, body {
     box-sizing: border-box;
     margin: 0;
 	background-color: #effae8;
+}
+
+.example-panel {
+	min-width: 350px !important;
 }

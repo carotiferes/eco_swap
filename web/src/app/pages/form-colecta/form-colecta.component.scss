@@ -71,7 +71,7 @@
 
 		.main-data {
 			display: grid;
-			grid-template-columns: 1fr 1fr;
+			grid-template-columns: 1fr 2fr 1fr;
 			mat-form-field {
 				padding: 5px;
 			}
@@ -93,11 +93,11 @@
 	}
 }
 
-/* @media (min-width: 577px) and (max-width: 768px) {
-	.producto {
-		grid-template-columns: 1fr 1fr 1fr !important;
+@media (min-width: 577px) and (max-width: 768px) {
+	.main-data {
+		grid-template-columns: 1fr 1fr !important;
 	}
-} */
+}
 
 @media (min-width: 0px) and (max-width: 576px) {
 	.producto {

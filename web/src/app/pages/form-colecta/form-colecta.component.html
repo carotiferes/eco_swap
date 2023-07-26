@@ -12,11 +12,28 @@
 					<mat-form-field>
 						<mat-label>Título</mat-label>
 						<input matInput formControlName="s_titulo">
+						<mat-error *ngIf="colectaForm.get('s_titulo')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
 					</mat-form-field>
 					<mat-form-field>
 						<mat-label>Descripción</mat-label>
 						<input matInput formControlName="s_descripcion">
 					</mat-form-field>
+					<mat-form-field class="datepicker-form-field">
+						<mat-label>Vigencia</mat-label>
+						<mat-date-range-input [rangePicker]="picker">
+						  <input matStartDate formControlName="fecha_inicio" placeholder="Inicio">
+						  <input matEndDate formControlName="fecha_fin" placeholder="Fin">
+						</mat-date-range-input>
+						<mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+						<mat-date-range-picker #picker></mat-date-range-picker>
+						<mat-error *ngIf="colectaForm.get('fecha_inicio')!.hasError('required') || colectaForm.get('fecha_fin')!.hasError('required')">
+							Las fechas de inicio y fin son obligatorias
+						</mat-error>
+						<mat-error *ngIf="colectaForm.controls['fecha_inicio'].hasError('matStartDateInvalid')">Fecha de inicio inválida</mat-error>
+						<mat-error *ngIf="colectaForm.controls['fecha_fin'].hasError('matEndDateInvalid')">Fecha de fin inválida</mat-error>
+					  </mat-form-field>
 				</div>
 				<section formArrayName="productos" class="form-col">
 					<div>
@@ -26,7 +43,10 @@
 						<div *ngFor="let producto of getProductosArray.controls; let i=index" class="producto"
 							[formGroupName]="i">
 							<mat-form-field>
-								<input matInput placeholder="Descripción" formControlName="s_descripcion">
+								<input matInput placeholder="Descripción*" formControlName="s_descripcion">
+								<mat-error *ngIf="producto.get('s_descripcion')!.hasError('required')">
+									Campo obligatorio
+								</mat-error>
 							</mat-form-field>
 							<mat-form-field>
 								<mat-label>Cantidad solicitada</mat-label>
@@ -39,24 +59,13 @@
 										{{tipo}}
 									</mat-option>
 								</mat-select>
-								<!-- <mat-error *ngIf="solicitudForm.get('producto')!.hasError('required')">
+								<mat-error *ngIf="producto.get('tipo_producto')!.hasError('required')">
 									Campo obligatorio
-								</mat-error> -->
+								</mat-error>
 							</mat-form-field>
 							<mat-form-field [hidden]="true">
 								<input matInput formControlName="estado" type="text" [hidden]="true">
 							</mat-form-field>
-							<!-- <mat-form-field>
-								<mat-label>Estado</mat-label>
-								<mat-select formControlName="estado_producto">
-									<mat-option *ngFor="let estado of estados_productos" [value]="estado">
-										{{estado}}
-									</mat-option>
-								</mat-select>
-								<mat-error *ngIf="solicitudForm.get('producto')!.hasError('required')">
-									Campo obligatorio
-								</mat-error> 
-							</mat-form-field> -->
 							<button type="button" (click)="removeProducto(i)" mat-icon-button color="light">
 								<mat-icon>delete</mat-icon>
 							</button>
@@ -104,11 +113,11 @@
 	<mat-form-field>
 		<mat-label>Producto</mat-label>
 		<mat-select formControlName="producto">
-			<mat-option *ngFor="let prod of solicitud.productos" [value]="prod.id_producto">
+			<mat-option *ngFor="let prod of colecta.productos" [value]="prod.id_producto">
 				{{prod.s_descripcion}}
 			</mat-option>
 		</mat-select>
-		<mat-error *ngIf="solicitudForm.get('producto')!.hasError('required')">
+		<mat-error *ngIf="colectaForm.get('producto')!.hasError('required')">
 			Campo obligatorio
 		</mat-error>
 	</mat-form-field>

@@ -1,18 +1,22 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ColectaModel } from 'src/app/models/colecta.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import Swal from 'sweetalert2';
-
+import { DateAdapter } from '@angular/material/core';
 const TIPOS = ['COLCHONES_Y_FRAZADAS','LIBROS','MUEBLES','OTROS','SALUD','TECNOLOGIA']
 const ESTADOS = ['BUEN_ESTADO','ROTO_PERO_UTIL','ROTO']
 
 @Component({
   selector: 'app-form-colecta',
   templateUrl: './form-colecta.component.html',
-  styleUrls: ['./form-colecta.component.scss']
+  styleUrls: ['./form-colecta.component.scss'],
+  providers: [
+	{provide: MAT_DATE_LOCALE, useValue: 'en-GB'},
+  ]
 })
 export class FormColectaComponent  {
 
@@ -28,8 +32,9 @@ export class FormColectaComponent  {
 	loadingImg: boolean = false;
 
 	constructor(private fb: FormBuilder, private route: ActivatedRoute, private donacionesService: DonacionesService,
-		private auth: AuthService, private router: Router) {
+		private auth: AuthService, private router: Router, private dateAdapter: DateAdapter<Date>) {
 
+		this.dateAdapter.setLocale('es');
 		this.tipos_productos = TIPOS;
 		this.estados_productos = ESTADOS;
 
@@ -43,6 +48,8 @@ export class FormColectaComponent  {
 			file_name: [this.fileName],
 			file: [''],
 			file_source: [''],
+			fecha_inicio: ['', Validators.required],
+			fecha_fin: ['', Validators.required]
 		})
 
 		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
@@ -54,9 +61,9 @@ export class FormColectaComponent  {
 
 	agregarProducto(caract?: number) {
 		const producto = this.fb.group({
-			s_descripcion: [''],
+			s_descripcion: ['', Validators.required],
 			n_cantidad_solicitada: [''],
-			tipo_producto: [''],
+			tipo_producto: ['', Validators.required],
 			estado: ['-']
 		});
 
@@ -89,11 +96,13 @@ export class FormColectaComponent  {
 			descripcion: this.colectaForm.controls['s_descripcion'].value,
 			idFundacion: this.colectaForm.controls['id_fundacion'].value,
 			productos,
-			imagen: this.colectaForm.controls['file_source'].value[0]
+			imagen: this.colectaForm.controls['file_source'].value[0],
+			fechaInicio: this.colectaForm.controls['fecha_inicio'].value,
+			fechaFin: this.colectaForm.controls['fecha_fin'].value
 		}).subscribe((res) => {
 			//console.log(res, JSON.parse(JSON.stringify(res)).descripcion);
 			if(JSON.parse(JSON.stringify(res)).descripcion)	{
-				this.showMessage('¡Colecta Creada!', 'La colecta se creó exitosamente. Los Swappers te contactarán pronto!', 'success')
+				this.showMessage('¡Colecta Creada!', 'La colecta se creó exitosamente. Los particulars te contactarán pronto!', 'success')
 				this.router.navigateByUrl('colectas/'+ this.colectaForm.controls['id_fundacion'].value)
 			}
 			else this.showMessage('Ocurrió un error', 'No pudimos crear la colecta. Intentá nuevamente luego.', 'error')

@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DonacionModel } from 'src/app/models/donacion.model';
+import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import { MapComponent } from 'src/app/shared/map/map.component';
 import Swal from 'sweetalert2';
@@ -12,65 +13,38 @@ import Swal from 'sweetalert2';
 })
 export class DonacionesComponent {
 
-	donaciones: DonacionModel[] = [/* {
-		id_propuesta: 1,
-		id_producto: 1,
-		id_swapper: 1,
-		descripcion: 'Frazadas',
-		estado: 'NUEVA',
-		cantidad_propuesta: 2,
-		swapper: {
-			id_swapper: 1,
-			id_perfil: 1,
-			f_nacimiento: new Date(),
-			s_nombre: 'Swapper',
-			s_apellido: 'Test'
-		},
-		imagenes: ['assets/test_prop/alim_no_perec.jpg', 'assets/test_prop/gatito1.jpeg']
-	}, {
-		id_propuesta: 1,
-		id_producto: 1,
-		id_swapper: 1,
-		descripcion: 'Frazadas',
-		estado: 'ACEPTADA',
-		cantidad_propuesta: 2,
-		swapper: {
-			id_swapper: 1,
-			id_perfil: 1,
-			f_nacimiento: new Date(),
-			s_nombre: 'Swapper',
-			s_apellido: 'Test'
-		},
-		imagenes: ['']
-	} */];
+	donaciones: DonacionModel[] = [];
+	userData: any;
 
-	constructor(public dialog: MatDialog, private donacionesService: DonacionesService){
-		// TODO: GET PROPUESTAS FROM BACK
+	buttonsCard: {name: string, icon: string, color: string, status: string, disabled: string}[] = []
 
-		this.donaciones.map((item:any) => {
-			item['last_status'] = item.estado
-		})
+	constructor(public dialog: MatDialog, private donacionesService: DonacionesService,
+		private auth: AuthService) {
+		this.getDonaciones()
 	}
 
-	zoomImage(img: string){
+	getDonaciones() {
+		this.userData = this.auth.getUserData();
+		console.log(this.userData);
+
+		this.donacionesService.getAllDonaciones(this.userData.id_particular).subscribe((res: any) => {
+			console.log(res);
+
+			this.donaciones = res;
+			this.donaciones.map((donacion: any) => {
+				if(donacion.idDonacion) donacion['last_status'] = donacion.estado;
+				if(donacion.imagenes) donacion.parsedImagenes = donacion.imagenes.split('|')
+			})
+		})
+
+	}
+
+	zoomImage(img: string) {
 		Swal.fire({
 			html: `<img src="${img}" style="width: 100%"/>`,
 			showConfirmButton: false,
 			showCloseButton: true
 		})
-	}
-
-	changeEstadoPropuesta(donacion: DonacionModel, event: any){
-		console.log(donacion, event);
-		
-		this.donaciones.map((item: any) => {
-			if(item == donacion) {
-				if(event.checked) item.estado = item['last_status'];
-				else item.estado = 'CANCELADA'
-			}
-		})
-		console.log(this.donaciones);
-		//this.donacionesService.cambiarEstadoPropuesta()
 	}
 
 	openDialog() {
@@ -80,7 +54,11 @@ export class DonacionesComponent {
 			height: '100%',
 			width: '100%',
 			panelClass: 'full-screen-modal'
-		  });
-	  }
+		});
+	}
+
+	getImage(image: any) {
+		return this.donacionesService.getImagen(image)
+	}
 
 }

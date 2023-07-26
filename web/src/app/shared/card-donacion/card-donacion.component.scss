@@ -1,0 +1,42 @@
+.donacion-example-header-image {
+	background-image: url('../../../assets/persona.png');
+	background-size: cover;
+}
+.donacion-card-content {
+	display: grid;
+	grid-template-columns: 1fr 2fr 1fr;//1fr 2fr 1fr;
+	gap: 1rem;
+	margin-top: 10px;
+
+	.imagenes {
+		img {
+			height: 65px;
+			margin: 5px;
+			border-radius: 5px;
+			box-shadow: 2px 2px 5px var(--dark-grey);
+
+			&:hover {
+				cursor: pointer;
+			}
+		}
+	}
+
+	.donacion-status {
+		display: flex;
+		flex-direction: column;
+
+		button {
+			margin: 5px auto;
+			width: 150px;
+			text-transform: uppercase;
+		}
+	}
+
+	.aprobada {
+		color: var(--primary-color);
+		font-weight: 500;
+	}
+	.rechazada {
+		color: var(--warn-color);
+	}
+}

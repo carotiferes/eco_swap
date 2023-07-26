@@ -27,6 +27,7 @@ import { HttpErrorInterceptor } from './pipes/error.interceptor';
 import { DonacionesComponent } from './pages/donaciones/donaciones.component';
 import { SharedModule } from './shared/shared.module';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
+import { ErrorComponent } from './pages/error/error.component';
 
 @NgModule({
 	declarations: [
@@ -45,7 +46,8 @@ import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 		LoginComponent,
 		FormColectaComponent,
   		DonacionesComponent,
-    	SafeHtmlPipe
+    	SafeHtmlPipe,
+     ErrorComponent
 	],
 	imports: [
 		BrowserModule,
