@@ -13,4 +13,8 @@ export class UsuarioService {
 	getUser(id_perfil: number) {
 		return this.backendService.get('perfil/' + id_perfil);
 	}
+
+	createUser(user: any){
+		return this.backendService.post('/ms-autenticacion/api/v1/usuario/signin', user);
+	}
 }

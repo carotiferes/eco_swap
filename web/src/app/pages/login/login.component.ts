@@ -49,4 +49,8 @@ export class LoginComponent {
 			input: 'email'
 		})
 	}
+
+	goToHome(){
+		this.router.navigate(['home'])
+	}
 }

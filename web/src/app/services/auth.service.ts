@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpBackEnd } from './httpBackend.service';
 
 @Injectable({
 	providedIn: 'root'
@@ -10,13 +11,15 @@ export class AuthService {
 
 	possibleUsers = ['mromero', 'sgomez', 'tzedaka', 'cruzroja']
 
-	constructor(private router: Router) {
+	constructor(private router: Router, private backendService: HttpBackEnd) {
 		if(this.getUserLogin()) this.isUserLoggedIn = true;
 		else this.isUserLoggedIn = false;
 	}
 
 	login(username: string, password?: string) {
 		console.log(username, password);
+		//return this.backendService.patch('/ms-autenticacion/api/v1/usuario/login', {username, password});
+
 		// TODO: CHANGE FROM HARDCODED DATA TO CALL BACKEND (access token)
 		let userData: any;
 		if(username == 'mromero'){
