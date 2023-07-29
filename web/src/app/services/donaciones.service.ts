@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpBackEnd } from './httpBackend.service';
 
 const URL = 'http://localhost:8080/'
+const URL_NAME = 'URImsUsuarios'
 
 @Injectable({
 	providedIn: 'root'
@@ -12,30 +13,30 @@ export class DonacionesService {
 
 	crearColecta(body: any) {
 		console.log(body);
-		const test = this.backendService.post('api/colecta', body);
+		const test = this.backendService.post(URL_NAME, 'api/colecta', body);
 		console.log('aaaa', test);
 
 		return test
 	}
 
 	getColectas(filtros?: any){
-		return this.backendService.get('api/colectas', filtros);
+		return this.backendService.get(URL_NAME, 'api/colectas', filtros);
 	}
 
 	getColecta(id_colecta: any){
-		return this.backendService.get('api/colecta/'+id_colecta);
+		return this.backendService.get(URL_NAME, 'api/colecta/'+id_colecta);
 	}
 
 	getDonaciones(id_colecta: any){
-		return this.backendService.get('api/colecta/'+id_colecta+'/donaciones');
+		return this.backendService.get(URL_NAME, 'api/colecta/'+id_colecta+'/donaciones');
 	}
 
 	getAllDonaciones(id_particular: any){
-		return this.backendService.get('api/'+id_particular+'/donaciones');
+		return this.backendService.get(URL_NAME, 'api/'+id_particular+'/donaciones');
 	}
 
 	crearDonacion(id_colecta: number, body: any){
-		return this.backendService.post('api/colecta/'+id_colecta+'/donaciones', body);
+		return this.backendService.post(URL_NAME, 'api/colecta/'+id_colecta+'/donaciones', body);
 	}
 
 	getImagen(img: string){
@@ -43,6 +44,6 @@ export class DonacionesService {
 	}
 
 	cambiarEstadoDonacion(id_colecta: any, id_donacion: number, body: any){
-		return this.backendService.put('api/colecta/'+id_colecta+'/donaciones/'+id_donacion, body);
+		return this.backendService.put(URL_NAME, 'api/colecta/'+id_colecta+'/donaciones/'+id_donacion, body);
 	}
 }

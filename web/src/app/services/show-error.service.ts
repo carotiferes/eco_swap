@@ -15,6 +15,6 @@ export class ShowErrorService {
 			text,
 			icon: 'error'
 		})
-		this.router.navigate(['error'])
+		//this.router.navigate(['error'])
 	}
 }
