@@ -1,9 +1,26 @@
 <app-header></app-header>
 
-<div style="display: flex;
+<!-- <div style="display: flex;
 justify-content: center;
 flex-direction: column;
 align-items: center;">
 	<img src="assets/logo_green.png" style="max-width: 300px;">
 	<h3>¡Muy pronto podrás acceder a esta página!</h3>
-</div>
+</div> -->
+
+<ngb-carousel *ngIf="images" [interval]="3500">
+	<ng-template ngbSlide>
+		<div class="picsum-img-wrapper">
+			<img [src]="images[0]" alt="Random first slide" />
+		</div>
+		<div class="carousel-caption">
+		</div>
+	</ng-template>
+	<ng-template ngbSlide>
+		<div class="picsum-img-wrapper">
+			<img [src]="images[1]" alt="Random second slide" />
+		</div>
+		<div class="carousel-caption">
+		</div>
+	</ng-template>
+</ngb-carousel>
