@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import msUsers.domain.entities.enums.TipoDocumento;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -41,7 +42,7 @@ public class Particular {
     @Column(columnDefinition = "DATE")
     private LocalDate fechaNacimiento;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @Enumerated(value = EnumType.STRING)
     private TipoDocumento tipoDocumento;
 
     @OneToMany(mappedBy = "particular",cascade = CascadeType.ALL, fetch = FetchType.LAZY)

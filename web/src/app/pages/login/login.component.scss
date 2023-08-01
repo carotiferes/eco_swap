@@ -53,6 +53,14 @@ main{
     border-radius: 20px;
     padding: 2.5rem 25px;
     box-shadow: 0 2px 5px rgb(49, 49, 49);
+
+	a {
+		font-size: 12px;
+
+		&:hover {
+			cursor: pointer;
+		}
+	}
 }
 
 .loginPanel img{

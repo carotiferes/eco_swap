@@ -8,7 +8,7 @@ import lombok.Data;
 @Builder
 public class RequestLogin {
 
-    @NotNull(message = "solicitudProductoModel Debe existir")
+    @NotNull(message = "El nombre de usuario es obligatorio")
     private String username;
 
     @NotNull

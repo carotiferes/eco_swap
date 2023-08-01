@@ -48,6 +48,10 @@ public class Usuario {
     @NotNull
     private boolean isSwapper;
 
+    private Integer intentos;
+
+    private boolean bloqueado;
+
     @OneToMany(mappedBy = "usuarioOpina", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Opinion> opiniones;
 
