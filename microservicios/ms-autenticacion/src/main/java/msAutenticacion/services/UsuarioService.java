@@ -58,10 +58,12 @@ public class UsuarioService {
     public Long crearUsuario(RequestSignin signin) {
         log.info("crearUsuario: Usuario a crear:" + signin.getUsername());
         RequestDireccion direccionCrear = signin.getDireccion();
+        String salt = this.crearSalt();
         Usuario usuario = Usuario.builder()
                 .email(signin.getEmail())
                 .username(signin.getUsername())
-                .password(this.crearPassword(signin.getPassword()))
+                .password(this.crearPassword(signin.getPassword(), salt))
+                .salt(salt)
                 .telefono(signin.getTelefono())
                 .isSwapper(signin.getFundacion()==null)
                 .intentos(0)
@@ -100,7 +102,8 @@ public class UsuarioService {
         log.info(("login: Intentar ingresar el username: " + request.getUsername()));
         Usuario usuario = usuarioRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new EntityNotFoundException("No fue encontrado el usuario: " + request.getUsername()));
-        if(!this.compararContrasenias(request.getPassword(), usuario.getPassword())) {
+        String hashPassword = this.crearPassword(request.getPassword(), usuario.getSalt());
+        if(!this.compararContrasenias(hashPassword, usuario.getPassword())) {
             //ERROR, LA PASSWORD NO FUNCA
             log.error(("login: error durante el LOGIN y se le aumenta los intentos en 1: " + request.getUsername()));
             usuario.aumentarIntetoEn1();
@@ -121,8 +124,8 @@ public class UsuarioService {
         return passwordHashGuardado.equals(passwordHashIngresado);
     }
 
-    private String crearPassword(String password) {
-        String passwordAHashear = password + this.crearSalt() + PEPPER;
+    private String crearPassword(String password, String salt) {
+        String passwordAHashear = password + salt + PEPPER;
         return getSHA256(passwordAHashear);
     }
 

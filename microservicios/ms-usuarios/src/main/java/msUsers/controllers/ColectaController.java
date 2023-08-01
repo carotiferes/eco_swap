@@ -28,8 +28,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -74,17 +74,15 @@ public class ColectaController {
         colecta.setFundacion(fundacion);
         colecta.setTitulo(requestColecta.getTitulo());
 
-        // ToDo: En el caso de que la colecta falle por alguna razón, la imagen se sigue guardando. CORREGIR.
-
-        String img = requestColecta.getImagen();
-        colecta.setImagen(imageService.saveImage(img));
-
         List<Producto> productos = requestColecta.getProductos().stream()
                 .map(reqProducto -> {
                     Producto p = new Producto();
                     p.setColecta(colecta);
                     p.setDescripcion(reqProducto.getDescripcion());
-                    p.setCantidadSolicitada(reqProducto.getCantidadRequerida());
+
+                    Optional<Integer> cantidadRequerida = Optional.ofNullable(reqProducto.getCantidadRequerida());
+                    cantidadRequerida.ifPresent(p::setCantidadSolicitada);
+
                     p.setTipoProducto(reqProducto.getTipoProducto());
                     return p;
                 }).collect(Collectors.toList());
@@ -93,6 +91,10 @@ public class ColectaController {
 
         // Guardo la colecta y me quedo con el id generada en la base de datos
         var entity = this.colectaRepository.save(colecta);
+
+        String img = requestColecta.getImagen();
+        colecta.setImagen(imageService.saveImage(img));
+        entity = this.colectaRepository.save(colecta); // Actualizo la colecta con la imagen
 
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUri();
 
