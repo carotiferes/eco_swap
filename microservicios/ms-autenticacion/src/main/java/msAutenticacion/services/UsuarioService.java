@@ -62,7 +62,7 @@ public class UsuarioService {
         Usuario usuario = Usuario.builder()
                 .email(signin.getEmail())
                 .username(signin.getUsername())
-                .password(this.crearPassword(signin.getPassword()), salt)
+                .password(this.crearPassword(signin.getPassword(), salt))
                 .salt(salt)
                 .telefono(signin.getTelefono())
                 .isSwapper(signin.getFundacion()==null)
