@@ -51,7 +51,7 @@ const routes: Routes = [{
 },{
 	path: 'colecta/:id_colecta',
 	component: ColectaComponent,
-	canActivate: [AuthGuard]
+	//canActivate: [AuthGuard]
 },{
 	path: 'donacion/:id_colecta',
 	component: FormDonacionComponent,
@@ -60,6 +60,9 @@ const routes: Routes = [{
 	path: 'mis-donaciones',
 	component: DonacionesComponent,
 	canActivate: [AuthGuard]
+},{
+	path: 'reset-password',
+	component: RegistroComponent
 },{
 	path: 'error',
 	component: ErrorComponent

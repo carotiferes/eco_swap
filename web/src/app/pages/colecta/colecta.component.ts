@@ -73,14 +73,29 @@ export class ColectaComponent {
 	}
 
 	donar() {
-		Swal.fire({
-			title: '¡Estás un paso más cerca de hacer tu donación!',
-			text: 'Te vamos a pedir algunos datos de lo que vas a donar. Es importante que completes la información requerida para que la fundación conozca lo que vas a donar.', //'Seleccioná el producto que quieras donar',
-			icon: 'info',
-			confirmButtonText: '¡VAMOS!' //'Confirmar'
-		}).then(({isConfirmed, value}) => {
-			this.router.navigate(['donacion/'+this.id_colecta])
-		})
+		//console.log(Object.keys(this.userData).length === 0);
+		
+		if(Object.keys(this.userData).length != 0){
+			Swal.fire({
+				title: '¡Estás un paso más cerca de hacer tu donación!',
+				text: 'Te vamos a pedir algunos datos de lo que vas a donar. Es importante que completes la información requerida para que la fundación conozca lo que vas a donar.', //'Seleccioná el producto que quieras donar',
+				icon: 'info',
+				confirmButtonText: '¡VAMOS!' //'Confirmar'
+			}).then(({isConfirmed, value}) => {
+				if(isConfirmed) this.router.navigate(['donacion/'+this.id_colecta])
+			})
+		} else {
+			Swal.fire({
+				title: 'Necesitás una cuenta!',
+				text: 'Para poder donar, tenés que usar tu cuenta.',
+				icon: 'warning',
+				confirmButtonText: 'Iniciar sesión',
+				showCancelButton: true,
+				cancelButtonText: 'Cancelar'
+			}).then(({isConfirmed}) => {
+				if(isConfirmed) this.router.navigate(['login'])
+			})
+		}
 	}
 
 	zoomImage(img?: string){

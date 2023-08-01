@@ -47,7 +47,7 @@ import { ErrorComponent } from './pages/error/error.component';
 		FormColectaComponent,
   		DonacionesComponent,
     	SafeHtmlPipe,
-     ErrorComponent
+     	ErrorComponent
 	],
 	imports: [
 		BrowserModule,

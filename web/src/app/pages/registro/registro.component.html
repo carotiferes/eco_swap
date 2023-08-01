@@ -3,8 +3,16 @@
 <div id="main-container">
 	<mat-card id="main-card" *ngIf="!loading">
 		<mat-card-header>
-			<mat-card-title>Registrate!</mat-card-title>
-			<mat-card-subtitle>Completá {{isSwapper ? 'tus datos' : 'los datos de la fundación'}} para crear tu cuenta</mat-card-subtitle>
+			<div *ngIf="!resetPassword; else resetHeader">
+				<mat-card-title>Registrate!</mat-card-title>
+				<mat-card-subtitle>Completá {{isSwapper ? 'tus datos' : 'los datos de la fundación'}} para crear tu cuenta</mat-card-subtitle>
+			</div>
+			<ng-template #resetHeader>
+				<div>
+					<mat-card-title>Actualizar contraseña</mat-card-title>
+					<mat-card-subtitle>Completá {{isSwapper ? 'tus datos' : 'los datos de la fundación'}} para actualizar tu contraseña</mat-card-subtitle>
+				</div>
+			</ng-template>
 		</mat-card-header>
 		<mat-card-content>
 			<form [formGroup]="mainForm" class="form">
@@ -21,7 +29,7 @@
 					</mat-form-field>
 				</div>
 				<div class="form-input">
-					<mat-form-field>
+					<mat-form-field *ngIf="!resetPassword">
 						<mat-label>Teléfono</mat-label>
 						<input matInput formControlName="telefono">
 						<mat-error *ngIf="mainForm.get('telefono')!.hasError('required')">
@@ -57,7 +65,7 @@
 					</mat-form-field>
 				</div>
 			</form>
-			<form [formGroup]="particularForm" *ngIf="isSwapper" class="form">
+			<form [formGroup]="particularForm" *ngIf="isSwapper && !resetPassword" class="form">
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>Nombre</mat-label>
@@ -108,7 +116,7 @@
 					</mat-form-field>
 				</div>
 			</form>
-				<form [formGroup]="fundacionForm" *ngIf="!isSwapper" class="form">
+				<form [formGroup]="fundacionForm" *ngIf="!isSwapper && !resetPassword" class="form">
 					<div class="form-input">
 						<mat-form-field>
 							<mat-label>Nombre / Razón Social</mat-label>
@@ -136,7 +144,7 @@
 					mainForm.valid;
 					isSwapper && particularForm.valid;
 					!isSwapper && fundacionForm.valid">
-				CREAR CUENTA
+				{{resetPassword ? 'ACTUALIZAR CONTRASEÑA' : 'CREAR CUENTA'}}
 			</button>
 		</mat-card-actions>
 	</mat-card>
