@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TruequeComponent } from './trueque.component';
+import { TruequesComponent } from './trueques.component';
 
-describe('TruequeComponent', () => {
-  let component: TruequeComponent;
-  let fixture: ComponentFixture<TruequeComponent>;
+describe('TruequesComponent', () => {
+  let component: TruequesComponent;
+  let fixture: ComponentFixture<TruequesComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [TruequeComponent]
+      declarations: [TruequesComponent]
     });
-    fixture = TestBed.createComponent(TruequeComponent);
+    fixture = TestBed.createComponent(TruequesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

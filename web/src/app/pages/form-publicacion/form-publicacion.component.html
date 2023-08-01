@@ -1,0 +1,121 @@
+<app-header></app-header>
+
+<div id="main-publicacion">
+	<app-spinner [loading]="loading"></app-spinner>
+	<mat-card id="main-card" *ngIf="!loading">
+		<mat-card-header style="margin-bottom: 20px;">
+			<mat-card-title>Completá los datos de tu donación!</mat-card-title>
+		</mat-card-header>
+		<mat-card-content>
+			<form [formGroup]="publicacionForm" class="form">
+				<!-- <div class="form-input form-col">
+					<mat-form-field>
+						<mat-label>Producto</mat-label>
+						<mat-select formControlName="producto">
+							<mat-option *ngFor="let prod of colecta.productos" [value]="prod.idProducto">
+								{{prod.descripcion}}
+							</mat-option>
+						</mat-select>
+						<mat-error *ngIf="publicacionForm.get('producto')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
+				</div> -->
+
+				<div class="form-col">
+					<mat-form-field>
+						<mat-label>Título</mat-label>
+						<input matInput formControlName="titulo" type="text">
+						<mat-error *ngIf="publicacionForm.get('titulo')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
+				</div>
+
+				<div class="form-col">
+					<mat-form-field>
+						<mat-label>Descripción</mat-label>
+						<input matInput formControlName="descripcion" type="text">
+						<mat-error *ngIf="publicacionForm.get('descripcion')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
+				</div>
+
+				<section formArrayName="caracteristicas" class="form-col">
+					<div>
+						<label class="caract-label">
+							Caracteristicas
+							<mat-icon class="material-icons-outlined"
+							matTooltip="Por favor incluir medidas, estado del producto,  material del producto y cualquier característica que identifique a tu producto">
+								info
+							</mat-icon>
+						</label>
+					</div>
+					<div>
+						<div *ngFor="let caracteristica of getCaracteristicasArray.controls; let i=index"
+							class="caracteristica" [formGroupName]="i">
+							<mat-form-field>
+								<input matInput placeholder="Descripción*" formControlName="s_descripcion">
+								<mat-error *ngIf="caracteristica.get('s_descripcion')!.hasError('pattern')">
+									El campo no puede contener <b>;</b>
+								</mat-error>
+								<mat-error *ngIf="caracteristica.get('s_descripcion')!.hasError('required')">
+									Campo obligatorio
+								</mat-error>
+							</mat-form-field>
+							<button type="button" (click)="removeCaracteristica(i)" mat-icon-button color="light"
+							style="height: 60px; margin-left: 5px;">
+								<mat-icon>delete</mat-icon>
+							</button>
+						</div>
+						<button type="button" (click)="agregarCaracteristica()" mat-raised-button color="light" style="width: 100%;">
+							<mat-icon>add</mat-icon>
+							<label>Agregar Caracteristica</label>
+						</button>
+					</div>
+				</section>
+
+				<div class="form-col">
+					<div>
+						<label style="font-weight: 500; font-size: large; margin: 7px 0;">Imágenes</label>
+					</div>
+					<button type="button" mat-raised-button color="light">
+						<mat-icon>add</mat-icon>
+						<label for="file">Agregar Imagen</label>
+					</button>
+					<input formControlName="file" id="file" type="file" class="form-control hidden" multiple=""
+						(change)="onFileChange($event)" #file>
+					<div class="form-col form-imgs">
+						<div class="show-image" *ngFor='let url of images; let i = index;' (click)="removeImagen(i)" >
+							<div class="image" >
+								<div class="overlay">
+								</div>
+								<mat-icon class="update" color="primary">delete</mat-icon>
+								<img [src]="url" class="img-producto">
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-col mensaje-field">
+					<mat-form-field>
+						<mat-label>Mensaje Adicional</mat-label>
+						<textarea matInput
+						cdkTextareaAutosize
+						#autosize="cdkTextareaAutosize"
+						cdkAutosizeMinRows="1"
+						cdkAutosizeMaxRows="5"
+						formControlName="mensaje"></textarea>
+					</mat-form-field>
+				</div>
+			</form>
+		</mat-card-content>
+		<mat-card-actions class="buttons">
+			<button mat-raised-button color="primary"
+				(click)="publicar();publicacionForm.markAllAsTouched(); publicacionForm.valid">
+				CONFIRMAR PROPUESTA
+			</button>
+		</mat-card-actions>
+	</mat-card>
+</div>

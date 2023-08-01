@@ -7,3 +7,9 @@ align-items: center;">
 	<img src="assets/logo_green.png" style="max-width: 300px;">
 	<h3>¡Muy pronto podrás acceder a esta página!</h3>
 </div>
+
+<div class="floating-button-container" *ngIf="userData.isSwapper">
+	<button mat-fab color="primary" aria-label="Agregar Publicación" (click)="addPublicacion()">
+		<mat-icon>add</mat-icon>
+	</button>
+</div>

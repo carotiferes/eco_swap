@@ -9,7 +9,7 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { FooterComponent } from './layout/footer/footer.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './shared/material/material.module';
-import { TruequeComponent } from './pages/trueque/trueque.component';
+import { TruequesComponent } from './pages/trueques/trueques.component';
 import { ColectasComponent } from './pages/colectas/colectas.component';
 import { RegistroComponent } from './pages/registro/registro.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
@@ -28,6 +28,7 @@ import { DonacionesComponent } from './pages/donaciones/donaciones.component';
 import { SharedModule } from './shared/shared.module';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { ErrorComponent } from './pages/error/error.component';
+import { FormPublicacionComponent } from './pages/form-publicacion/form-publicacion.component';
 
 @NgModule({
 	declarations: [
@@ -36,7 +37,7 @@ import { ErrorComponent } from './pages/error/error.component';
 		HeaderComponent,
 		NotFoundComponent,
 		FooterComponent,
-		TruequeComponent,
+		TruequesComponent,
 		ColectasComponent,
 		RegistroComponent,
 		PerfilComponent,
@@ -47,7 +48,8 @@ import { ErrorComponent } from './pages/error/error.component';
 		FormColectaComponent,
   		DonacionesComponent,
     	SafeHtmlPipe,
-     	ErrorComponent
+		ErrorComponent,
+		FormPublicacionComponent
 	],
 	imports: [
 		BrowserModule,
