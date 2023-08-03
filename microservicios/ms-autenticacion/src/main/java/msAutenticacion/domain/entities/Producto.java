@@ -16,7 +16,7 @@ import java.util.List;
 public class Producto {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long idProducto;
 
     @Enumerated(value = EnumType.STRING)

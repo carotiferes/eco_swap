@@ -3,17 +3,21 @@ package msAutenticacion.domain.entities;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 @Entity
 @Table(name = "Direcciones")
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Direccion {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long idDireccion;
 
     @ManyToOne(cascade = CascadeType.ALL)

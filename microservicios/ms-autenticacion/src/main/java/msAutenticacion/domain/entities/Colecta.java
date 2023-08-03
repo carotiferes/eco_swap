@@ -21,7 +21,7 @@ import java.util.List;
 public class Colecta implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long idColecta;
 
     @Size(max = 50)

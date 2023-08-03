@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class CaracteristicaPropuesta {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     private Long userId;
