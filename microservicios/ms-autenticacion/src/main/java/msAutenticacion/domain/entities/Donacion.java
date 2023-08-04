@@ -22,7 +22,7 @@ import java.util.List;
 public class Donacion {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long idDonacion;
 
     private String descripcion;

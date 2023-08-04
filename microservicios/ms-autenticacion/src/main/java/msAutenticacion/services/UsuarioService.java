@@ -145,7 +145,7 @@ public class UsuarioService {
     }
 
     private String crearSalt() {
-        return RandomStringUtils.randomAlphanumeric(10);
+        return RandomStringUtils.randomAlphanumeric(5);
     }
 
     /*
