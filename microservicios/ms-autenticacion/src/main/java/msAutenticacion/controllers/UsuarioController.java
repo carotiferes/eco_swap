@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.*;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
-    private static final String json = "application/json";
+    private static final String JSON = "application/JSON";
 
     public UsuarioController(UsuarioService usuarioService) {this.usuarioService = usuarioService;}
-    @GetMapping(path = "/usuario/{id_usuario}", produces = json)
+    @GetMapping(path = "/usuario/{id_usuario}", produces = JSON)
     @Transactional(readOnly = true)
     public ResponseEntity<Usuario> getUserById(@PathVariable("id_usuario") Long id){
         log.info("getUserById: obtener Usuario a partir de ID: "+ id);
@@ -34,7 +34,7 @@ public class UsuarioController {
         return ResponseEntity.ok(usuario);
     }
 
-    @PostMapping(path = "/usuario/signup", produces = json)
+    @PostMapping(path = "/usuario/signup", produces = JSON)
     @Transactional
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<Long> postSignin(@RequestBody RequestSignin body){
@@ -44,7 +44,7 @@ public class UsuarioController {
         return ResponseEntity.ok(userId);
     }
 
-    @PutMapping(path = "/usuario/password", produces = json)
+    @PutMapping(path = "/usuario/password", produces = JSON)
     @Transactional
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<HttpStatus> putPassword(@RequestBody RequestPassword body){
@@ -54,7 +54,7 @@ public class UsuarioController {
         return ResponseEntity.ok(HttpStatus.ACCEPTED);
     }
 
-    @PatchMapping(path = "/usuario/login", produces = json)
+    @PatchMapping(path = "/usuario/login", produces = JSON)
     @Transactional
     public ResponseEntity<Boolean> patchLogin(@RequestBody RequestLogin body){
         log.info("postLogin: Intento de login para usuario: "+ body.getUsername());

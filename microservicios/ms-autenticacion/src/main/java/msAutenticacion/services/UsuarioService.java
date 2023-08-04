@@ -1,16 +1,10 @@
 package msAutenticacion.services;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import msAutenticacion.domain.entities.Direccion;
-import msAutenticacion.domain.entities.Particular;
 import msAutenticacion.domain.entities.Usuario;
 import msAutenticacion.domain.repositories.DireccionRepository;
-import msAutenticacion.domain.repositories.FundacionesRepository;
-import msAutenticacion.domain.repositories.ParticularRepository;
 import msAutenticacion.domain.repositories.UsuarioRepository;
 import msAutenticacion.domain.requests.RequestLogin;
 import msAutenticacion.domain.requests.RequestPassword;
@@ -18,16 +12,10 @@ import msAutenticacion.domain.requests.RequestSignin;
 import msAutenticacion.domain.requests.propuestas.RequestDireccion;
 import msAutenticacion.exceptions.LoginUserException;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfiguration;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.time.Instant;
 import java.util.Optional;
 
 @Service
@@ -38,18 +26,20 @@ public class UsuarioService {
     private final FundacionService fundacionService;
     private final ParticularService particularService;
     private  final DireccionRepository direccionRepository;
-    private static final String json = "application/json";
+    private final EmailService emailService;
+    private static final String JSON = "application/JSON";
 
-    private static String PEPPER = "c";
+    private static final String PEPPER = "c";
 
     public UsuarioService(UsuarioRepository usuarioRepository,
                           FundacionService fundacionService,
                           ParticularService particularService,
-                          DireccionRepository direccionRepository) {
+                          DireccionRepository direccionRepository, EmailService emailService) {
         this.usuarioRepository = usuarioRepository;
         this.fundacionService = fundacionService;
         this.particularService = particularService;
         this.direccionRepository = direccionRepository;
+        this.emailService = emailService;
     }
 
     public Optional<Usuario> obtenerUsuario(Long userId) {
@@ -59,24 +49,8 @@ public class UsuarioService {
         log.info("crearUsuario: Usuario a crear:" + signin.getUsername());
         RequestDireccion direccionCrear = signin.getDireccion();
         String salt = this.crearSalt();
-        Usuario usuario = Usuario.builder()
-                .email(signin.getEmail())
-                .username(signin.getUsername())
-                .password(this.crearPassword(signin.getPassword(), salt))
-                .salt(salt)
-                .telefono(signin.getTelefono())
-                .isSwapper(signin.getFundacion()==null)
-                .intentos(0)
-                .bloqueado(false)
-                .build();
-        Direccion direccion = Direccion.builder()
-                .usuario(usuario)
-                .direccion(direccionCrear.getDireccion())
-                .codigoPostal(direccionCrear.getCodigoPostal())
-                .altura(direccionCrear.getAltura())
-                .dpto(direccionCrear.getDepartamento())
-                .piso(direccionCrear.getPiso())
-                .build();
+        Usuario usuario = this.crearUsuario(signin, salt);
+        Direccion direccion = this.crearDireccion(usuario, direccionCrear);
         Direccion direccionCreada = direccionRepository.save(direccion);
         log.info("crearUsuario: Direccion creado con ID:" + direccionCreada.getIdDireccion());
         Usuario usuarioCreado = null;
@@ -86,8 +60,12 @@ public class UsuarioService {
             usuarioCreado = fundacionService.crearUser(direccionCreada.getUsuario(), signin);
         }
         log.info("crearUsuario: Usuario creado con ID:" + usuarioCreado.getIdUsuario());
+        emailService.sendConfirmEmail(usuario.getEmail(), "Bienvenido a ECOSWAP", usuario, this.crearSalt());
+        log.info("Email enviado para el usuario:" + usuario.getUsername());
         return usuarioCreado.getIdUsuario();
     }
+    
+
 
     public void actualizarContrasenia(RequestPassword request) {
         log.info(("actualizarContrasenia: Actualizar contraseña para usuarioId: " + request.getUsername()));
@@ -148,6 +126,30 @@ public class UsuarioService {
         return RandomStringUtils.randomAlphanumeric(5);
     }
 
+    private Direccion crearDireccion(Usuario usuario, RequestDireccion direccionCrear) {
+        return Direccion.builder()
+                .usuario(usuario)
+                .direccion(direccionCrear.getDireccion())
+                .codigoPostal(direccionCrear.getCodigoPostal())
+                .altura(direccionCrear.getAltura())
+                .dpto(direccionCrear.getDepartamento())
+                .piso(direccionCrear.getPiso())
+                .build();
+    }
+
+    private Usuario crearUsuario(RequestSignin signin, String salt) {
+        return Usuario.builder()
+                .email(signin.getEmail())
+                .username(signin.getUsername())
+                .password(this.crearPassword(signin.getPassword(), salt))
+                .salt(salt)
+                .telefono(signin.getTelefono())
+                .isSwapper(signin.getFundacion()==null)
+                .intentos(0)
+                .bloqueado(false)
+                .build();
+    }
+    
     /*
     private String crearJWT(Usuario usuario) {
         String prvKey = "-----BEGIN PRIVATE KEY-----\n"
