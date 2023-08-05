@@ -21,6 +21,12 @@ export class LoginComponent {
 
 	constructor(private auth: AuthService, private router: Router) { }
 
+	ngOnInit(): void {
+		if(this.auth.isUserLoggedIn){
+			this.router.navigate([''])
+		}
+	}
+
 	onSubmit() {
 		this.username = this.userHtml?.nativeElement.value;
 		this.password = this.passwordHtml?.nativeElement.value;
@@ -29,7 +35,7 @@ export class LoginComponent {
 			Swal.fire({ title: 'Campos incompletos!', text: 'Por favor completá todos los campos antes de continuar.', icon: 'error' })
 		} else {
 			this.auth.login(this.username, this.password) //TODO: then and catch
-			this.router.navigateByUrl('/colectas')
+			//this.router.navigateByUrl('/colectas')
 		}
 	}
 

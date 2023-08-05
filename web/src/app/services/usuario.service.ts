@@ -16,6 +16,6 @@ export class UsuarioService {
 	}
 
 	createUser(user: any){
-		return this.backendService.post(URL_NAME, 'ms-autenticacion/api/v1/usuario/signin', user);
+		return this.backendService.post(URL_NAME, 'ms-autenticacion/api/v1/usuario/signup', user);
 	}
 }

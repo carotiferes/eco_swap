@@ -31,9 +31,13 @@
 				<div class="form-input">
 					<mat-form-field *ngIf="!resetPassword">
 						<mat-label>Teléfono</mat-label>
-						<input matInput formControlName="telefono">
+						<input matInput formControlName="telefono" [ngModel]="this.mainForm.get('telefono')!.value" (keyup)="formatearTelefono()">
+						<mat-hint>Formato: 11 1234-5678</mat-hint> 
 						<mat-error *ngIf="mainForm.get('telefono')!.hasError('required')">
 							Campo obligatorio
+						</mat-error>
+						<mat-error *ngIf="mainForm.get('telefono')!.hasError('formatoInvalido')">
+							El formato debe ser 11 1234-5678
 						</mat-error>
 					</mat-form-field>
 				</div>

@@ -28,6 +28,7 @@ import { DonacionesComponent } from './pages/donaciones/donaciones.component';
 import { SharedModule } from './shared/shared.module';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { ErrorComponent } from './pages/error/error.component';
+import { PhoneNumberPipe } from './pipes/phone-number.pipe';
 
 @NgModule({
 	declarations: [
@@ -47,7 +48,8 @@ import { ErrorComponent } from './pages/error/error.component';
 		FormColectaComponent,
   		DonacionesComponent,
     	SafeHtmlPipe,
-     	ErrorComponent
+     	ErrorComponent,
+      	PhoneNumberPipe
 	],
 	imports: [
 		BrowserModule,
@@ -67,7 +69,8 @@ import { ErrorComponent } from './pages/error/error.component';
 			provide: HTTP_INTERCEPTORS,
 			useClass: HttpErrorInterceptor,
 			multi: true,
-		}
+		},
+		PhoneNumberPipe
 	],
 	bootstrap: [AppComponent]
 })

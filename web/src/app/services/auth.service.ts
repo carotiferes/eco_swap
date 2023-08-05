@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpBackEnd } from './httpBackend.service';
+import Swal from 'sweetalert2';
 
 const URL_NAME = 'URImsAutenticacion'
 
@@ -24,47 +25,20 @@ export class AuthService {
 
 		// TODO: CHANGE FROM HARDCODED DATA TO CALL BACKEND (access token)
 		let userData: any;
-		/* this.backendService.patch(URL_NAME, 'ms-autenticacion/api/v1/usuario/login', {username, password}).subscribe({
+		this.backendService.patch(URL_NAME, 'ms-autenticacion/api/v1/usuario/login', {username, password}).subscribe({
 			next: (v: any) => {
 				console.log('next',v);
+				this.setLocalStorage('userData', JSON.stringify(userData));
+				this.isUserLoggedIn = true;
+				this.setUserLoggedIn();
+				this.router.navigate([''])
 			},
 			error: (e) => {
 				console.error('error',e);
+				Swal.fire('¡Error!', 'Ocurrió un error. Por favor revisá los campos e intentá nuevamente.', 'error')
 			},
 			complete: () => console.info('complete') 
-		}) */
-		if(username == 'mromero'){
-			userData = {
-				username,
-				id_perfil: 1,
-				id_particular: 1,
-				isSwapper: true
-			}
-		} else if(username == 'sgomez'){
-			userData = {
-				username,
-				id_perfil: 4,
-				id_particular: 2,
-				isSwapper: true
-			}
-		} else if(username == 'tzedaka'){
-			userData = {
-				username,
-				id_perfil: 2,
-				id_fundacion: 1,
-				isSwapper: false
-			}
-		} else {
-			userData = {
-				username,
-				id_perfil: 3,
-				id_fundacion: 2,
-				isSwapper: false
-			}
-		}
-		this.setLocalStorage('userData', JSON.stringify(userData));
-		this.isUserLoggedIn = true;
-		this.setUserLoggedIn()
+		})
 	}
 
 	get getPossibleUsers(){
@@ -99,7 +73,7 @@ export class AuthService {
 	logout() {
 		this.isUserLoggedIn = false;
 		localStorage.clear();
-		this.router.navigate(['/']);
+		this.router.navigate(['/login']);
 		console.log(localStorage.getItem('userData'));
 	}
 
