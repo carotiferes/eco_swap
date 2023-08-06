@@ -61,6 +61,16 @@ main{
 			cursor: pointer;
 		}
 	}
+
+	.eye {
+		position: absolute;
+		margin-left: -35px;
+		margin-top: 10px;
+
+		&:hover {
+			cursor: pointer;
+		}
+	}
 }
 
 .loginPanel img{

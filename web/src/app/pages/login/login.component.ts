@@ -17,6 +17,9 @@ export class LoginComponent {
 	@ViewChild('user') userHtml: ElementRef | undefined;
 	@ViewChild('password') passwordHtml: ElementRef | undefined;
 
+	passwordIcon: string = 'visibility';
+	passwordType: string = 'password';
+
 	//TODO: loading on submit
 
 	constructor(private auth: AuthService, private router: Router) { }
@@ -40,13 +43,7 @@ export class LoginComponent {
 	}
 
 	createAccount(){
-		Swal.fire({
-			title: '¡Te damos la bienvenida!',
-			text: `Nos alegra que te quieras sumar a nuestra comunidad, para hacerlo, dejanos tu email
-				y te mandaremos tu usuario para que puedas ingresar.`,
-			icon: 'success',
-			input: 'email'
-		})
+		this.router.navigate(['registro'])
 	}
 
 	goToHome(){
@@ -55,5 +52,10 @@ export class LoginComponent {
 
 	resetPassword(){
 		this.router.navigate(['reset-password'])
+	}
+
+	togglePassword(){
+		this.passwordType = this.passwordType === 'text' ? 'password' : 'text';
+		this.passwordIcon = this.passwordIcon === 'visibility' ? 'visibility_off' : 'visibility';
 	}
 }

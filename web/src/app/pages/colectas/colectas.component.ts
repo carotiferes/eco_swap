@@ -94,8 +94,20 @@ export class ColectasComponent implements OnInit {
 	}
 
 	addColecta() {
-		this.router.navigateByUrl('form-colecta')
-
+		if(Object.keys(this.userData).length != 0) {
+			this.router.navigateByUrl('form-colecta')
+		} else {
+			Swal.fire({
+				title: '¡Necesitás una cuenta!',
+				text: 'Para poder crear una colecta, tenés que usar la cuenta de una fundación.',
+				icon: 'warning',
+				confirmButtonText: 'Iniciar sesión',
+				showCancelButton: true,
+				cancelButtonText: 'Cancelar'
+			}).then(({isConfirmed}) => {
+				if(isConfirmed) this.router.navigate(['login'])
+			})
+		}
 	}
 
 	filtrarColectas(hasFiltros: boolean = false){

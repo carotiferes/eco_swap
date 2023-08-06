@@ -25,6 +25,8 @@ export class RegistroComponent {
 	screenWidth: number;
 
 	resetPassword: boolean = false;
+	passwordIcon: string = 'visibility';
+	passwordType: string = 'password';
 
 	constructor(private fb: FormBuilder, private dateAdapter: DateAdapter<Date>,
 		private usuarioService: UsuarioService, private route: ActivatedRoute,
@@ -65,6 +67,10 @@ export class RegistroComponent {
 	ngOnInit(): void {
 		if (!this.resetPassword) this.selectTipoPerfil();
 		else this.loading = false;
+	}
+
+	ngOnDestroy(): void {
+		Swal.close()
 	}
 
 	selectTipoPerfil() {
@@ -232,5 +238,10 @@ export class RegistroComponent {
 		  const esValido = telefonoPattern.test(control.value);
 		  return esValido ? null : { formatoInvalido: true };
 		};
+	}
+
+	togglePassword(){
+		this.passwordType = this.passwordType === 'text' ? 'password' : 'text';
+		this.passwordIcon = this.passwordIcon === 'visibility' ? 'visibility_off' : 'visibility';
 	}
 }
