@@ -17,9 +17,18 @@ export class LoginComponent {
 	@ViewChild('user') userHtml: ElementRef | undefined;
 	@ViewChild('password') passwordHtml: ElementRef | undefined;
 
+	passwordIcon: string = 'visibility';
+	passwordType: string = 'password';
+
 	//TODO: loading on submit
 
 	constructor(private auth: AuthService, private router: Router) { }
+
+	ngOnInit(): void {
+		if(this.auth.isUserLoggedIn){
+			this.router.navigate([''])
+		}
+	}
 
 	onSubmit() {
 		this.username = this.userHtml?.nativeElement.value;
@@ -29,18 +38,12 @@ export class LoginComponent {
 			Swal.fire({ title: 'Campos incompletos!', text: 'Por favor completá todos los campos antes de continuar.', icon: 'error' })
 		} else {
 			this.auth.login(this.username, this.password) //TODO: then and catch
-			this.router.navigateByUrl('/colectas')
+			//this.router.navigateByUrl('/colectas')
 		}
 	}
 
 	createAccount(){
-		Swal.fire({
-			title: '¡Te damos la bienvenida!',
-			text: `Nos alegra que te quieras sumar a nuestra comunidad, para hacerlo, dejanos tu email
-				y te mandaremos tu usuario para que puedas ingresar.`,
-			icon: 'success',
-			input: 'email'
-		})
+		this.router.navigate(['registro'])
 	}
 
 	goToHome(){
@@ -49,5 +52,10 @@ export class LoginComponent {
 
 	resetPassword(){
 		this.router.navigate(['reset-password'])
+	}
+
+	togglePassword(){
+		this.passwordType = this.passwordType === 'text' ? 'password' : 'text';
+		this.passwordIcon = this.passwordIcon === 'visibility' ? 'visibility_off' : 'visibility';
 	}
 }

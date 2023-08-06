@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import Swal from 'sweetalert2';
 import { DateAdapter } from '@angular/material/core';
 import { UsuarioService } from 'src/app/services/usuario.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
+import { PhoneNumberPipe } from 'src/app/pipes/phone-number.pipe';
 
 @Component({
 	selector: 'app-registro',
@@ -24,14 +25,17 @@ export class RegistroComponent {
 	screenWidth: number;
 
 	resetPassword: boolean = false;
+	passwordIcon: string = 'visibility';
+	passwordType: string = 'password';
 
 	constructor(private fb: FormBuilder, private dateAdapter: DateAdapter<Date>,
 		private usuarioService: UsuarioService, private route: ActivatedRoute,
-		private auth: AuthService) {
+		private auth: AuthService, private router: Router,
+		private cdr: ChangeDetectorRef, private phoneNumberPipe: PhoneNumberPipe) {
 		this.mainForm = fb.group({
 			//username: [''], TODO: POR AHORA USO EMAIL
 			email: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)]],
-			telefono: [''],
+			telefono: ['', [Validators.required, this.telefonoValidator()]],
 			password: ['', [Validators.required, this.validarConfirmPassword(), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,32}$/)]],
 			confirmPassword: ['', [Validators.required, this.validarConfirmPassword()]],
 		})
@@ -58,12 +62,15 @@ export class RegistroComponent {
 				this.mainForm.controls['telefono'].addValidators(Validators.required)
 			}
 		});
-
 	}
 
 	ngOnInit(): void {
 		if (!this.resetPassword) this.selectTipoPerfil();
 		else this.loading = false;
+	}
+
+	ngOnDestroy(): void {
+		Swal.close()
 	}
 
 	selectTipoPerfil() {
@@ -157,14 +164,17 @@ export class RegistroComponent {
 					next: (v: any) => {
 						console.log('next', v);
 						// IF OK THEN MESSAGE:
-						this.showMessage('¡Gracias por registrarte!',
+						/* this.showMessage('¡Gracias por registrarte!',
 							`Te enviamos un email a la cuenta que ingresaste,
 							para que confirmes tu cuenta.`,
-							'No recibí el email', 'send_again', 'success')
+							'No recibí el email', 'send_again', 'success') */
+						this.showMessage('¡Gracias por registrarte!',
+							`Ya podés usar Eco Swap 😀.`,
+							'Ir a la Home', 'ir_a_home', 'success')
 					},
 					error: (e) => {
 						console.error('error', e);
-						this.showMessage('Error!', 'Ha ocurrido un error al crear la fundación', 'OK', 'error', 'error')
+						this.showMessage('Error!', 'Ha ocurrido un error al crear la cuenta', 'OK', 'error', 'error')
 					},
 					complete: () => console.info('complete')
 				})
@@ -182,8 +192,12 @@ export class RegistroComponent {
 			confirmButtonText: confirm,
 			icon
 		}).then(({ isConfirmed }) => {
-			if (origin == 'send_again' && isConfirmed) {
-				// TODO: RESEND EMAIL
+			if(isConfirmed){
+				if (origin == 'send_again') {
+					// TODO: RESEND EMAIL
+				} else if(origin == 'ir_a_home') {
+					this.router.navigate(['home'])
+				}
 			}
 		})
 	}
@@ -203,5 +217,31 @@ export class RegistroComponent {
 			}
 			return null; // Valor válido
 		};
+	}
+
+	formatearTelefono() {
+		this.mainForm.get('telefono')?.setValue(this.phoneNumberPipe.transform(this.mainForm.get('telefono')?.value)); // Esto fuerza el cambio del valor
+		this.cdr.detectChanges(); // Detectamos los cambios manualmente
+		console.log(this.mainForm.get('telefono')?.value);
+		
+	}
+
+	telefonoValidator(): ValidatorFn {
+		const telefonoPattern = /^11\s\d{4}-\d{4}$/;
+	  
+		return (control: AbstractControl): { [key: string]: any } | null => {
+		  if (!control.value) {
+			// Si el campo está vacío, no se aplica la validación.
+			return null;
+		  }
+	  
+		  const esValido = telefonoPattern.test(control.value);
+		  return esValido ? null : { formatoInvalido: true };
+		};
+	}
+
+	togglePassword(){
+		this.passwordType = this.passwordType === 'text' ? 'password' : 'text';
+		this.passwordIcon = this.passwordIcon === 'visibility' ? 'visibility_off' : 'visibility';
 	}
 }

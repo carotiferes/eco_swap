@@ -13,7 +13,7 @@ import java.util.List;
 public class Publicacion {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long idPublicacion;
 
     @Size(max = 50)

@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class MensajeRespuesta {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     private Long idEmisor;

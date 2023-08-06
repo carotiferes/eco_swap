@@ -17,6 +17,10 @@
 			.form-input {
 				display: flex;
 				justify-content: center;
+
+				.eye:hover {
+					cursor: pointer;
+				}
 			}
 		}
 	

@@ -34,8 +34,8 @@ public class UsuarioController {
         return ResponseEntity.ok(usuario);
     }
 
-    @PostMapping(path = "/usuario/signin", produces = json)
-    @Transactional(readOnly = true)
+    @PostMapping(path = "/usuario/signup", produces = json)
+    @Transactional
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<Long> postSignin(@RequestBody RequestSignin body){
         log.info("postSignin: creando nuevo usuario: "+ body.getEmail());
@@ -45,7 +45,7 @@ public class UsuarioController {
     }
 
     @PutMapping(path = "/usuario/password", produces = json)
-    @Transactional(readOnly = true)
+    @Transactional
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<HttpStatus> putPassword(@RequestBody RequestPassword body){
         log.info("putPassword: Actualizar contraseña para usuario: "+ body.getUsername());
@@ -55,7 +55,7 @@ public class UsuarioController {
     }
 
     @PatchMapping(path = "/usuario/login", produces = json)
-    @Transactional(readOnly = true)
+    @Transactional
     public ResponseEntity<Boolean> patchLogin(@RequestBody RequestLogin body){
         log.info("postLogin: Intento de login para usuario: "+ body.getUsername());
         Boolean resultadoLogin = usuarioService.login(body);

@@ -22,6 +22,7 @@ public class ParticularService {
         log.info("Creando usuario como PARTICULAR");
         RequestSigninSwapper requestParicular = requestSignin.getParticular();
         Particular particular = Particular.builder()
+                .usuario(usuario)
                 .apellido(requestParicular.getApellido())
                 .cuil(requestParicular.getCuil())
                 .dni(requestParicular.getDni())

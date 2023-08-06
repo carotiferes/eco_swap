@@ -86,7 +86,7 @@ export class ColectaComponent {
 			})
 		} else {
 			Swal.fire({
-				title: 'Necesitás una cuenta!',
+				title: '¡Necesitás una cuenta!',
 				text: 'Para poder donar, tenés que usar tu cuenta.',
 				icon: 'warning',
 				confirmButtonText: 'Iniciar sesión',
