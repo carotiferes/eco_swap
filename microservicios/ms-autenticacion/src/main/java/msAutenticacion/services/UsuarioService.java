@@ -1,5 +1,8 @@
 package msAutenticacion.services;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import msAutenticacion.domain.entities.Direccion;
@@ -12,11 +15,18 @@ import msAutenticacion.domain.requests.RequestSignin;
 import msAutenticacion.domain.requests.propuestas.RequestDireccion;
 import msAutenticacion.exceptions.LoginUserException;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
-import java.security.MessageDigest;
+import java.security.*;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.time.Instant;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
@@ -28,13 +38,15 @@ public class UsuarioService {
     private  final DireccionRepository direccionRepository;
     private final EmailService emailService;
     private static final String JSON = "application/JSON";
+    private static final String prvKey = "3c0s2ap231023914523";
 
     private static final String PEPPER = "c";
 
     public UsuarioService(UsuarioRepository usuarioRepository,
                           FundacionService fundacionService,
                           ParticularService particularService,
-                          DireccionRepository direccionRepository, EmailService emailService) {
+                          DireccionRepository direccionRepository,
+                          EmailService emailService) {
         this.usuarioRepository = usuarioRepository;
         this.fundacionService = fundacionService;
         this.particularService = particularService;
@@ -59,10 +71,18 @@ public class UsuarioService {
         } else {
             usuarioCreado = fundacionService.crearUser(direccionCreada.getUsuario(), signin);
         }
-        log.info("crearUsuario: Usuario creado con ID:" + usuarioCreado.getIdUsuario());
-        emailService.sendConfirmEmail(usuario.getEmail(), "Bienvenido a ECOSWAP", usuario, this.crearSalt());
-        log.info("Email enviado para el usuario:" + usuario.getUsername());
+        log.info("crearUsuario: Usuario creado con ID: {}", usuarioCreado.getIdUsuario());
+        this.enviarMail(usuario);
         return usuarioCreado.getIdUsuario();
+    }
+
+    private void enviarMail(Usuario usuario) {
+        /*
+        Método asincrónico, obtenido de https://www.baeldung.com/java-asynchronous-programming
+        Tiene la ventaja de ser método nativo de Java 8.
+         */
+        CompletableFuture.supplyAsync(() ->
+                emailService.sendConfirmEmail(usuario.getEmail(), "Gracias por sumarte a ECOSWAP", usuario, this.crearSalt()));
     }
     
 
@@ -76,7 +96,7 @@ public class UsuarioService {
         log.info(("actualizarContrasenia: Se ha actualizar con ÉXITO la contraseña para usuarioId: " + request.getUsername()));
     }
 
-    public boolean login(RequestLogin request) {
+    public String login(RequestLogin request) throws NoSuchAlgorithmException {
         log.info(("login: Intentar ingresar el username: " + request.getUsername()));
         Usuario usuario = usuarioRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new EntityNotFoundException("No fue encontrado el usuario: " + request.getUsername()));
@@ -92,10 +112,10 @@ public class UsuarioService {
                 throw new LoginUserException("El usuario fue bloqueado");
             }
             usuarioRepository.save(usuario);
-            return false;
+            return this.crearJWT(usuario);
         }
         log.info(("login: Login EXITOSO para username: " + request.getUsername()));
-        return true;
+        return this.crearJWT(usuario);
     }
 
     private Boolean compararContrasenias(String passwordHashIngresado, String passwordHashGuardado) {
@@ -150,21 +170,13 @@ public class UsuarioService {
                 .build();
     }
     
-    /*
-    private String crearJWT(Usuario usuario) {
-        String prvKey = "-----BEGIN PRIVATE KEY-----\n"
-                + "........\n"
-                + "-----END PRIVATE KEY-----";
-        prvKey = prvKey.replace("-----BEGIN PRIVATE KEY-----", "");
-        prvKey = prvKey.replace("-----END PRIVATE KEY-----", "");
-        prvKey = prvKey.replaceAll("\\s+","");
 
-        byte [] prvKeyBytes = Base64.decode(prvKey);
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(prvKeyBytes);
-        KeyFactory kf = KeyFactory.getInstance("RSA");
-        PrivateKey prvKey = kf.generatePrivate(keySpec);
+    private String crearJWT(Usuario usuario) throws NoSuchAlgorithmException {
         try {
-            Algorithm algorithm = Algorithm.RSA256(rsaPublicKey, rsaPrivateKey);
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+            kpg.initialize(2048);
+            KeyPair kp = kpg.generateKeyPair();
+            Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) kp.getPublic(), (RSAPrivateKey) kp.getPrivate());
             return JWT.create()
                     .withIssuer("ecoswap")
                     .withExpiresAt(Instant.now().plusSeconds(604800))
@@ -172,10 +184,10 @@ public class UsuarioService {
                     .withClaim("id", usuario.getIdUsuario())
                     .withClaim("esParticular", usuario.isSwapper())
                     .sign(algorithm);
-        } catch (JWTCreationException exception){
-            return null;
+        } catch (JWTCreationException | NoSuchAlgorithmException exception){
+            log.error(("login: JWT dió error durante la creación: " + exception.getMessage()));
+            return "";
         }
     }
-    */
 
 }
