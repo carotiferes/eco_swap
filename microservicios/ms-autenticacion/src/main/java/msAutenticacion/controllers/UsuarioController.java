@@ -13,16 +13,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.NoSuchAlgorithmException;
+
 @RestController
 @RequestMapping("/ms-autenticacion/api/v1")
 @Slf4j
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
-    private static final String json = "application/json";
+    private static final String JSON = "application/JSON";
 
     public UsuarioController(UsuarioService usuarioService) {this.usuarioService = usuarioService;}
-    @GetMapping(path = "/usuario/{id_usuario}", produces = json)
+    @GetMapping(path = "/usuario/{id_usuario}", produces = JSON)
     @Transactional(readOnly = true)
     public ResponseEntity<Usuario> getUserById(@PathVariable("id_usuario") Long id){
         log.info("getUserById: obtener Usuario a partir de ID: "+ id);
@@ -34,7 +36,7 @@ public class UsuarioController {
         return ResponseEntity.ok(usuario);
     }
 
-    @PostMapping(path = "/usuario/signup", produces = json)
+    @PostMapping(path = "/usuario/signup", produces = JSON)
     @Transactional
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<Long> postSignin(@RequestBody RequestSignin body){
@@ -44,7 +46,7 @@ public class UsuarioController {
         return ResponseEntity.ok(userId);
     }
 
-    @PutMapping(path = "/usuario/password", produces = json)
+    @PutMapping(path = "/usuario/password", produces = JSON)
     @Transactional
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<HttpStatus> putPassword(@RequestBody RequestPassword body){
@@ -54,13 +56,13 @@ public class UsuarioController {
         return ResponseEntity.ok(HttpStatus.ACCEPTED);
     }
 
-    @PatchMapping(path = "/usuario/login", produces = json)
+    @PatchMapping(path = "/usuario/login", produces = JSON)
     @Transactional
-    public ResponseEntity<Boolean> patchLogin(@RequestBody RequestLogin body){
+    public ResponseEntity<String> patchLogin(@RequestBody RequestLogin body) throws NoSuchAlgorithmException {
         log.info("postLogin: Intento de login para usuario: "+ body.getUsername());
-        Boolean resultadoLogin = usuarioService.login(body);
-        log.info("postLogin: Resultado del Login para usuario: "+ body.getUsername() + " con resultado: " + resultadoLogin);
-        return ResponseEntity.ok(resultadoLogin);
+        String jwt = usuarioService.login(body);
+        log.info("postLogin: Resultado del Login para usuario: "+ body.getUsername() + " con resultado: " + jwt);
+        return ResponseEntity.ok(jwt);
     }
 
 }
