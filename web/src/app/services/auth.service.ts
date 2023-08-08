@@ -20,22 +20,16 @@ export class AuthService {
 	}
 
 	login(username: string, password?: string) {
-		console.log(username, password);
-		//return this.backendService.patch('/ms-autenticacion/api/v1/usuario/login', {username, password});
-
-		// TODO: CHANGE FROM HARDCODED DATA TO CALL BACKEND (access token)
-		let userData: any;
 		this.backendService.patch(URL_NAME, 'ms-autenticacion/api/v1/usuario/login', {username, password}).subscribe({
 			next: (v: any) => {
-				console.log('next',v);
-				//this.setLocalStorage('userData', JSON.stringify(userData));
-				this.setLocalStorage('userToken', JSON.stringify(v));
+				console.log('response:', v);
+				this.setLocalStorage('userToken', JSON.stringify(v.token));
 				this.isUserLoggedIn = true;
 				this.setUserLoggedIn();
 				this.router.navigate([''])
 			},
 			error: (e) => {
-				console.error('error',e);
+				console.error('error:', e);
 				Swal.fire('¡Error!', 'Ocurrió un error. Por favor revisá los campos e intentá nuevamente.', 'error')
 			},
 			complete: () => console.info('complete') 

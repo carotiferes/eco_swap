@@ -7,6 +7,7 @@ import msAutenticacion.domain.repositories.UsuarioRepository;
 import msAutenticacion.domain.requests.RequestLogin;
 import msAutenticacion.domain.requests.RequestPassword;
 import msAutenticacion.domain.requests.RequestSignin;
+import msAutenticacion.domain.responses.ResponseLogin;
 import msAutenticacion.services.UsuarioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,11 +59,13 @@ public class UsuarioController {
 
     @PatchMapping(path = "/usuario/login", produces = JSON)
     @Transactional
-    public ResponseEntity<String> patchLogin(@RequestBody RequestLogin body) throws NoSuchAlgorithmException {
+    public ResponseEntity<ResponseLogin> patchLogin(@RequestBody RequestLogin body) throws NoSuchAlgorithmException {
         log.info("postLogin: Intento de login para usuario: "+ body.getUsername());
         String jwt = usuarioService.login(body);
         log.info("postLogin: Resultado del Login para usuario: "+ body.getUsername() + " con resultado: " + jwt);
-        return ResponseEntity.ok(jwt);
+        ResponseLogin responseLogin = new ResponseLogin();
+        responseLogin.setToken(jwt);
+        return ResponseEntity.ok(responseLogin);
     }
 
 }

@@ -1,7 +1,7 @@
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, } from '@angular/common/http';
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse, } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError, timer } from 'rxjs';
-import { catchError, finalize, mergeMap } from 'rxjs/operators';
+import { catchError, finalize, map, mergeMap } from 'rxjs/operators';
 import { ShowErrorService } from '../services/show-error.service';
 import { AuthService } from '../services/auth.service';
 
@@ -10,28 +10,33 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 
 	private token: string | null = '';
 
-	constructor(private authService: AuthService, private showErrorService: ShowErrorService) {
-		this.token = this.authService.getUserToken();
-	}
-
+	constructor(private authService: AuthService, private showErrorService: ShowErrorService) { }
+	
 	intercept( request: HttpRequest<unknown>, next: HttpHandler ): Observable<HttpEvent<unknown>> {
 		// Agrega el token a los encabezados de la solicitud
-		request = request.clone({
-			setHeaders: {
-				Authorization: `Bearer ${this.token}`,
-			},
-		});
+		this.token = this.authService.getUserToken();
+		if(this.token) {
+				request = request.clone({
+				setHeaders: {
+					Authorization: `Bearer ${this.token}`,
+				},
+			});
+		}
 
 		return next.handle(request).pipe(
+			map((event: HttpEvent<any>) => {
+				if (event instanceof HttpResponse) { }
+				return event;
+			  }),
 			catchError((err) => {
 				let error: BackendError = { message: '', severity: ErrorSeverity.INFO, code: '' };
-				if (err instanceof ErrorEvent) {
-					// this is client side error
+				
+				if (err instanceof ErrorEvent) { // client side error
 					error = this.handleUnknownError();
 					console.log('Error del lado del cliente', JSON.stringify(err));
 					this.showErrorService.show('Error!', err.error.descripcion)
-				} else {
-					// this is server side error
+
+				} else { // server side error
 					error = this.handleBackendError(error, err);
 					console.log('Server error with code: ' + JSON.stringify(err));
 					this.showErrorService.show('Error!', err.error.descripcion)
