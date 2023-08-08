@@ -67,7 +67,7 @@ const routes: Routes = [{
 },{
 	path: 'form-publicacion',
 	component: FormPublicacionComponent,
-	canActivate: [AuthGuard]
+	//canActivate: [AuthGuard] TODO: CAMBIAR CUANDO LA INFO DEL USER ESTE EN LOCAL STORAGE
 },{
 	path: 'error',
 	component: ErrorComponent

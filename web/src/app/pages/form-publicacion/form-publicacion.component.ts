@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TruequesService } from 'src/app/services/trueques.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-form-publicacion',
@@ -13,19 +15,19 @@ export class FormPublicacionComponent {
 
 	loading: boolean = false;
 
-	constructor(private fb: FormBuilder){
+	constructor(private fb: FormBuilder, private truequeService: TruequesService){
 		this.publicacionForm = fb.group({
 			titulo: ['', Validators.required],
 			descripcion: ['', Validators.required],
-			idParticular: [''],
+			valorMinimo: ['', Validators.required],
+			valorMaximo: ['', Validators.required],
+			finalidadVenta: [false],
+			precioVenta: [''],
+			caracteristicas: this.fb.array([]),
 			file: [''],
 			file_source: [''],
 			tipoProducto: [''],
-			caracteristicas: this.fb.array([]),
-			finalidad: [''],
-			valorMinimo: [''],
-			valorMaximo: [''],
-			precioVenta: ['']
+			idParticular: [''],
 		})
 	}
 
@@ -76,7 +78,40 @@ export class FormPublicacionComponent {
 	}
 
 	publicar(){
-		console.log('PUBLICAR: ', this.publicacionForm.value);
-		
+		if(this.publicacionForm.valid){
+			let caracteristicas: any[] = this.getCaracteristicasArray.value || [];
+			let sendCaracteristicas: string[] = [];
+			caracteristicas.forEach(item => {
+				sendCaracteristicas.push(item.s_descripcion);
+			})
+			console.log('PUBLICAR: ', this.publicacionForm.value);
+			const body = {
+				titulo: this.publicacionForm.controls['titulo'].value,
+				descripcion: this.publicacionForm.controls['descripcion'].value,
+				imagen: this.publicacionForm.controls['file_source'].value,
+				idParticular: 1, //TODO: this.publicacionForm.controls['idParticular'].value,
+				tipoProducto: 'OTROS' ,//TODO: this.publicacionForm.controls['tipoProducto'].value,
+				caracteristicasProducto: sendCaracteristicas,
+				fechaPublicacion: new Date(),//this.publicacionForm.controls['fechaPublicacion'].value,
+				esVenta: this.publicacionForm.controls['finalidadVenta'].value,
+				precioVenta: this.publicacionForm.controls['precioVenta'].value,
+				valorTruequeMin: this.publicacionForm.controls['valorMinimo'].value,
+				valorTruequeMax: this.publicacionForm.controls['valorMaximo'].value,
+				//valorMaximoValido: this.publicacionForm.controls['valorMaximoValido'].value,
+			}
+	
+			console.log('body', body);
+			
+			this.truequeService.crearPublicacion(body).subscribe({
+				next: (res: any) => {
+					console.log('publicacion creada',res);
+					
+				},
+				error: (error) => {
+					console.log('error creando publicacion', error);
+					Swal.fire('¡Error!', 'Ocurrió un error al crear la publicación. Intentalo nuevamente', 'error')
+				}
+			})
+		}
 	}
 }
