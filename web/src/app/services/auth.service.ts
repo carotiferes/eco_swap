@@ -28,7 +28,8 @@ export class AuthService {
 		this.backendService.patch(URL_NAME, 'ms-autenticacion/api/v1/usuario/login', {username, password}).subscribe({
 			next: (v: any) => {
 				console.log('next',v);
-				this.setLocalStorage('userData', JSON.stringify(userData));
+				//this.setLocalStorage('userData', JSON.stringify(userData));
+				this.setLocalStorage('userToken', JSON.stringify(v));
 				this.isUserLoggedIn = true;
 				this.setUserLoggedIn();
 				this.router.navigate([''])
@@ -68,6 +69,13 @@ export class AuthService {
 
 	getUserLogin() {
 		return localStorage.getItem('userLoggedIn');
+	}
+
+	getUserToken(){
+		const tkn = localStorage.getItem('userToken');
+		console.log(tkn);
+		
+		return tkn;
 	}
 
 	logout() {
