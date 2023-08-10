@@ -30,7 +30,7 @@ const routes: Routes = [{
 	path: 'colectas',
 	component: ColectasComponent
 }, {
-	path: 'colectas/:id_fundacion',
+	path: 'mis-colectas',
 	component: ColectasComponent,
 	canActivate: [AuthGuard]
 },{

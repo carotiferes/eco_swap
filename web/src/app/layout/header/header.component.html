@@ -34,7 +34,7 @@
 		<ul class="navbar-nav mr-auto mt-2 mt-lg-0 mr-2">
 			<li class="nav-item">
 				<a class="nav-link nav-white px-2" *ngIf="isUserLoggedIn && !userData.isSwapper"
-					[href]="'/colectas/'+ userData.id_fundacion">
+					[href]="'/mis-colectas/'">
 					<b>Mis colectas</b>
 				</a>
 			</li>
@@ -56,4 +56,4 @@
 		</ul>
 	</div>
 </nav>
-<h3 style="margin: 20px; font-weight: bold;">{{title}}</h3>
+<h3 style="margin: 20px 0px 0px 20px; font-weight: bold;">{{title}}</h3>

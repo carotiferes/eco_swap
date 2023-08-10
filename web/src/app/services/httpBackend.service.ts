@@ -3,13 +3,8 @@ import { Injectable } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
 const properties = require('../core/properties.json')
 
-/* const URI_ms_usuarios = properties.URI_ms_usuarios;
-const URI_ms_autenticacion = properties.URI_ms_autenticacion; */
-
 @Injectable()
 export class HttpBackEnd {
-
-	//URL: string = URI_ms_usuarios;
 
 	constructor(private httpClient: HttpClient) { }
 
@@ -60,10 +55,6 @@ export class HttpBackEnd {
 	}
 
 	private getUrlByName(urlName: string): string {
-		console.log(properties);
-		
-		console.log(urlName, properties[urlName]);
-		
 		return properties[urlName] || 'http://localhost:8080/';
 	}
 }

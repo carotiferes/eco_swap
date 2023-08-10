@@ -12,8 +12,6 @@ export class AuthService {
 
 	isUserLoggedIn: boolean;
 
-	possibleUsers = ['mromero', 'sgomez', 'tzedaka', 'cruzroja']
-
 	constructor(private router: Router, private backendService: HttpBackEnd) {
 		if(this.getUserLogin()) this.isUserLoggedIn = true;
 		else this.isUserLoggedIn = false;
@@ -23,6 +21,7 @@ export class AuthService {
 		this.backendService.patch(URL_NAME, 'ms-autenticacion/api/v1/usuario/login', {username, password}).subscribe({
 			next: (v: any) => {
 				console.log('response:', v);
+				// TODO: GET USER INFO TO SAVE IN LOCAL STORAGE (AT LEAST IS_SWAPPER)
 				this.setLocalStorage('userToken', JSON.stringify(v.token));
 				this.isUserLoggedIn = true;
 				this.setUserLoggedIn();
@@ -32,12 +31,8 @@ export class AuthService {
 				console.error('error:', e);
 				Swal.fire('¡Error!', 'Ocurrió un error. Por favor revisá los campos e intentá nuevamente.', 'error')
 			},
-			complete: () => console.info('complete') 
+			complete: () => console.info('login complete') 
 		})
-	}
-
-	get getPossibleUsers(){
-		return this.possibleUsers
 	}
 
 	setLocalStorage(key: string, data: string) {
@@ -45,16 +40,11 @@ export class AuthService {
 	}
 
 	setUserLoggedIn() {
-		localStorage.setItem(
-			'userLoggedIn',
-			this.isUserLoggedIn ? 'true' : 'false'
-		);
+		localStorage.setItem('userLoggedIn', this.isUserLoggedIn ? 'true' : 'false');
 	}
 
 	getUserData() {
 		const data = localStorage.getItem('userData');
-		console.log(data);
-		
 		if(data && data != 'undefined'){
 			const user = JSON.parse(data as string);
 			return user;
@@ -66,17 +56,13 @@ export class AuthService {
 	}
 
 	getUserToken(){
-		const tkn = localStorage.getItem('userToken');
-		console.log(tkn);
-		
-		return tkn;
+		return localStorage.getItem('userToken');
 	}
 
 	logout() {
 		this.isUserLoggedIn = false;
 		localStorage.clear();
 		this.router.navigate(['/login']);
-		console.log(localStorage.getItem('userData'));
 	}
 
 	resetPassword(body: any){ /* body: { username: string, nuevoPassword: string, confirmarPassword: string } */

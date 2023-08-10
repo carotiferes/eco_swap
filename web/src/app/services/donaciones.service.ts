@@ -12,27 +12,27 @@ export class DonacionesService {
 	constructor(private backendService: HttpBackEnd) { }
 
 	crearColecta(body: any) {
-		console.log(body);
-		const test = this.backendService.post(URL_NAME, 'api/colecta', body);
-		console.log('aaaa', test);
-
-		return test
+		return this.backendService.post(URL_NAME, 'api/colecta', body);
 	}
 
-	getColectas(filtros?: any){
+	getAllColectas(filtros?: any){
 		return this.backendService.get(URL_NAME, 'api/colectas', filtros);
+	}
+
+	getMisColectas(){
+		return this.backendService.get(URL_NAME, 'api/colectas');
 	}
 
 	getColecta(id_colecta: any){
 		return this.backendService.get(URL_NAME, 'api/colecta/'+id_colecta);
 	}
 
-	getDonaciones(id_colecta: any){
+	getDonacionesColecta(id_colecta: any){// TODO: url de donaciones x colecta
 		return this.backendService.get(URL_NAME, 'api/colecta/'+id_colecta+'/donaciones');
 	}
 
-	getAllDonaciones(id_particular: any){
-		return this.backendService.get(URL_NAME, 'api/'+id_particular+'/donaciones');
+	getMisDonaciones(){ // TODO: url de mis donaciones (x tkn)
+		return this.backendService.get(URL_NAME, 'api/1/donaciones');
 	}
 
 	crearDonacion(id_colecta: number, body: any){

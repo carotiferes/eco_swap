@@ -163,20 +163,20 @@ export class RegistroComponent {
 				this.usuarioService.createUser(user).subscribe({
 					next: (v: any) => {
 						console.log('next', v);
-						// IF OK THEN MESSAGE:
-						/* this.showMessage('¡Gracias por registrarte!',
+						// TODO: REVISAR CON EMAILS. esperar 1 min antes de dejarlo enviar devuelta
+						this.showMessage('¡Gracias por registrarte!',
 							`Te enviamos un email a la cuenta que ingresaste,
 							para que confirmes tu cuenta.`,
-							'No recibí el email', 'send_again', 'success') */
-						this.showMessage('¡Gracias por registrarte!',
+							'No recibí el email', 'send_again', 'success')
+						/* this.showMessage('¡Gracias por registrarte!',
 							`Ya podés usar Eco Swap 😀.`,
-							'Ir a la Home', 'ir_a_home', 'success')
+							'Ir a la Home', 'ir_a_home', 'success') */
 					},
 					error: (e) => {
 						console.error('error', e);
 						this.showMessage('Error!', 'Ha ocurrido un error al crear la cuenta', 'OK', 'error', 'error')
 					},
-					complete: () => console.info('complete')
+					complete: () => console.info('signup complete')
 				})
 			}
 		} else {

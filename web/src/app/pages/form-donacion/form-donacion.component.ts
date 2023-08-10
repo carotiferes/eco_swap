@@ -46,9 +46,15 @@ export class FormDonacionComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this.donacionesService.getColectas().subscribe((res: any) => {
-			this.colecta = res.find((item: any) => item.idColecta == this.id_colecta)
-			this.loading = false;
+		this.donacionesService.getColecta(this.id_colecta).subscribe({
+			next: (res: any) => {
+				this.colecta = res;
+				this.loading = false;
+			},
+			error: (error) => {
+				console.log(error);
+				
+			}
 		})
 	}
 
