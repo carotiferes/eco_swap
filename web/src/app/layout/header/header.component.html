@@ -50,6 +50,7 @@
 				<ul ngbDropdownMenu aria-labelledby="dropdownMenuButton1" class="dropdown-menu-end">
 				  <li><a ngbDropdownItem [href]="'/registro'" class="dropdown-item" *ngIf="!isUserLoggedIn">Crear Cuenta</a></li>
 				  <li><a ngbDropdownItem [href]="'/login'" class="dropdown-item" *ngIf="!isUserLoggedIn">Iniciar Sesión</a></li>
+				  <li><a ngbDropdownItem [href]="'/perfil'" class="dropdown-item" *ngIf="isUserLoggedIn">Mi perfil</a></li>
 				  <li><a ngbDropdownItem (click)="logOut()" class="dropdown-item" *ngIf="isUserLoggedIn">Cerrar Sesión</a></li>
 				</ul>
 			  </div>

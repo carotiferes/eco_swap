@@ -1,10 +1,10 @@
 <app-header></app-header>
 
-<div id="main-perfil">
+<div id="main-perfil" *ngIf="user">
 	<div class="profile-img">
 		<img [src]="isSwapper ? 'assets/persona.png' : 'assets/fundacion.png'">
 	</div>
-	<h4>{{userInfo.s_nombre}} {{userInfo.s_apellido}}</h4>
+	<!-- <h4>{{userInfo.s_nombre}} {{userInfo.s_apellido}}</h4> -->
 	<mat-card id="main-perfil-card">
 		<div ngbAccordion>
 			<div ngbAccordionItem *ngFor="let accordion of showableAccordions()">
@@ -28,6 +28,9 @@
 									</mat-grid-tile>
 								</div>
 							</mat-grid-list>
+							<div class="div-cambiar-pass" *ngIf="accordion.icon == 'person'">
+								<button mat-raised-button color="primary">CAMBIAR CONTRASEÑA</button>
+							</div>
 						</ng-template>
 					</div>
 				</div>

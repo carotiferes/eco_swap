@@ -109,7 +109,7 @@ export class ColectasComponent implements OnInit {
 	}
 
 	addColecta() {
-		if (Object.keys(this.userData).length != 0) {
+		if (this.auth.isUserLoggedIn) {
 			this.router.navigateByUrl('form-colecta')
 		} else {
 			Swal.fire({

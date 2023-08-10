@@ -64,7 +64,7 @@ export class ColectaComponent {
 						this.donaciones = this.donaciones.filter(item => item.particular.idParticular == this.userData.id_particular)
 					}
 
-					if(usuario && !usuario.particular && this.colecta.fundacion.idFundacion == this.userData.id_fundacion)
+					if(usuario && !usuario.swapper && this.colecta.fundacion.idFundacion == this.userData.id_fundacion)
 						this.showDonaciones = true;
 					if(this.userData.isSwapper && usuario) this.showDonaciones = true;
 

@@ -81,7 +81,7 @@ export class FormDonacionComponent implements OnInit {
 				sendCaracteristicas.push(item.s_descripcion);
 			})
 			const objetoToSend = {
-				idParticular: this.userData.id_particular,
+				idParticular: this.userData.id_particular, //TODO: SACAR PARA Q SEA X TKN
 				colectaProductoModel: {
 					tipoProducto: "MUEBLES",
 					productoId: this.donacionForm.controls['producto'].value,
@@ -93,13 +93,19 @@ export class FormDonacionComponent implements OnInit {
 			}
 			console.log(objetoToSend);
 	
-			this.donacionesService.crearDonacion(this.colecta.idColecta, objetoToSend).subscribe(res => {
-				console.log(res);
-				if(JSON.parse(JSON.stringify(res)).descripcion)	{
-					this.showMessage('Donación Creada!', 'La donacion se creó exitosamente. Ahora te toca a vos! Llevá tu donación a la fundación para que la puedan empezar a usar.', 'success')
-					this.router.navigateByUrl('colecta/'+ this.id_colecta)
+			this.donacionesService.crearDonacion(this.colecta.idColecta, objetoToSend).subscribe({
+				next: (res) => {
+					console.log(res);
+					if(JSON.parse(JSON.stringify(res)).descripcion)	{
+						this.showMessage('Donación Creada!', 'La donacion se creó exitosamente. Ahora te toca a vos! Llevá tu donación a la fundación para que la puedan empezar a usar.', 'success')
+						this.router.navigateByUrl('colecta/'+ this.id_colecta)
+					}
+					else this.showMessage('Ocurrió un error', 'No pudimos crear la donacion. Intentá nuevamente luego.', 'error')
+				},
+				error: (error) =>{
+					console.log('error creando donacion', error);
+					this.showMessage('Ocurrió un error', 'No pudimos crear la donacion. Intentá nuevamente luego.', 'error')
 				}
-				else this.showMessage('Ocurrió un error', 'No pudimos crear la donacion. Intentá nuevamente luego.', 'error')
 			})
 		} else this.showMessage('Error en los campos.', 'Revisá los campos y completalos correctamente.', 'error')
 	}
@@ -114,18 +120,13 @@ export class FormDonacionComponent implements OnInit {
 			var filesAmount = event.target.files.length;
 			for (let i = 0; i < filesAmount; i++) {
 				var reader = new FileReader();
-
 				reader.onload = (event: any) => {
 					this.images.push(event.target.result);
-
 					this.donacionForm.patchValue({
 						file_source: this.images
 					});
 				}
-
 				reader.readAsDataURL(event.target.files[i]);
-				console.log(this.images, this.donacionForm.controls['file_source']);
-
 			}
 		}
 	}

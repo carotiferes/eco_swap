@@ -59,7 +59,7 @@ export class FormColectaComponent  {
 		return <FormArray>this.colectaForm.get('productos');
 	}
 
-	agregarProducto(caract?: number) {
+	agregarProducto() {
 		const producto = this.fb.group({
 			s_descripcion: ['', Validators.required],
 			n_cantidad_solicitada: [''],
@@ -71,42 +71,45 @@ export class FormColectaComponent  {
 		productos.push(producto);
 	}
 
-	test(){
-		console.log(this.getProductosArray.value);
-		
-	}
-
 	crearColecta() {
 		console.log(this.colectaForm.value);
-		const productos: any[] = [];
-		for (const producto of this.getProductosArray.value) {
-			console.log('PROD', producto);
-			
-			productos.push({
-				tipoProducto: producto.tipo_producto,
-				cantidadRequerida: producto.n_cantidad_solicitada,
-				descripcion: producto.s_descripcion,
-				estado: producto.estado
-			})
-		}
-		console.log('prdos', productos);
-		
-		this.donacionesService.crearColecta({
-			titulo: this.colectaForm.controls['s_titulo'].value,
-			descripcion: this.colectaForm.controls['s_descripcion'].value,
-			idFundacion: this.colectaForm.controls['id_fundacion'].value,
-			productos,
-			imagen: this.colectaForm.controls['file_source'].value[0],
-			fechaInicio: this.colectaForm.controls['fecha_inicio'].value,
-			fechaFin: this.colectaForm.controls['fecha_fin'].value
-		}).subscribe((res) => {
-			//console.log(res, JSON.parse(JSON.stringify(res)).descripcion);
-			if(JSON.parse(JSON.stringify(res)).descripcion)	{
-				this.showMessage('¡Colecta Creada!', 'La colecta se creó exitosamente. Los particulars te contactarán pronto!', 'success')
-				this.router.navigateByUrl('mis-colectas/')
+		if(this.colectaForm.valid){
+			const productos: any[] = [];
+			for (const producto of this.getProductosArray.value) {
+				productos.push({
+					tipoProducto: producto.tipo_producto,
+					cantidadRequerida: producto.n_cantidad_solicitada,
+					descripcion: producto.s_descripcion,
+					estado: producto.estado
+				})
 			}
-			else this.showMessage('Ocurrió un error', 'No pudimos crear la colecta. Intentá nuevamente luego.', 'error')
-		})
+			console.log('prdos', productos);
+			
+			this.donacionesService.crearColecta({
+				titulo: this.colectaForm.controls['s_titulo'].value,
+				descripcion: this.colectaForm.controls['s_descripcion'].value,
+				idFundacion: this.colectaForm.controls['id_fundacion'].value, //TODO: SACAR PARA Q SEA X TKN
+				productos,
+				imagen: this.colectaForm.controls['file_source'].value[0],
+				fechaInicio: this.colectaForm.controls['fecha_inicio'].value,
+				fechaFin: this.colectaForm.controls['fecha_fin'].value
+			}).subscribe({
+				next: (res) => {
+					//console.log(res, JSON.parse(JSON.stringify(res)).descripcion);
+					if(JSON.parse(JSON.stringify(res)).descripcion)	{
+						this.showMessage('¡Colecta Creada!', 'La colecta se creó exitosamente. Los particulars te contactarán pronto!', 'success')
+						this.router.navigateByUrl('mis-colectas/')
+					}
+					else this.showMessage('Ocurrió un error', 'No pudimos crear la colecta. Intentá nuevamente luego.', 'error')
+				},
+				error: (error) => {
+					console.log('error al crear colecta', error);
+					this.showMessage('Ocurrió un error', 'No pudimos crear la colecta. Intentá nuevamente luego.', 'error')
+				}
+			})
+		} else {
+			this.showMessage('Error en los campos', 'Hay un error en los campos ingresados, por favor revisalos y volvé a intentar.', 'error')
+		}
 	}
 
 	removeProducto(i: number) {
@@ -119,18 +122,13 @@ export class FormColectaComponent  {
 			var filesAmount = event.target.files.length;
 			for (let i = 0; i < filesAmount; i++) {
 				var reader = new FileReader();
-
 				reader.onload = (event: any) => {
 					this.images.push(event.target.result);
-
 					this.colectaForm.patchValue({
 						file_source: this.images
 					});
 				}
-
 				reader.readAsDataURL(event.target.files[i]);
-				console.log(this.images, this.colectaForm.controls['file_source']);
-				
 			}
 			this.loadingImg = false;	
 		}
@@ -139,8 +137,6 @@ export class FormColectaComponent  {
 	removeImagen(url: string){
 		let imgIndex = this.colectaForm.controls['file_source'].value.findIndex((item: string) => item == url)
 		this.colectaForm.controls['file_source'].value.splice(imgIndex, 1)
-		console.log(url);
-		
 	}
 
 	showMessage(title: string, text: string, icon:'warning'| 'error'| 'success'| 'info'| 'question'){
