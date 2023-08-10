@@ -23,7 +23,7 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "idUsuario")
-    private long idUsuario;
+    private long id;
 
     @NotNull
     @Column(unique = true)
@@ -40,8 +40,12 @@ public class Usuario {
     private String password;
 
     @NotNull
-    @Size(max = 10)
+    @Size(max = 6)
     private String salt;
+
+    @NotNull
+    @Size(max = 6)
+    private String confirmCodigo;
 
     @NotNull
     @Size(max = 10)
@@ -58,8 +62,10 @@ public class Usuario {
     @NotNull
     private boolean isSwapper;
 
+    @Column(columnDefinition = "int default 0")
     private Integer intentos;
 
+    @Column(columnDefinition = "boolean default 1")
     private boolean bloqueado;
 
     @OneToMany(mappedBy = "usuarioOpina", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
