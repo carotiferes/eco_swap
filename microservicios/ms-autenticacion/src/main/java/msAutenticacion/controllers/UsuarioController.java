@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import msAutenticacion.domain.entities.Usuario;
 import msAutenticacion.domain.repositories.UsuarioRepository;
+import msAutenticacion.domain.requests.RequestConfirm;
 import msAutenticacion.domain.requests.RequestLogin;
 import msAutenticacion.domain.requests.RequestPassword;
 import msAutenticacion.domain.requests.RequestSignin;
@@ -53,6 +54,17 @@ public class UsuarioController {
         log.info("putPassword: Actualizar contraseña para usuario: "+ body.getUsername());
         usuarioService.actualizarContrasenia(body);
         log.info("putPassword: Contraseña actualizada para usuario: "+ body.getUsername());
+        return ResponseEntity.ok(HttpStatus.ACCEPTED);
+    }
+
+    @PutMapping(path = "/usuario/confirmar", produces = JSON)
+    @Transactional
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ResponseEntity<HttpStatus> putConfirmarUser(@RequestBody RequestConfirm body) throws Exception {
+        log.info("putConfirmarUser: Confirmación del usuario: "+ body.getUsername());
+        Boolean resultado = usuarioService.confirmarUsuario(body);
+        log.info("putConfirmarUser: Usuario {} tuvo como resultado de confirmacion de mail: {} ",
+                body.getUsername(), resultado);
         return ResponseEntity.ok(HttpStatus.ACCEPTED);
     }
 
