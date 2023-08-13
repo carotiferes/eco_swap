@@ -1,11 +1,13 @@
 package msUsers.exceptions.handler;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.exceptions.responses.MethodArgumentNotValidExceptionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,6 +29,14 @@ public class GlobalExceptionHandler{
     public ResponseEntity<String> handleHttpMessageNotReadable(HttpMessageNotReadableException exception) {
         log.error("ERROR - Problemas al recibir la request: {}", exception.getMessage());
         return ResponseEntity.badRequest().body(exception.getLocalizedMessage());
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<String> handleRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException exception,
+                                                                           HttpServletRequest request) {
+        String msg = "ERROR - La URL " + request.getRequestURL().toString() + "no soporta " + exception.getMethod();
+        log.error("ERROR - La URL: {} no soporta {}", request.getRequestURL().toString(), exception.getMethod());
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(msg);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -31,7 +31,7 @@ public class Donacion {
     private EstadoDonacion estadoDonacion;
 
     @ManyToOne(cascade = CascadeType.ALL)
-//    @JsonManagedReference
+    @JsonBackReference
     private Particular particular;
 
     @ManyToOne(cascade = CascadeType.ALL)

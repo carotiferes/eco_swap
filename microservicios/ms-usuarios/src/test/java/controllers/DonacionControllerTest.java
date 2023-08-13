@@ -128,7 +128,7 @@ public class DonacionControllerTest{
         when(particularRepository.findById(idParticular)).thenReturn(Optional.of(particular));
 
         // Act
-        ResponseEntity<List<Donacion>> response = donacionController.listarDonaciones(idParticular);
+        ResponseEntity<List<Donacion>> response = donacionController.listarDonacionesPorParticular(idParticular);
 
         // Assert
         verify(particularRepository, times(1)).findById(idParticular);
@@ -147,7 +147,7 @@ public class DonacionControllerTest{
 
         // Act and Assert
         assertThrows(EntityNotFoundException.class, () -> {
-            donacionController.listarDonaciones(idParticular);
+            donacionController.listarDonacionesPorParticular(idParticular);
         });
 
         // Verify
