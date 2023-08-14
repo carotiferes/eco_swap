@@ -39,7 +39,6 @@ public class Producto {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_colecta")
-    @JsonBackReference
     private Colecta colecta;
 
     @ManyToOne(cascade = CascadeType.ALL)
