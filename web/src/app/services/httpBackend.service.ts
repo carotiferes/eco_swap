@@ -3,50 +3,58 @@ import { Injectable } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
 const properties = require('../core/properties.json')
 
-const URL = properties.URI;
-
 @Injectable()
 export class HttpBackEnd {
-  constructor(private httpClient: HttpClient) {}
 
-  get(endpoint: string, params?: any) {
-    return this.httpClient.get(URL + endpoint, { params });
-  }
+	constructor(private httpClient: HttpClient) { }
 
-  post(endpoint: string, body: any) {
-    return this.httpClient.post(URL + endpoint, body);
-  }
+	get(urlName: string, endpoint: string, params?: any) {
+		const URL = this.getUrlByName(urlName);
+		return this.httpClient.get(URL + endpoint, { params });
+	}
 
-  async uploadFile(endpoint: string, file: any) {
-    let formData = new FormData();
-    formData.append('file', file);
+	post(urlName: string, endpoint: string, body: any) {
+		const URL = this.getUrlByName(urlName);
+		return this.httpClient.post(URL + endpoint, body);
+	}
 
-    const response = this.post(endpoint, formData);
-    const data = await lastValueFrom(response);
-    return data;
-  }
+	async uploadFile(urlName: string, endpoint: string, file: any) {
+		let formData = new FormData();
+		formData.append('file', file);
 
-  put(endpoint: string, body: any) {
-    return this.httpClient.put(URL + endpoint, body,  );
-  }
+		const response = this.post(urlName, endpoint, formData);
+		const data = await lastValueFrom(response);
+		return data;
+	}
 
-  patch(endpoint: string, body: any) {
-    return this.httpClient.patch(URL + endpoint, body);
-  }
+	put(urlName: string, endpoint: string, body: any) {
+		const URL = this.getUrlByName(urlName);
+		return this.httpClient.put(URL + endpoint, body,);
+	}
 
-  delete(endpoint: string) {
-    return this.httpClient.delete(URL + endpoint);
-  }
+	patch(urlName: string, endpoint: string, body: any) {
+		const URL = this.getUrlByName(urlName);
+		return this.httpClient.patch(URL + endpoint, body);
+	}
 
-  async postImg(endpoint: string, img: any, body?: any) {
-    let formData = new FormData();
-    formData.append('image', img);
-    if (body) {
-      if (body.dest) formData.append('dest', body.dest);
-      if (body.id) formData.append('id', body.id);
-    }
-    const response = await this.post(endpoint, formData).toPromise();
-    const data = response;
-    return data;
-  }
+	delete(urlName: string, endpoint: string) {
+		const URL = this.getUrlByName(urlName);
+		return this.httpClient.delete(URL + endpoint);
+	}
+
+	async postImg(urlName: string, endpoint: string, img: any, body?: any) {
+		let formData = new FormData();
+		formData.append('image', img);
+		if (body) {
+			if (body.dest) formData.append('dest', body.dest);
+			if (body.id) formData.append('id', body.id);
+		}
+		const response = await this.post(urlName, endpoint, formData).toPromise();
+		const data = response;
+		return data;
+	}
+
+	private getUrlByName(urlName: string): string {
+		return properties[urlName] || 'http://localhost:8080/';
+	}
 }

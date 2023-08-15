@@ -1,10 +1,14 @@
 <main>
 	<form class="loginPanel" #loginForm="ngForm" (ngSubmit)="onSubmit()">
 		<img src="assets/logo_green_small.png" />
-		 <input type="text" placeholder="Usuario" #user required autocomplete="off" />
-		<!-- <input type="password" placeholder="Contraseña" #password required autocomplete="off" />
-		 <a id="forgot" (click)="openForgot()">Forgot password?</a> -->
-		 <input id="submitLogin" type="submit" value="LOGIN" />
-		 <a id="create" (click)="createAccount()" style="font-size: 12px;">Crear cuenta</a>
+		<input type="text" placeholder="Usuario" #user required autocomplete="off" />
+		<div>
+			<input [type]="passwordType" placeholder="Contraseña" #password required autocomplete="off" />
+			<mat-icon matSuffix (click)="togglePassword()" class="eye">{{passwordIcon}}</mat-icon>
+		</div>
+		<!-- <a id="forgot" (click)="resetPassword()">Olvidé mi contraseña</a> -->
+		<input id="submitLogin" type="submit" value="LOGIN" />
+		<a id="create" (click)="createAccount()">Crear cuenta</a>
+		<a id="invitado" (click)="goToHome()">Entrar como invitado</a>
 	</form>
 </main>

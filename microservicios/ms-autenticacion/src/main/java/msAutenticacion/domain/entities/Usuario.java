@@ -4,10 +4,11 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import java.util.List;
 
@@ -15,10 +16,12 @@ import java.util.List;
 @Data
 @Table(name = "Usuarios")
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Usuario {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "idUsuario")
     private long idUsuario;
 
@@ -37,7 +40,7 @@ public class Usuario {
     private String password;
 
     @NotNull
-    @Size(max = 6)
+    @Size(max = 10)
     private String salt;
 
     @NotNull

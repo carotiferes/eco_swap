@@ -4,20 +4,18 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/microservicios/ms-autenticacion" />
-        <option name="gradleJvm" value="17" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/microservicios/ms-autenticacion" />
+            <option value="$PROJECT_DIR$" />
           </set>
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/microservicios/ms-usuarios" />
-        <option name="gradleJvm" value="17" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/microservicios/ms-autenticacion" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/microservicios/ms-usuarios" />
+            <option value="$PROJECT_DIR$/microservicios/ms-autenticacion" />
           </set>
         </option>
       </GradleProjectSettings>

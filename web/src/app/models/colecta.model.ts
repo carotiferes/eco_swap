@@ -1,4 +1,5 @@
 import { DonacionModel } from "./donacion.model";
+import { FundacionModel } from "./fundacion.model";
 import { ProductoModel } from "./producto.model";
 
 export interface ColectaModel {
@@ -8,7 +9,7 @@ export interface ColectaModel {
 	descripcion: string,
 	//cantidadDisponible: number,
 	idFundacion: number,
-	fundacion: string,
+	fundacion: FundacionModel,
 	imagen: string,
 	fechaSolicitud: Date,
 	productos: ProductoModel[],

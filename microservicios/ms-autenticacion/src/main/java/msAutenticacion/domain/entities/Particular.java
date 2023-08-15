@@ -3,8 +3,10 @@ package msAutenticacion.domain.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import msAutenticacion.domain.entities.enums.TipoDocumento;
 
 import java.time.LocalDate;
@@ -14,10 +16,12 @@ import java.util.List;
 @Table(name = "Particulares")
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Particular {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long idParticular;
 
     @OneToOne
@@ -33,10 +37,12 @@ public class Particular {
 
     @NotNull
     @Size(max = 8)
+    @Column(unique = true)
     private String dni;
 
     @NotNull
     @Size(max = 11)
+    @Column(unique = true)
     private String cuil;
 
     @NotNull

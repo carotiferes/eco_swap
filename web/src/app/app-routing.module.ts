@@ -4,7 +4,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { TruequeComponent } from './pages/trueque/trueque.component';
 import { ColectasComponent } from './pages/colectas/colectas.component';
 import { RegistroComponent } from './pages/registro/registro.component';
-import { authGuard } from './core/auth.guard';
+import { AuthGuard } from './core/auth.guard';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { ColectaComponent } from './pages/colecta/colecta.component';
 import { FormDonacionComponent } from './pages/form-donacion/form-donacion.component';
@@ -16,10 +16,13 @@ import { ErrorComponent } from './pages/error/error.component';
 
 const routes: Routes = [{
 	path: '',
-	component: LoginComponent
+	component: HomeComponent
 }, {
 	path: 'home',
 	component: HomeComponent
+}, {
+	path: 'login',
+	component: LoginComponent
 }, {
 	path: 'trueques',
 	component: TruequeComponent
@@ -27,35 +30,39 @@ const routes: Routes = [{
 	path: 'colectas',
 	component: ColectasComponent
 }, {
-	path: 'colectas/:id_fundacion',
-	component: ColectasComponent
+	path: 'mis-colectas',
+	component: ColectasComponent,
+	canActivate: [AuthGuard]
 },{
 	path: 'registro',
 	component: RegistroComponent
 },{
 	path: 'perfil',
 	component: PerfilComponent,
-	canActivate: [authGuard]
+	canActivate: [AuthGuard]
 },{
 	path: 'perfil/:id',
 	component: PerfilComponent,
-	canActivate: [authGuard]
+	canActivate: [AuthGuard]
 },{
 	path: 'form-colecta',
 	component: FormColectaComponent,
-	canActivate: [authGuard]
+	canActivate: [AuthGuard]
 },{
 	path: 'colecta/:id_colecta',
 	component: ColectaComponent,
-	canActivate: [authGuard]
+	//canActivate: [AuthGuard]
 },{
 	path: 'donacion/:id_colecta',
 	component: FormDonacionComponent,
-	canActivate: [authGuard]
+	canActivate: [AuthGuard]
 },{
 	path: 'mis-donaciones',
 	component: DonacionesComponent,
-	canActivate: [authGuard]
+	canActivate: [AuthGuard]
+},{
+	path: 'reset-password',
+	component: RegistroComponent
 },{
 	path: 'error',
 	component: ErrorComponent

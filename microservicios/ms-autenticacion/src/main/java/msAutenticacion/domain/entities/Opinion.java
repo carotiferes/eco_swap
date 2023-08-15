@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 @Table(name = "Opiniones")
 public class Opinion{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long idOpinion;
     @NotNull
     private float valoracion;
