@@ -31,7 +31,7 @@ export class HeaderComponent {
 		this.isUserLoggedIn = auth.isUserLoggedIn
 		if(this.isUserLoggedIn){
 			this.userData = auth.getUserData()
-			this.profileType = this.userData.isSwapper ? 'particular' : 'particular';
+			this.profileType = this.userData.isSwapper ? 'particular' : 'fundacion';
 		}
 		
 	}

@@ -2,7 +2,7 @@
 
 <div id="main-colecta">
 	<app-spinner [loading]="loading"></app-spinner>
-	<mat-card *ngIf="!loading && colecta.fundacion && colecta.fundacion.usuario && colecta">
+	<mat-card *ngIf="!loading && colecta && this.colecta.fundacion && this.colecta.fundacion.usuario">
 		<mat-card-header style="border-bottom: solid 1px var(--light-grey); padding-bottom: 10px;">
 			<div class="div-header">
 				<div class="header-info">

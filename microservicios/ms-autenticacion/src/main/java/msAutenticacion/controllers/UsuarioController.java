@@ -38,7 +38,7 @@ public class UsuarioController {
         return ResponseEntity.ok(usuario);
     }
 
-    @PostMapping(path = "/usuario/signup", produces = JSON)
+    @PostMapping(path = "/usuario/signup", produces = JSON, consumes = JSON)
     @Transactional
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<Long> postSignin(@RequestBody RequestSignin body){

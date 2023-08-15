@@ -23,6 +23,7 @@ export class AuthService {
 				console.log('response:', v);
 				// TODO: GET USER INFO TO SAVE IN LOCAL STORAGE (AT LEAST IS_SWAPPER)
 				this.setLocalStorage('userToken', JSON.stringify(v.token));
+				this.setLocalStorage('isSwapper', JSON.stringify(true));
 				this.isUserLoggedIn = true;
 				this.setUserLoggedIn();
 				this.router.navigate([''])

@@ -8,6 +8,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import Swal from 'sweetalert2';
 import { ShowErrorService } from 'src/app/services/show-error.service';
+import { FundacionesService } from 'src/app/services/fundaciones.service';
 
 @Component({
   selector: 'app-colecta',
@@ -27,7 +28,8 @@ export class ColectaComponent {
 	buttonsCard: {name: string, icon: string, color: string, status: string, disabled: string}[] = []
 
 	constructor(private route: ActivatedRoute, private router: Router, private auth: AuthService,
-		private donacionesService: DonacionesService, private showErrorService: ShowErrorService){
+		private donacionesService: DonacionesService, private showErrorService: ShowErrorService,
+		private fundacionesService: FundacionesService){
 		route.paramMap.subscribe(params => {
 			console.log(params);
 			this.id_colecta = params.get('id_colecta') || '';
@@ -40,15 +42,59 @@ export class ColectaComponent {
 		this.getColecta();
 	}
 
-	getColecta(){
+	getColecta() {
 		this.donacionesService.getColecta(this.id_colecta).subscribe({
-			next: (res: any) => {
-				if(res){
-					this.colecta = res;
-					let usuario = this.colecta.fundacion.usuario;
-					if(usuario) this.colecta.fundacion.usuario.puntaje = Number(this.colecta.fundacion.usuario.puntaje)
+			next: (colecta: any) => {
+				if (colecta) {
+					this.colecta = colecta;
+
+					this.fundacionesService.getFundacion(this.colecta.idFundacion).subscribe({
+						next: (fundacion: any) => {
+							console.log(fundacion);
+							
+							this.colecta.fundacion = fundacion;
+							this.colecta.fundacion.usuario.puntaje = Number(this.colecta.fundacion.usuario.puntaje)
+							this.colecta.imagen = this.getImage(this.colecta.imagen);
+
+							this.donacionesService.getDonacionesColecta(this.colecta.idColecta).subscribe({
+								next: (donaciones: any) => {
+									console.log(donaciones);
+									this.donaciones = donaciones;
+									this.donaciones.map(donacion => {
+										if(donacion.imagenes) donacion.parsedImagenes = donacion.imagenes.split('|')
+									})
+
+									if (this.userData.isSwapper) {
+										this.donaciones = this.donaciones.filter(item => item.particular.idParticular == this.userData.id_particular)
+									}
+				
+									/* TODO: CHECK IF USERDATA IS SAME FUNDACION FROM COLECTA
+									if (this.colecta.idFundacion == this.userData.id_fundacion)
+									this.showDonaciones = true;
+									if (this.userData.isSwapper) this.showDonaciones = true; */
+									console.log(this.showDonaciones);
+								},
+								error: (error) => {
+									console.log('error', error);
+									
+								}
+							})
+
+						},
+						error: (error) => {
+							console.log(error);
+							
+						}
+					})
+
+					
+					this.loading = false;
+
+					/* let usuario = this.colecta.fundacion.usuario;
+					if (usuario) this.colecta.fundacion.usuario.puntaje = Number(this.colecta.fundacion.usuario.puntaje)
 					this.colecta.imagen = this.getImage(this.colecta.imagen)
 					this.loading = false;
+					console.log(res, this.userData, usuario);
 
 					for (const prod of this.colecta.productos) {
 						for (const donacion of prod.donaciones) {
@@ -60,13 +106,15 @@ export class ColectaComponent {
 						if(donacion.imagenes) donacion.parsedImagenes = donacion.imagenes.split('|')
 					})
 
-					if(this.userData.isSwapper){
+					if (this.userData.isSwapper) {
 						this.donaciones = this.donaciones.filter(item => item.particular.idParticular == this.userData.id_particular)
 					}
 
-					if(usuario && !usuario.swapper && this.colecta.fundacion.idFundacion == this.userData.id_fundacion)
+					if (usuario && !usuario.swapper && this.colecta.idFundacion == this.userData.id_fundacion)
 						this.showDonaciones = true;
-					if(this.userData.isSwapper && usuario) this.showDonaciones = true;
+					if (this.userData.isSwapper && usuario) this.showDonaciones = true;
+					console.log(this.showDonaciones); */
+
 
 				} else this.showErrorService.show('Error!', 'No se encontró la información de la colecta que seleccionaste. Intentá nuevamente más tarde.')
 			},

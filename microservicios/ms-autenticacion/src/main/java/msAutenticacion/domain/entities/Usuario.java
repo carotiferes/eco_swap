@@ -40,7 +40,7 @@ public class Usuario {
     private String password;
 
     @NotNull
-    @Size(max = 6)
+    @Size(max = 10)
     private String salt;
 
     @NotNull
@@ -48,7 +48,7 @@ public class Usuario {
     private String confirmCodigo;
 
     @NotNull
-    @Size(max = 10)
+    @Size(max = 12)
     private String telefono;
 
     @NotNull
