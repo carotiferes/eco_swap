@@ -37,8 +37,7 @@ export class LoginComponent {
 		if (!this.username || !this.password) {
 			Swal.fire({ title: 'Campos incompletos!', text: 'Por favor completá todos los campos antes de continuar.', icon: 'error' })
 		} else {
-			this.auth.login(this.username, this.password) //TODO: then and catch
-			//this.router.navigateByUrl('/colectas')
+			this.auth.login(this.username, this.password);
 		}
 	}
 

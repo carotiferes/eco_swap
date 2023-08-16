@@ -20,11 +20,7 @@ import { ShowErrorService } from 'src/app/services/show-error.service';
 export class ColectasComponent implements OnInit {
 
 	colectas: ColectaModel[] = [];
-	fundacion?: FundacionModel;
-
-	idFundacion?: string;
-	colectasFundacion: ColectaModel[] = []
-
+	isMyColectas: boolean = false;
 	showColectas: ColectaModel[] = [];
 	userData: any;
 
@@ -32,26 +28,16 @@ export class ColectasComponent implements OnInit {
 
 	formFiltros: FormGroup;
 	tipos_productos: any[] = [];
-
 	optionsFundaciones: any[] = [/* { idFundacion: 1, nombre: 'Tzedaka' }, { idFundacion: 2, nombre: 'Cruz Roja' } */];
 	filteredOptions: Observable<any[]>;
-
 	filtros: any = {};
 
-	constructor(private router: Router, private route: ActivatedRoute, private auth: AuthService,
+	constructor(private router: Router, private auth: AuthService,
 		private donacionesService: DonacionesService, private fundacionesService: FundacionesService,
 		private fb: FormBuilder, private productosService: ProductosService,
 		private showErrorService: ShowErrorService) {
-		
-		// si tiene fundacion en el param, es MIS COLECTAS, sino COLECTAS
-		route.paramMap.subscribe(params => {
-			this.idFundacion = params.get('id_fundacion') || undefined;
-			if (this.idFundacion) {
-				fundacionesService.getFundacion(this.idFundacion).subscribe((res: any) => {
-					this.fundacion = res;
-				})
-			}
-		});
+
+		if (router.url == '/mis-colectas') this.isMyColectas = true;
 
 		this.formFiltros = fb.group({
 			fundacion: [''],
@@ -59,11 +45,6 @@ export class ColectasComponent implements OnInit {
 			tipoProducto: ['']
 		})
 
-		this.userData = auth.getUserData();
-
-		this.getFundaciones();
-		this.getTiposProductos();
-		
 		this.filteredOptions = this.formFiltros.controls['fundacion'].valueChanges.pipe(
 			startWith(''),
 			map(value => {
@@ -74,27 +55,61 @@ export class ColectasComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this.filtrarColectas()
+		this.userData = this.auth.getUserData();
+		this.getFundaciones();
+		this.getTiposProductos();
+
+		this.filtrarColectas();
 	}
 
-	displayFn(fundacion: any): string {
-		return fundacion && fundacion.nombre ? fundacion.nombre : '';
-	}
+	filtrarColectas() {
+		this.loading = true;
+		if (this.isMyColectas) {
+			this.donacionesService.getMisColectas().subscribe({
+				next: (res: any) => {
+					this.colectas = res;
+					this.showColectas = this.colectas;
+					this.showColectas.map(item => {
+						item.imagen = this.donacionesService.getImagen(item.imagen)
+					})
+					this.loading = false;
+				},
+				error: (error) => {
+					console.log('error mis colectas', error);
+					this.showErrorService.show('Ocurrió un error!', 'Ocurrió un error al traer las colectas de la fundación. Por favor volvé a intentarlo más tarde.')
+					this.loading = false;
+				}
+			})
+		} else {
+			this.filtros = {};
+			const idFundacion = this.formFiltros.controls['fundacion'].value ? this.formFiltros.controls['fundacion'].value.idFundacion : undefined;
+			const codigoPostal = this.formFiltros.controls['codigoPostal'].value;
+			const tipoProducto = this.formFiltros.controls['tipoProducto'].value;
 
-	private _filter(nombre: string): any[] {
-		const filterValue = nombre.toLowerCase();
+			if (idFundacion) this.filtros['idFundacion'] = idFundacion;
+			if (codigoPostal) this.filtros['codigoPostal'] = codigoPostal;
+			if (tipoProducto) this.filtros['tipoProducto'] = tipoProducto;
 
-		return this.optionsFundaciones.filter(option => option.nombre.toLowerCase().includes(filterValue));
-	}
-
-	goToColecta(colecta: ColectaModel) {
-		console.log(colecta);
-
-		this.router.navigateByUrl('colecta/' + colecta.idColecta)
+			this.donacionesService.getAllColectas(this.filtros).subscribe({
+				next: (res: any) => {
+					this.colectas = res;
+					this.showColectas = this.colectas;
+					this.showColectas.map(item => {
+						item.imagen = this.donacionesService.getImagen(item.imagen)
+					})
+					this.loading = false;
+				},
+				error: (error) => {
+					console.log('error all colectas', error);
+					this.showErrorService.show('Ocurrió un error!', 'Ocurrió un error al traer las colectas. Por favor volvé a intentarlo más tarde.')
+					this.loading = false;
+				}
+			})
+		}
 	}
 
 	addColecta() {
-		if(Object.keys(this.userData).length != 0) {
+		if (this.auth.isUserLoggedIn) {
 			this.router.navigateByUrl('form-colecta')
 		} else {
 			Swal.fire({
@@ -104,70 +119,48 @@ export class ColectasComponent implements OnInit {
 				confirmButtonText: 'Iniciar sesión',
 				showCancelButton: true,
 				cancelButtonText: 'Cancelar'
-			}).then(({isConfirmed}) => {
-				if(isConfirmed) this.router.navigate(['login'])
+			}).then(({ isConfirmed }) => {
+				if (isConfirmed) this.router.navigate(['login'])
 			})
 		}
 	}
 
-	filtrarColectas(hasFiltros: boolean = false){
-		//if(!filtros) filtros = this.filtros
-		console.log(this.formFiltros.value);
-		this.loading = true;
-		this.filtros = {};
-		const idFundacion = this.formFiltros.controls['fundacion'].value ? this.formFiltros.controls['fundacion'].value.idFundacion : undefined;
-		const codigoPostal = this.formFiltros.controls['codigoPostal'].value;
-		const tipoProducto = this.formFiltros.controls['tipoProducto'].value;
-
-		if(idFundacion) this.filtros['idFundacion'] = idFundacion;
-		if(codigoPostal) this.filtros['codigoPostal'] = codigoPostal;
-		if(tipoProducto) this.filtros['tipoProducto'] = tipoProducto;
-		console.log(this.filtros);
-		this.donacionesService.getColectas(this.filtros).subscribe((res: any) => {
-			console.log(res);
-			this.colectas = res;
-			this.showColectas = this.colectas;
-
-			this.showColectas.map(item => {
-				item.imagen = this.donacionesService.getImagen(item.imagen)
-			})
-			if (this.idFundacion) {
-				this.colectasFundacion = this.colectas.filter(item => item.idFundacion == Number(this.idFundacion))
-				this.showColectas = this.colectasFundacion
-			} else {
-				this.showColectas = this.colectas;
-			}
-			this.loading = false;
-		})
-	}
-
-	limpiarFiltros(){
-		this.formFiltros.reset()
-		this.filtrarColectas(false)
-	}
-
-	getFundaciones(){
+	getFundaciones() {
 		this.fundacionesService.getFundaciones().subscribe((res: any) => {
 			console.log(res);
 			this.optionsFundaciones = res;
 		})
 	}
 
-	getTiposProductos(){
+	getTiposProductos() {
 		this.productosService.getTiposProductos().subscribe({
 			next: (v: any) => {
-				console.log('next',v);
+				console.log('productos', v);
 				this.tipos_productos = v;
 			},
 			error: (e) => {
-				console.error('error',e);
-				this.showErrorService.show('Error!','Ha ocurrido un error al traer los tipos de producto')
+				console.error('error', e);
+				this.showErrorService.show('Error!', 'Ha ocurrido un error al traer los tipos de producto')
 			},
-			complete: () => console.info('complete') 
-		})/* .subscribe((res:any) => {
-			console.log(res);
-			this.tipos_productos = res;
-			
-		}) */
+			complete: () => console.info('complete')
+		});
+	}
+
+	limpiarFiltros() {
+		this.formFiltros.reset()
+		this.filtrarColectas()
+	}
+
+	displayFn(fundacion: any): string {
+		return fundacion && fundacion.nombre ? fundacion.nombre : '';
+	}
+
+	private _filter(nombre: string): any[] {
+		const filterValue = nombre.toLowerCase();
+		return this.optionsFundaciones.filter(option => option.nombre.toLowerCase().includes(filterValue));
+	}
+
+	goToColecta(colecta: ColectaModel) {
+		this.router.navigateByUrl('colecta/' + colecta.idColecta)
 	}
 }

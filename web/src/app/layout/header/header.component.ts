@@ -29,21 +29,15 @@ export class HeaderComponent {
 		this.url = router.url;
 
 		this.isUserLoggedIn = auth.isUserLoggedIn
-		console.log(this.isUserLoggedIn);
 		if(this.isUserLoggedIn){
 			this.userData = auth.getUserData()
 			this.profileType = this.userData.isSwapper ? 'particular' : 'fundacion';
-			console.log(this.userData, this.profileType);
 		}
 		
 	}
 
 	goTo(path: string){
 		this.router.navigateByUrl(path)
-	}
-
-	goToMy(path: string){
-		this.router.navigateByUrl(path + '/' + this.userData.id_perfil)
 	}
 
 	logOut(){

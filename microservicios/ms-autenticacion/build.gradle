@@ -25,13 +25,16 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+	//JAVA EMAILS
+	implementation 'org.springframework.boot:spring-boot-starter-mail:3.1.2'
+
 	compileOnly 'org.projectlombok:lombok:1.18.28'
 	annotationProcessor 'org.projectlombok:lombok:1.18.28'
 
 	testCompileOnly 'org.projectlombok:lombok:1.18.28'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
 
-// https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui
+	// https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
 
 

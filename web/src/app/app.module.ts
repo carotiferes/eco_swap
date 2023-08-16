@@ -23,13 +23,15 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './pages/login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormColectaComponent } from './pages/form-colecta/form-colecta.component';
-import { HttpErrorInterceptor } from './pipes/error.interceptor';
+import { HttpErrorInterceptor } from './interceptors/error.interceptor';
 import { DonacionesComponent } from './pages/donaciones/donaciones.component';
 import { SharedModule } from './shared/shared.module';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { ErrorComponent } from './pages/error/error.component';
 import { FormPublicacionComponent } from './pages/form-publicacion/form-publicacion.component';
 import { PhoneNumberPipe } from './pipes/phone-number.pipe';
+import { DateAdapter } from '@angular/material/core';
+import { CustomDateAdapter } from './pipes/date-adapter';
 
 @NgModule({
 	declarations: [
@@ -72,7 +74,8 @@ import { PhoneNumberPipe } from './pipes/phone-number.pipe';
 			useClass: HttpErrorInterceptor,
 			multi: true,
 		},
-		PhoneNumberPipe
+		PhoneNumberPipe,
+		{provide: DateAdapter, useClass: CustomDateAdapter }
 	],
 	bootstrap: [AppComponent]
 })

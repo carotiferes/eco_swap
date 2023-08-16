@@ -11,11 +11,11 @@ export class UsuarioService {
 
 	constructor(private backendService: HttpBackEnd) { }
 
-	getUser(id_perfil: number) {
-		return this.backendService.get(URL_NAME, 'perfil/' + id_perfil);
+	getCurrentUser() { // TODO: CAMBIAR CUANDO TRAIGA X TKN
+		return this.backendService.get(URL_NAME, 'ms-autenticacion/api/v1/usuario/103');
 	}
 
-	createUser(user: any){
+	createUser(user: any){ // SIGNUP
 		return this.backendService.post(URL_NAME, 'ms-autenticacion/api/v1/usuario/signup', user);
 	}
 }

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -37,7 +36,7 @@ public class ColectaService {
     @Autowired
     CaracteristicaDonacionRepository caracteristicaDonacionRepository;
 
-    public void crearDonacionComunicacion(RequestComunicarDonacionColectaModel request, Long idColecta) {
+    public void crearDonacion(RequestComunicarDonacionColectaModel request, Long idColecta) {
            log.info(">> SERVICE: Se comenzo la creacion de donacion para la colecta: {}", idColecta);
            Colecta colecta = colectaRepository.findById(idColecta).get();
            Producto producto = colecta.getProductos().
@@ -80,21 +79,22 @@ public class ColectaService {
                            .toList());
     }
 
-    public List<Donacion> obtenerTodasLasDonacionesComunicacion(Long idcolecta) {
-        log.info(">> Obtener todas las donaciones de comunicacion de una Colecta: {}", idcolecta);
-        List<Donacion> donacioncolectas = colectaRepository.findById(idcolecta).get().getProductos().
-                stream().flatMap(prod -> prod.getDonaciones().stream()).toList();;
-        log.info("<< Cantidad obtenidas: {}", donacioncolectas.size());
-        return donacioncolectas;
+    public List<Donacion> obtenerTodasLasDonaciones(Long idColecta) {
+        log.info(">> Obtener todas las donaciones de la Colecta: {}", idColecta);
+        Colecta colecta = this.colectaRepository.findById(idColecta)
+                        .orElseThrow(() -> new EntityNotFoundException("No fue encontrada la colecta: " + idColecta));
+        List<Donacion> donaciones = colecta.getProductos().stream().flatMap(prod -> prod.getDonaciones().stream()).toList();;
+        log.info("<< Cantidad obtenidas: {}", donaciones.size());
+        return donaciones;
 
     }
 
-    public Donacion obtenerdonacionesComunicacionXId(Long idDonacionComunicacion) {
-        log.info(">> Obtener 1 donacion de comunicacion de colecta x id: {}", idDonacionComunicacion);
-        return donacionesRepository.findById(idDonacionComunicacion).
-                orElseThrow(() -> new EntityNotFoundException("No fue encontrado la comunicacion de donacion con ID: "
-                        + idDonacionComunicacion));
+    public Donacion obtenerDonacionXIdDonacion(Long idDonacion) {
+        log.info(">> Obtener donacion de colecta x id: {}", idDonacion);
+        return donacionesRepository.findById(idDonacion).
+                orElseThrow(() -> new EntityNotFoundException("No fue encontrado la donacion con ID: " + idDonacion));
     }
+
 /* POSTERGAMOS ESTE DESARROLLO
     //PUEDE ACTUALIZAR LA DONACION E INCLUSO LA colecta
     public void agregarMensajeParaDonacionComunicacion(

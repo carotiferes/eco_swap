@@ -34,7 +34,7 @@
 		<ul class="navbar-nav mr-auto mt-2 mt-lg-0 mr-2">
 			<li class="nav-item">
 				<a class="nav-link nav-white px-2" *ngIf="isUserLoggedIn && !userData.isSwapper"
-					[href]="'/colectas/'+ userData.id_fundacion">
+					[href]="'/mis-colectas/'">
 					<b>Mis colectas</b>
 				</a>
 			</li>
@@ -50,10 +50,11 @@
 				<ul ngbDropdownMenu aria-labelledby="dropdownMenuButton1" class="dropdown-menu-end">
 				  <li><a ngbDropdownItem [href]="'/registro'" class="dropdown-item" *ngIf="!isUserLoggedIn">Crear Cuenta</a></li>
 				  <li><a ngbDropdownItem [href]="'/login'" class="dropdown-item" *ngIf="!isUserLoggedIn">Iniciar Sesión</a></li>
+				  <li><a ngbDropdownItem [href]="'/perfil'" class="dropdown-item" *ngIf="isUserLoggedIn">Mi perfil</a></li>
 				  <li><a ngbDropdownItem (click)="logOut()" class="dropdown-item" *ngIf="isUserLoggedIn">Cerrar Sesión</a></li>
 				</ul>
 			  </div>
 		</ul>
 	</div>
 </nav>
-<h3 style="margin: 20px; font-weight: bold;">{{title}}</h3>
+<h3 style="margin: 20px 0px 0px 20px; font-weight: bold;">{{title}}</h3>

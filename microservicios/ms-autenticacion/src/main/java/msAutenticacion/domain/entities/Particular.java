@@ -37,10 +37,12 @@ public class Particular {
 
     @NotNull
     @Size(max = 8)
+    @Column(unique = true)
     private String dni;
 
     @NotNull
     @Size(max = 11)
+    @Column(unique = true)
     private String cuil;
 
     @NotNull

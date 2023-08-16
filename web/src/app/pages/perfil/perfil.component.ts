@@ -11,8 +11,7 @@ const db = require('../../data/db.json')
 })
 export class PerfilComponent {
 	isSwapper: boolean = true; // CHANGE WHEN BRINGING USER INFO
-	user: UsuarioModel;
-	userInfo: any;
+	user!: UsuarioModel;
 
 	columns: number = 2;
 	colspan: number = 1;
@@ -28,15 +27,22 @@ export class PerfilComponent {
 	userData: any;
 
 	constructor(private auth: AuthService, private usuarioService: UsuarioService){
-		// TODO: GET USER INFO
-		/* this.userData = auth.getUserData().userData;
-		usuarioService.getUser(this.userData.id_perfil).subscribe(res => {
-			console.log(res);
-			
-		}) */
-		this.user = db.perfiles[this.isSwapper ? 0 : 1];
-		this.userInfo = this.isSwapper ? db.particulars[0] : db.fundaciones[0];
-		this.configureColumns();
+		this.getUserInformation();
+	}
+
+	getUserInformation(){
+		this.usuarioService.getCurrentUser().subscribe({
+			next: (res: any) => {
+				console.log(res);
+				this.user = res;
+				this.configureColumns();
+
+			},
+			error: (error) => {
+				console.log('error', error);
+				
+			}
+		})
 	}
 	
 	configureColumns(){
@@ -47,8 +53,8 @@ export class PerfilComponent {
 			attributes: [
 				{title: 'Usuario', name: 's_usuario', value: this.user.username},
 				{title: 'Contraseña', name: 's_contrasena', value: this.user.password},
-				{title: 'Nombre', name: 's_nombre', value: this.userInfo.s_nombre},
-				{title: 'Apellido', name: 's_apellido', value: this.userInfo.s_apellido}
+				/* {title: 'Nombre', name: 's_nombre', value: this.user.s_nombre},
+				{title: 'Apellido', name: 's_apellido', value: this.user.s_apellido} */
 			]
 		}, {
 			title: 'Información de Contacto',
@@ -61,7 +67,7 @@ export class PerfilComponent {
 			title: 'Información de Particular',
 			icon: 'social_distance',
 			attributes: [
-				{title: 'Fecha de Nacimiento', name: 'f_nacimiento', value: this.userInfo.f_nacimiento},
+				//{title: 'Fecha de Nacimiento', name: 'f_nacimiento', value: this.user.f_nacimiento},
 				{title: 'Puntaje', name: 'n_puntaje', value: this.user.puntaje},
 			],
 			exclusive: 'particular'
@@ -69,7 +75,7 @@ export class PerfilComponent {
 			title: 'Información de la Fundación',
 			icon: 'diversity_2',
 			attributes: [
-				{title: 'Fecha de Nacimiento', name: 'f_nacimiento', value: this.userInfo.f_nacimiento},
+				//{title: 'Fecha de Nacimiento', name: 'f_nacimiento', value: this.user.f_nacimiento},
 				{title: 'Puntaje', name: 'n_puntaje', value: this.user.puntaje},
 			],
 			exclusive: 'fundacion'

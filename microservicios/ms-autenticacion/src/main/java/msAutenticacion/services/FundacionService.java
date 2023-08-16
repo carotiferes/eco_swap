@@ -24,6 +24,7 @@ public class FundacionService {
                 .baja(false)
                 .cuil(request.getCuil())
                 .nombre(request.getNombre())
+                .usuario(usuario)
                 .build();
         Fundacion creado = fundacionesRepository.save(fundacion);
         log.info("Usuario fundacion creado con ID: "+creado.getIdFundacion());

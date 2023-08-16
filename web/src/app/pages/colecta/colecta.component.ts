@@ -7,6 +7,8 @@ import { ColectaModel } from 'src/app/models/colecta.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import Swal from 'sweetalert2';
+import { ShowErrorService } from 'src/app/services/show-error.service';
+import { FundacionesService } from 'src/app/services/fundaciones.service';
 
 @Component({
   selector: 'app-colecta',
@@ -16,66 +18,117 @@ import Swal from 'sweetalert2';
 export class ColectaComponent {
 
 	id_colecta: string = '';
-	colecta?: ColectaModel;
-	fundacion?: FundacionModel;
-	usuario?: UsuarioModel;
+	colecta!: ColectaModel;
 	donaciones: DonacionModel[] = [];
 
 	userData?: any;
 	loading: boolean = true;
+	showDonaciones: boolean = false;
 
 	buttonsCard: {name: string, icon: string, color: string, status: string, disabled: string}[] = []
 
 	constructor(private route: ActivatedRoute, private router: Router, private auth: AuthService,
-		private donacionesService: DonacionesService){
+		private donacionesService: DonacionesService, private showErrorService: ShowErrorService,
+		private fundacionesService: FundacionesService){
 		route.paramMap.subscribe(params => {
 			console.log(params);
 			this.id_colecta = params.get('id_colecta') || '';
+			if(!this.id_colecta) showErrorService.show('Error!', 'No pudimos encontrar la información de la colecta que seleccionaste, por favor volvé a intentarlo más tarde.')
 		})
 	}
 	
 	ngOnInit(): void {
 		this.userData = this.auth.getUserData();
-		console.log(this.userData);
-		this.donacionesService.getColecta(this.id_colecta).subscribe((res: any) => {
-			console.log(res);
+		this.getColecta();
+	}
 
-			this.colecta = res;
-			this.fundacion = res.fundacion
-			this.usuario = res.fundacion.usuario
-			if(this.usuario) this.usuario.puntaje = Number(this.usuario?.puntaje)
-			console.log(this.fundacion, this.usuario, this.colecta);
+	getColecta() {
+		this.donacionesService.getColecta(this.id_colecta).subscribe({
+			next: (colecta: any) => {
+				if (colecta) {
+					console.log(colecta);
+					
+					this.colecta = colecta;
 
-			if(this.colecta) this.colecta.imagen = this.getImage(this.colecta.imagen)
-			this.loading = false;
+					this.fundacionesService.getFundacion(this.colecta.idFundacion).subscribe({
+						next: (fundacion: any) => {
+							console.log(fundacion);
+							
+							this.colecta.fundacion = fundacion;
+							this.colecta.fundacion.usuario.puntaje = Number(this.colecta.fundacion.usuario.puntaje)
+							this.colecta.imagen = this.getImage(this.colecta.imagen);
 
-			/* TODO: usar esto si cambiamos la logica y traemos x separado las donaciones
-			this.donacionesService.getDonaciones(this.id_colecta).subscribe((resDonaciones: any) => {
-				console.log(resDonaciones);
-				this.donaciones = resDonaciones
-			}) */
-			if(this.colecta){
-				for (const prod of this.colecta.productos) {
-					for (const donacion of prod.donaciones) {
-						donacion['nombreProducto'] = prod.descripcion;
+							this.donacionesService.getDonacionesColecta(this.colecta.idColecta).subscribe({
+								next: (donaciones: any) => {
+									console.log(donaciones);
+									this.donaciones = donaciones;
+									this.donaciones.map(donacion => {
+										if(donacion.imagenes) donacion.parsedImagenes = donacion.imagenes.split('|')
+									})
+
+									if (this.userData.isSwapper) {
+										this.donaciones = this.donaciones.filter(item => item.particular.idParticular == this.userData.id_particular)
+									}
+				
+									/* TODO: CHECK IF USERDATA IS SAME FUNDACION FROM COLECTA
+									if (this.colecta.idFundacion == this.userData.id_fundacion)
+									this.showDonaciones = true;
+									if (this.userData.isSwapper) this.showDonaciones = true; */
+									console.log(this.showDonaciones);
+								},
+								error: (error) => {
+									console.log('error', error);
+									
+								}
+							})
+
+						},
+						error: (error) => {
+							console.log(error);
+							
+						}
+					})
+
+					
+					this.loading = false;
+
+					/* let usuario = this.colecta.fundacion.usuario;
+					if (usuario) this.colecta.fundacion.usuario.puntaje = Number(this.colecta.fundacion.usuario.puntaje)
+					this.colecta.imagen = this.getImage(this.colecta.imagen)
+					this.loading = false;
+					console.log(res, this.userData, usuario);
+
+					for (const prod of this.colecta.productos) {
+						for (const donacion of prod.donaciones) {
+							donacion['nombreProducto'] = prod.descripcion;
+						}
+						this.donaciones.push(...prod.donaciones)
 					}
-					this.donaciones.push(...prod.donaciones)
-				}
-				this.donaciones.map(donacion => {
-					if(donacion.imagenes) donacion.parsedImagenes = donacion.imagenes.split('|')
-				})
-			}
-			console.log(this.donaciones);
-			if(this.userData.isSwapper){
-				this.donaciones = this.donaciones.filter(item => item.particular.idParticular == this.userData.id_particular)
+					this.donaciones.map(donacion => {
+						if(donacion.imagenes) donacion.parsedImagenes = donacion.imagenes.split('|')
+					})
+
+					if (this.userData.isSwapper) {
+						this.donaciones = this.donaciones.filter(item => item.particular.idParticular == this.userData.id_particular)
+					}
+
+					if (usuario && !usuario.swapper && this.colecta.idFundacion == this.userData.id_fundacion)
+						this.showDonaciones = true;
+					if (this.userData.isSwapper && usuario) this.showDonaciones = true;
+					console.log(this.showDonaciones); */
+
+
+				} else this.showErrorService.show('Error!', 'No se encontró la información de la colecta que seleccionaste. Intentá nuevamente más tarde.')
+			},
+			error: (error) => {
+				console.log(error);
+				this.showErrorService.show('Error!', 'Ocurrió un error al traer la información de la colecta que seleccionaste. Intentá nuevamente más tarde.')
 			}
 		})
 	}
 
 	donar() {
-		//console.log(Object.keys(this.userData).length === 0);
-		
-		if(Object.keys(this.userData).length != 0){
+		if(this.auth.isUserLoggedIn){
 			Swal.fire({
 				title: '¡Estás un paso más cerca de hacer tu donación!',
 				text: 'Te vamos a pedir algunos datos de lo que vas a donar. Es importante que completes la información requerida para que la fundación conozca lo que vas a donar.', //'Seleccioná el producto que quieras donar',
