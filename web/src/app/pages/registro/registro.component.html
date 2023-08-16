@@ -44,7 +44,7 @@
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>Password</mat-label>
-						<input matInput formControlName="password" [type]="passwordType">
+						<input matInput formControlName="password" [type]="passwordType" (change)="refreshValidity()">
 						<mat-icon matSuffix (click)="togglePassword()" class="eye">{{passwordIcon}}</mat-icon>
 						<mat-error *ngIf="mainForm.get('password')!.hasError('required')">
 							Campo obligatorio
@@ -52,7 +52,7 @@
 						<mat-error *ngIf="mainForm.get('password')!.hasError('differentPassword')">
 							Las contraseñas no coinciden
 						</mat-error>
-						<mat-error *ngIf="mainForm.get('email')!.hasError('pattern')">
+						<mat-error *ngIf="mainForm.get('password')!.hasError('pattern')">
 							La contraseña debe tener entre 8 y 32 caracteres y al menos 1 minúscula, 1 mayúscula y 1 número.
 						</mat-error>
 					</mat-form-field>
@@ -60,7 +60,7 @@
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>Confirm Password</mat-label>
-						<input matInput formControlName="confirmPassword" [type]="passwordType">
+						<input matInput formControlName="confirmPassword" [type]="passwordType" (focus)="refreshValidity()">
 						<mat-icon matSuffix (click)="togglePassword()" class="eye">{{passwordIcon}}</mat-icon>
 						<mat-error *ngIf="mainForm.get('confirmPassword')!.hasError('required')">
 							Campo obligatorio

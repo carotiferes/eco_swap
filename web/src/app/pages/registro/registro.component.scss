@@ -17,6 +17,12 @@
 			.form-input {
 				display: flex;
 				justify-content: center;
+				width: 80%;
+
+				mat-form-field {
+					width: 100%;
+
+				}
 
 				.eye:hover {
 					cursor: pointer;

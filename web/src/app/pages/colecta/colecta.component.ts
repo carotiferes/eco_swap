@@ -46,6 +46,8 @@ export class ColectaComponent {
 		this.donacionesService.getColecta(this.id_colecta).subscribe({
 			next: (colecta: any) => {
 				if (colecta) {
+					console.log(colecta);
+					
 					this.colecta = colecta;
 
 					this.fundacionesService.getFundacion(this.colecta.idFundacion).subscribe({
