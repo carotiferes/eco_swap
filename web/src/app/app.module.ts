@@ -32,6 +32,7 @@ import { FormPublicacionComponent } from './pages/form-publicacion/form-publicac
 import { PhoneNumberPipe } from './pipes/phone-number.pipe';
 import { DateAdapter } from '@angular/material/core';
 import { CustomDateAdapter } from './pipes/date-adapter';
+import { PublicacionComponent } from './pages/publicacion/publicacion.component';
 
 @NgModule({
 	declarations: [
@@ -53,7 +54,8 @@ import { CustomDateAdapter } from './pipes/date-adapter';
     	SafeHtmlPipe,
 		FormPublicacionComponent,
      	ErrorComponent,
-      	PhoneNumberPipe
+      	PhoneNumberPipe,
+       PublicacionComponent
 	],
 	imports: [
 		BrowserModule,

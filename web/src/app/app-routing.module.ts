@@ -14,6 +14,7 @@ import { FormColectaComponent } from './pages/form-colecta/form-colecta.componen
 import { DonacionesComponent } from './pages/donaciones/donaciones.component';
 import { ErrorComponent } from './pages/error/error.component';
 import { FormPublicacionComponent } from './pages/form-publicacion/form-publicacion.component';
+import { PublicacionComponent } from './pages/publicacion/publicacion.component';
 
 const routes: Routes = [{
 	path: '',
@@ -68,6 +69,9 @@ const routes: Routes = [{
 	path: 'form-publicacion',
 	component: FormPublicacionComponent,
 	//canActivate: [AuthGuard] TODO: CAMBIAR CUANDO LA INFO DEL USER ESTE EN LOCAL STORAGE
+},{
+	path: 'publicacion/:id_publicacion',
+	component: PublicacionComponent,
 },{
 	path: 'error',
 	component: ErrorComponent

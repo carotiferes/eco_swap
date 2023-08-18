@@ -1,0 +1,132 @@
+#main-publicacion {
+	padding: 2%;
+
+	.example-header-image {
+		background-image: url('../../../assets/persona.png');
+		background-size: cover;
+		margin: 0 10px 0 0;
+	}
+
+	mat-card {
+		mat-card-header, mat-card-content, mat-card-actions {
+			margin: 10px;
+		}
+
+		mat-card-actions {
+			display: flex;
+			gap: 10px;
+		}
+	}
+
+	.div-header {
+		display: flex;
+		width: 100%;
+		justify-content: space-between;
+		align-items: flex-end;
+
+		.header-info {
+			display: flex;
+			align-items: center;
+
+			.address {
+				color: var(--dark-grey);
+				margin-left: 10px;
+
+				&:hover {
+					color: var(--grey-text);
+					cursor: pointer;
+				}
+			}
+		}
+	}
+
+	.card-content {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1rem;
+
+		.imagenes {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			
+			img {
+				height: 100px;
+				margin: 5px;
+				border-radius: 5px;
+				box-shadow: 2px 2px 5px var(--dark-grey);
+	
+				&:hover {
+					cursor: pointer;
+				}
+			}
+		}
+
+		.descripcion {
+			font-weight: 500;
+			font-size: 16px;
+			margin-bottom: 15px;
+		}
+
+		.trueque, .venta {
+			font-size: 16px;
+		}
+	}
+
+	.card-button {
+		align-self: center;
+
+		/* .buttons {
+			display: flex;
+		} */
+	}
+
+	.donacion-example-header-image {
+		background-image: url('../../../assets/persona.png');
+		background-size: cover;
+	}
+	.donacion-card-content {
+		display: grid;
+		grid-template-columns: 1fr 2fr 1fr;//1fr 2fr 1fr;
+		gap: 1rem;
+
+		.imagenes {
+			img {
+				height: 65px;
+    			margin: 5px;
+				border-radius: 5px;
+				box-shadow: 2px 2px 5px var(--dark-grey);
+			}
+		}
+
+		.donacion-status {
+			display: flex;
+			flex-direction: column;
+
+			button {
+				margin: 5px auto;
+				width: 150px;
+			}
+		}
+
+		.aprobada {
+			color: var(--primary-color);
+			font-weight: 500;
+		}
+		.rechazada {
+			color: var(--warn-color);
+		}
+	}
+}
+
+@media (min-width: 0px) and (max-width: 576px) {
+	.card-content {
+		display: grid;
+		grid-template-columns: 1fr !important;
+	}
+
+	.donacion-card-content {
+		display: grid;
+		grid-template-columns: 1fr !important;
+	}
+}

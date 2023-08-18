@@ -1,15 +1,64 @@
 <app-header title="Trueques"></app-header>
 
-<div style="display: flex;
+<div id="main-publicaciones">
+	<div class="row">
+		<form [formGroup]="formFiltros" id="form-filtros" *ngIf="origin == 'all'">
+			<mat-form-field appearance="outline">
+				<mat-label>Código Postal</mat-label>
+				<input matInput formControlName="codigoPostal" type="number">
+			</mat-form-field>
+			<mat-form-field appearance="outline">
+				<mat-label>Tipo del Producto</mat-label>
+				<mat-select formControlName="tipoProducto" panelClass="example-panel">
+					<mat-option *ngFor="let tipo of tipos_productos" [value]="tipo.nombre">
+						{{tipo.descripcion}}
+					</mat-option>
+				</mat-select>
+				<!-- <input matInput formControlName="tipoProducto"> -->
+			</mat-form-field>
+			<div style="text-align: center;">
+				<button mat-raised-button color="primary" (click)="filtrarPublicaciones()">FILTRAR</button>
+				<button mat-raised-button (click)="limpiarFiltros()">LIMPIAR</button>
+			</div>
+		</form>
+	</div>
+	<app-spinner [loading]="loading"></app-spinner>
+	<div class="row" *ngIf="!loading">
+		<div *ngIf="publicacionesToShow.length==0" style="text-align: center;">No hay publicaciones para mostrar</div>
+		<div><!-- class="col-lg-6" -->
+			<div class="card-deck">
+				<div class="card row" *ngFor="let publicacion of publicacionesToShow" (click)="goToPublicacion(publicacion)">
+					<div class="col-sm-4" style="display: flex; justify-content: center;">
+						<img class="card-img" [src]="publicacion.imagenes ? publicacion.imagenes : 'assets/persona.png'">
+					</div>
+					<div class="card-body col-sm-6">
+						<h2 class="card-title">{{publicacion.titulo}}</h2>
+						<div class="trueque">
+							Valor de trueque: ${{publicacion.valorTruequeMin}} - ${{publicacion.valorTruequeMax}} 
+						</div>
+						<div class="venta" *ngIf="publicacion.tipoPublicacion == 'VENTA'">
+							Precio de venta: ${{publicacion.precioVenta}}
+						</div>
+					</div>
+					<div class="card-fundacion col-sm-2">
+						<img class="img-fundacion" src="assets/persona.png">
+						<h4>{{publicacion.particular.nombre + ' ' + publicacion.particular.apellido}}</h4>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="floating-button-container">
+		<button mat-fab color="primary" aria-label="Agregar Publicación" (click)="addPublicacion()">
+			<mat-icon>add</mat-icon>
+		</button>
+	</div>
+</div>
+
+<!-- <div style="display: flex;
 justify-content: center;
 flex-direction: column;
 align-items: center;">
 	<img src="assets/logo_green.png" style="max-width: 300px;">
 	<h3>¡Muy pronto podrás acceder a esta página!</h3>
-</div>
-
-<div class="floating-button-container">
-	<button mat-fab color="primary" aria-label="Agregar Publicación" (click)="addPublicacion()">
-		<mat-icon>add</mat-icon>
-	</button>
-</div>
+</div> -->
