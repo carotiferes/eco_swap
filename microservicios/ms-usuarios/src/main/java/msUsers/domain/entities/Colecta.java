@@ -10,6 +10,7 @@ import msUsers.domain.responses.DTOs.ColectaDTO;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -58,6 +59,7 @@ public class Colecta implements Serializable {
         colectaDTO.setActiva(activa);
         colectaDTO.setFechaInicio(fechaInicio);
         colectaDTO.setFechaFin(fechaFin);
+        colectaDTO.setProductos(productos.stream().map(Producto::getDescripcion).collect(Collectors.toList()));
         return colectaDTO;
     }
 }

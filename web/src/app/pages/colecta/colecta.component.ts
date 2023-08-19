@@ -8,7 +8,6 @@ import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import Swal from 'sweetalert2';
 import { ShowErrorService } from 'src/app/services/show-error.service';
-import { FundacionesService } from 'src/app/services/fundaciones.service';
 
 @Component({
   selector: 'app-colecta',
@@ -28,8 +27,7 @@ export class ColectaComponent {
 	buttonsCard: {name: string, icon: string, color: string, status: string, disabled: string}[] = []
 
 	constructor(private route: ActivatedRoute, private router: Router, private auth: AuthService,
-		private donacionesService: DonacionesService, private showErrorService: ShowErrorService,
-		private fundacionesService: FundacionesService){
+		private donacionesService: DonacionesService, private showErrorService: ShowErrorService){
 		route.paramMap.subscribe(params => {
 			console.log(params);
 			this.id_colecta = params.get('id_colecta') || '';
@@ -42,7 +40,7 @@ export class ColectaComponent {
 		this.getColecta();
 	}
 
-	getColecta() {
+	getColecta(){
 		this.donacionesService.getColecta(this.id_colecta).subscribe({
 			next: (colecta: any) => {
 				if (colecta) {

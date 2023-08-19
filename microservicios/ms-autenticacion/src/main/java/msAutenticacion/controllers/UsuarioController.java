@@ -3,11 +3,14 @@ package msAutenticacion.controllers;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import msAutenticacion.domain.entities.Usuario;
+import msAutenticacion.domain.entities.enums.TipoDocumento;
+import msAutenticacion.domain.model.EnumValue;
+import msAutenticacion.domain.model.enums.TipoDocumentoEnum;
 import msAutenticacion.domain.repositories.UsuarioRepository;
-import msAutenticacion.domain.requests.RequestConfirm;
 import msAutenticacion.domain.requests.RequestLogin;
 import msAutenticacion.domain.requests.RequestPassword;
 import msAutenticacion.domain.requests.RequestSignin;
+import msAutenticacion.domain.responses.DTOs.TipoDocumentoDTO;
 import msAutenticacion.domain.responses.ResponseLogin;
 import msAutenticacion.services.UsuarioService;
 import org.springframework.http.HttpStatus;
@@ -16,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/ms-autenticacion/api/v1")
@@ -38,7 +44,7 @@ public class UsuarioController {
         return ResponseEntity.ok(usuario);
     }
 
-    @PostMapping(path = "/usuario/signup", produces = JSON, consumes = JSON)
+    @PostMapping(path = "/usuario/signup", produces = JSON)
     @Transactional
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<Long> postSignin(@RequestBody RequestSignin body){
@@ -58,17 +64,6 @@ public class UsuarioController {
         return ResponseEntity.ok(HttpStatus.ACCEPTED);
     }
 
-    @PutMapping(path = "/usuario/confirmar", produces = JSON)
-    @Transactional
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseEntity<HttpStatus> putConfirmarUser(@RequestBody RequestConfirm body) throws Exception {
-        log.info("putConfirmarUser: Confirmación del usuario: "+ body.getUsername());
-        Boolean resultado = usuarioService.confirmarUsuario(body);
-        log.info("putConfirmarUser: Usuario {} tuvo como resultado de confirmacion de mail: {} ",
-                body.getUsername(), resultado);
-        return ResponseEntity.ok(HttpStatus.ACCEPTED);
-    }
-
     @PatchMapping(path = "/usuario/login", produces = JSON)
     @Transactional
     public ResponseEntity<ResponseLogin> patchLogin(@RequestBody RequestLogin body) throws NoSuchAlgorithmException {
@@ -78,6 +73,25 @@ public class UsuarioController {
         ResponseLogin responseLogin = new ResponseLogin();
         responseLogin.setToken(jwt);
         return ResponseEntity.ok(responseLogin);
+    }
+
+    @GetMapping(path = "/tiposDocumentos", produces = JSON)
+    public ResponseEntity<List<TipoDocumentoDTO>> getTiposProductos() {
+        List<TipoDocumentoDTO> tiposDocumento = Arrays.stream(TipoDocumentoEnum.values()).
+                map(tipoDocumento -> new TipoDocumentoDTO(tipoDocumento.name(),obtenerDescripcion(tipoDocumento)))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(tiposDocumento);
+    }
+
+    private String obtenerDescripcion(TipoDocumentoEnum tipoProducto) {
+        try {
+            EnumValue annotation = tipoProducto.getClass()
+                    .getField(tipoProducto.name())
+                    .getAnnotation(EnumValue.class);
+            return annotation != null ? annotation.description() : "";
+        } catch (NoSuchFieldException e) {
+            return "";
+        }
     }
 
 }

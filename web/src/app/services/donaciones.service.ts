@@ -19,15 +19,15 @@ export class DonacionesService {
 		return this.backendService.get(URL_NAME, 'api/colectas', filtros);
 	}
 
-	getMisColectas(){ // TODO: url de mis COLECTAS (x tkn)
-		return this.backendService.get(URL_NAME, 'api/colectas/102');
+	getMisColectas(){
+		return this.backendService.get(URL_NAME, 'api/colectas');
 	}
 
 	getColecta(id_colecta: any){
 		return this.backendService.get(URL_NAME, 'api/colecta/'+id_colecta);
 	}
 
-	getDonacionesColecta(id_colecta: any){
+	getDonacionesColecta(id_colecta: any){// TODO: url de donaciones x colecta
 		return this.backendService.get(URL_NAME, 'api/colecta/'+id_colecta+'/donaciones');
 	}
 
