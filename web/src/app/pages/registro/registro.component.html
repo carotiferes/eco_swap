@@ -94,7 +94,12 @@
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>Tipo Documento</mat-label>
-						<input matInput formControlName="tipoDocumento">
+						<!-- <input matInput formControlName="tipoDocumento"> -->
+						<mat-select formControlName="tipoDocumento" name="tipoDocumento">
+							<mat-option *ngFor="let tipo of tiposDocumento" [value]="tipo.nombre">
+								{{tipo.descripcion}}
+							</mat-option>
+						</mat-select>
 						<mat-error *ngIf="particularForm.get('tipoDocumento')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>

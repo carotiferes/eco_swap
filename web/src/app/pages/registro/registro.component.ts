@@ -32,6 +32,8 @@ export class RegistroComponent {
 	passwordIcon: string = 'visibility';
 	passwordType: string = 'password';
 
+	tiposDocumento: any[] = [];
+
 	constructor(private fb: FormBuilder, private dateAdapter: DateAdapter<Date>,
 		private usuarioService: UsuarioService, private route: ActivatedRoute,
 		private auth: AuthService, private router: Router,
@@ -71,6 +73,7 @@ export class RegistroComponent {
 	ngOnInit(): void {
 		if (!this.resetPassword) this.selectTipoPerfil();
 		else this.loading = false;
+		this.getTiposDocumentos()
 	}
 
 	ngOnDestroy(): void {
@@ -100,6 +103,19 @@ export class RegistroComponent {
 			}
 			console.log(this.isSwapper);
 			this.loading = false
+		})
+	}
+
+	getTiposDocumentos() {
+		this.usuarioService.getTiposDocumentos().subscribe({
+			next: (res: any) => {
+				console.log('TIPOS DOC:', res);
+				this.tiposDocumento = res;
+			},
+			error: (error) => {
+				console.log('ERROR TIPOS DOC:', error);
+				
+			}
 		})
 	}
 

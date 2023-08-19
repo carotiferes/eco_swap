@@ -25,7 +25,7 @@ export class AuthService {
 			next: (v: any) => {
 				console.log('response:', v);
 				// TODO: GET USER INFO TO SAVE IN LOCAL STORAGE (AT LEAST IS_SWAPPER)
-				this.setLocalStorage('userToken', JSON.stringify(v.token));
+				this.setLocalStorage('userToken', v.token);
 				const userData: any = jwtDecode(v.token)
 				this.setLocalStorage('isSwapper', JSON.stringify(userData.esParticular));
 				this.isUserLoggedIn = true;

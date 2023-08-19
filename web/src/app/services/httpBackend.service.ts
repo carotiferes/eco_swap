@@ -13,6 +13,11 @@ export class HttpBackEnd {
 		return this.httpClient.get(URL + endpoint, { params });
 	}
 
+	getImg(urlName: string, endpoint: string, params?: any) {
+		const URL = this.getUrlByName(urlName);
+		return this.httpClient.get(URL + endpoint, { params, responseType: 'blob' });
+	}
+
 	post(urlName: string, endpoint: string, body: any) {
 		const URL = this.getUrlByName(urlName);
 		return this.httpClient.post(URL + endpoint, body);
