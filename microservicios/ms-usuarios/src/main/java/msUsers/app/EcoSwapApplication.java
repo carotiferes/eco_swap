@@ -21,19 +21,4 @@ public class EcoSwapApplication {
 
 		SpringApplication.run(EcoSwapApplication.class, args);
 	}
-
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**")
-						.allowedOrigins("http://localhost:4200")
-						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Agrega aquí los métodos permitidos
-						.allowedHeaders("Content-Type", "Authorization") // Agrega aquí los encabezados permitidos en tus solicitudes
-						.allowCredentials(true)
-						.maxAge(3600); // Tiempo máximo de caché para la pre-comprobación OPTIONS, en segundos
-			}
-		};
-	}
 }
