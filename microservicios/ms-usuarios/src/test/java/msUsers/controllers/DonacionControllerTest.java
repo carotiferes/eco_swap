@@ -14,6 +14,7 @@ import jakarta.servlet.http.Part;
 import msUsers.domain.entities.CaracteristicaDonacion;
 import msUsers.domain.entities.Particular;
 import msUsers.domain.repositories.ParticularRepository;
+import msUsers.domain.responses.DTOs.DonacionDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -128,7 +129,7 @@ public class DonacionControllerTest{
         when(particularRepository.findById(idParticular)).thenReturn(Optional.of(particular));
 
         // Act
-        ResponseEntity<List<Donacion>> response = donacionController.listarDonacionesPorParticular(idParticular);
+        ResponseEntity<List<DonacionDTO>> response = donacionController.listarDonacionesPorParticular();
 
         // Assert
         verify(particularRepository, times(1)).findById(idParticular);
@@ -147,7 +148,7 @@ public class DonacionControllerTest{
 
         // Act and Assert
         assertThrows(EntityNotFoundException.class, () -> {
-            donacionController.listarDonacionesPorParticular(idParticular);
+            donacionController.listarDonacionesPorParticular();
         });
 
         // Verify

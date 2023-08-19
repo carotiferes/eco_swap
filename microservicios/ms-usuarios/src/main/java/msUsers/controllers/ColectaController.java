@@ -7,11 +7,13 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import jakarta.persistence.criteria.*;
 import msUsers.domain.entities.*;
+import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.repositories.ColectaRepository;
 import msUsers.domain.repositories.FundacionesRepository;
 import msUsers.domain.requests.RequestFilterColectas;
 import msUsers.domain.requests.RequestColecta;
 import msUsers.domain.responses.ResponsePostEntityCreation;
+import msUsers.services.CriteriaBuilderQueries;
 import msUsers.services.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import msUsers.domain.responses.DTOs.ColectaDTO;
@@ -40,21 +42,22 @@ public class ColectaController {
     @Autowired
     ImageService imageService;
 
-    //private UserContextService userContextService;
+    @Autowired
+    CriteriaBuilderQueries criteriaBuilderQueries;
 
     private static final String json = "application/json";
-
 
     @PostMapping(path = "/colecta", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public ResponseEntity<ResponsePostEntityCreation> createColecta(@Valid @RequestBody RequestColecta requestColecta) {
 
-        //final var perfil = this.userContextService.getUsuario();
-        log.info(">> Request de creación de colecta: {}", requestColecta.getTitulo());
+        final Usuario user = UsuarioContext.getUsuario();
+        Optional<Fundacion> optionalFundacion = criteriaBuilderQueries.getFundacionPorUsuario(user.getIdUsuario());
+        Fundacion fundacion = optionalFundacion.orElseThrow(() -> new EntityNotFoundException("¡La fundacion no existe!"));
 
-        var fundacionOptional = this.fundacionesRepository.findById(requestColecta.getIdFundacion());
-        Fundacion fundacion = fundacionOptional.orElseThrow(() -> new EntityNotFoundException("¡La fundacion no existe!"));
+        //final var usuario = this.jwtService.getParticularPorJwt(requestColecta.getJwt());
+        log.info(">> Request de creación de colecta: {}", requestColecta.getTitulo());
 
         Colecta colecta = new Colecta();
         colecta.setFechaInicio(requestColecta.getFechaInicio());
@@ -152,8 +155,12 @@ public class ColectaController {
         return ResponseEntity.ok(colectaDTO);
     }
 
-    @GetMapping(path = "/colectas/{id_fundacion}", produces = json)
-    public ResponseEntity<List<ColectaDTO>> getColectaPorIdFundacion(@PathVariable("id_fundacion") Long id) {
+    @GetMapping(path = "/colecta", produces = json)
+    public ResponseEntity<List<ColectaDTO>> getColectaPorIdFundacion() {
+
+        final Usuario user = UsuarioContext.getUsuario();
+        Optional<Fundacion> optionalFundacion = criteriaBuilderQueries.getFundacionPorUsuario(user.getIdUsuario());
+        Fundacion fundacion = optionalFundacion.orElseThrow(() -> new EntityNotFoundException("¡La fundacion no existe!"));
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Colecta> query = cb.createQuery(Colecta.class);
@@ -161,7 +168,7 @@ public class ColectaController {
         Predicate predicate = cb.conjunction();
 
         Join<Colecta, Fundacion> join = from.join("fundacion");
-        predicate = cb.and(predicate, cb.equal(join.get("idFundacion"), id));
+        predicate = cb.and(predicate, cb.equal(join.get("idFundacion"), fundacion.getIdFundacion()));
 
         query.where(predicate);
 
@@ -182,6 +189,41 @@ public class ColectaController {
 
         return ResponseEntity.ok(colectasDTO);
     }
+    @GetMapping(path = "/misColectas", produces = json)
+    public ResponseEntity<List<ColectaDTO>> getMisColectas() {
+
+        final Usuario user = UsuarioContext.getUsuario();
+        Optional<Fundacion> optionalFundacion = criteriaBuilderQueries.getFundacionPorUsuario(user.getIdUsuario());
+        Fundacion fundacion = optionalFundacion.orElseThrow(() -> new EntityNotFoundException("¡La fundacion no existe!"));
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Colecta> query = cb.createQuery(Colecta.class);
+        Root<Colecta> from = query.from(Colecta.class);
+        Predicate predicate = cb.conjunction();
+
+        Join<Colecta, Fundacion> join = from.join("fundacion");
+        predicate = cb.and(predicate, cb.equal(join.get("idFundacion"), fundacion.getIdFundacion()));
+
+        query.where(predicate);
+
+        List<Colecta> colectas = entityManager.createQuery(query).getResultList();
+        List<ColectaDTO> colectasDTO = colectas.stream().map(colecta -> {
+            ColectaDTO colectaDTO = new ColectaDTO();
+            colectaDTO.setTitulo(colecta.getTitulo());
+            colectaDTO.setFundacion(colecta.getFundacion().getNombre());
+            colectaDTO.setIdColecta(colecta.getIdColecta());
+            colectaDTO.setImagen(colecta.getImagen());
+            colectaDTO.setIdFundacion(colecta.getFundacion().getIdFundacion());
+            colectaDTO.setActiva(colecta.isActiva());
+            colectaDTO.setFechaInicio(colecta.getFechaInicio());
+            colectaDTO.setDescripcion(colecta.getDescripcion());
+            colectaDTO.setFechaFin(colecta.getFechaFin());
+            return colectaDTO;
+        }).toList();
+
+        return ResponseEntity.ok(colectasDTO);
+    }
+
 
 }
 

@@ -9,6 +9,7 @@ import msAutenticacion.domain.entities.Direccion;
 import msAutenticacion.domain.entities.Usuario;
 import msAutenticacion.domain.repositories.DireccionRepository;
 import msAutenticacion.domain.repositories.UsuarioRepository;
+import msAutenticacion.domain.requests.RequestConfirm;
 import msAutenticacion.domain.requests.RequestLogin;
 import msAutenticacion.domain.requests.RequestPassword;
 import msAutenticacion.domain.requests.RequestSignin;
@@ -60,8 +61,7 @@ public class UsuarioService {
     public Long crearUsuario(RequestSignin signin) {
         log.info("crearUsuario: Usuario a crear:" + signin.getUsername());
         RequestDireccion direccionCrear = signin.getDireccion();
-        String salt = this.crearSalt();
-        Usuario usuario = this.crearUsuario(signin, salt);
+        Usuario usuario = this.crearUsuarioBuilder(signin);
         Direccion direccion = this.crearDireccion(usuario, direccionCrear);
         Direccion direccionCreada = direccionRepository.save(direccion);
         log.info("crearUsuario: Direccion creado con ID:" + direccionCreada.getIdDireccion());
@@ -71,18 +71,22 @@ public class UsuarioService {
         } else {
             usuarioCreado = fundacionService.crearUser(direccionCreada.getUsuario(), signin);
         }
-        log.info("crearUsuario: Usuario creado con ID: {}", usuarioCreado.getIdUsuario());
-        this.enviarMail(usuario);
-        return usuarioCreado.getIdUsuario();
+        log.info("crearUsuario: Usuario creado con ID: {}", usuarioCreado.getId());
+        this.enviarEmailConfirmacion(usuarioCreado, usuarioCreado.getConfirmCodigo());
+        return usuarioCreado.getId();
     }
 
-    private void enviarMail(Usuario usuario) {
+    private void enviarEmailConfirmacion(Usuario usuario, String codigoConfirmacion) {
         /*
         Método asincrónico, obtenido de https://www.baeldung.com/java-asynchronous-programming
         Tiene la ventaja de ser método nativo de Java 8.
          */
         CompletableFuture.supplyAsync(() ->
-                emailService.sendConfirmEmail(usuario.getEmail(), "Gracias por sumarte a ECOSWAP", usuario, this.crearSalt()));
+                emailService.sendConfirmEmail(
+                        usuario.getEmail(),
+                        "Gracias por sumarte a ECOSWAP",
+                        usuario,
+                        codigoConfirmacion));
     }
     
 
@@ -94,6 +98,22 @@ public class UsuarioService {
         usuario.setPassword(request.getNuevoPassword());
         usuarioRepository.save(usuario);
         log.info(("actualizarContrasenia: Se ha actualizar con ÉXITO la contraseña para usuarioId: " + request.getUsername()));
+    }
+
+    public Boolean confirmarUsuario(RequestConfirm request) {
+        log.info("confirmarUsuario: Confirmar usuarioId {}", request.getUsername());
+        Usuario usuario = usuarioRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new EntityNotFoundException("No fue encontrado el usuarioId: " + request.getUsername()));
+        if(usuario.getConfirmCodigo().equals(request.getCodigo())){
+            usuario.setConfirmCodigo("");
+            usuario.setBloqueado(false);
+            usuarioRepository.save(usuario);
+            log.info(("confirmarUsuario: Confirmación exitosa para userId: "
+                    + request.getUsername()));
+            return true;
+        }
+        log.info("confirmarUsuario: Confirmación de ususario para usuarioId {} falló: ", request.getUsername());
+        throw new EntityNotFoundException("Error durante la confirmación del usaurioId: " + request.getUsername());
     }
 
     public String login(RequestLogin request) throws NoSuchAlgorithmException {
@@ -157,16 +177,18 @@ public class UsuarioService {
                 .build();
     }
 
-    private Usuario crearUsuario(RequestSignin signin, String salt) {
+    private Usuario crearUsuarioBuilder(RequestSignin signin) {
+        String salt = this.crearSalt();
         return Usuario.builder()
                 .email(signin.getEmail())
                 .username(signin.getUsername())
                 .password(this.crearPassword(signin.getPassword(), salt))
                 .salt(salt)
+                .confirmCodigo(this.crearSalt())
                 .telefono(signin.getTelefono())
                 .isSwapper(signin.getFundacion()==null)
                 .intentos(0)
-                .bloqueado(false)
+                .bloqueado(true) //CUANDO SE CREA UN USUARIO, ESTE DEBE CONFIRMAR POR MAIL PRIMERO
                 .build();
     }
     
@@ -181,7 +203,7 @@ public class UsuarioService {
                     .withIssuer("ecoswap")
                     .withExpiresAt(Instant.now().plusSeconds(604800))
                     .withClaim("email", usuario.getEmail())
-                    .withClaim("id", usuario.getIdUsuario())
+                    .withClaim("id", usuario.getId())
                     .withClaim("esParticular", usuario.isSwapper())
                     .sign(algorithm);
         } catch (JWTCreationException | NoSuchAlgorithmException exception){

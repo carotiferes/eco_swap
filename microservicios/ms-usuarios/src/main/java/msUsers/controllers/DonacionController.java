@@ -7,13 +7,17 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.entities.*;
 import msUsers.domain.entities.enums.EstadoDonacion;
+import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.repositories.DonacionesRepository;
 import msUsers.domain.repositories.ParticularRepository;
 import msUsers.domain.requests.donaciones.RequestCambiarEstadoDonacion;
 import msUsers.domain.requests.donaciones.RequestComunicarDonacionColectaModel;
+import msUsers.domain.responses.DTOs.ColectaDTO;
+import msUsers.domain.responses.DTOs.DonacionDTO;
 import msUsers.domain.responses.ResponsePostEntityCreation;
 import msUsers.domain.responses.ResponseUpdateEntity;
 import msUsers.services.ColectaService;
+import msUsers.services.CriteriaBuilderQueries;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +25,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import static java.util.Arrays.stream;
 
 @RestController
 @Slf4j
@@ -35,6 +43,8 @@ public class DonacionController {
     ColectaService colectaService;
     @Autowired
     EntityManager entityManager;
+    @Autowired
+    CriteriaBuilderQueries criteriaBuilderQueries;
     @Autowired
     ParticularRepository particularRepository;
 
@@ -74,11 +84,26 @@ public class DonacionController {
 
         }
 
-    @GetMapping(path = "/particular/{id_particular}/donaciones", produces = json)
-    public ResponseEntity<List<Donacion>> listarDonacionesPorParticular(@PathVariable("id_particular") Long idParticular){
-        final var particular = this.particularRepository.findById(idParticular).
-                orElseThrow(() -> new EntityNotFoundException("No fue encontrado el particular: " + idParticular));
-        return ResponseEntity.ok(particular.getDonaciones());
+    @GetMapping(path = "/particular/misDonaciones", produces = json)
+    public ResponseEntity<List<DonacionDTO>> listarDonacionesPorParticular(){
+
+        final Usuario user = UsuarioContext.getUsuario();
+        Optional<Particular> optionalParticular = criteriaBuilderQueries.getParticularPorUsuario(user.getIdUsuario());
+        Particular particular = optionalParticular.orElseThrow(() -> new EntityNotFoundException("No fue encontrado el particular."));
+
+        List<DonacionDTO> donacionesDTO = particular.getDonaciones().stream().map(donacion -> {
+            DonacionDTO donacionDTO = new DonacionDTO();
+            donacionDTO.setCantidadDonacion(donacion.getCantidadDonacion());
+            donacionDTO.setCaracteristicaDonacion(donacion.getCaracteristicaDonacion());
+            donacionDTO.setEstadoDonacion(donacion.getEstadoDonacion());
+            donacionDTO.setImagenes(donacion.getImagenes());
+            donacionDTO.setIdParticular(donacion.getParticular().getIdParticular());
+            donacionDTO.setDescripcion(donacion.getDescripcion());
+            donacionDTO.setNombreParticular(donacion.getParticular().getNombre());
+            donacionDTO.setProducto(donacion.getProducto().toDTO());
+            return donacionDTO;
+        }).toList();
+        return ResponseEntity.ok(donacionesDTO);
     }
 
     @PostMapping(path = "/colecta/{id_colecta}/crearDonacion", consumes = json, produces = json)
@@ -88,7 +113,12 @@ public class DonacionController {
             @PathVariable(required = true, name = "id_colecta") Long idColecta,
             @Valid @RequestBody RequestComunicarDonacionColectaModel request){
         log.info(">> Request para colecta ID {} creacion donacion: {}", idColecta, request.toString());
-        colectaService.crearDonacion(request, idColecta);
+
+        final Usuario user = UsuarioContext.getUsuario();
+        Optional<Particular> optionalParticular = criteriaBuilderQueries.getParticularPorUsuario(user.getIdUsuario());
+        Particular particular = optionalParticular.orElseThrow(() -> new EntityNotFoundException("No fue encontrado el particular."));
+
+        colectaService.crearDonacion(request, idColecta, particular.getIdParticular());
         ResponsePostEntityCreation response = new ResponsePostEntityCreation();
         response.setId(idColecta);
         response.setDescripcion("Donacion creada.");
@@ -109,7 +139,7 @@ public class DonacionController {
 
     @GetMapping(path = "/colecta/{id_colecta}/donaciones/{id_donacion}", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.OK)
-    public Donacion obtenerDonacionesXIdDonacion(@PathVariable(required = true, name = "id_colecta") Long idDonacion) {
+    public Donacion obtenerDonacionesXIdDonacion(@PathVariable(required = true, name = "id_donacion") Long idDonacion) {
         log.info(">> Request obtener donacion x idDonacion: {}", idDonacion);
         Donacion donacion = colectaService.obtenerDonacionXIdDonacion(idDonacion);
         log.info("<< Donacion obtenido: {}", donacion);

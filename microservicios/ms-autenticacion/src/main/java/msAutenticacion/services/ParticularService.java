@@ -19,16 +19,16 @@ public class ParticularService {
     private ParticularRepository particularRepository;
 
     public Usuario crearUser(Usuario usuario, RequestSignin requestSignin) {
-        log.info("Creando usuario como PARTICULAR");
-        RequestSigninSwapper requestParicular = requestSignin.getParticular();
+        log.info("Creando usuario como PARTICULAR: {}", requestSignin);
+        RequestSigninSwapper requestParticular = requestSignin.getParticular();
         Particular particular = Particular.builder()
                 .usuario(usuario)
-                .apellido(requestParicular.getApellido())
-                .cuil(requestParicular.getCuil())
-                .dni(requestParicular.getDni())
-                .fechaNacimiento(requestParicular.getFechaNacimiento())
-                .nombre(requestParicular.getNombre())
-                .tipoDocumento(TipoDocumento.valueOf(requestParicular.getTipoDocumento()))
+                .apellido(requestParticular.getApellido())
+                .cuil(requestParticular.getCuil())
+                .dni(requestParticular.getDni())
+                .fechaNacimiento(requestParticular.getFechaNacimiento())
+                .nombre(requestParticular.getNombre())
+                .tipoDocumento(TipoDocumento.valueOf(requestParticular.getTipoDocumento()))
                 .build();
         Particular creado = particularRepository.save(particular);
         log.info("Usuario Particular creado con ID: "+creado.getIdParticular());

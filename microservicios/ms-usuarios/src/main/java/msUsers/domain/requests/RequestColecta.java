@@ -21,8 +21,6 @@ public class RequestColecta {
     @NotBlank(message = "La colecta debe contener una descripción.")
     private String descripcion;
 
-    private long idFundacion;
-
     @NotNull(message = "La colecta debe tener una lista de productos.")
     @Valid
     private List<RequestProducto> productos;

@@ -8,8 +8,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import msUsers.domain.entities.enums.TipoProducto;
+import msUsers.domain.responses.DTOs.ProductoDTO;
+import msUsers.domain.responses.DTOs.ProductoDTO;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -43,5 +46,17 @@ public class Producto {
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Publicacion publicacion;
+
+    public ProductoDTO toDTO() {
+        ProductoDTO productoDTO = new ProductoDTO();
+        productoDTO.setTipoProducto(tipoProducto);
+        productoDTO.setDescripcion(descripcion);
+        productoDTO.setTipoProducto(tipoProducto);
+        productoDTO.setPublicacion(publicacion);
+        productoDTO.setDonaciones(donaciones);
+        productoDTO.setCantidadSolicitada(cantidadSolicitada);
+        productoDTO.setCantidadRecibida(cantidadRecibida);
+        return productoDTO;
+    }
 
 }

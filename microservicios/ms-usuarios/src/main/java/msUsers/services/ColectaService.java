@@ -24,7 +24,6 @@ public class ColectaService {
 
     @Autowired
     ParticularRepository particularRepository;
-
     @Autowired
     ProductoRepository productoRepository;
 
@@ -36,29 +35,28 @@ public class ColectaService {
     @Autowired
     CaracteristicaDonacionRepository caracteristicaDonacionRepository;
 
-    public void crearDonacion(RequestComunicarDonacionColectaModel request, Long idColecta) {
+    public void crearDonacion(RequestComunicarDonacionColectaModel request, Long idColecta, Long idParticular) {
            log.info(">> SERVICE: Se comenzo la creacion de donacion para la colecta: {}", idColecta);
            Colecta colecta = colectaRepository.findById(idColecta).get();
            Producto producto = colecta.getProductos().
                    stream()
-                   .filter(x -> x.getIdProducto() == request.getColectaProductoModel().getProductoId())
+                   .filter(x -> x.getIdProducto() == request.getProductoId())
                    .findAny().get();
-           List<CaracteristicaDonacion> lista = request.getColectaProductoModel()
-                   .getCaracteristicas()
+           List<CaracteristicaDonacion> lista = request.getCaracteristicas()
                    .stream()
-                   .map(s -> CaracteristicaDonacion.armarCarateristica(s, request.getIdParticular()))
+                   .map(s -> CaracteristicaDonacion.armarCarateristica(s, idParticular))
                    .toList();
-           Particular particular = particularRepository.findById(request.getIdParticular()).get();
+           Particular particular = particularRepository.findById(idParticular).get();
 
            //TODO: Revisar que no se creen las imagenes si falla la creación de la donación
            List<String> nombreImagenes = new ArrayList<>();
-           for (int i = 0; i < request.getColectaProductoModel().getImagenes().size(); i++) {
-               nombreImagenes.add(imageService.saveImage(request.getColectaProductoModel().getImagenes().get(i)));
+           for (int i = 0; i < request.getImagenes().size(); i++) {
+               nombreImagenes.add(imageService.saveImage(request.getImagenes().get(i)));
            }
 
            Donacion donacionNueva = new Donacion();
-           donacionNueva.setCantidadDonacion(request.getColectaProductoModel().getCantidadOfrecida());
-           donacionNueva.setDescripcion(request.getColectaProductoModel().getMensaje());
+           donacionNueva.setCantidadDonacion(request.getCantidadOfrecida());
+           donacionNueva.setDescripcion(request.getMensaje());
            donacionNueva.setEstadoDonacion(EstadoDonacion.PENDIENTE);
            donacionNueva.setParticular(particular);
            donacionNueva.setProducto(producto);
