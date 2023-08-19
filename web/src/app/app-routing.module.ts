@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
-import { TruequesComponent } from './pages/trueques/trueques.component';
+import { PublicacionesComponent } from './pages/publicaciones/publicaciones.component';
 import { ColectasComponent } from './pages/colectas/colectas.component';
 import { RegistroComponent } from './pages/registro/registro.component';
 import { AuthGuard } from './core/auth.guard';
@@ -26,8 +26,8 @@ const routes: Routes = [{
 	path: 'login',
 	component: LoginComponent
 }, {
-	path: 'trueques',
-	component: TruequesComponent
+	path: 'publicaciones',
+	component: PublicacionesComponent
 }, {
 	path: 'colectas',
 	component: ColectasComponent
@@ -72,6 +72,14 @@ const routes: Routes = [{
 },{
 	path: 'publicacion/:id_publicacion',
 	component: PublicacionComponent,
+},{
+	path: 'mis-publicaciones',
+	component: PublicacionesComponent,
+	canActivate: [AuthGuard]
+},{
+	path: 'mis-ventas',
+	component: PublicacionesComponent,
+	canActivate: [AuthGuard]
 },{
 	path: 'error',
 	component: ErrorComponent

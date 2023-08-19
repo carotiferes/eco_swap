@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpBackEnd } from './httpBackend.service';
 import Swal from 'sweetalert2';
+import jwtDecode from 'jwt-decode';
+import { UsuarioService } from './usuario.service';
 
 const URL_NAME = 'URImsAutenticacion'
 
@@ -11,8 +13,9 @@ const URL_NAME = 'URImsAutenticacion'
 export class AuthService {
 
 	isUserLoggedIn: boolean;
+	userData: any;
 
-	constructor(private router: Router, private backendService: HttpBackEnd) {
+	constructor(private router: Router, private backendService: HttpBackEnd, private usuarioService: UsuarioService) {
 		if(this.getUserLogin()) this.isUserLoggedIn = true;
 		else this.isUserLoggedIn = false;
 	}
@@ -23,7 +26,8 @@ export class AuthService {
 				console.log('response:', v);
 				// TODO: GET USER INFO TO SAVE IN LOCAL STORAGE (AT LEAST IS_SWAPPER)
 				this.setLocalStorage('userToken', JSON.stringify(v.token));
-				this.setLocalStorage('isSwapper', JSON.stringify(true));
+				const userData: any = jwtDecode(v.token)
+				this.setLocalStorage('isSwapper', JSON.stringify(userData.esParticular));
 				this.isUserLoggedIn = true;
 				this.setUserLoggedIn();
 				this.router.navigate([''])
@@ -45,15 +49,35 @@ export class AuthService {
 	}
 
 	getUserData() {
-		const data = localStorage.getItem('userData');
+		const tkn = localStorage.getItem('userToken')
+		if(tkn) {
+			const decodedToken: any = jwtDecode(tkn)
+			this.usuarioService.getUserByID(decodedToken.id).subscribe({
+				next: (res) => {
+					this.userData = res;
+					return this.userData;
+				},
+				error: (error) => {
+					console.log(error);
+					return this.userData;
+				}
+			})
+		}
+		else return this.userData;
+		/* const data = localStorage.getItem('userData');
 		if(data && data != 'undefined'){
 			const user = JSON.parse(data as string);
 			return user;
-		} else return {}
+		} else return {} */
 	}
 
 	getUserLogin() {
 		return localStorage.getItem('userLoggedIn');
+	}
+
+	isUserSwapper() {
+		const is = localStorage.getItem('isSwapper')
+		if(is) return JSON.parse(is);
 	}
 
 	getUserToken(){

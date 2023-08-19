@@ -9,10 +9,10 @@ import Swal from 'sweetalert2';
 
 @Component({
 	selector: 'app-trueque',
-	templateUrl: './trueques.component.html',
-	styleUrls: ['./trueques.component.scss']
+	templateUrl: './publicaciones.component.html',
+	styleUrls: ['./publicaciones.component.scss']
 })
-export class TruequesComponent {
+export class PublicacionesComponent {
 
 	origin: 'all' | 'myPublicaciones' | 'myVentas' = 'all';
 	userData: any;
@@ -59,8 +59,7 @@ export class TruequesComponent {
 
 	addPublicacion(){
 		this.router.navigate(['form-publicacion'])
-		//TODO: cuando en el local storage esté la info del user, chequear inicio de sesion:
-		/* if(Object.keys(this.userData).length != 0) {
+		if(this.auth.isUserLoggedIn) {
 			this.router.navigate(['form-publicacion'])
 		} else {
 			Swal.fire({
@@ -73,7 +72,7 @@ export class TruequesComponent {
 			}).then(({isConfirmed}) => {
 				if(isConfirmed) this.router.navigate(['login'])
 			})
-		} */
+		}
 	}
 
 	getTiposProductos() {

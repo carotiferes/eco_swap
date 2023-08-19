@@ -43,7 +43,7 @@ export class FormColectaComponent  {
 		this.colectaForm = fb.group({
 			s_titulo: ['', Validators.required],
 			s_descripcion: [''],
-			id_fundacion: [userData.id_fundacion || ''],
+			//id_fundacion: [userData?.id || ''],
 			productos: this.fb.array([]),
 			file_name: [this.fileName],
 			file: [''],

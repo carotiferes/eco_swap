@@ -2,7 +2,7 @@
 
 <div id="main-perfil" *ngIf="user">
 	<div class="profile-img">
-		<img [src]="isSwapper ? 'assets/persona.png' : 'assets/fundacion.png'">
+		<img [src]="userData.isSwapper ? 'assets/persona.png' : 'assets/fundacion.png'">
 	</div>
 	<!-- <h4>{{userInfo.s_nombre}} {{userInfo.s_apellido}}</h4> -->
 	<mat-card id="main-perfil-card">

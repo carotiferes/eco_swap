@@ -52,10 +52,10 @@ export class ColectasComponent implements OnInit {
 				return nombre ? this._filter(nombre as string) : this.optionsFundaciones.slice();
 			}),
 		);
+		this.userData = { isSwapper: auth.isUserSwapper() }
 	}
 
 	ngOnInit() {
-		this.userData = this.auth.getUserData();
 		this.getFundaciones();
 		this.getTiposProductos();
 

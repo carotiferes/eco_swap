@@ -35,10 +35,10 @@ export class ColectaComponent {
 			this.id_colecta = params.get('id_colecta') || '';
 			if(!this.id_colecta) showErrorService.show('Error!', 'No pudimos encontrar la información de la colecta que seleccionaste, por favor volvé a intentarlo más tarde.')
 		})
+		this.userData = { isSwapper: auth.isUserSwapper() }
 	}
 	
 	ngOnInit(): void {
-		this.userData = this.auth.getUserData();
 		this.getColecta();
 	}
 
@@ -69,11 +69,6 @@ export class ColectaComponent {
 									if (this.userData.isSwapper) {
 										this.donaciones = this.donaciones.filter(item => item.particular.idParticular == this.userData.id_particular)
 									}
-				
-									/* TODO: CHECK IF USERDATA IS SAME FUNDACION FROM COLECTA
-									if (this.colecta.idFundacion == this.userData.id_fundacion)
-									this.showDonaciones = true;
-									if (this.userData.isSwapper) this.showDonaciones = true; */
 									console.log(this.showDonaciones);
 								},
 								error: (error) => {
@@ -88,36 +83,7 @@ export class ColectaComponent {
 							
 						}
 					})
-
-					
 					this.loading = false;
-
-					/* let usuario = this.colecta.fundacion.usuario;
-					if (usuario) this.colecta.fundacion.usuario.puntaje = Number(this.colecta.fundacion.usuario.puntaje)
-					this.colecta.imagen = this.getImage(this.colecta.imagen)
-					this.loading = false;
-					console.log(res, this.userData, usuario);
-
-					for (const prod of this.colecta.productos) {
-						for (const donacion of prod.donaciones) {
-							donacion['nombreProducto'] = prod.descripcion;
-						}
-						this.donaciones.push(...prod.donaciones)
-					}
-					this.donaciones.map(donacion => {
-						if(donacion.imagenes) donacion.parsedImagenes = donacion.imagenes.split('|')
-					})
-
-					if (this.userData.isSwapper) {
-						this.donaciones = this.donaciones.filter(item => item.particular.idParticular == this.userData.id_particular)
-					}
-
-					if (usuario && !usuario.swapper && this.colecta.idFundacion == this.userData.id_fundacion)
-						this.showDonaciones = true;
-					if (this.userData.isSwapper && usuario) this.showDonaciones = true;
-					console.log(this.showDonaciones); */
-
-
 				} else this.showErrorService.show('Error!', 'No se encontró la información de la colecta que seleccionaste. Intentá nuevamente más tarde.')
 			},
 			error: (error) => {

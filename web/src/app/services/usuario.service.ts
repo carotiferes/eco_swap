@@ -15,6 +15,10 @@ export class UsuarioService {
 		return this.backendService.get(URL_NAME, 'ms-autenticacion/api/v1/usuario/103');
 	}
 
+	getUserByID(id: number) {
+		return this.backendService.get(URL_NAME, 'ms-autenticacion/api/v1/usuario/'+id);
+	}
+
 	createUser(user: any){ // SIGNUP
 		return this.backendService.post(URL_NAME, 'ms-autenticacion/api/v1/usuario/signup', user);
 	}

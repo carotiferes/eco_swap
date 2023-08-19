@@ -10,7 +10,7 @@ const db = require('../../data/db.json')
   styleUrls: ['./perfil.component.scss']
 })
 export class PerfilComponent {
-	isSwapper: boolean = true; // CHANGE WHEN BRINGING USER INFO
+	//isSwapper: boolean = true; // CHANGE WHEN BRINGING USER INFO
 	user!: UsuarioModel;
 
 	columns: number = 2;
@@ -28,6 +28,7 @@ export class PerfilComponent {
 
 	constructor(private auth: AuthService, private usuarioService: UsuarioService){
 		this.getUserInformation();
+		this.userData = { isSwapper: auth.isUserSwapper() }
 	}
 
 	getUserInformation(){
@@ -84,7 +85,7 @@ export class PerfilComponent {
 
 	showableAccordions(){
 		return this.accordions.filter(item => 
-			(this.isSwapper && item.exclusive == 'particular') || (!this.isSwapper && item.exclusive == 'fundacion') || !item.exclusive
+			(this.userData.isSwapper && item.exclusive == 'particular') || (!this.userData.isSwapper && item.exclusive == 'fundacion') || !item.exclusive
 		)
 	}
 }

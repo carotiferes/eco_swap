@@ -9,7 +9,7 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { FooterComponent } from './layout/footer/footer.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './shared/material/material.module';
-import { TruequesComponent } from './pages/trueques/trueques.component';
+import { PublicacionesComponent } from './pages/publicaciones/publicaciones.component';
 import { ColectasComponent } from './pages/colectas/colectas.component';
 import { RegistroComponent } from './pages/registro/registro.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
@@ -41,7 +41,7 @@ import { PublicacionComponent } from './pages/publicacion/publicacion.component'
 		HeaderComponent,
 		NotFoundComponent,
 		FooterComponent,
-		TruequesComponent,
+		PublicacionesComponent,
 		ColectasComponent,
 		RegistroComponent,
 		PerfilComponent,

@@ -32,7 +32,7 @@ export class DonacionesService {
 	}
 
 	getMisDonaciones(){ // TODO: url de mis donaciones (x tkn)
-		return this.backendService.get(URL_NAME, 'api/1/donaciones');
+		return this.backendService.get(URL_NAME, 'api/particular/1/donaciones');
 	}
 
 	crearDonacion(id_colecta: number, body: any){
