@@ -12,7 +12,7 @@ import msAutenticacion.domain.repositories.UsuarioRepository;
 import msAutenticacion.domain.requests.RequestConfirm;
 import msAutenticacion.domain.requests.RequestLogin;
 import msAutenticacion.domain.requests.RequestPassword;
-import msAutenticacion.domain.requests.RequestSignin;
+import msAutenticacion.domain.requests.RequestSignUp;
 import msAutenticacion.domain.requests.propuestas.RequestDireccion;
 import msAutenticacion.exceptions.LoginUserBlockedException;
 import msAutenticacion.exceptions.LoginUserWrongCredentialsException;
@@ -56,22 +56,22 @@ public class UsuarioService {
     public Optional<Usuario> obtenerUsuario(Long userId) {
         return usuarioRepository.findById(userId);
     }
-    public Long crearUsuario(RequestSignin signin) {
-        log.info("crearUsuario: Usuario a crear:" + signin.getUsername());
-        RequestDireccion direccionCrear = signin.getDireccion();
-        Usuario usuario = this.crearUsuarioBuilder(signin);
+    public Long crearUsuario(RequestSignUp signUp) {
+        log.info("crearUsuario: Usuario a crear:" + signUp.getUsername());
+        RequestDireccion direccionCrear = signUp.getDireccion();
+        Usuario usuario = this.crearUsuarioBuilder(signUp);
         Direccion direccion = this.crearDireccion(usuario, direccionCrear);
         Direccion direccionCreada = direccionRepository.save(direccion);
         log.info("crearUsuario: Direccion creado con ID:" + direccionCreada.getIdDireccion());
         Usuario usuarioCreado = null;
         if(usuario.isSwapper()) {
-            usuarioCreado = particularService.crearUser(direccionCreada.getUsuario(), signin);
+            usuarioCreado = particularService.crearUser(direccionCreada.getUsuario(), signUp);
         } else {
-            usuarioCreado = fundacionService.crearUser(direccionCreada.getUsuario(), signin);
+            usuarioCreado = fundacionService.crearUser(direccionCreada.getUsuario(), signUp);
         }
-        log.info("crearUsuario: Usuario creado con ID: {}", usuarioCreado.getId());
+        log.info("crearUsuario: Usuario creado con ID: {}", usuarioCreado.getIdUsuario());
         this.enviarEmailConfirmacion(usuarioCreado, usuarioCreado.getConfirmCodigo());
-        return usuarioCreado.getId();
+        return usuarioCreado.getIdUsuario();
     }
 
     private void enviarEmailConfirmacion(Usuario usuario, String codigoConfirmacion) {
@@ -183,7 +183,7 @@ public class UsuarioService {
                 .build();
     }
 
-    private Usuario crearUsuarioBuilder(RequestSignin signin) {
+    private Usuario crearUsuarioBuilder(RequestSignUp signin) {
         String salt = this.crearSalt();
         return Usuario.builder()
                 .email(signin.getEmail())
@@ -194,8 +194,10 @@ public class UsuarioService {
                 .telefono(signin.getTelefono())
                 .isSwapper(signin.getFundacion()==null)
                 .intentos(0)
-                .bloqueado(true) //CUANDO SE CREA UN USUARIO, ESTE DEBE CONFIRMAR POR MAIL PRIMERO
+                .bloqueado(false) //CUANDO SE CREA UN USUARIO, ESTE DEBE CONFIRMAR POR MAIL PRIMERO.
                 .build();
+
+        // El bloqueado en false, es temporal, hasta que se ponga para ingresar el codigo de confirmación del email.
     }
     
 
@@ -209,7 +211,7 @@ public class UsuarioService {
                     .withIssuer("ecoswap")
                     .withExpiresAt(Instant.now().plusSeconds(604800))
                     .withClaim("email", usuario.getEmail())
-                    .withClaim("id", usuario.getId())
+                    .withClaim("id", usuario.getIdUsuario())
                     .withClaim("esParticular", usuario.isSwapper())
                     .sign(algorithm);
         } catch (JWTCreationException | NoSuchAlgorithmException exception){

@@ -6,4 +6,5 @@ import lombok.Data;
 public class FundacionDTO {
     private String nombre;
     private Long idFundacion;
+    private String cuil;
 }

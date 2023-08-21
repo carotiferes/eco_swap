@@ -2,6 +2,7 @@ package msUsers.domain.responses.DTOs;
 
 import lombok.Data;
 import msUsers.domain.entities.Donacion;
+import msUsers.domain.entities.Producto;
 import msUsers.domain.entities.Publicacion;
 import msUsers.domain.entities.enums.TipoProducto;
 
@@ -16,4 +17,5 @@ public class ProductoDTO {
     private int cantidadRecibida;
     private List<Donacion> donaciones;
     private Publicacion publicacion;
+
 }

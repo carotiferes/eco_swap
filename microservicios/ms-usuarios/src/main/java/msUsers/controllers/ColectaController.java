@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import jakarta.persistence.criteria.*;
 import msUsers.domain.entities.*;
 import msUsers.domain.model.UsuarioContext;
-import msUsers.domain.repositories.ColectaRepository;
+import msUsers.domain.repositories.ColectasRepository;
 import msUsers.domain.repositories.FundacionesRepository;
 import msUsers.domain.requests.RequestFilterColectas;
 import msUsers.domain.requests.RequestColecta;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class ColectaController {
     @Autowired
-    ColectaRepository colectaRepository;
+    ColectasRepository colectasRepository;
     @Autowired FundacionesRepository fundacionesRepository;
     @Autowired EntityManager entityManager;
     @Autowired
@@ -83,11 +83,11 @@ public class ColectaController {
         colecta.setProductos(productos);
 
         // Guardo la colecta y me quedo con el id generada en la base de datos
-        var entity = this.colectaRepository.save(colecta);
+        var entity = this.colectasRepository.save(colecta);
 
         String img = requestColecta.getImagen();
         colecta.setImagen(imageService.saveImage(img));
-        entity = this.colectaRepository.save(colecta); // Actualizo la colecta con la imagen
+        entity = this.colectasRepository.save(colecta); // Actualizo la colecta con la imagen
 
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUri();
 
@@ -149,7 +149,7 @@ public class ColectaController {
 
     @GetMapping(path = "/colecta/{id_colecta}", produces = json)
     public ResponseEntity<ColectaDTO> getColecta(@PathVariable("id_colecta") Long id) {
-        final var colecta = this.colectaRepository.findById(id).
+        final var colecta = this.colectasRepository.findById(id).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrado la colecta: " + id));
         ColectaDTO colectaDTO = colecta.toDTO();
         return ResponseEntity.ok(colectaDTO);

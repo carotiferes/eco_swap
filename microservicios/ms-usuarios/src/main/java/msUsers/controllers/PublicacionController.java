@@ -1,18 +1,24 @@
 package msUsers.controllers;
 
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.Part;
+import jakarta.persistence.criteria.*;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import msUsers.domain.entities.CaracteristicaProducto;
-import msUsers.domain.entities.Particular;
-import msUsers.domain.entities.Publicacion;
+import msUsers.domain.entities.*;
 import msUsers.domain.entities.enums.EstadoPublicacion;
 import msUsers.domain.entities.enums.TipoPublicacion;
-import msUsers.domain.repositories.ParticularRepository;
-import msUsers.domain.repositories.PublicacionRepository;
+import msUsers.domain.model.UsuarioContext;
+import msUsers.domain.repositories.ParticularesRepository;
+import msUsers.domain.repositories.PublicacionesRepository;
+import msUsers.domain.requests.RequestFilterPublicaciones;
 import msUsers.domain.requests.RequestPublicacion;
+import msUsers.domain.responses.DTOs.ColectaDTO;
+import msUsers.domain.responses.DTOs.ParticularDTO;
+import msUsers.domain.responses.DTOs.ProductoDTO;
+import msUsers.domain.responses.DTOs.PublicacionDTO;
 import msUsers.domain.responses.ResponsePostEntityCreation;
+import msUsers.services.CriteriaBuilderQueries;
 import msUsers.services.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +32,8 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -34,11 +42,16 @@ import java.util.List;
 public class PublicacionController {
 
     @Autowired
-    PublicacionRepository publicacionRepository;
+    PublicacionesRepository publicacionesRepository;
     @Autowired
-    ParticularRepository particularRepository;
+    ParticularesRepository particularesRepository;
+    @Autowired
+    EntityManager entityManager;
     @Autowired
     ImageService imageService;
+
+    @Autowired
+    CriteriaBuilderQueries criteriaBuilderQueries;
     private static final String json = "application/json";
 
     @PostMapping(path = "/publicacion", consumes = json, produces = json)
@@ -49,7 +62,7 @@ public class PublicacionController {
         //final var perfil = this.userContextService.getUsuario();
         log.info(">> Request de creación de la publicación: {}", requestPublicacion.getTitulo());
 
-        var particularOptional = this.particularRepository.findById(requestPublicacion.getIdParticular());
+        var particularOptional = this.particularesRepository.findById(requestPublicacion.getIdParticular());
         Particular particular = particularOptional.orElseThrow(() -> new EntityNotFoundException("¡El particular no existe!"));
 
         Publicacion publicacion = new Publicacion();
@@ -78,7 +91,6 @@ public class PublicacionController {
         // Guardo la publicacion y me quedo con el id generada en la base de datos
         //var entity = this.publicacionRepository.save(publicacion);
 
-
         // ToDo: Cambiar logica para que soporte una falla en la creacion de la publicacion
         List<String> nombreImagenes = new ArrayList<>();
         for (int i = 0; i < requestPublicacion.getImagen().size(); i++) {
@@ -86,7 +98,7 @@ public class PublicacionController {
         }
 
         publicacion.setImagenes(String.join("|", nombreImagenes));
-        var entity = this.publicacionRepository.save(publicacion); // Actualizo la publicacion con la imagen
+        var entity = this.publicacionesRepository.save(publicacion); // Actualizo la publicacion con la imagen
 
         log.info(">> Publicación creada con ID: {}", entity.getIdPublicacion());
 
@@ -100,5 +112,101 @@ public class PublicacionController {
 
         return ResponseEntity.created(location).body(responsePostEntityCreation);
 
+    }
+
+    @GetMapping(path = "/publicaciones", produces = json)
+    public ResponseEntity<List<PublicacionDTO>> listPublicaciones(@ModelAttribute RequestFilterPublicaciones request) {
+        log.info(">> Se realiza listado de publicaciones con los parametros: {}", request);
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Publicacion> query = cb.createQuery(Publicacion.class);
+        Root<Publicacion> from = query.from(Publicacion.class);
+        Predicate predicate = cb.conjunction();
+
+        if (request.getCodigoPostal() != null) {
+            Join<Publicacion, Particular> particularJoin = from.join("particular");
+            Join<Particular, Usuario> usuarioJoin = particularJoin.join("usuario");
+            Join<Usuario, Direccion> direccionJoin = usuarioJoin.join("direcciones");
+            predicate = cb.and(predicate, cb.equal(direccionJoin.get("codigoPostal"), request.getCodigoPostal()));
+        }
+
+        if (request.getTipoProducto() != null) {
+            Join<Publicacion, Producto> join = from.join("productos");
+            predicate = cb.and(predicate, cb.equal(join.get("tipoProducto"), request.getTipoProducto()));
+        }
+
+        query.where(predicate);
+
+        List<Publicacion> publicaciones = entityManager.createQuery(query).getResultList();
+
+        List<PublicacionDTO> publicacionesDTOS = publicaciones.stream().map(publicacion -> {
+            PublicacionDTO publicacionDTO = new PublicacionDTO();
+            publicacionDTO.setTitulo(publicacion.getTitulo());
+            publicacionDTO.setEstadoPublicacion(publicacion.getEstadoPublicacion());
+            publicacionDTO.setFechaPublicacion(publicacion.getFechaPublicacion());
+            publicacionDTO.setDescripcion(publicacion.getDescripcion());
+            publicacionDTO.setImagenes(publicacion.getImagenes());
+            publicacionDTO.setCaracteristicaProducto(publicacion.getCaracteristicaProducto());
+            publicacionDTO.setParticularDTO(publicacion.getParticular().toDTO());
+
+            List<ProductoDTO> productos = publicacion.getProductos().stream()
+                    .map(producto -> {
+                        ProductoDTO productoDTO = new ProductoDTO();
+                        return producto.toDTO();
+                    }).collect(Collectors.toList());
+
+            publicacionDTO.setProductos(productos);
+            publicacionDTO.setValorTruequeMax(publicacion.getValorTruequeMax());
+            publicacionDTO.setValorTruequeMin(publicacion.getValorTruequeMin());
+            publicacionDTO.setPrecioVenta(publicacion.getPrecioVenta());
+            return publicacionDTO;
+        }).collect(Collectors.toList());
+
+        log.info("<< {} publicaciones encontradas.", publicacionesDTOS.size());
+        return ResponseEntity.ok(publicacionesDTOS);
+    }
+
+    @GetMapping(path = "/misPublicaciones", produces = json)
+    public ResponseEntity<List<PublicacionDTO>> getMisPublicaciones() {
+
+        final Usuario user = UsuarioContext.getUsuario();
+        Optional<Particular> optionalParticular = criteriaBuilderQueries.getParticularPorUsuario(user.getIdUsuario());
+        Particular particular = optionalParticular.orElseThrow(() -> new EntityNotFoundException("¡El particular no existe!"));
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Publicacion> query = cb.createQuery(Publicacion.class);
+        Root<Publicacion> from = query.from(Publicacion.class);
+        Predicate predicate = cb.conjunction();
+
+        Join<Publicacion, Particular> join = from.join("particular");
+        predicate = cb.and(predicate, cb.equal(join.get("idParticular"), particular.getIdParticular()));
+
+        query.where(predicate);
+
+        List<Publicacion> publicaciones = entityManager.createQuery(query).getResultList();
+        List<PublicacionDTO> publicacionesDTO = publicaciones.stream().map(publicacion -> {
+            PublicacionDTO publicacionDTO = new PublicacionDTO();
+            publicacionDTO.setTitulo(publicacion.getTitulo());
+            publicacionDTO.setEstadoPublicacion(publicacion.getEstadoPublicacion());
+            publicacionDTO.setFechaPublicacion(publicacion.getFechaPublicacion());
+            publicacionDTO.setDescripcion(publicacion.getDescripcion());
+            publicacionDTO.setImagenes(publicacion.getImagenes());
+            publicacionDTO.setCaracteristicaProducto(publicacion.getCaracteristicaProducto());
+            publicacionDTO.setParticularDTO(publicacion.getParticular().toDTO());
+
+            List<ProductoDTO> productos = publicacion.getProductos().stream()
+                    .map(producto -> {
+                        ProductoDTO productoDTO = new ProductoDTO();
+                        return producto.toDTO();
+                    }).collect(Collectors.toList());
+
+            publicacionDTO.setProductos(productos);
+            publicacionDTO.setValorTruequeMax(publicacion.getValorTruequeMax());
+            publicacionDTO.setValorTruequeMin(publicacion.getValorTruequeMin());
+            publicacionDTO.setPrecioVenta(publicacion.getPrecioVenta());
+            return publicacionDTO;
+        }).toList();
+
+        return ResponseEntity.ok(publicacionesDTO);
     }
 }

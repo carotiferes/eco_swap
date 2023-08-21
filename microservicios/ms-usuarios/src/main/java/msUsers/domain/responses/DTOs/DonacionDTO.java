@@ -3,6 +3,7 @@ package msUsers.domain.responses.DTOs;
 
 import lombok.Data;
 import msUsers.domain.entities.CaracteristicaDonacion;
+import msUsers.domain.entities.Donacion;
 import msUsers.domain.entities.enums.EstadoDonacion;
 
 import java.util.List;

@@ -22,8 +22,8 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "idUsuario")
-    private long id;
+    @Column(name = "id_usuario")
+    private long idUsuario;
 
     @NotNull
     @Column(unique = true)

@@ -8,7 +8,7 @@ import msAutenticacion.domain.model.EnumValue;
 import msAutenticacion.domain.model.enums.TipoDocumentoEnum;
 import msAutenticacion.domain.requests.RequestLogin;
 import msAutenticacion.domain.requests.RequestPassword;
-import msAutenticacion.domain.requests.RequestSignin;
+import msAutenticacion.domain.requests.RequestSignUp;
 import msAutenticacion.domain.responses.DTOs.TipoDocumentoDTO;
 import msAutenticacion.domain.responses.ResponseLogin;
 import msAutenticacion.exceptions.LoginUserBlockedException;
@@ -49,10 +49,10 @@ public class UsuarioController {
     @PostMapping(path = "/usuario/signup", produces = JSON)
     @Transactional
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseEntity<Long> postSignin(@RequestBody RequestSignin body){
-        log.info("postSignin: creando nuevo usuario: "+ body.getEmail());
+    public ResponseEntity<Long> postSignUp(@RequestBody RequestSignUp body){
+        log.info("postSignUp: creando nuevo usuario: "+ body.getEmail());
         Long userId = usuarioService.crearUsuario(body);
-        log.info("postSignin: Usuario creado con ID: "+ userId);
+        log.info("postSignUp: Usuario creado con ID: "+ userId);
         return ResponseEntity.ok(userId);
     }
 

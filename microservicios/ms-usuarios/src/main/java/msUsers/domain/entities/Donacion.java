@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import msUsers.domain.entities.enums.EstadoDonacion;
+import msUsers.domain.responses.DTOs.DonacionDTO;
 
 import java.util.List;
 
@@ -42,4 +43,17 @@ public class Donacion {
     private List<CaracteristicaDonacion> caracteristicaDonacion;
 
     private String imagenes;
+
+    public DonacionDTO toDTO() {
+        DonacionDTO donacionDTO = new DonacionDTO();
+        donacionDTO.setCantidadDonacion(cantidadDonacion);
+        donacionDTO.setDescripcion(descripcion);
+        donacionDTO.setCaracteristicaDonacion(caracteristicaDonacion);
+        donacionDTO.setEstadoDonacion(estadoDonacion);
+        donacionDTO.setImagenes(imagenes);
+        donacionDTO.setNombreParticular(particular.getNombre());
+        donacionDTO.setIdParticular(particular.getIdParticular());
+        donacionDTO.setProducto(producto.toDTO());
+        return donacionDTO;
+    }
 }
