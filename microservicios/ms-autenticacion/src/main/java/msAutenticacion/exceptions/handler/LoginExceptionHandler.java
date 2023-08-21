@@ -15,7 +15,7 @@ import java.util.Date;
 @ControllerAdvice
 public class LoginExceptionHandler {
     @ExceptionHandler(LoginUserException.class)
-    public ResponseEntity<EntityNotFoundExceptionResponse> handle(EntityNotFoundException exception){
+    public ResponseEntity<EntityNotFoundExceptionResponse> handle(LoginUserException exception){
         EntityNotFoundExceptionResponse response = new EntityNotFoundExceptionResponse();
         response.setDescripcion(exception.getMessage());
         Date date = new Date();

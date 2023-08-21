@@ -16,15 +16,12 @@ import msAutenticacion.domain.requests.RequestSignin;
 import msAutenticacion.domain.requests.propuestas.RequestDireccion;
 import msAutenticacion.exceptions.LoginUserException;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -120,21 +117,25 @@ public class UsuarioService {
         log.info(("login: Intentar ingresar el username: " + request.getUsername()));
         Usuario usuario = usuarioRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new EntityNotFoundException("No fue encontrado el usuario: " + request.getUsername()));
+
         String hashPassword = this.crearPassword(request.getPassword(), usuario.getSalt());
         if(!this.compararContrasenias(hashPassword, usuario.getPassword())) {
             //ERROR, LA PASSWORD NO FUNCA
             log.error(("login: error durante el LOGIN y se le aumenta los intentos en 1: " + request.getUsername()));
-            usuario.aumentarIntetoEn1();
+            usuario.aumentarIntentoEn1();
             if(usuario.getIntentos()>2) {
                 log.error(("login: Usuario será bloqueado por superar la cantidad de intentos fallidos: " + request.getUsername()));
                 usuario.setBloqueado(true);
                 usuarioRepository.save(usuario);
                 throw new LoginUserException("El usuario fue bloqueado");
             }
+            log.error("Cantidad de intentos actual: {}", usuario.getIntentos());
             usuarioRepository.save(usuario);
-            return this.crearJWT(usuario);
+            throw new LoginUserException("Usuario y/o contraseña invalido");
         }
         log.info(("login: Login EXITOSO para username: " + request.getUsername()));
+        usuario.setIntentos(0);
+        usuarioRepository.save(usuario);
         return this.crearJWT(usuario);
     }
 

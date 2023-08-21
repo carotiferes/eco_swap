@@ -71,8 +71,17 @@ public class Usuario {
     @OneToMany(mappedBy = "usuarioOpina", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Opinion> opiniones;
 
-    public void aumentarIntetoEn1() {
+    public void aumentarIntentoEn1() {
         this.setIntentos(intentos+1);
     }
+
+//    @Override
+//    public String toString() {
+//        return "Usuario{" +
+//                "id=" + id +
+//                ", username='" + username + '\'' +
+//                ", email='" + email + '\'' +
+//                '}';
+//    }
 
 }

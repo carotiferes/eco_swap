@@ -55,7 +55,7 @@ public class DonacionController {
     @Transactional
     public ResponseEntity<ResponseUpdateEntity> cambiarEstadoDonacion(
             @PathVariable("id_donacion") Long idDonacion,
-            @RequestBody RequestCambiarEstadoDonacion request) {
+            @RequestBody @Valid RequestCambiarEstadoDonacion request) {
 
         log.info(">> Se va cambiar el estado de la donacion {} a {}", idDonacion, request.getNuevoEstado());
         final var donacion = this.donacionesRepository.findById(idDonacion).
