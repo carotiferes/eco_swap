@@ -4,16 +4,16 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import msAutenticacion.domain.entities.Usuario;
-import msAutenticacion.domain.entities.enums.TipoDocumento;
 import msAutenticacion.domain.model.EnumValue;
 import msAutenticacion.domain.model.enums.TipoDocumentoEnum;
-import msAutenticacion.domain.repositories.UsuarioRepository;
 import msAutenticacion.domain.requests.RequestLogin;
 import msAutenticacion.domain.requests.RequestPassword;
 import msAutenticacion.domain.requests.RequestSignin;
 import msAutenticacion.domain.responses.DTOs.TipoDocumentoDTO;
 import msAutenticacion.domain.responses.ResponseLogin;
+import msAutenticacion.exceptions.LoginUserBlockedException;
 import msAutenticacion.exceptions.LoginUserException;
+import msAutenticacion.exceptions.LoginUserWrongCredentialsException;
 import msAutenticacion.services.UsuarioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,7 +67,7 @@ public class UsuarioController {
     }
 
     @PatchMapping(path = "/usuario/login", produces = JSON)
-    @Transactional(noRollbackFor = LoginUserException.class)
+    @Transactional(noRollbackFor = {LoginUserException.class, LoginUserBlockedException.class, LoginUserWrongCredentialsException.class})
     public ResponseEntity<ResponseLogin> patchLogin(@RequestBody @Valid RequestLogin body) throws NoSuchAlgorithmException {
         log.info("postLogin: Intento de login para usuario: "+ body.getUsername());
         String jwt = usuarioService.login(body);

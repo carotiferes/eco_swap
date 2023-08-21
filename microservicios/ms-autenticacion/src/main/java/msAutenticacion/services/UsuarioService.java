@@ -14,7 +14,8 @@ import msAutenticacion.domain.requests.RequestLogin;
 import msAutenticacion.domain.requests.RequestPassword;
 import msAutenticacion.domain.requests.RequestSignin;
 import msAutenticacion.domain.requests.propuestas.RequestDireccion;
-import msAutenticacion.exceptions.LoginUserException;
+import msAutenticacion.exceptions.LoginUserBlockedException;
+import msAutenticacion.exceptions.LoginUserWrongCredentialsException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
@@ -119,20 +120,24 @@ public class UsuarioService {
                 .orElseThrow(() -> new EntityNotFoundException("No fue encontrado el usuario: " + request.getUsername()));
 
         String hashPassword = this.crearPassword(request.getPassword(), usuario.getSalt());
-        if(!this.compararContrasenias(hashPassword, usuario.getPassword())) {
-            //ERROR, LA PASSWORD NO FUNCA
-            log.error(("login: error durante el LOGIN y se le aumenta los intentos en 1: " + request.getUsername()));
-            usuario.aumentarIntentoEn1();
-            if(usuario.getIntentos()>2) {
-                log.error(("login: Usuario será bloqueado por superar la cantidad de intentos fallidos: " + request.getUsername()));
-                usuario.setBloqueado(true);
+        if(!usuario.isBloqueado()){
+            if(!this.compararContrasenias(hashPassword, usuario.getPassword())) {
+                //ERROR, LA PASSWORD NO FUNCA
+                log.error(("login: error durante el LOGIN y se le aumenta los intentos en 1: " + request.getUsername()));
+                usuario.aumentarIntentoEn1();
+                if(usuario.getIntentos()>2) {
+                    log.error(("login: Usuario será bloqueado por superar la cantidad de intentos fallidos: " + request.getUsername()));
+                    usuario.setBloqueado(true);
+                    usuarioRepository.save(usuario);
+                    throw new LoginUserBlockedException("El usuario fue bloqueado");
+                }
+                log.error("Cantidad de intentos actual: {}", usuario.getIntentos());
                 usuarioRepository.save(usuario);
-                throw new LoginUserException("El usuario fue bloqueado");
+                throw new LoginUserWrongCredentialsException("Usuario y/o contraseña invalido");
             }
-            log.error("Cantidad de intentos actual: {}", usuario.getIntentos());
-            usuarioRepository.save(usuario);
-            throw new LoginUserException("Usuario y/o contraseña invalido");
         }
+        else
+            throw new LoginUserBlockedException("El usuario fue bloqueado");
         log.info(("login: Login EXITOSO para username: " + request.getUsername()));
         usuario.setIntentos(0);
         usuarioRepository.save(usuario);
