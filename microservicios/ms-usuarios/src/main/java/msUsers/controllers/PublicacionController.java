@@ -166,4 +166,17 @@ public class PublicacionController {
 
         return ResponseEntity.ok(publicacionesDTO);
     }
+
+    @GetMapping(path = "/publicacion/{id_publicacion}", produces = json)
+    public ResponseEntity<PublicacionDTO> getPublicacionXId(@PathVariable("id_publicacion") Long idPublicacion) {
+
+        final Usuario user = UsuarioContext.getUsuario();
+        Optional<Particular> optionalParticular = criteriaBuilderQueries.getParticularPorUsuario(user.getIdUsuario());
+        Particular particular = optionalParticular.orElseThrow(() -> new EntityNotFoundException("¡El particular no existe!"));
+
+        final var publicacion = this.publicacionesRepository.findById(idPublicacion).
+                orElseThrow(() -> new EntityNotFoundException("No fue encontrada la publicacion: " + idPublicacion));
+
+        return ResponseEntity.ok(publicacion.toDTO());
+    }
 }
