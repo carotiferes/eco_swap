@@ -1,6 +1,5 @@
 package msUsers.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -9,10 +8,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import msUsers.domain.entities.enums.TipoProducto;
 import msUsers.domain.responses.DTOs.ProductoDTO;
-import msUsers.domain.responses.DTOs.ProductoDTO;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Data

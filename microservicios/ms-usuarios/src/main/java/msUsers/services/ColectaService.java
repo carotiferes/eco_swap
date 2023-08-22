@@ -17,15 +17,15 @@ import java.util.List;
 public class ColectaService {
 
     @Autowired
-    ColectaRepository colectaRepository;
+    ColectasRepository colectasRepository;
 
     @Autowired
     ImageService imageService;
 
     @Autowired
-    ParticularRepository particularRepository;
+    ParticularesRepository particularesRepository;
     @Autowired
-    ProductoRepository productoRepository;
+    ProductosRepository productosRepository;
 
     @Autowired
     DonacionesRepository donacionesRepository;
@@ -37,7 +37,7 @@ public class ColectaService {
 
     public void crearDonacion(RequestComunicarDonacionColectaModel request, Long idColecta, Long idParticular) {
            log.info(">> SERVICE: Se comenzo la creacion de donacion para la colecta: {}", idColecta);
-           Colecta colecta = colectaRepository.findById(idColecta).get();
+           Colecta colecta = colectasRepository.findById(idColecta).get();
            Producto producto = colecta.getProductos().
                    stream()
                    .filter(x -> x.getIdProducto() == request.getProductoId())
@@ -46,7 +46,7 @@ public class ColectaService {
                    .stream()
                    .map(s -> CaracteristicaDonacion.armarCarateristica(s, idParticular))
                    .toList();
-           Particular particular = particularRepository.findById(idParticular).get();
+           Particular particular = particularesRepository.findById(idParticular).get();
 
            //TODO: Revisar que no se creen las imagenes si falla la creación de la donación
            List<String> nombreImagenes = new ArrayList<>();
@@ -79,7 +79,7 @@ public class ColectaService {
 
     public List<Donacion> obtenerTodasLasDonaciones(Long idColecta) {
         log.info(">> Obtener todas las donaciones de la Colecta: {}", idColecta);
-        Colecta colecta = this.colectaRepository.findById(idColecta)
+        Colecta colecta = this.colectasRepository.findById(idColecta)
                         .orElseThrow(() -> new EntityNotFoundException("No fue encontrada la colecta: " + idColecta));
         List<Donacion> donaciones = colecta.getProductos().stream().flatMap(prod -> prod.getDonaciones().stream()).toList();;
         log.info("<< Cantidad obtenidas: {}", donaciones.size());

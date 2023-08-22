@@ -12,19 +12,17 @@ import msAutenticacion.domain.repositories.UsuarioRepository;
 import msAutenticacion.domain.requests.RequestConfirm;
 import msAutenticacion.domain.requests.RequestLogin;
 import msAutenticacion.domain.requests.RequestPassword;
-import msAutenticacion.domain.requests.RequestSignin;
+import msAutenticacion.domain.requests.RequestSignUp;
 import msAutenticacion.domain.requests.propuestas.RequestDireccion;
-import msAutenticacion.exceptions.LoginUserException;
+import msAutenticacion.exceptions.LoginUserBlockedException;
+import msAutenticacion.exceptions.LoginUserWrongCredentialsException;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -58,22 +56,22 @@ public class UsuarioService {
     public Optional<Usuario> obtenerUsuario(Long userId) {
         return usuarioRepository.findById(userId);
     }
-    public Long crearUsuario(RequestSignin signin) {
-        log.info("crearUsuario: Usuario a crear:" + signin.getUsername());
-        RequestDireccion direccionCrear = signin.getDireccion();
-        Usuario usuario = this.crearUsuarioBuilder(signin);
+    public Long crearUsuario(RequestSignUp signUp) {
+        log.info("crearUsuario: Usuario a crear:" + signUp.getUsername());
+        RequestDireccion direccionCrear = signUp.getDireccion();
+        Usuario usuario = this.crearUsuarioBuilder(signUp);
         Direccion direccion = this.crearDireccion(usuario, direccionCrear);
         Direccion direccionCreada = direccionRepository.save(direccion);
         log.info("crearUsuario: Direccion creado con ID:" + direccionCreada.getIdDireccion());
         Usuario usuarioCreado = null;
         if(usuario.isSwapper()) {
-            usuarioCreado = particularService.crearUser(direccionCreada.getUsuario(), signin);
+            usuarioCreado = particularService.crearUser(direccionCreada.getUsuario(), signUp);
         } else {
-            usuarioCreado = fundacionService.crearUser(direccionCreada.getUsuario(), signin);
+            usuarioCreado = fundacionService.crearUser(direccionCreada.getUsuario(), signUp);
         }
-        log.info("crearUsuario: Usuario creado con ID: {}", usuarioCreado.getId());
+        log.info("crearUsuario: Usuario creado con ID: {}", usuarioCreado.getIdUsuario());
         this.enviarEmailConfirmacion(usuarioCreado, usuarioCreado.getConfirmCodigo());
-        return usuarioCreado.getId();
+        return usuarioCreado.getIdUsuario();
     }
 
     private void enviarEmailConfirmacion(Usuario usuario, String codigoConfirmacion) {
@@ -120,21 +118,29 @@ public class UsuarioService {
         log.info(("login: Intentar ingresar el username: " + request.getUsername()));
         Usuario usuario = usuarioRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new EntityNotFoundException("No fue encontrado el usuario: " + request.getUsername()));
+
         String hashPassword = this.crearPassword(request.getPassword(), usuario.getSalt());
-        if(!this.compararContrasenias(hashPassword, usuario.getPassword())) {
-            //ERROR, LA PASSWORD NO FUNCA
-            log.error(("login: error durante el LOGIN y se le aumenta los intentos en 1: " + request.getUsername()));
-            usuario.aumentarIntetoEn1();
-            if(usuario.getIntentos()>2) {
-                log.error(("login: Usuario será bloqueado por superar la cantidad de intentos fallidos: " + request.getUsername()));
-                usuario.setBloqueado(true);
+        if(!usuario.isBloqueado()){
+            if(!this.compararContrasenias(hashPassword, usuario.getPassword())) {
+                //ERROR, LA PASSWORD NO FUNCA
+                log.error(("login: error durante el LOGIN y se le aumenta los intentos en 1: " + request.getUsername()));
+                usuario.aumentarIntentoEn1();
+                if(usuario.getIntentos()>2) {
+                    log.error(("login: Usuario será bloqueado por superar la cantidad de intentos fallidos: " + request.getUsername()));
+                    usuario.setBloqueado(true);
+                    usuarioRepository.save(usuario);
+                    throw new LoginUserBlockedException("El usuario fue bloqueado");
+                }
+                log.error("Cantidad de intentos actual: {}", usuario.getIntentos());
                 usuarioRepository.save(usuario);
-                throw new LoginUserException("El usuario fue bloqueado");
+                throw new LoginUserWrongCredentialsException("Usuario y/o contraseña invalido");
             }
-            usuarioRepository.save(usuario);
-            return this.crearJWT(usuario);
         }
+        else
+            throw new LoginUserBlockedException("El usuario fue bloqueado");
         log.info(("login: Login EXITOSO para username: " + request.getUsername()));
+        usuario.setIntentos(0);
+        usuarioRepository.save(usuario);
         return this.crearJWT(usuario);
     }
 
@@ -177,7 +183,7 @@ public class UsuarioService {
                 .build();
     }
 
-    private Usuario crearUsuarioBuilder(RequestSignin signin) {
+    private Usuario crearUsuarioBuilder(RequestSignUp signin) {
         String salt = this.crearSalt();
         return Usuario.builder()
                 .email(signin.getEmail())
@@ -188,8 +194,10 @@ public class UsuarioService {
                 .telefono(signin.getTelefono())
                 .isSwapper(signin.getFundacion()==null)
                 .intentos(0)
-                .bloqueado(true) //CUANDO SE CREA UN USUARIO, ESTE DEBE CONFIRMAR POR MAIL PRIMERO
+                .bloqueado(false) //CUANDO SE CREA UN USUARIO, ESTE DEBE CONFIRMAR POR MAIL PRIMERO.
                 .build();
+
+        // El bloqueado en false, es temporal, hasta que se ponga para ingresar el codigo de confirmación del email.
     }
     
 
@@ -203,7 +211,7 @@ public class UsuarioService {
                     .withIssuer("ecoswap")
                     .withExpiresAt(Instant.now().plusSeconds(604800))
                     .withClaim("email", usuario.getEmail())
-                    .withClaim("id", usuario.getId())
+                    .withClaim("id", usuario.getIdUsuario())
                     .withClaim("esParticular", usuario.isSwapper())
                     .sign(algorithm);
         } catch (JWTCreationException | NoSuchAlgorithmException exception){

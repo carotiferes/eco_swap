@@ -22,8 +22,8 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "idUsuario")
-    private long id;
+    @Column(name = "id_usuario")
+    private long idUsuario;
 
     @NotNull
     @Column(unique = true)
@@ -71,7 +71,7 @@ public class Usuario {
     @OneToMany(mappedBy = "usuarioOpina", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Opinion> opiniones;
 
-    public void aumentarIntetoEn1() {
+    public void aumentarIntentoEn1() {
         this.setIntentos(intentos+1);
     }
 

@@ -11,7 +11,7 @@ import msAutenticacion.domain.requests.propuestas.RequestSigninSwapper;
 
 @Data
 @Builder
-public class RequestSignin {
+public class RequestSignUp {
 
     @NotNull(message = "username Debe existir")
     private String username;

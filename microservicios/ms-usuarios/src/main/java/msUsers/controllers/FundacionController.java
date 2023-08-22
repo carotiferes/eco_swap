@@ -1,9 +1,9 @@
 package msUsers.controllers;
 
 import jakarta.persistence.EntityNotFoundException;
-import msUsers.domain.entities.Fundacion;
 import msUsers.domain.repositories.FundacionesRepository;
 import msUsers.domain.responses.DTOs.FundacionDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,19 +15,22 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping
-public class FundacionesController {
-    private final FundacionesRepository fundacionesRepository;
+public class FundacionController {
 
-    public FundacionesController(FundacionesRepository fundacionesRepository) {
-        this.fundacionesRepository = fundacionesRepository;
-    }
+    @Autowired
+    private FundacionesRepository fundacionesRepository;
 
     private static final String json = "application/json";
     @GetMapping(path = "/fundacion/{id_fundacion}", produces = json)
-    public ResponseEntity<Fundacion> getFundacionById(@PathVariable("id_fundacion") Long id){
+    public ResponseEntity<FundacionDTO> getFundacionById(@PathVariable("id_fundacion") Long id){
         final var fundacion = this.fundacionesRepository.findById(id).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrada la fundación: " + id));
-        return ResponseEntity.ok(fundacion);
+
+        FundacionDTO fundacionDTO = new FundacionDTO();
+        fundacionDTO.setIdFundacion(fundacion.getIdFundacion());
+        fundacionDTO.setNombre(fundacion.getNombre());
+
+        return ResponseEntity.ok(fundacionDTO);
     }
     @GetMapping(path = "/fundaciones", produces = json)
     public ResponseEntity<List<FundacionDTO>> listFundaciones(){

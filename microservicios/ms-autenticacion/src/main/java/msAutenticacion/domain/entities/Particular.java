@@ -22,10 +22,11 @@ public class Particular {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id_particular")
     private long idParticular;
 
     @OneToOne
-    @JoinColumn(name = "id_particular")
+    @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
     @NotNull

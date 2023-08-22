@@ -6,9 +6,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import msUsers.domain.responses.DTOs.FundacionDTO;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "Fundaciones")
@@ -38,4 +40,11 @@ public class Fundacion implements Serializable{
     @OneToMany(mappedBy = "fundacion", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Colecta> colectas;
 
+    public FundacionDTO toDTO() {
+        FundacionDTO fundacionDTO = new FundacionDTO();
+        fundacionDTO.setIdFundacion(idFundacion);
+        fundacionDTO.setNombre(nombre);
+        fundacionDTO.setCuil(cuil);
+        return fundacionDTO;
+    }
 }

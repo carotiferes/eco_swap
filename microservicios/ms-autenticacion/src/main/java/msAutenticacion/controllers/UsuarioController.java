@@ -1,17 +1,19 @@
 package msAutenticacion.controllers;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import msAutenticacion.domain.entities.Usuario;
-import msAutenticacion.domain.entities.enums.TipoDocumento;
 import msAutenticacion.domain.model.EnumValue;
 import msAutenticacion.domain.model.enums.TipoDocumentoEnum;
-import msAutenticacion.domain.repositories.UsuarioRepository;
 import msAutenticacion.domain.requests.RequestLogin;
 import msAutenticacion.domain.requests.RequestPassword;
-import msAutenticacion.domain.requests.RequestSignin;
+import msAutenticacion.domain.requests.RequestSignUp;
 import msAutenticacion.domain.responses.DTOs.TipoDocumentoDTO;
 import msAutenticacion.domain.responses.ResponseLogin;
+import msAutenticacion.exceptions.LoginUserBlockedException;
+import msAutenticacion.exceptions.LoginUserException;
+import msAutenticacion.exceptions.LoginUserWrongCredentialsException;
 import msAutenticacion.services.UsuarioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +31,7 @@ import java.util.stream.Collectors;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
-    private static final String JSON = "application/JSON";
+    private static final String JSON = "application/json";
 
     public UsuarioController(UsuarioService usuarioService) {this.usuarioService = usuarioService;}
     @GetMapping(path = "/usuario/{id_usuario}", produces = JSON)
@@ -47,10 +49,10 @@ public class UsuarioController {
     @PostMapping(path = "/usuario/signup", produces = JSON)
     @Transactional
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseEntity<Long> postSignin(@RequestBody RequestSignin body){
-        log.info("postSignin: creando nuevo usuario: "+ body.getEmail());
+    public ResponseEntity<Long> postSignUp(@RequestBody RequestSignUp body){
+        log.info("postSignUp: creando nuevo usuario: "+ body.getEmail());
         Long userId = usuarioService.crearUsuario(body);
-        log.info("postSignin: Usuario creado con ID: "+ userId);
+        log.info("postSignUp: Usuario creado con ID: "+ userId);
         return ResponseEntity.ok(userId);
     }
 
@@ -65,8 +67,8 @@ public class UsuarioController {
     }
 
     @PatchMapping(path = "/usuario/login", produces = JSON)
-    @Transactional
-    public ResponseEntity<ResponseLogin> patchLogin(@RequestBody RequestLogin body) throws NoSuchAlgorithmException {
+    @Transactional(noRollbackFor = {LoginUserException.class, LoginUserBlockedException.class, LoginUserWrongCredentialsException.class})
+    public ResponseEntity<ResponseLogin> patchLogin(@RequestBody @Valid RequestLogin body) throws NoSuchAlgorithmException {
         log.info("postLogin: Intento de login para usuario: "+ body.getUsername());
         String jwt = usuarioService.login(body);
         log.info("postLogin: Resultado del Login para usuario: "+ body.getUsername() + " con resultado: " + jwt);

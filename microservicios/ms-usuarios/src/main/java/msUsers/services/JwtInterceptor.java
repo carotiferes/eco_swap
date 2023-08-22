@@ -9,11 +9,13 @@ import msUsers.domain.entities.Usuario;
 import msUsers.domain.model.UsuarioContext;
 import msUsers.exceptions.responses.UnauthorizedAccessResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -23,16 +25,27 @@ public class JwtInterceptor implements HandlerInterceptor {
     @Autowired
     JwtService jwtService;
 
+    @Autowired
+    AllowedUrlsProvider allowedUrlsProvider;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (!Objects.equals(request.getMethod(), "OPTIONS")) {
             String jwtToken = request.getHeader("Authorization");
+            String uri = request.getRequestURI();
+
+            AntPathMatcher pathMatcher = new AntPathMatcher();
+            List<String> allowedUrls = allowedUrlsProvider.getAllowedUrls();
+            for(String allowedUrl : allowedUrls){
+                if(pathMatcher.match(allowedUrl, uri))
+                    return true;
+            }
 
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
             if (jwtToken == null || !jwtToken.startsWith("Bearer ")) {
-                log.info("ERROR 401: Acceso no autorizado.");
+                log.info("ERROR 401: Acceso no autorizado: " + uri);
                 UnauthorizedAccessResponse unauthorizedAccessResponse = new UnauthorizedAccessResponse(
                         "ERROR 401: Acceso no autorizado.",
                         System.currentTimeMillis(),
@@ -51,7 +64,7 @@ public class JwtInterceptor implements HandlerInterceptor {
                 return true;
             } catch (Exception e) {
                 UnauthorizedAccessResponse unauthorizedAccessResponse = new UnauthorizedAccessResponse(
-                        "ERROR 401: Acceso no autorizado.",
+                        "ERROR 401: Acceso no autorizado: ",
                         System.currentTimeMillis(),
                         HttpStatus.UNAUTHORIZED);
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

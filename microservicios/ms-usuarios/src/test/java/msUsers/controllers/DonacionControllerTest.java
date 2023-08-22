@@ -10,10 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.Part;
 import msUsers.domain.entities.CaracteristicaDonacion;
 import msUsers.domain.entities.Particular;
-import msUsers.domain.repositories.ParticularRepository;
+import msUsers.domain.repositories.ParticularesRepository;
 import msUsers.domain.responses.DTOs.DonacionDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +34,7 @@ public class DonacionControllerTest{
     @Mock
     private DonacionesRepository donacionesRepository;
     @Mock
-    private ParticularRepository particularRepository;
+    private ParticularesRepository particularesRepository;
 
 
     @InjectMocks
@@ -126,13 +125,13 @@ public class DonacionControllerTest{
         particular.setIdParticular(idParticular);
         particular.setFechaNacimiento(LocalDate.of(1997, 11, 25));
 
-        when(particularRepository.findById(idParticular)).thenReturn(Optional.of(particular));
+        when(particularesRepository.findById(idParticular)).thenReturn(Optional.of(particular));
 
         // Act
         ResponseEntity<List<DonacionDTO>> response = donacionController.listarDonacionesPorParticular();
 
         // Assert
-        verify(particularRepository, times(1)).findById(idParticular);
+        verify(particularesRepository, times(1)).findById(idParticular);
         assert response.getStatusCode() == HttpStatus.OK;
         assert response.getBody() != null;
         assert response.getBody().size() == 2;
@@ -144,7 +143,7 @@ public class DonacionControllerTest{
     public void listInvalid(){
         Long idParticular = 1L;
 
-        when(particularRepository.findById(idParticular)).thenReturn(Optional.empty());
+        when(particularesRepository.findById(idParticular)).thenReturn(Optional.empty());
 
         // Act and Assert
         assertThrows(EntityNotFoundException.class, () -> {
@@ -152,8 +151,8 @@ public class DonacionControllerTest{
         });
 
         // Verify
-        verify(particularRepository, times(1)).findById(idParticular);
-        verifyNoMoreInteractions(particularRepository);
+        verify(particularesRepository, times(1)).findById(idParticular);
+        verifyNoMoreInteractions(particularesRepository);
     }
 
 }

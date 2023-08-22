@@ -2,17 +2,15 @@ package msUsers.controllers;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.criteria.*;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.entities.*;
 import msUsers.domain.entities.enums.EstadoDonacion;
 import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.repositories.DonacionesRepository;
-import msUsers.domain.repositories.ParticularRepository;
+import msUsers.domain.repositories.ParticularesRepository;
 import msUsers.domain.requests.donaciones.RequestCambiarEstadoDonacion;
 import msUsers.domain.requests.donaciones.RequestComunicarDonacionColectaModel;
-import msUsers.domain.responses.DTOs.ColectaDTO;
 import msUsers.domain.responses.DTOs.DonacionDTO;
 import msUsers.domain.responses.ResponsePostEntityCreation;
 import msUsers.domain.responses.ResponseUpdateEntity;
@@ -25,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +43,7 @@ public class DonacionController {
     @Autowired
     CriteriaBuilderQueries criteriaBuilderQueries;
     @Autowired
-    ParticularRepository particularRepository;
+    ParticularesRepository particularesRepository;
 
     private static final String json = "application/json";
 
@@ -55,7 +52,7 @@ public class DonacionController {
     @Transactional
     public ResponseEntity<ResponseUpdateEntity> cambiarEstadoDonacion(
             @PathVariable("id_donacion") Long idDonacion,
-            @RequestBody RequestCambiarEstadoDonacion request) {
+            @RequestBody @Valid RequestCambiarEstadoDonacion request) {
 
         log.info(">> Se va cambiar el estado de la donacion {} a {}", idDonacion, request.getNuevoEstado());
         final var donacion = this.donacionesRepository.findById(idDonacion).

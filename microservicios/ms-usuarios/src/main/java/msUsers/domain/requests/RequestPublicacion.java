@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
 import msUsers.domain.entities.enums.TipoProducto;
+import msUsers.domain.entities.enums.TipoPublicacion;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,6 +29,8 @@ public class RequestPublicacion {
     private TipoProducto tipoProducto;
 
     private List<String> caracteristicasProducto;
+
+    private TipoPublicacion tipoPublicacion;
 
     /* A definir en base al comentario de Caro: Tiene una fecha de inicio y una fecha de fin
        al igual que las colectas? */
