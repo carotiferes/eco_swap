@@ -46,6 +46,7 @@ public class Donacion {
 
     public DonacionDTO toDTO() {
         DonacionDTO donacionDTO = new DonacionDTO();
+        donacionDTO.setIdDonacion(idDonacion);
         donacionDTO.setCantidadDonacion(cantidadDonacion);
         donacionDTO.setDescripcion(descripcion);
         donacionDTO.setCaracteristicaDonacion(caracteristicaDonacion);

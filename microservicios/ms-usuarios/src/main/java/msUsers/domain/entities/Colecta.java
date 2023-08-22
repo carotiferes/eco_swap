@@ -51,8 +51,7 @@ public class Colecta implements Serializable {
     public ColectaDTO toDTO() {
         ColectaDTO colectaDTO = new ColectaDTO();
         colectaDTO.setIdColecta(idColecta);
-        colectaDTO.setFundacion(fundacion.getNombre());
-        colectaDTO.setIdFundacion(fundacion.getIdFundacion());
+        colectaDTO.setFundacionDTO(fundacion.toDTO());
         colectaDTO.setTitulo(titulo);
         colectaDTO.setImagen(imagen);
         colectaDTO.setDescripcion(descripcion);

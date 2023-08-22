@@ -194,6 +194,7 @@ public class UsuarioService {
                 .telefono(signin.getTelefono())
                 .isSwapper(signin.getFundacion()==null)
                 .intentos(0)
+                .puntaje(0)
                 .bloqueado(false) //CUANDO SE CREA UN USUARIO, ESTE DEBE CONFIRMAR POR MAIL PRIMERO.
                 .build();
 

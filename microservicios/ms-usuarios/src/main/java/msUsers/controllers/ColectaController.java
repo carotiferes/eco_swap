@@ -129,19 +129,7 @@ public class ColectaController {
 
         List<Colecta> colectas = entityManager.createQuery(query).getResultList();
 
-        List<ColectaDTO> colectasDTO = colectas.stream().map(colecta -> {
-            ColectaDTO colectaDTO = new ColectaDTO();
-            colectaDTO.setTitulo(colecta.getTitulo());
-            colectaDTO.setFundacion(colecta.getFundacion().getNombre());
-            colectaDTO.setIdColecta(colecta.getIdColecta());
-            colectaDTO.setImagen(colecta.getImagen());
-            colectaDTO.setIdFundacion(colecta.getFundacion().getIdFundacion());
-            colectaDTO.setActiva(colecta.isActiva());
-            colectaDTO.setFechaInicio(colecta.getFechaInicio());
-            colectaDTO.setDescripcion(colecta.getDescripcion());
-            colectaDTO.setFechaFin(colecta.getFechaFin());
-            return colectaDTO;
-        }).collect(Collectors.toList());
+        List<ColectaDTO> colectasDTO = colectas.stream().map(Colecta::toDTO).collect(Collectors.toList());
 
         log.info("<< {} colectas encontradas.", colectasDTO.size());
         return ResponseEntity.ok(colectasDTO);
@@ -173,19 +161,7 @@ public class ColectaController {
         query.where(predicate);
 
         List<Colecta> colectas = entityManager.createQuery(query).getResultList();
-        List<ColectaDTO> colectasDTO = colectas.stream().map(colecta -> {
-            ColectaDTO colectaDTO = new ColectaDTO();
-            colectaDTO.setTitulo(colecta.getTitulo());
-            colectaDTO.setFundacion(colecta.getFundacion().getNombre());
-            colectaDTO.setIdColecta(colecta.getIdColecta());
-            colectaDTO.setImagen(colecta.getImagen());
-            colectaDTO.setIdFundacion(colecta.getFundacion().getIdFundacion());
-            colectaDTO.setActiva(colecta.isActiva());
-            colectaDTO.setFechaInicio(colecta.getFechaInicio());
-            colectaDTO.setDescripcion(colecta.getDescripcion());
-            colectaDTO.setFechaFin(colecta.getFechaFin());
-            return colectaDTO;
-        }).toList();
+        List<ColectaDTO> colectasDTO = colectas.stream().map(Colecta::toDTO).toList();
 
         return ResponseEntity.ok(colectasDTO);
     }
@@ -207,19 +183,7 @@ public class ColectaController {
         query.where(predicate);
 
         List<Colecta> colectas = entityManager.createQuery(query).getResultList();
-        List<ColectaDTO> colectasDTO = colectas.stream().map(colecta -> {
-            ColectaDTO colectaDTO = new ColectaDTO();
-            colectaDTO.setTitulo(colecta.getTitulo());
-            colectaDTO.setFundacion(colecta.getFundacion().getNombre());
-            colectaDTO.setIdColecta(colecta.getIdColecta());
-            colectaDTO.setImagen(colecta.getImagen());
-            colectaDTO.setIdFundacion(colecta.getFundacion().getIdFundacion());
-            colectaDTO.setActiva(colecta.isActiva());
-            colectaDTO.setFechaInicio(colecta.getFechaInicio());
-            colectaDTO.setDescripcion(colecta.getDescripcion());
-            colectaDTO.setFechaFin(colecta.getFechaFin());
-            return colectaDTO;
-        }).toList();
+        List<ColectaDTO> colectasDTO = colectas.stream().map(Colecta::toDTO).toList();
 
         return ResponseEntity.ok(colectasDTO);
     }

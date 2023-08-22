@@ -6,9 +6,11 @@ import lombok.Builder;
 import lombok.Data;
 import msUsers.domain.entities.enums.EstadoPublicacion;
 import msUsers.domain.entities.enums.TipoPublicacion;
+import msUsers.domain.responses.DTOs.PublicacionDTO;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -46,5 +48,21 @@ public class Publicacion {
     private List<Producto> productos;
 
     private String imagenes;
+
+    public PublicacionDTO toDTO() {
+        PublicacionDTO publicacionDTO = new PublicacionDTO();
+        publicacionDTO.setParticularDTO(particular.toDTO());
+        publicacionDTO.setFechaPublicacion(fechaPublicacion);
+        publicacionDTO.setTitulo(titulo);
+        publicacionDTO.setImagenes(imagenes);
+        publicacionDTO.setDescripcion(descripcion);
+        publicacionDTO.setTipoPublicacion(tipoPublicacion);
+        publicacionDTO.setEstadoPublicacion(estadoPublicacion);
+        publicacionDTO.setPrecioVenta(precioVenta);
+        publicacionDTO.setValorTruequeMax(valorTruequeMax);
+        publicacionDTO.setValorTruequeMin(valorTruequeMin);
+        publicacionDTO.setProductos(productos.stream().map(Producto::toDTO).collect(Collectors.toList()));
+        return publicacionDTO;
+    }
 
 }

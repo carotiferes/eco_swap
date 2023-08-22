@@ -88,18 +88,7 @@ public class DonacionController {
         Optional<Particular> optionalParticular = criteriaBuilderQueries.getParticularPorUsuario(user.getIdUsuario());
         Particular particular = optionalParticular.orElseThrow(() -> new EntityNotFoundException("No fue encontrado el particular."));
 
-        List<DonacionDTO> donacionesDTO = particular.getDonaciones().stream().map(donacion -> {
-            DonacionDTO donacionDTO = new DonacionDTO();
-            donacionDTO.setCantidadDonacion(donacion.getCantidadDonacion());
-            donacionDTO.setCaracteristicaDonacion(donacion.getCaracteristicaDonacion());
-            donacionDTO.setEstadoDonacion(donacion.getEstadoDonacion());
-            donacionDTO.setImagenes(donacion.getImagenes());
-            donacionDTO.setIdParticular(donacion.getParticular().getIdParticular());
-            donacionDTO.setDescripcion(donacion.getDescripcion());
-            donacionDTO.setNombreParticular(donacion.getParticular().getNombre());
-            donacionDTO.setProducto(donacion.getProducto().toDTO());
-            return donacionDTO;
-        }).toList();
+        List<DonacionDTO> donacionesDTO = particular.getDonaciones().stream().map(Donacion::toDTO).toList();
         return ResponseEntity.ok(donacionesDTO);
     }
 
