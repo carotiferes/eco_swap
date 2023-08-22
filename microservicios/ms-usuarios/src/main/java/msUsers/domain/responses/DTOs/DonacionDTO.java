@@ -14,8 +14,7 @@ public class DonacionDTO {
     private String descripcion;
     private int cantidadDonacion;
     private EstadoDonacion estadoDonacion;
-    private String nombreParticular;
-    private long idParticular;
+    private ParticularDTO particularDTO;
     private ProductoDTO producto;
     private List<CaracteristicaDonacion> caracteristicaDonacion;
     private String imagenes;

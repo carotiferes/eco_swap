@@ -49,7 +49,7 @@ public class Producto {
         productoDTO.setTipoProducto(tipoProducto);
         productoDTO.setDescripcion(descripcion);
         productoDTO.setTipoProducto(tipoProducto);
-        productoDTO.setPublicacion(publicacion.toDTO());
+     //   productoDTO.setPublicacion(publicacion.toDTO());
         productoDTO.setCantidadSolicitada(cantidadSolicitada);
         productoDTO.setCantidadRecibida(cantidadRecibida);
         return productoDTO;
