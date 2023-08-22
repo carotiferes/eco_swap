@@ -1,6 +1,7 @@
 package msUsers.domain.responses.DTOs;
 
 import lombok.Data;
+
 import java.util.List;
 
 @Data
@@ -9,5 +10,5 @@ public class FundacionDTO {
     private Long idFundacion;
     private String cuil;
     private Integer puntaje;
-    private List<String> direcciones;
+    private List<DireccionDTO> direcciones;
 }

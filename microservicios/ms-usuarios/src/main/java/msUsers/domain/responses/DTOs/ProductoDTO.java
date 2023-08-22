@@ -18,6 +18,6 @@ public class ProductoDTO {
     private int cantidadSolicitada;
     private int cantidadRecibida;
 //    private List<DonacionDTO> donaciones;
-    private PublicacionDTO publicacion;
+//    private PublicacionDTO publicacion;
 
 }

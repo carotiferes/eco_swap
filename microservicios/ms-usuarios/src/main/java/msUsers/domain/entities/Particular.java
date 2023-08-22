@@ -63,6 +63,8 @@ public class Particular {
         particularDTO.setDni(dni);
         particularDTO.setCuil(cuil);
         particularDTO.setTipoDocumento(tipoDocumento);
+        particularDTO.setPuntaje(usuario.getPuntaje());
+        particularDTO.setDirecciones(usuario.getDirecciones().stream().map(Direccion::toDTO).toList());
         return particularDTO;
     }
 

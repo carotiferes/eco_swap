@@ -46,14 +46,7 @@ public class ParticularController {
         final var particular = this.particularesRepository.findById(idParticular).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrado el particular: " + idParticular));
 
-        ParticularDTO particularDTO = new ParticularDTO();
-        particularDTO.setNombre(particular.getNombre());
-        particularDTO.setDni(particular.getDni());
-        particularDTO.setCuil(particular.getCuil());
-        particularDTO.setApellido(particular.getApellido());
-        particularDTO.setNombre(particular.getNombre());
-        particularDTO.setTipoDocumento(particular.getTipoDocumento());
-        particularDTO.setFechaNacimiento(particular.getFechaNacimiento());
+        ParticularDTO particularDTO = particular.toDTO();
 
         return ResponseEntity.ok(particularDTO);
     }

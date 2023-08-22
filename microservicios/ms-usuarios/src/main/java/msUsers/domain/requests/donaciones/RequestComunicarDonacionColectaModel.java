@@ -15,22 +15,22 @@ import java.util.List;
 @ToString(exclude = "imagenes")
 public class RequestComunicarDonacionColectaModel {
 
-    @NotNull(message = "TipoProducto debe tener un valor valido")
+    @NotNull(message = "Se debe seleccionar un tipo de producto.")
     private TipoProducto tipoProducto;
 
-        @NotNull(message = "ProductoId debe tener un valor valido")
+        @NotNull(message = "ProductoId debe tener un valor valido.")
         private Long productoId;
 
-        @NotNull(message = "cantidadOfrecida debe tener un valor valido")
+        @NotNull(message = "La cantidad ofrecida debe tener un valor valido.")
         @Positive(message = "La cantidad ofrecida debe ser mayor a cero.")
         private Integer cantidadOfrecida;
 
         private String mensaje;
 
-        @NotNull(message = "caracteristicas debe tener un valor string")
+        @NotNull(message = "Se necesita al menos una caracterìstica sobre el producto.")
         private List<String> caracteristicas;
 
-        @NotNull(message = "Las donaciones deben contener imagenes")
+        @NotNull(message = "Las donaciones deben contener imagenes.")
         private List<String> imagenes;
 
 }

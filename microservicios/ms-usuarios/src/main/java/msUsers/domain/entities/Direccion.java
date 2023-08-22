@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import msUsers.domain.responses.DTOs.DireccionDTO;
 
 
 @Entity
@@ -29,4 +30,13 @@ public class Direccion {
     private String dpto;
     @NotNull
     private String codigoPostal;
+
+    public DireccionDTO toDTO(){
+        DireccionDTO direccionDTO = new DireccionDTO();
+        direccionDTO.setDireccion(direccion);
+        direccionDTO.setPiso(piso);
+        direccionDTO.setAltura(altura);
+        direccionDTO.setCodigoPostal(codigoPostal);
+        return direccionDTO;
+    }
 }

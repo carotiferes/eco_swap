@@ -115,21 +115,20 @@ public class DonacionController {
 
     @GetMapping(path = "/colecta/{id_colecta}/donaciones", produces = json)
     @ResponseStatus(HttpStatus.OK)
-    public List<Donacion> obtenerTodasLasDonacionesDeColecta(@PathVariable(required = true, name = "id_colecta") Long idColecta)  {
+    public List<DonacionDTO> obtenerTodasLasDonacionesDeColecta(@PathVariable(required = true, name = "id_colecta") Long idColecta)  {
         log.info(">> Request obtener todas las donaciones de la colecta: {}", idColecta);
         List<Donacion> donacionColectesList = colectaService.obtenerTodasLasDonaciones(idColecta);
-        log.info("<< Cantidad de donaciones obtenidas: {} para idColecta: {}",
-                donacionColectesList.size(), idColecta);
-        return donacionColectesList;
+        log.info("<< Cantidad de donaciones obtenidas: {} para idColecta: {}", donacionColectesList.size(), idColecta);
+        return donacionColectesList.stream().map(Donacion::toDTO).toList();
     }
 
     @GetMapping(path = "/colecta/{id_colecta}/donaciones/{id_donacion}", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.OK)
-    public Donacion obtenerDonacionesXIdDonacion(@PathVariable(required = true, name = "id_donacion") Long idDonacion) {
+    public DonacionDTO obtenerDonacionesXIdDonacion(@PathVariable(required = true, name = "id_donacion") Long idDonacion) {
         log.info(">> Request obtener donacion x idDonacion: {}", idDonacion);
         Donacion donacion = colectaService.obtenerDonacionXIdDonacion(idDonacion);
         log.info("<< Donacion obtenido: {}", donacion);
-        return donacion;
+        return donacion.toDTO();
     }
 
 
