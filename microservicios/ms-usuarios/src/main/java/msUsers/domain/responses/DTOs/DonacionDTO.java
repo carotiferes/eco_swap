@@ -10,6 +10,7 @@ import java.util.List;
 
 @Data
 public class DonacionDTO {
+    private long idDonacion;
     private String descripcion;
     private int cantidadDonacion;
     private EstadoDonacion estadoDonacion;

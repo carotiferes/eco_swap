@@ -45,6 +45,8 @@ public class Fundacion implements Serializable{
         fundacionDTO.setIdFundacion(idFundacion);
         fundacionDTO.setNombre(nombre);
         fundacionDTO.setCuil(cuil);
+        fundacionDTO.setPuntaje(usuario.getPuntaje());
+        fundacionDTO.setDirecciones(usuario.getDirecciones().stream().map(Direccion::getDireccion).toList());
         return fundacionDTO;
     }
 }
