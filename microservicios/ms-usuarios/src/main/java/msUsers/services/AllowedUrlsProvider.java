@@ -26,6 +26,7 @@ public class AllowedUrlsProvider {
                 "/api/colecta/*",
                 "/fundacion/*",
                 // TRUEQUES / VENTAS
-                "/api/publicaciones");
+                "/api/publicaciones",
+                "/api/publicacion/*");
     }
 }

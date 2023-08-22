@@ -22,30 +22,7 @@ export class PublicacionesComponent {
 
 	loading: boolean = false;
 
-	publicacionesToShow: PublicacionModel[] = [/* {
-		idPublicacion: 1,
-		titulo: 'titulo',
-		descripcion: 'descripcion',
-		estado: 'estado',
-		particular: {
-			idParticular: 1,
-			usuario: 1,
-			nombre: 'nombre',
-			apellido: 'apellido',
-			dni: 'dni',
-			cuil: 'cuil',
-			fechaNacimiento: new Date(),
-			tipoDocumento: 'tipoDocumento',
-			publicaciones: [],
-			donaciones: []
-		},
-		fechaPublicacion: new Date(),
-		imagenes: 'assets/TEST_abrigos.jpg',
-		tipoPublicacion: 'VENTA',
-		precioVenta: 1000,
-		valorTruequeMin: 500,
-		valorTruequeMax: 700,
-	} */];
+	publicacionesToShow: PublicacionModel[] = [];
 
 	constructor(private router: Router, private auth: AuthService, private fb: FormBuilder,
 		private productosService: ProductosService, private showErrorService: ShowErrorService,
@@ -57,6 +34,9 @@ export class PublicacionesComponent {
 			codigoPostal: [''],
 			tipoProducto: ['']
 		})
+
+		if (router.url == '/mis-publicaciones') this.origin = 'myPublicaciones';
+		if (router.url == '/mis-ventas') this.origin = 'myVentas';
 
 		this.filtrarPublicaciones()
 	}
@@ -94,15 +74,29 @@ export class PublicacionesComponent {
 	}
 
 	filtrarPublicaciones() {
-		this.truequesService.getPublicaciones().subscribe({
-			next: (data: any) => {
-				console.log(data);
-				this.publicacionesToShow = data;
-				this.publicacionesToShow.map(item => {
-					item.parsedImagenes = item.imagenes.split('|')
-				})
-			}
-		})
+		if(this.origin == 'all'){
+			this.truequesService.getPublicaciones().subscribe({
+				next: (data: any) => {
+					console.log(data);
+					this.publicacionesToShow = data;
+					this.publicacionesToShow.map(item => {
+						item.parsedImagenes = item.imagenes.split('|')
+					})
+				}
+			})
+		} else if(this.origin == 'myPublicaciones'){
+			this.truequesService.getMisPublicaciones().subscribe({
+				next: (data: any) => {
+					console.log(data);
+					this.publicacionesToShow = data;
+					this.publicacionesToShow.map(item => {
+						item.parsedImagenes = item.imagenes.split('|')
+					})
+				}
+			})
+		} else { // myVentas
+
+		}
 	}
 
 	goToPublicacion(publicacion: PublicacionModel){

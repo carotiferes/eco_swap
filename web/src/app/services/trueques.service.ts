@@ -19,6 +19,14 @@ export class TruequesService {
 		return this.backendService.get(URL_NAME, 'api/publicaciones', filtros);
 	}
 
+	getMisPublicaciones(){
+		return this.backendService.get(URL_NAME, 'api/misPublicaciones');
+	}
+
+	getPublicacion(id_publicacion: number){
+		return this.backendService.get(URL_NAME, 'api/publicacion/' + id_publicacion);
+	}
+
 	getImagen(img: string){
 		return URL + 'api/getImage/' + img;
 	}

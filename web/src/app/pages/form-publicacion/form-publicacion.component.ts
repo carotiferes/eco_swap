@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TruequesService } from 'src/app/services/trueques.service';
 import Swal from 'sweetalert2';
 
@@ -15,7 +16,7 @@ export class FormPublicacionComponent {
 
 	loading: boolean = false;
 
-	constructor(private fb: FormBuilder, private truequeService: TruequesService){
+	constructor(private fb: FormBuilder, private truequeService: TruequesService, private router: Router){
 		this.publicacionForm = fb.group({
 			titulo: ['', Validators.required],
 			descripcion: ['', Validators.required],
@@ -89,7 +90,6 @@ export class FormPublicacionComponent {
 				titulo: this.publicacionForm.controls['titulo'].value,
 				descripcion: this.publicacionForm.controls['descripcion'].value,
 				imagen: this.publicacionForm.controls['file_source'].value,
-				idParticular: 1, //TODO: this.publicacionForm.controls['idParticular'].value,
 				tipoProducto: 'OTROS' ,//TODO: this.publicacionForm.controls['tipoProducto'].value,
 				caracteristicasProducto: sendCaracteristicas,
 				fechaPublicacion: new Date(),//this.publicacionForm.controls['fechaPublicacion'].value,
@@ -109,6 +109,8 @@ export class FormPublicacionComponent {
 						title: '¡Creada!',
 						text: 'La publicación se creó correctamente, ya podes hacer un intercambio!',
 						icon: 'success'
+					}).then(({isConfirmed}) => {
+						this.router.navigate(['publicaciones'])
 					})
 				},
 				error: (error) => {

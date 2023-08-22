@@ -29,8 +29,7 @@ export class ColectaComponent {
 	buttonsCard: {name: string, icon: string, color: string, status: string, disabled: string}[] = []
 
 	constructor(private route: ActivatedRoute, private router: Router, private auth: AuthService,
-		private donacionesService: DonacionesService, private showErrorService: ShowErrorService,
-		private fundacionesService: FundacionesService){
+		private donacionesService: DonacionesService, private showErrorService: ShowErrorService){
 		route.paramMap.subscribe(params => {
 			console.log(params);
 			this.id_colecta = params.get('id_colecta') || '';

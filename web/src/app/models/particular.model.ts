@@ -10,5 +10,6 @@ export interface ParticularModel {
 	fechaNacimiento: Date,
 	tipoDocumento: string,
 	publicaciones?: any[],
-	donaciones?: DonacionModel[]
+	donaciones?: DonacionModel[],
+	puntaje: number
 }

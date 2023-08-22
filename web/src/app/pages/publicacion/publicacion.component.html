@@ -10,12 +10,12 @@
 					<div mat-card-avatar class="example-header-image"></div>
 					<div>
 						<mat-card-title style="display: flex; align-items: center;">
-							{{publicacion.particularDTO.nombre}}
+							{{publicacion.particularDTO.nombre}} {{publicacion.particularDTO.apellido}}
 							<!-- <mat-icon class="address" (click)="showDireccion(publicacion.fundacion.usuario)">place</mat-icon> -->
 						</mat-card-title>
 						<mat-card-subtitle>
-							<mat-icon *ngFor="let i of [].constructor(publicacion.particularDTO.usuario.puntaje || 0)" color="primary">star</mat-icon>
-							<mat-icon *ngFor="let i of [].constructor(5-(publicacion.particularDTO.usuario.puntaje || 0))"
+							<mat-icon *ngFor="let i of [].constructor(publicacion.particularDTO.puntaje || 0)" color="primary">star</mat-icon>
+							<mat-icon *ngFor="let i of [].constructor(5-(publicacion.particularDTO.puntaje || 0))"
 								class="empty-star">star</mat-icon>
 						</mat-card-subtitle>
 					</div>
@@ -35,7 +35,7 @@
 				<div class="trueque">
 					Valor de trueque: ${{publicacion.valorTruequeMin}} - ${{publicacion.valorTruequeMax}} 
 				</div>
-				<div class="venta" *ngIf="publicacion.tipoPublicacion == 'VENTA'">
+				<div class="venta" *ngIf="publicacion.tipoPublicacion == 'VENTA_Y_TRUEQUE'">
 					Precio de venta: ${{publicacion.precioVenta}}
 				</div>
 				<div class="caracteristicas">
@@ -48,7 +48,7 @@
 		</mat-card-content>
 		<mat-card-actions class="card-button">
 			<button mat-raised-button color="primary" (click)="intercambiar()">QUIERO INTERCAMBIAR</button>
-			<button mat-raised-button color="accent" (click)="comprar()" *ngIf="publicacion.tipoPublicacion == 'VENTA'">QUIERO COMPRAR</button>
+			<button mat-raised-button color="accent" (click)="comprar()" *ngIf="publicacion.tipoPublicacion == 'VENTA_Y_TRUEQUE'">QUIERO COMPRAR</button>
 		</mat-card-actions>
 	</mat-card>
 </div>
