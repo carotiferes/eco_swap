@@ -24,8 +24,6 @@ public class RequestPublicacion {
     @NotNull(message = "La publicación debe contener al menos una imagen.")
     private List<String> imagen;
 
-    private long idParticular;
-
     private TipoProducto tipoProducto;
 
     private List<String> caracteristicasProducto;

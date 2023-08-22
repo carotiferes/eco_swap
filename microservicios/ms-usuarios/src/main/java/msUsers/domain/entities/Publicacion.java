@@ -19,6 +19,7 @@ public class Publicacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id_publicacion")
     private long idPublicacion;
 
     @Size(max = 50)
@@ -51,6 +52,7 @@ public class Publicacion {
 
     public PublicacionDTO toDTO() {
         PublicacionDTO publicacionDTO = new PublicacionDTO();
+        publicacionDTO.setIdPublicacion(idPublicacion);
         publicacionDTO.setParticularDTO(particular.toDTO());
         publicacionDTO.setFechaPublicacion(fechaPublicacion);
         publicacionDTO.setTitulo(titulo);

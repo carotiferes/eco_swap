@@ -59,11 +59,11 @@ public class PublicacionController {
     @Transactional
     public ResponseEntity<ResponsePostEntityCreation> createPublicacion(@Valid @RequestBody RequestPublicacion requestPublicacion) {
 
-        //final var perfil = this.userContextService.getUsuario();
+        final Usuario user = UsuarioContext.getUsuario();
+        Optional<Particular> optionalParticular = criteriaBuilderQueries.getParticularPorUsuario(user.getIdUsuario());
+        Particular particular = optionalParticular.orElseThrow(() -> new EntityNotFoundException("¡El particular no existe!"));
+        
         log.info(">> Request de creación de la publicación: {}", requestPublicacion.getTitulo());
-
-        var particularOptional = this.particularesRepository.findById(requestPublicacion.getIdParticular());
-        Particular particular = particularOptional.orElseThrow(() -> new EntityNotFoundException("¡El particular no existe!"));
 
         Publicacion publicacion = new Publicacion();
         publicacion.setTitulo(requestPublicacion.getTitulo());
@@ -75,7 +75,7 @@ public class PublicacionController {
 
         List<CaracteristicaProducto> listaCaracteristicas = requestPublicacion.getCaracteristicasProducto()
                 .stream()
-                .map(s -> CaracteristicaProducto.armarCarateristica(s, requestPublicacion.getIdParticular()))
+                .map(s -> CaracteristicaProducto.armarCarateristica(s, particular.getIdParticular()))
                 .toList();
 
         publicacion.setCaracteristicaProducto(listaCaracteristicas);
@@ -138,29 +138,7 @@ public class PublicacionController {
         query.where(predicate);
 
         List<Publicacion> publicaciones = entityManager.createQuery(query).getResultList();
-
-        List<PublicacionDTO> publicacionesDTOS = publicaciones.stream().map(publicacion -> {
-            PublicacionDTO publicacionDTO = new PublicacionDTO();
-            publicacionDTO.setTitulo(publicacion.getTitulo());
-            publicacionDTO.setEstadoPublicacion(publicacion.getEstadoPublicacion());
-            publicacionDTO.setFechaPublicacion(publicacion.getFechaPublicacion());
-            publicacionDTO.setDescripcion(publicacion.getDescripcion());
-            publicacionDTO.setImagenes(publicacion.getImagenes());
-            publicacionDTO.setCaracteristicaProducto(publicacion.getCaracteristicaProducto());
-            publicacionDTO.setParticularDTO(publicacion.getParticular().toDTO());
-
-            List<ProductoDTO> productos = publicacion.getProductos().stream()
-                    .map(producto -> {
-                        ProductoDTO productoDTO = new ProductoDTO();
-                        return producto.toDTO();
-                    }).collect(Collectors.toList());
-
-            publicacionDTO.setProductos(productos);
-            publicacionDTO.setValorTruequeMax(publicacion.getValorTruequeMax());
-            publicacionDTO.setValorTruequeMin(publicacion.getValorTruequeMin());
-            publicacionDTO.setPrecioVenta(publicacion.getPrecioVenta());
-            return publicacionDTO;
-        }).collect(Collectors.toList());
+        List<PublicacionDTO> publicacionesDTOS = publicaciones.stream().map(Publicacion::toDTO).toList();
 
         log.info("<< {} publicaciones encontradas.", publicacionesDTOS.size());
         return ResponseEntity.ok(publicacionesDTOS);
@@ -184,28 +162,7 @@ public class PublicacionController {
         query.where(predicate);
 
         List<Publicacion> publicaciones = entityManager.createQuery(query).getResultList();
-        List<PublicacionDTO> publicacionesDTO = publicaciones.stream().map(publicacion -> {
-            PublicacionDTO publicacionDTO = new PublicacionDTO();
-            publicacionDTO.setTitulo(publicacion.getTitulo());
-            publicacionDTO.setEstadoPublicacion(publicacion.getEstadoPublicacion());
-            publicacionDTO.setFechaPublicacion(publicacion.getFechaPublicacion());
-            publicacionDTO.setDescripcion(publicacion.getDescripcion());
-            publicacionDTO.setImagenes(publicacion.getImagenes());
-            publicacionDTO.setCaracteristicaProducto(publicacion.getCaracteristicaProducto());
-            publicacionDTO.setParticularDTO(publicacion.getParticular().toDTO());
-
-            List<ProductoDTO> productos = publicacion.getProductos().stream()
-                    .map(producto -> {
-                        ProductoDTO productoDTO = new ProductoDTO();
-                        return producto.toDTO();
-                    }).collect(Collectors.toList());
-
-            publicacionDTO.setProductos(productos);
-            publicacionDTO.setValorTruequeMax(publicacion.getValorTruequeMax());
-            publicacionDTO.setValorTruequeMin(publicacion.getValorTruequeMin());
-            publicacionDTO.setPrecioVenta(publicacion.getPrecioVenta());
-            return publicacionDTO;
-        }).toList();
+        List<PublicacionDTO> publicacionesDTO = publicaciones.stream().map(Publicacion::toDTO).toList();
 
         return ResponseEntity.ok(publicacionesDTO);
     }

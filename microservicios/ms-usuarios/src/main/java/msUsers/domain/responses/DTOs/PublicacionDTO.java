@@ -15,6 +15,7 @@ import java.util.List;
 @Data
 public class PublicacionDTO {
 
+    private Long idPublicacion;
     private String titulo;
     private String descripcion;
     private EstadoPublicacion estadoPublicacion;

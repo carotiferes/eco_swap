@@ -20,6 +20,7 @@ public class Particular {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_particular")
     private long idParticular;
 
     @OneToOne
