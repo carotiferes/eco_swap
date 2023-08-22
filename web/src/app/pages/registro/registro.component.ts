@@ -160,7 +160,7 @@ export class RegistroComponent {
 				if (this.isSwapper) {
 					if (this.particularForm.valid) {
 						user.particular = {
-							fechaNacimiento: this.particularForm.controls['fechaNacimiento'].value,
+							fechaNacimiento: new Date(this.particularForm.controls['fechaNacimiento'].value),
 							dni: this.particularForm.controls['nroDocumento'].value, // TODO: CAMBIAR A NRO DOC
 							cuil: this.particularForm.controls['nroDocumento'].value,
 							nombre: this.particularForm.controls['nombre'].value,
@@ -216,7 +216,8 @@ export class RegistroComponent {
 			title,
 			text,
 			confirmButtonText: confirm,
-			icon
+			icon,
+			allowOutsideClick: icon == 'success' ? false : true,
 		}).then(({ isConfirmed }) => {
 			if(isConfirmed){
 				if (origin == 'send_again') {

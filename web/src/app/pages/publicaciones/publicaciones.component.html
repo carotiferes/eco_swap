@@ -28,8 +28,8 @@
 		<div><!-- class="col-lg-6" -->
 			<div class="card-deck">
 				<div class="card row" *ngFor="let publicacion of publicacionesToShow" (click)="goToPublicacion(publicacion)">
-					<div class="col-sm-4" style="display: flex; justify-content: center;">
-						<img class="card-img" [src]="publicacion.imagenes ? publicacion.imagenes : 'assets/persona.png'">
+					<div class="col-sm-4" style="display: flex; justify-content: center;" *ngFor="let img of publicacion.parsedImagenes">
+						<img class="card-img" [src]="getImagen(img)">
 					</div>
 					<div class="card-body col-sm-6">
 						<h2 class="card-title">{{publicacion.titulo}}</h2>
@@ -42,7 +42,8 @@
 					</div>
 					<div class="card-fundacion col-sm-2">
 						<img class="img-fundacion" src="assets/persona.png">
-						<h4>{{publicacion.particular.nombre + ' ' + publicacion.particular.apellido}}</h4>
+						<h4>{{publicacion.particularDTO.nombre + ' ' + publicacion.particularDTO.apellido}}</h4>
+						<h6>{{publicacion.fechaPublicacion | date: 'dd/MM/yyyy' }}</h6>
 					</div>
 				</div>
 			</div>

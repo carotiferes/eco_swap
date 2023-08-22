@@ -6,5 +6,6 @@ export interface FundacionModel {
 	nombre: string,
 	cuil: string,
 	usuario: UsuarioModel,
-	colectas: ColectaModel[]
+	colectas: ColectaModel[],
+	puntaje?: number
 }

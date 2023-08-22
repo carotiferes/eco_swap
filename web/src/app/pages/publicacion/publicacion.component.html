@@ -10,12 +10,12 @@
 					<div mat-card-avatar class="example-header-image"></div>
 					<div>
 						<mat-card-title style="display: flex; align-items: center;">
-							{{publicacion.particular.nombre}}
+							{{publicacion.particularDTO.nombre}}
 							<!-- <mat-icon class="address" (click)="showDireccion(publicacion.fundacion.usuario)">place</mat-icon> -->
 						</mat-card-title>
 						<mat-card-subtitle>
-							<mat-icon *ngFor="let i of [].constructor(publicacion.particular.usuario.puntaje || 0)" color="primary">star</mat-icon>
-							<mat-icon *ngFor="let i of [].constructor(5-(publicacion.particular.usuario.puntaje || 0))"
+							<mat-icon *ngFor="let i of [].constructor(publicacion.particularDTO.usuario.puntaje || 0)" color="primary">star</mat-icon>
+							<mat-icon *ngFor="let i of [].constructor(5-(publicacion.particularDTO.usuario.puntaje || 0))"
 								class="empty-star">star</mat-icon>
 						</mat-card-subtitle>
 					</div>

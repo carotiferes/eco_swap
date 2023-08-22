@@ -19,7 +19,7 @@ export class PublicacionComponent implements OnInit {
 			titulo: 'titulo',
 			descripcion: 'descripcion',
 			estado: 'estado',
-			particular: {
+			particularDTO: {
 				idParticular: 1,
 				usuario: 1,
 				nombre: 'nombre',

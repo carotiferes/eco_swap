@@ -24,6 +24,7 @@ export class ColectaComponent {
 	userData?: any;
 	loading: boolean = true;
 	showDonaciones: boolean = false;
+	donacionesToShow: DonacionModel[] = [];
 
 	buttonsCard: {name: string, icon: string, color: string, status: string, disabled: string}[] = []
 
@@ -35,7 +36,7 @@ export class ColectaComponent {
 			this.id_colecta = params.get('id_colecta') || '';
 			if(!this.id_colecta) showErrorService.show('Error!', 'No pudimos encontrar la información de la colecta que seleccionaste, por favor volvé a intentarlo más tarde.')
 		})
-		this.userData = { isSwapper: auth.isUserSwapper() }
+		this.userData = { isSwapper: auth.isUserSwapper(), isLoggedIn: auth.isUserLoggedIn }
 	}
 	
 	ngOnInit(): void {
@@ -50,39 +51,33 @@ export class ColectaComponent {
 					
 					this.colecta = colecta;
 
-					this.fundacionesService.getFundacion(this.colecta.idFundacion).subscribe({
-						next: (fundacion: any) => {
-							console.log(fundacion);
-							
-							this.colecta.fundacion = fundacion;
-							this.colecta.fundacion.usuario.puntaje = Number(this.colecta.fundacion.usuario.puntaje)
-							this.colecta.imagen = this.getImage(this.colecta.imagen);
+					this.colecta.imagen = this.getImage(this.colecta.imagen);
 
-							this.donacionesService.getDonacionesColecta(this.colecta.idColecta).subscribe({
-								next: (donaciones: any) => {
-									console.log(donaciones);
-									this.donaciones = donaciones;
-									this.donaciones.map(donacion => {
-										if(donacion.imagenes) donacion.parsedImagenes = donacion.imagenes.split('|')
-									})
+					if(this.auth.isUserLoggedIn){
+						this.donacionesService.getDonacionesColecta(this.colecta.idColecta).subscribe({
+							next: (donaciones: any) => {
+								console.log(donaciones);
+								this.donaciones = donaciones;
+								this.donaciones.map(donacion => {
+									if(donacion.imagenes) donacion.parsedImagenes = donacion.imagenes.split('|')
+								})
 
-									if (this.userData.isSwapper) {
-										this.donaciones = this.donaciones.filter(item => item.particular.idParticular == this.userData.id_particular)
-									}
-									console.log(this.showDonaciones);
-								},
-								error: (error) => {
-									console.log('error', error);
-									
+								//TODO: REVISAR CUANDO MUESTRA DONACIONES
+								if (this.userData.isSwapper) {
+									this.donacionesToShow = this.donaciones.filter(item => item.particularDTO.idParticular == this.userData.id_particular)
+									this.showDonaciones = true;
+								} else if(this.userData) { // TODO: IF colecta.id_fundacion == userData.id_fundacion --> show donaciones
+									this.donacionesToShow = donaciones;
+									this.showDonaciones = true;
 								}
-							})
-
-						},
-						error: (error) => {
-							console.log(error);
-							
-						}
-					})
+								console.log(this.showDonaciones);
+							},
+							error: (error) => {
+								console.log('error', error);
+								
+							}
+						})
+					}
 					this.loading = false;
 				} else this.showErrorService.show('Error!', 'No se encontró la información de la colecta que seleccionaste. Intentá nuevamente más tarde.')
 			},

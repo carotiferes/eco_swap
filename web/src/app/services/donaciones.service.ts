@@ -27,12 +27,12 @@ export class DonacionesService {
 		return this.backendService.get(URL_NAME, 'api/colecta/'+id_colecta);
 	}
 
-	getDonacionesColecta(id_colecta: any){// TODO: url de donaciones x colecta
+	getDonacionesColecta(id_colecta: any){
 		return this.backendService.get(URL_NAME, 'api/colecta/'+id_colecta+'/donaciones');
 	}
 
-	getMisDonaciones(){ // TODO: url de mis donaciones (x tkn)
-		return this.backendService.get(URL_NAME, 'api/particular/1/donaciones');
+	getMisDonaciones(){
+		return this.backendService.get(URL_NAME, 'api/particular/misDonaciones');
 	}
 
 	crearDonacion(id_colecta: number, body: any){

@@ -2,19 +2,19 @@
 
 <div id="main-colecta">
 	<app-spinner [loading]="loading"></app-spinner>
-	<mat-card *ngIf="!loading && colecta.fundacion && colecta.fundacion.usuario && colecta">
+	<mat-card *ngIf="!loading && colecta && colecta.fundacionDTO"> <!-- && colecta.fundacionDTO.usuario -->
 		<mat-card-header style="border-bottom: solid 1px var(--light-grey); padding-bottom: 10px;">
 			<div class="div-header">
 				<div class="header-info">
 					<div mat-card-avatar class="example-header-image"></div>
 					<div>
 						<mat-card-title style="display: flex; align-items: center;">
-							{{colecta.fundacion.nombre}}
-							<mat-icon class="address" (click)="showDireccion(colecta.fundacion.usuario)">place</mat-icon>
+							{{colecta.fundacionDTO.nombre}}
+							<mat-icon class="address" (click)="showDireccion(colecta.fundacionDTO.usuario)" *ngIf="colecta.fundacionDTO.usuario">place</mat-icon>
 						</mat-card-title>
 						<mat-card-subtitle>
-							<mat-icon *ngFor="let i of [].constructor(colecta.fundacion.usuario.puntaje)" color="primary">star</mat-icon>
-							<mat-icon *ngFor="let i of [].constructor(5-colecta.fundacion.usuario.puntaje)"
+							<mat-icon *ngFor="let i of [].constructor(colecta.fundacionDTO.puntaje || 0)" color="primary">star</mat-icon>
+							<mat-icon *ngFor="let i of [].constructor(5-(colecta.fundacionDTO.puntaje || 0))"
 								class="empty-star">star</mat-icon>
 						</mat-card-subtitle>
 					</div>
@@ -31,14 +31,16 @@
 					{{colecta.descripcion}}
 				</div>
 				<div class="productos">
+					<h4><u>Productos</u>:</h4>
 					<div *ngFor="let producto of colecta.productos" class="producto">
-						{{producto.descripcion}}: {{producto.cantidadRecibida}}
+						<!-- {{producto.descripcion}}: {{producto.cantidadRecibida}} -->
+						{{producto}}
 					</div>
 				</div>
 			</div>
 		</mat-card-content>
 		<mat-card-actions class="card-button">
-			<button mat-raised-button color="primary" (click)="donar()">QUIERO DONAR</button>
+			<button mat-raised-button color="primary" (click)="donar()" *ngIf="!(userData.isLoggedIn && !userData.isSwapper)">QUIERO DONAR</button>
 		</mat-card-actions>
 	</mat-card>
 
@@ -46,10 +48,10 @@
 		<h3 style="margin: 20px 0 0 5px; font-weight: bold;">
 			{{this.userData.isSwapper ? 'Mi donación' : 'Donaciones'}}
 		</h3>
-		<div *ngIf="donaciones.length == 0 && !loading" style="text-align: center;">Esta colecta no tiene donaciones
+		<div *ngIf="donacionesToShow.length == 0 && !loading" style="text-align: center;">Esta colecta no tiene donaciones
 			aún!</div>
-		<app-card-donacion *ngFor="let donacion of donaciones" [donacion]="donacion"
-			[usuarioHeader]="donacion.particular" [buttons]="this.userData.isSwapper ? 
+		<app-card-donacion *ngFor="let donacion of donacionesToShow" [donacion]="donacion"
+			[usuarioHeader]="donacion.particularDTO" [buttons]="this.userData.isSwapper ? 
 			[{name: 'cancelar', icon: 'close', color: 'warn', status: 'CANCELADA', disabled: donacion.estadoDonacion != 'PENDIENTE'}]
 			: [
 				{name: 'aceptar', icon: 'check', color: 'primary', status: 'APROBADA', disabled: donacion.estadoDonacion != 'PENDIENTE'},

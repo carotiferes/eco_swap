@@ -22,9 +22,7 @@ export class CardDonacionComponent implements OnInit{
 	userData: any
 	caracteristicas: string = '';
 
-	constructor(private auth: AuthService, private donacionesService: DonacionesService){
-		this.userData = auth.getUserData();
-	}
+	constructor(private donacionesService: DonacionesService){	}
 	
 	ngOnInit(): void {
 		console.log(this.donacion, this.usuarioHeader,this.donacion.caracteristicaDonacion);

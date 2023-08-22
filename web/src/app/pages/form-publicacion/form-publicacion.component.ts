@@ -105,7 +105,11 @@ export class FormPublicacionComponent {
 			this.truequeService.crearPublicacion(body).subscribe({
 				next: (res: any) => {
 					console.log('publicacion creada',res);
-					
+					Swal.fire({
+						title: '¡Creada!',
+						text: 'La publicación se creó correctamente, ya podes hacer un intercambio!',
+						icon: 'success'
+					})
 				},
 				error: (error) => {
 					console.log('error creando publicacion', error);

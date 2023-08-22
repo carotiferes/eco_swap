@@ -8,7 +8,7 @@ export interface PublicacionModel {
 	titulo: string,
 	descripcion: string,
 	estado: string,
-	particular: ParticularModel,
+	particularDTO: ParticularModel,
 	fechaPublicacion: Date,
 	imagenes: string,
 	parsedImagenes?: string[],

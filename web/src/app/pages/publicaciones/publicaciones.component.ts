@@ -5,6 +5,7 @@ import { PublicacionModel } from 'src/app/models/publicacion.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { ShowErrorService } from 'src/app/services/show-error.service';
+import { TruequesService } from 'src/app/services/trueques.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -21,7 +22,7 @@ export class PublicacionesComponent {
 
 	loading: boolean = false;
 
-	publicacionesToShow: PublicacionModel[] = [{
+	publicacionesToShow: PublicacionModel[] = [/* {
 		idPublicacion: 1,
 		titulo: 'titulo',
 		descripcion: 'descripcion',
@@ -44,10 +45,11 @@ export class PublicacionesComponent {
 		precioVenta: 1000,
 		valorTruequeMin: 500,
 		valorTruequeMax: 700,
-	}];
+	} */];
 
 	constructor(private router: Router, private auth: AuthService, private fb: FormBuilder,
-		private productosService: ProductosService, private showErrorService: ShowErrorService){
+		private productosService: ProductosService, private showErrorService: ShowErrorService,
+		private truequesService: TruequesService){
 		this.userData = auth.getUserData();
 
 		this.formFiltros = fb.group({
@@ -55,6 +57,8 @@ export class PublicacionesComponent {
 			codigoPostal: [''],
 			tipoProducto: ['']
 		})
+
+		this.filtrarPublicaciones()
 	}
 
 	addPublicacion(){
@@ -78,19 +82,27 @@ export class PublicacionesComponent {
 	getTiposProductos() {
 		this.productosService.getTiposProductos().subscribe({
 			next: (v: any) => {
-				console.log('productos', v);
+				//console.log('productos', v);
 				this.tipos_productos = v;
 			},
 			error: (e) => {
 				console.error('error', e);
 				this.showErrorService.show('Error!', 'Ha ocurrido un error al traer los tipos de producto')
 			},
-			complete: () => console.info('complete')
+			//complete: () => console.info('complete')
 		});
 	}
 
 	filtrarPublicaciones() {
-		
+		this.truequesService.getPublicaciones().subscribe({
+			next: (data: any) => {
+				console.log(data);
+				this.publicacionesToShow = data;
+				this.publicacionesToShow.map(item => {
+					item.parsedImagenes = item.imagenes.split('|')
+				})
+			}
+		})
 	}
 
 	goToPublicacion(publicacion: PublicacionModel){
@@ -100,5 +112,9 @@ export class PublicacionesComponent {
 	limpiarFiltros() {
 		this.formFiltros.reset()
 		this.filtrarPublicaciones()
+	}
+
+	getImagen(img: string) {
+		return this.truequesService.getImagen(img)
 	}
 }
