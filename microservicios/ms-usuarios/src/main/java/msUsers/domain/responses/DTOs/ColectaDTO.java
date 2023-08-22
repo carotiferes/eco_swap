@@ -10,8 +10,7 @@ import java.util.List;
 public class ColectaDTO {
 
     private long idColecta;
-    private String fundacion;
-    private long idFundacion;
+    private FundacionDTO fundacionDTO;
     private String titulo;
     private String imagen;
     private boolean activa;
