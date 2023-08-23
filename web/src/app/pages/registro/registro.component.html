@@ -5,12 +5,14 @@
 		<mat-card-header>
 			<div *ngIf="!resetPassword; else resetHeader">
 				<mat-card-title>Registrate!</mat-card-title>
-				<mat-card-subtitle>Completá {{isSwapper ? 'tus datos' : 'los datos de la fundación'}} para crear tu cuenta</mat-card-subtitle>
+				<mat-card-subtitle>Completá {{isSwapper ? 'tus datos' : 'los datos de la fundación'}} para crear tu
+					cuenta</mat-card-subtitle>
 			</div>
 			<ng-template #resetHeader>
 				<div>
 					<mat-card-title>Actualizar contraseña</mat-card-title>
-					<mat-card-subtitle>Completá {{isSwapper ? 'tus datos' : 'los datos de la fundación'}} para actualizar tu contraseña</mat-card-subtitle>
+					<mat-card-subtitle>Completá {{isSwapper ? 'tus datos' : 'los datos de la fundación'}} para
+						actualizar tu contraseña</mat-card-subtitle>
 				</div>
 			</ng-template>
 		</mat-card-header>
@@ -31,8 +33,9 @@
 				<div class="form-input">
 					<mat-form-field *ngIf="!resetPassword">
 						<mat-label>Teléfono</mat-label>
-						<input matInput formControlName="telefono" [ngModel]="this.mainForm.get('telefono')!.value" (keyup)="formatearTelefono()">
-						<mat-hint>Formato: 11 1234-5678</mat-hint> 
+						<input matInput formControlName="telefono" [ngModel]="this.mainForm.get('telefono')!.value"
+							(keyup)="formatearTelefono()">
+						<mat-hint>Formato: 11 1234-5678</mat-hint>
 						<mat-error *ngIf="mainForm.get('telefono')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
@@ -53,14 +56,16 @@
 							Las contraseñas no coinciden
 						</mat-error>
 						<mat-error *ngIf="mainForm.get('password')!.hasError('pattern')">
-							La contraseña debe tener entre 8 y 32 caracteres y al menos 1 minúscula, 1 mayúscula y 1 número.
+							La contraseña debe tener entre 8 y 32 caracteres y al menos 1 minúscula, 1 mayúscula y 1
+							número.
 						</mat-error>
 					</mat-form-field>
 				</div>
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>Confirm Password</mat-label>
-						<input matInput formControlName="confirmPassword" [type]="passwordType" (focus)="refreshValidity()">
+						<input matInput formControlName="confirmPassword" [type]="passwordType"
+							(focus)="refreshValidity()">
 						<mat-icon matSuffix (click)="togglePassword()" class="eye">{{passwordIcon}}</mat-icon>
 						<mat-error *ngIf="mainForm.get('confirmPassword')!.hasError('required')">
 							Campo obligatorio
@@ -80,7 +85,7 @@
 							Campo obligatorio
 						</mat-error>
 					</mat-form-field>
-	
+
 				</div>
 				<div class="form-input">
 					<mat-form-field>
@@ -127,30 +132,71 @@
 					</mat-form-field>
 				</div>
 			</form>
-				<form [formGroup]="fundacionForm" *ngIf="!isSwapper && !resetPassword" class="form">
-					<div class="form-input">
-						<mat-form-field>
-							<mat-label>Nombre / Razón Social</mat-label>
-							<input matInput formControlName="nombre">
-							<mat-error *ngIf="fundacionForm.get('nombre')!.hasError('required')">
-								Campo obligatorio
-							</mat-error>
-						</mat-form-field>
-					</div>
-					<div class="form-input">
-						<mat-form-field>
-							<mat-label>CUIT</mat-label>
-							<input matInput formControlName="cuit">
-							<mat-error *ngIf="fundacionForm.get('cuit')!.hasError('required')">
-								Campo obligatorio
-							</mat-error>
-						</mat-form-field>
-					</div>
-				</form>
+			<form [formGroup]="fundacionForm" *ngIf="!isSwapper && !resetPassword" class="form">
+				<div class="form-input">
+					<mat-form-field>
+						<mat-label>Nombre / Razón Social</mat-label>
+						<input matInput formControlName="nombre">
+						<mat-error *ngIf="fundacionForm.get('nombre')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
+				</div>
+				<div class="form-input">
+					<mat-form-field>
+						<mat-label>CUIT</mat-label>
+						<input matInput formControlName="cuit">
+						<mat-error *ngIf="fundacionForm.get('cuit')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
+				</div>
+			</form>
+			<div style="margin: 20px 5% 0px; font-weight: bold;">Dirección</div>
+			<form [formGroup]="direccionForm" *ngIf="!resetPassword" class="form">
+				<div class="form-input">
+					<mat-form-field>
+						<mat-label>Calle</mat-label>
+						<input matInput formControlName="direccion">
+						<mat-error *ngIf="direccionForm.get('direccion')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
+				</div>
+				<div class="form-input">
+					<mat-form-field>
+						<mat-label>Altura</mat-label>
+						<input matInput formControlName="altura">
+						<mat-error *ngIf="direccionForm.get('altura')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
+				</div>
+				<div class="form-input">
+					<mat-form-field>
+						<mat-label>Piso</mat-label>
+						<input matInput formControlName="piso">
+					</mat-form-field>
+				</div>
+				<div class="form-input">
+					<mat-form-field>
+						<mat-label>Departamento</mat-label>
+						<input matInput formControlName="departamento">
+					</mat-form-field>
+				</div>
+				<div class="form-input">
+					<mat-form-field>
+						<mat-label>Código Postal</mat-label>
+						<input matInput formControlName="codigoPostal">
+						<mat-error *ngIf="direccionForm.get('codigoPostal')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
+				</div>
+			</form>
 		</mat-card-content>
-		<mat-card-actions class="buttons"> 
-			<button mat-raised-button color="primary"
-			(click)="crearCuenta();
+		<mat-card-actions class="buttons">
+			<button mat-raised-button color="primary" (click)="crearCuenta();
 					mainForm.markAllAsTouched();
 					mainForm.valid;
 					isSwapper && particularForm.valid;

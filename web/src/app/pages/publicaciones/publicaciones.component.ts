@@ -16,7 +16,6 @@ import Swal from 'sweetalert2';
 export class PublicacionesComponent {
 
 	origin: 'all' | 'myPublicaciones' | 'myVentas' = 'all';
-	userData: any;
 	formFiltros: FormGroup;
 	tipos_productos: any[] = [];
 
@@ -27,7 +26,6 @@ export class PublicacionesComponent {
 	constructor(private router: Router, private auth: AuthService, private fb: FormBuilder,
 		private productosService: ProductosService, private showErrorService: ShowErrorService,
 		private truequesService: TruequesService){
-		this.userData = auth.getUserData();
 
 		this.formFiltros = fb.group({
 			fundacion: [''],

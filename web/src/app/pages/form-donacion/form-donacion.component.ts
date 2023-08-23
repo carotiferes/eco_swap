@@ -19,8 +19,6 @@ export class FormDonacionComponent implements OnInit {
 
 	images: any[] = [];
 
-	userData: any;
-
 	loading: boolean = true;
 	id_colecta?: string;
 
@@ -42,7 +40,6 @@ export class FormDonacionComponent implements OnInit {
 		})
 
 		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
-		this.userData = auth.getUserData();
 	}
 
 	ngOnInit(): void {
@@ -81,7 +78,6 @@ export class FormDonacionComponent implements OnInit {
 				sendCaracteristicas.push(item.s_descripcion);
 			})
 			const objetoToSend = {
-				idParticular: this.userData.id_particular, //TODO: SACAR PARA Q SEA X TKN
 				colectaProductoModel: {
 					tipoProducto: "MUEBLES",
 					productoId: this.donacionForm.controls['producto'].value,

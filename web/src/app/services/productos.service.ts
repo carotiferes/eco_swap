@@ -13,4 +13,8 @@ export class ProductosService {
 	getTiposProductos() {
 		return this.backendService.get(URL_NAME, 'api/tiposProductos');
 	}
+
+	getProductosColecta(id_colecta: number) {
+		return this.backendService.get(URL_NAME, 'api/productos/'+id_colecta);
+	}
 }

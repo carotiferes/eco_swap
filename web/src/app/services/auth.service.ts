@@ -48,11 +48,12 @@ export class AuthService {
 		localStorage.setItem('userLoggedIn', this.isUserLoggedIn ? 'true' : 'false');
 	}
 
-	getUserData() {
+	getUserID() {
 		const tkn = localStorage.getItem('userToken')
-		if(tkn) {
-			const decodedToken: any = jwtDecode(tkn)
-			this.usuarioService.getUserByID(decodedToken.id).subscribe({
+		const decodedToken: any = jwtDecode(tkn || '')
+		return decodedToken.id;
+		/*const decodedToken: any = jwtDecode(tkn || '')
+		this.usuarioService.getUserByID(decodedToken.id).subscribe({
 				next: (res) => {
 					this.userData = res;
 					return this.userData;
@@ -62,8 +63,9 @@ export class AuthService {
 					return this.userData;
 				}
 			})
+			 if(tkn) {
 		}
-		else return this.userData;
+		else return this.userData; */
 		/* const data = localStorage.getItem('userData');
 		if(data && data != 'undefined'){
 			const user = JSON.parse(data as string);

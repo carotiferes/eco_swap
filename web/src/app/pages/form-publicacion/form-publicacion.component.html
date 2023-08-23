@@ -80,7 +80,7 @@
 				<section formArrayName="caracteristicas" class="form-col">
 					<div>
 						<label class="caract-label">
-							Caracteristicas
+							Características
 							<mat-icon class="material-icons-outlined"
 							matTooltip="Por favor incluir medidas, estado del producto,  material del producto y cualquier característica que identifique a tu producto">
 								info
@@ -106,7 +106,7 @@
 						</div>
 						<button type="button" (click)="agregarCaracteristica()" mat-raised-button color="light" style="width: 100%;">
 							<mat-icon>add</mat-icon>
-							<label>Agregar Caracteristica</label>
+							<label>Agregar Característica</label>
 						</button>
 					</div>
 					<div></div>
@@ -116,9 +116,9 @@
 					<div>
 						<label style="font-weight: 500; font-size: large; margin: 7px 0;">Imágenes</label>
 					</div>
-					<button type="button" mat-raised-button color="light" style="margin-top: 5px;">
+					<button type="button" mat-raised-button color="light" (click)="file.click()">
 						<mat-icon>add</mat-icon>
-						<label for="file">Agregar Imagen</label>
+						Agregar Imagen
 					</button>
 					<input formControlName="file" id="file" type="file" class="form-control hidden" multiple=""
 						(change)="onFileChange($event)" #file>

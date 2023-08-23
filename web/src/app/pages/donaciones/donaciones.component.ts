@@ -15,7 +15,6 @@ import Swal from 'sweetalert2';
 export class DonacionesComponent {
 
 	donaciones: DonacionModel[] = [];
-	userData: any;
 
 	buttonsCard: {name: string, icon: string, color: string, status: string, disabled: string}[] = []
 
@@ -25,7 +24,6 @@ export class DonacionesComponent {
 	}
 
 	getDonaciones() {
-		this.userData = this.auth.getUserData();
 		this.donacionesService.getMisDonaciones().subscribe({
 			next: (res: any) => {
 				if(res){

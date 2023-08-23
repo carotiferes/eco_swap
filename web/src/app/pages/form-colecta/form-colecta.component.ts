@@ -38,8 +38,6 @@ export class FormColectaComponent  {
 		this.tipos_productos = TIPOS;
 		this.estados_productos = ESTADOS;
 
-		let userData = auth.getUserData();
-
 		this.colectaForm = fb.group({
 			s_titulo: ['', Validators.required],
 			s_descripcion: [''],
@@ -88,7 +86,6 @@ export class FormColectaComponent  {
 			this.donacionesService.crearColecta({
 				titulo: this.colectaForm.controls['s_titulo'].value,
 				descripcion: this.colectaForm.controls['s_descripcion'].value,
-				idFundacion: this.colectaForm.controls['id_fundacion'].value, //TODO: SACAR PARA Q SEA X TKN
 				productos,
 				imagen: this.colectaForm.controls['file_source'].value[0],
 				fechaInicio: this.colectaForm.controls['fecha_inicio'].value,
@@ -97,8 +94,8 @@ export class FormColectaComponent  {
 				next: (res) => {
 					//console.log(res, JSON.parse(JSON.stringify(res)).descripcion);
 					if(JSON.parse(JSON.stringify(res)).descripcion)	{
-						this.showMessage('¡Colecta Creada!', 'La colecta se creó exitosamente. Los particulars te contactarán pronto!', 'success')
-						this.router.navigateByUrl('mis-colectas/')
+						this.showMessage('¡Colecta Creada!', 'La colecta se creó exitosamente. Los particulares te contactarán pronto!', 'success')
+						this.router.navigateByUrl('mis-colectas')
 					}
 					else this.showMessage('Ocurrió un error', 'No pudimos crear la colecta. Intentá nuevamente luego.', 'error')
 				},

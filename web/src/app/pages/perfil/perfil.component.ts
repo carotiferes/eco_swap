@@ -32,7 +32,7 @@ export class PerfilComponent {
 	}
 
 	getUserInformation(){
-		this.usuarioService.getCurrentUser().subscribe({
+		this.usuarioService.getUserByID(this.auth.getUserID()).subscribe({
 			next: (res: any) => {
 				console.log(res);
 				this.user = res;

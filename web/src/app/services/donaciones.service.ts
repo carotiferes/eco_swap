@@ -20,7 +20,7 @@ export class DonacionesService {
 	}
 
 	getMisColectas(){
-		return this.backendService.get(URL_NAME, 'api/colectas');
+		return this.backendService.get(URL_NAME, 'api/misColectas');
 	}
 
 	getColecta(id_colecta: any){
@@ -36,7 +36,7 @@ export class DonacionesService {
 	}
 
 	crearDonacion(id_colecta: number, body: any){
-		return this.backendService.post(URL_NAME, 'api/colecta/'+id_colecta+'/donaciones', body);
+		return this.backendService.post(URL_NAME, 'api/colecta/'+id_colecta+'/crearDonacion', body);
 	}
 
 	getImagen(img: string){
