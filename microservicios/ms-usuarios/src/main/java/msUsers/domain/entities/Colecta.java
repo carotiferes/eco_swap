@@ -48,7 +48,7 @@ public class Colecta implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "colecta")
     private List<Producto> productos;
 
-    public ColectaDTO toDTO() {
+    public ColectaDTO toDTO(boolean includeProductos) {
         ColectaDTO colectaDTO = new ColectaDTO();
         colectaDTO.setIdColecta(idColecta);
         colectaDTO.setFundacionDTO(fundacion.toDTO());
@@ -58,7 +58,11 @@ public class Colecta implements Serializable {
         colectaDTO.setActiva(activa);
         colectaDTO.setFechaInicio(fechaInicio);
         colectaDTO.setFechaFin(fechaFin);
-        colectaDTO.setProductos(productos.stream().map(Producto::getDescripcion).collect(Collectors.toList()));
+
+        if (includeProductos && productos != null) {
+            colectaDTO.setProductos(productos.stream().map(producto -> producto.toDTO(false)).collect(Collectors.toList())); // Evitar recursión en ProductoDTO
+        }
+
         return colectaDTO;
     }
 }

@@ -129,7 +129,7 @@ public class ColectaController {
 
         List<Colecta> colectas = entityManager.createQuery(query).getResultList();
 
-        List<ColectaDTO> colectasDTO = colectas.stream().map(Colecta::toDTO).collect(Collectors.toList());
+        List<ColectaDTO> colectasDTO = colectas.stream().map(colecta -> colecta.toDTO(true)).collect(Collectors.toList());
 
         log.info("<< {} colectas encontradas.", colectasDTO.size());
         return ResponseEntity.ok(colectasDTO);
@@ -139,7 +139,7 @@ public class ColectaController {
     public ResponseEntity<ColectaDTO> getColecta(@PathVariable("id_colecta") Long id) {
         final var colecta = this.colectasRepository.findById(id).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrado la colecta: " + id));
-        ColectaDTO colectaDTO = colecta.toDTO();
+        ColectaDTO colectaDTO = colecta.toDTO(true);
         return ResponseEntity.ok(colectaDTO);
     }
 
@@ -161,7 +161,7 @@ public class ColectaController {
         query.where(predicate);
 
         List<Colecta> colectas = entityManager.createQuery(query).getResultList();
-        List<ColectaDTO> colectasDTO = colectas.stream().map(Colecta::toDTO).toList();
+        List<ColectaDTO> colectasDTO = colectas.stream().map(colecta -> colecta.toDTO(true)).toList();
 
         return ResponseEntity.ok(colectasDTO);
     }
@@ -183,7 +183,7 @@ public class ColectaController {
         query.where(predicate);
 
         List<Colecta> colectas = entityManager.createQuery(query).getResultList();
-        List<ColectaDTO> colectasDTO = colectas.stream().map(Colecta::toDTO).toList();
+        List<ColectaDTO> colectasDTO = colectas.stream().map(colecta -> colecta.toDTO(true)).toList();
 
         return ResponseEntity.ok(colectasDTO);
     }

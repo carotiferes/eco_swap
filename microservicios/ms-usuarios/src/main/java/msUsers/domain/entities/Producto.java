@@ -44,14 +44,19 @@ public class Producto {
     @ManyToOne(cascade = CascadeType.ALL)
     private Publicacion publicacion;
 
-    public ProductoDTO toDTO() {
+    public ProductoDTO toDTO(boolean includeColecta) {
         ProductoDTO productoDTO = new ProductoDTO();
+        productoDTO.setIdProducto(idProducto);
         productoDTO.setTipoProducto(tipoProducto);
         productoDTO.setDescripcion(descripcion);
         productoDTO.setTipoProducto(tipoProducto);
-        productoDTO.setColectaDTO(colecta.toDTO());
         productoDTO.setCantidadSolicitada(cantidadSolicitada);
         productoDTO.setCantidadRecibida(cantidadRecibida);
+
+        if (includeColecta && colecta != null) {
+            productoDTO.setColectaDTO(colecta.toDTO(false)); // Evitar recursión en ColectaDTO
+        }
+
         return productoDTO;
     }
 

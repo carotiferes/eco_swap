@@ -13,9 +13,6 @@ import msUsers.domain.repositories.ParticularesRepository;
 import msUsers.domain.repositories.PublicacionesRepository;
 import msUsers.domain.requests.RequestFilterPublicaciones;
 import msUsers.domain.requests.RequestPublicacion;
-import msUsers.domain.responses.DTOs.ColectaDTO;
-import msUsers.domain.responses.DTOs.ParticularDTO;
-import msUsers.domain.responses.DTOs.ProductoDTO;
 import msUsers.domain.responses.DTOs.PublicacionDTO;
 import msUsers.domain.responses.ResponsePostEntityCreation;
 import msUsers.services.CriteriaBuilderQueries;
@@ -33,7 +30,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -169,11 +165,6 @@ public class PublicacionController {
 
     @GetMapping(path = "/publicacion/{id_publicacion}", produces = json)
     public ResponseEntity<PublicacionDTO> getPublicacionXId(@PathVariable("id_publicacion") Long idPublicacion) {
-
-        final Usuario user = UsuarioContext.getUsuario();
-        Optional<Particular> optionalParticular = criteriaBuilderQueries.getParticularPorUsuario(user.getIdUsuario());
-        Particular particular = optionalParticular.orElseThrow(() -> new EntityNotFoundException("¡El particular no existe!"));
-
         final var publicacion = this.publicacionesRepository.findById(idPublicacion).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrada la publicacion: " + idPublicacion));
 
