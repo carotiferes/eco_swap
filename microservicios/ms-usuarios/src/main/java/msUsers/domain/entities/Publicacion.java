@@ -63,7 +63,7 @@ public class Publicacion {
         publicacionDTO.setPrecioVenta(precioVenta);
         publicacionDTO.setValorTruequeMax(valorTruequeMax);
         publicacionDTO.setValorTruequeMin(valorTruequeMin);
-        publicacionDTO.setProductos(productos.stream().map(Producto::toDTO).collect(Collectors.toList()));
+        publicacionDTO.setProductos(productos.stream().map(producto -> producto.toDTO(false)).collect(Collectors.toList()));
         return publicacionDTO;
     }
 

@@ -53,7 +53,7 @@ public class Donacion {
         donacionDTO.setEstadoDonacion(estadoDonacion);
         donacionDTO.setImagenes(imagenes);
         donacionDTO.setParticularDTO(particular.toDTO());
-        donacionDTO.setProducto(producto.toDTO());
+        donacionDTO.setProducto(producto.toDTO(true));
         return donacionDTO;
     }
 }

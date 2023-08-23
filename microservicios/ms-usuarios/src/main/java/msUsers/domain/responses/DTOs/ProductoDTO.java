@@ -12,6 +12,7 @@ import java.util.List;
 @Data
 public class ProductoDTO {
 
+    private Long idProducto;
     private TipoProducto tipoProducto;
     private ColectaDTO colectaDTO;
     private String descripcion;

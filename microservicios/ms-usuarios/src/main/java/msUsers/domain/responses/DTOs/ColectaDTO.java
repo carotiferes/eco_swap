@@ -17,6 +17,6 @@ public class ColectaDTO {
     private String descripcion;
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
-    private List<String> productos;
+    private List<ProductoDTO> productos;
 
 }
