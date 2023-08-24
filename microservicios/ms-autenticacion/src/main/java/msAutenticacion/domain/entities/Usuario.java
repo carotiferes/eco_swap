@@ -43,6 +43,8 @@ public class Usuario {
     @Size(max = 6)
     private String salt;
 
+    private String jwtPrivateKey;
+
     @NotNull
     @Size(max = 6)
     private String confirmCodigo;

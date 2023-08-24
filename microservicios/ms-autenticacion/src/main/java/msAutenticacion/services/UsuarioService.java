@@ -3,6 +3,7 @@ package msAutenticacion.services;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import msAutenticacion.domain.entities.Direccion;
@@ -26,6 +27,8 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -131,7 +134,6 @@ public class UsuarioService {
                 usuarioRepository.save(usuario);
                 throw new LoginUserException("El usuario fue bloqueado");
             }
-            usuarioRepository.save(usuario);
             return this.crearJWT(usuario);
         }
         log.info(("login: Login EXITOSO para username: " + request.getUsername()));
@@ -191,21 +193,31 @@ public class UsuarioService {
                 .bloqueado(true) //CUANDO SE CREA UN USUARIO, ESTE DEBE CONFIRMAR POR MAIL PRIMERO
                 .build();
     }
-    
 
     private String crearJWT(Usuario usuario) throws NoSuchAlgorithmException {
         try {
             KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
             kpg.initialize(2048);
             KeyPair kp = kpg.generateKeyPair();
-            Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) kp.getPublic(), (RSAPrivateKey) kp.getPrivate());
-            return JWT.create()
+            RSAPublicKey rPubKey = (RSAPublicKey) kp.getPublic();
+            RSAPrivateKey rPriKey = (RSAPrivateKey) kp.getPrivate();
+            Algorithm algorithm = Algorithm.RSA256(rPubKey, rPriKey);
+
+            log.info(("login: JWT rPubKey: " + rPubKey.toString()));
+            log.info(("login: JWT rPriKey: " + rPriKey.toString()));
+            log.info(("login: algorith: " + algorithm));
+            String jwt = JWT.create()
                     .withIssuer("ecoswap")
                     .withExpiresAt(Instant.now().plusSeconds(604800))
                     .withClaim("email", usuario.getEmail())
                     .withClaim("id", usuario.getId())
                     .withClaim("esParticular", usuario.isSwapper())
                     .sign(algorithm);
+            DecodedJWT decodedJWT = JWT.decode(jwt);
+            decodedJWT.getClaim("email");
+            log.info(("JWT: EMAIL: " + decodedJWT.getClaim("email")));
+            usuarioRepository.save(usuario);
+            return jwt;
         } catch (JWTCreationException | NoSuchAlgorithmException exception){
             log.error(("login: JWT dió error durante la creación: " + exception.getMessage()));
             return "";
