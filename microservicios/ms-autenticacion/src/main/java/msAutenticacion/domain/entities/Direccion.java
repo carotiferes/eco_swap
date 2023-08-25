@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import msAutenticacion.domain.responses.DTOs.DireccionDTO;
 
 
 @Entity
@@ -35,4 +36,13 @@ public class Direccion {
     private String dpto;
     @NotNull
     private String codigoPostal;
+
+    public DireccionDTO toDTO(){
+        DireccionDTO direccionDTO = new DireccionDTO();
+        direccionDTO.setDireccion(direccion);
+        direccionDTO.setPiso(piso);
+        direccionDTO.setAltura(altura);
+        direccionDTO.setCodigoPostal(codigoPostal);
+        return direccionDTO;
+    }
 }

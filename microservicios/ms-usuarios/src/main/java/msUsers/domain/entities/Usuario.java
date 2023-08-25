@@ -42,14 +42,19 @@ public class Usuario {
     @Column(unique = true)
     private String email;
 
-    @Range(min = 0, max = 100)
+    @Range(min = 0, max = 5)
     private Integer puntaje;
 
     @NotNull
     private boolean isSwapper;
 
+    @Column(columnDefinition = "int default 0")
     private Integer intentos;
 
+    @Column(name = "validado", columnDefinition = "boolean default 0")
+    private boolean validado;
+
+    @Column(columnDefinition = "boolean default 1")
     private boolean bloqueado;
 
     @OneToMany(mappedBy = "usuarioOpina", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

@@ -15,9 +15,6 @@ import java.util.List;
 @ToString(exclude = "imagenes")
 public class RequestComunicarDonacionColectaModel {
 
-    @NotNull(message = "Se debe seleccionar un tipo de producto.")
-    private TipoProducto tipoProducto;
-
         @NotNull(message = "ProductoId debe tener un valor valido.")
         private Long productoId;
 

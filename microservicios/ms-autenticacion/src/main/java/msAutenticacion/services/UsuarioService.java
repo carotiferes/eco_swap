@@ -105,6 +105,7 @@ public class UsuarioService {
         if(usuario.getConfirmCodigo().equals(request.getCodigo())){
             usuario.setConfirmCodigo("");
             usuario.setBloqueado(false);
+            usuario.setValidado(true);
             usuarioRepository.save(usuario);
             log.info(("confirmarUsuario: Confirmación exitosa para userId: "
                     + request.getUsername()));
@@ -195,6 +196,7 @@ public class UsuarioService {
                 .isSwapper(signin.getFundacion()==null)
                 .intentos(0)
                 .puntaje(0)
+                .validado(false)
                 .bloqueado(false) //CUANDO SE CREA UN USUARIO, ESTE DEBE CONFIRMAR POR MAIL PRIMERO.
                 .build();
 
