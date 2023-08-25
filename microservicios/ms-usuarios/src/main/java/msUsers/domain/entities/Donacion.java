@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import msUsers.domain.entities.enums.EstadoDonacion;
 import msUsers.domain.responses.DTOs.DonacionDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -44,6 +45,8 @@ public class Donacion {
 
     private String imagenes;
 
+    private LocalDate fechaDonacion;
+
     public DonacionDTO toDTO() {
         DonacionDTO donacionDTO = new DonacionDTO();
         donacionDTO.setIdDonacion(idDonacion);
@@ -54,6 +57,7 @@ public class Donacion {
         donacionDTO.setImagenes(imagenes);
         donacionDTO.setParticularDTO(particular.toDTO());
         donacionDTO.setProducto(producto.toDTO(true));
+        donacionDTO.setFechaDonacion(fechaDonacion);
         return donacionDTO;
     }
 }

@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import msAutenticacion.domain.responses.DTOs.UsuarioDTO;
 import org.hibernate.validator.constraints.Range;
 
 import java.util.List;
@@ -56,7 +57,7 @@ public class Usuario {
     @Column(unique = true)
     private String email;
 
-    @Range(min = 0, max = 100)
+    @Range(min = 0, max = 5)
     private Integer puntaje;
 
     @NotNull
@@ -68,11 +69,28 @@ public class Usuario {
     @Column(columnDefinition = "boolean default 1")
     private boolean bloqueado;
 
+    @Column(name = "validado", columnDefinition = "boolean default 0")
+    private boolean validado;
+
     @OneToMany(mappedBy = "usuarioOpina", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Opinion> opiniones;
 
     public void aumentarIntentoEn1() {
         this.setIntentos(intentos+1);
+    }
+
+    public UsuarioDTO toDTO(){
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setIdUsuario(idUsuario);
+        usuarioDTO.setPuntaje(puntaje);
+        usuarioDTO.setEmail(email);
+        usuarioDTO.setSwapper(isSwapper());
+        usuarioDTO.setTelefono(telefono);
+        usuarioDTO.setUsername(username);
+        usuarioDTO.setBloqueado(bloqueado);
+        usuarioDTO.setValidado(validado);
+        usuarioDTO.setIntentos(intentos);
+        return usuarioDTO;
     }
 
 }
