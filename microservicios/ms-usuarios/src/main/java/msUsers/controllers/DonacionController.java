@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -119,7 +120,7 @@ public class DonacionController {
         log.info(">> Request obtener todas las donaciones de la colecta: {}", idColecta);
         List<Donacion> donacionColectesList = colectaService.obtenerTodasLasDonaciones(idColecta);
         log.info("<< Cantidad de donaciones obtenidas: {} para idColecta: {}", donacionColectesList.size(), idColecta);
-        return donacionColectesList.stream().map(Donacion::toDTO).toList();
+        return donacionColectesList.stream().map(Donacion::toDTO).sorted(Comparator.comparing(DonacionDTO::getFechaDonacion).reversed()).toList();
     }
 
     @GetMapping(path = "/colecta/{id_colecta}/donaciones/{id_donacion}", consumes = json, produces = json)

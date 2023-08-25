@@ -127,8 +127,7 @@ public class PublicacionController {
         }
 
         if (request.getTipoProducto() != null) {
-            Join<Publicacion, Producto> join = from.join("productos");
-            predicate = cb.and(predicate, cb.equal(join.get("tipoProducto"), request.getTipoProducto()));
+            predicate = cb.and(predicate, cb.equal(from.get("tipoProducto"), request.getTipoProducto()));
         }
 
         query.where(predicate);

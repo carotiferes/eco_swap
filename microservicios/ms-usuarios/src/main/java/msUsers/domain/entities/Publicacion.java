@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 import msUsers.domain.entities.enums.EstadoPublicacion;
+import msUsers.domain.entities.enums.TipoProducto;
 import msUsers.domain.entities.enums.TipoPublicacion;
 import msUsers.domain.responses.DTOs.PublicacionDTO;
 
@@ -44,6 +45,9 @@ public class Publicacion {
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<CaracteristicaProducto> caracteristicaProducto;
+
+    @Enumerated(EnumType.STRING)
+    private TipoProducto tipoProducto;
 
     @OneToMany(mappedBy = "publicacion", fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private List<Producto> productos;

@@ -9,6 +9,7 @@ import msUsers.domain.requests.donaciones.RequestComunicarDonacionColectaModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +63,7 @@ public class ColectaService {
            donacionNueva.setProducto(producto);
            donacionNueva.setCaracteristicaDonacion(lista);
            donacionNueva.setImagenes(String.join("|", nombreImagenes));
+           donacionNueva.setFechaDonacion(LocalDate.now());
 
            var entity = this.donacionesRepository.save(donacionNueva);
 

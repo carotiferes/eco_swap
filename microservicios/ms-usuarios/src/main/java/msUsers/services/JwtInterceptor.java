@@ -44,7 +44,6 @@ public class JwtInterceptor implements HandlerInterceptor {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-            log.info(jwtToken);
             if (jwtToken == null || !jwtToken.startsWith("Bearer ")) {
                 log.info("ERROR 401: Acceso no autorizado: " + uri);
                 UnauthorizedAccessResponse unauthorizedAccessResponse = new UnauthorizedAccessResponse(
