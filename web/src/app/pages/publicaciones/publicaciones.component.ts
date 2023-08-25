@@ -22,6 +22,7 @@ export class PublicacionesComponent {
 	loading: boolean = false;
 
 	publicacionesToShow: PublicacionModel[] = [];
+	filtros: any;
 
 	constructor(private router: Router, private auth: AuthService, private fb: FormBuilder,
 		private productosService: ProductosService, private showErrorService: ShowErrorService,
@@ -36,6 +37,7 @@ export class PublicacionesComponent {
 		if (router.url == '/mis-publicaciones') this.origin = 'myPublicaciones';
 		if (router.url == '/mis-compras') this.origin = 'myCompras';
 
+		this.getTiposProductos();
 		this.filtrarPublicaciones()
 	}
 
@@ -73,7 +75,14 @@ export class PublicacionesComponent {
 
 	filtrarPublicaciones() {
 		if(this.origin == 'all'){
-			this.truequesService.getPublicaciones().subscribe({
+			this.filtros = {};
+			const codigoPostal = this.formFiltros.controls['codigoPostal'].value;
+			const tipoProducto = this.formFiltros.controls['tipoProducto'].value;
+
+			if (codigoPostal) this.filtros['codigoPostal'] = codigoPostal;
+			if (tipoProducto) this.filtros['tipoProducto'] = tipoProducto;
+
+			this.truequesService.getPublicaciones(this.filtros).subscribe({
 				next: (data: any) => {
 					console.log(data);
 					this.publicacionesToShow = data;
