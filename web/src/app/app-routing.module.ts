@@ -77,7 +77,7 @@ const routes: Routes = [{
 	component: PublicacionesComponent,
 	canActivate: [AuthGuard]
 },{
-	path: 'mis-ventas',
+	path: 'mis-compras',
 	component: PublicacionesComponent,
 	canActivate: [AuthGuard]
 },{

@@ -13,7 +13,7 @@
 			<p>Cantidad: {{donacion.cantidadDonacion}}</p>
 			<p [class.aprobada]="donacion.estadoDonacion == 'APROBADA'"
 				[class.rechazada]="donacion.estadoDonacion == 'RECHAZADA'">Estado: {{donacion.estadoDonacion}}</p>
-			<p>{{caracteristicas.length > 0 ? 'Características:' + caracteristicas : ''}}</p>
+			<p>{{caracteristicas.length > 0 ? 'Características: ' + caracteristicas : ''}}</p>
 		</div>
 		<div class="imagenes">
 			<img [src]="getImage(img)" *ngFor="let img of donacion.parsedImagenes" (click)="zoomImage(img)" />

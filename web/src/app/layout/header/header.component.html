@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-sm d-flex justify-content-between">
+<nav class="navbar navbar-expand-md d-flex justify-content-between">
 	<a class="navbar-brand" href="home">
 		<div class="div-logo" (click)="goTo('home')">
 			<img style="cursor: pointer; width: 100px;" alt="Logo Eco Swap - Ir a la home" id="logoCenter" class="logo"
@@ -49,8 +49,8 @@
 				</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link nav-white px-2" *ngIf="isUserLoggedIn && this.profileType == 'particular'" href="/mis-ventas/">
-					<b>Mis ventas</b>
+				<a class="nav-link nav-white px-2" *ngIf="isUserLoggedIn && this.profileType == 'particular'" href="/mis-compras/">
+					<b>Mis compras</b>
 				</a>
 			</li>
 			<div ngbDropdown class="dropdown nav-item">

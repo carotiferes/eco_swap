@@ -15,7 +15,7 @@ import Swal from 'sweetalert2';
 })
 export class PublicacionesComponent {
 
-	origin: 'all' | 'myPublicaciones' | 'myVentas' = 'all';
+	origin: 'all' | 'myPublicaciones' | 'myCompras' = 'all';
 	formFiltros: FormGroup;
 	tipos_productos: any[] = [];
 
@@ -34,7 +34,7 @@ export class PublicacionesComponent {
 		})
 
 		if (router.url == '/mis-publicaciones') this.origin = 'myPublicaciones';
-		if (router.url == '/mis-ventas') this.origin = 'myVentas';
+		if (router.url == '/mis-compras') this.origin = 'myCompras';
 
 		this.filtrarPublicaciones()
 	}
@@ -92,7 +92,7 @@ export class PublicacionesComponent {
 					})
 				}
 			})
-		} else { // myVentas
+		} else { // myCompras
 
 		}
 	}

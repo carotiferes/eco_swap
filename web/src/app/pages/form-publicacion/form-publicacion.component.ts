@@ -110,7 +110,7 @@ export class FormPublicacionComponent {
 						text: 'La publicación se creó correctamente, ya podes hacer un intercambio!',
 						icon: 'success'
 					}).then(({isConfirmed}) => {
-						this.router.navigate(['publicaciones'])
+						this.router.navigate(['mis-publicaciones'])
 					})
 				},
 				error: (error) => {

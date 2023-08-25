@@ -26,8 +26,9 @@ export class CardDonacionComponent implements OnInit{
 	
 	ngOnInit(): void {
 		console.log(this.donacion, this.usuarioHeader,this.donacion.caracteristicaDonacion);
-		for (const caract of this.donacion.caracteristicaDonacion) {
-			if(caract.caracteristica) this.caracteristicas += ' '+caract.caracteristica
+		for (const [i, caract] of this.donacion.caracteristicaDonacion.entries()) {
+			if(caract.caracteristica && i == 0) this.caracteristicas = caract.caracteristica
+			else if(caract.caracteristica) this.caracteristicas += ' - '+caract.caracteristica
 		}
 	}
 

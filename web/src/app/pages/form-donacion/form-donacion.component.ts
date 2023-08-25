@@ -78,14 +78,12 @@ export class FormDonacionComponent implements OnInit {
 				sendCaracteristicas.push(item.s_descripcion);
 			})
 			const objetoToSend = {
-				colectaProductoModel: {
-					tipoProducto: "MUEBLES",
-					productoId: this.donacionForm.controls['producto'].value,
-					cantidadOfrecida: this.donacionForm.controls['n_cantidad'].value,
-					mensaje: this.donacionForm.controls['mensaje'].value,
-					caracteristicas: sendCaracteristicas,
-					imagenes: this.donacionForm.controls['file_source'].value
-				}
+				tipoProducto: "MUEBLES",
+				productoId: this.donacionForm.controls['producto'].value,
+				cantidadOfrecida: this.donacionForm.controls['n_cantidad'].value,
+				mensaje: this.donacionForm.controls['mensaje'].value,
+				caracteristicas: sendCaracteristicas,
+				imagenes: this.donacionForm.controls['file_source'].value
 			}
 			console.log(objetoToSend);
 	

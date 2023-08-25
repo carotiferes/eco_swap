@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import { ShowErrorService } from 'src/app/services/show-error.service';
 import { FundacionesService } from 'src/app/services/fundaciones.service';
 import { ProductosService } from 'src/app/services/productos.service';
+import { UsuarioService } from 'src/app/services/usuario.service';
 
 @Component({
   selector: 'app-colecta',
@@ -23,6 +24,7 @@ export class ColectaComponent {
 	donaciones: DonacionModel[] = [];
 
 	userData?: any;
+	userInfo?: any;
 	loading: boolean = true;
 	showDonaciones: boolean = false;
 	donacionesToShow: DonacionModel[] = [];
@@ -31,13 +33,20 @@ export class ColectaComponent {
 
 	constructor(private route: ActivatedRoute, private router: Router, private auth: AuthService,
 		private donacionesService: DonacionesService, private showErrorService: ShowErrorService,
-		private productoService: ProductosService){
+		private productoService: ProductosService, private usuarioService: UsuarioService){
 		route.paramMap.subscribe(params => {
 			console.log(params);
 			this.id_colecta = params.get('id_colecta') || '';
 			if(!this.id_colecta) showErrorService.show('Error!', 'No pudimos encontrar la información de la colecta que seleccionaste, por favor volvé a intentarlo más tarde.')
 		})
 		this.userData = { isSwapper: auth.isUserSwapper(), isLoggedIn: auth.isUserLoggedIn }
+		usuarioService.getUserByID(auth.getUserID()).subscribe({
+			next: (res: any) => {
+				this.userInfo = res;
+				console.log(this.userInfo);
+				
+			}
+		})
 	}
 	
 	ngOnInit(): void {
@@ -77,7 +86,7 @@ export class ColectaComponent {
 
 								//TODO: REVISAR CUANDO MUESTRA DONACIONES
 								if (this.userData.isSwapper) {
-									this.donacionesToShow = this.donaciones.filter(item => item.particularDTO.idParticular == this.userData.id_particular)
+									this.donacionesToShow = this.donaciones.filter(item => item.particularDTO.idParticular == this.userInfo.particularDTO.idParticular)
 									this.showDonaciones = true;
 								} else if(this.userData) { // TODO: IF colecta.id_fundacion == userData.id_fundacion --> show donaciones
 									this.donacionesToShow = donaciones;
