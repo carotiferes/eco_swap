@@ -4,6 +4,7 @@ import { PublicacionModel } from 'src/app/models/publicacion.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { ShowErrorService } from 'src/app/services/show-error.service';
 import { TruequesService } from 'src/app/services/trueques.service';
+import { UsuarioService } from 'src/app/services/usuario.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -17,21 +18,33 @@ export class PublicacionComponent {
 	publicacion!: PublicacionModel;
 	id_publicacion: any;
 
+	userInfo: any;
+
+	showButtons: boolean = true;
+
 	constructor(private truequeService: TruequesService, private route: ActivatedRoute,
 		private showErrorService: ShowErrorService, private auth: AuthService,
-		private router: Router){
+		private router: Router, private usuarioService: UsuarioService){
 		route.paramMap.subscribe(params => {
 			console.log(params);
 			this.id_publicacion = params.get('id_publicacion') || 0;
 			if(!this.id_publicacion) showErrorService.show('Error!', 'No pudimos encontrar la información de la colecta que seleccionaste, por favor volvé a intentarlo más tarde.')
 			else this.getPublicacion(this.id_publicacion)
 		})
+		usuarioService.getUserByID(auth.getUserID()).subscribe({
+			next: (res: any) => {
+				this.userInfo = res;
+				//console.log(this.userInfo);
+				if(this.publicacion.particularDTO.idParticular == this.userInfo.particularDTO.idParticular)
+					this.showButtons = false;
+			}
+		})
 	}
 
 	getPublicacion(id: number){
 		this.truequeService.getPublicacion(id).subscribe({
 			next: (res: any) => {
-				console.log(res);
+				//console.log(res);
 				this.publicacion = res;
 				this.publicacion.parsedImagenes = this.publicacion.imagenes.split('|')
 				
