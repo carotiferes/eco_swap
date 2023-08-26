@@ -17,6 +17,9 @@
 							<div style="font-size: 48px; color:#49D392;">
 								<b>Eco Swap</b>
 							</div>
+                            <div>
+<img src="https://cdn.discordapp.com/attachments/392306391601119232/1144402316909363320/image.png" />
+</div>
 
 							<div style="font-size: 24px; color: #555100;">
 								<br>
