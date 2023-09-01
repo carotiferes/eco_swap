@@ -43,8 +43,8 @@ const routes: Routes = [{
 	component: PerfilComponent,
 	canActivate: [AuthGuard]
 },{
-	path: 'perfil/:id',
-	component: PerfilComponent,
+	path: 'edit-perfil',
+	component: RegistroComponent,
 	canActivate: [AuthGuard]
 },{
 	path: 'form-colecta',

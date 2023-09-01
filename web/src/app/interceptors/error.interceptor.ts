@@ -39,7 +39,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 				} else { // server side error
 					error = this.handleBackendError(error, err);
 					console.log('Server error with code: ' + JSON.stringify(err));
-					this.showErrorService.show('Error!', err.error.descripcion)
+					this.showErrorService.show('Error!', 'Ocurrió un error con el servidor. Por favor volvé a intentar más tarde.')
 				}
 				return throwError(() => error);
 			})

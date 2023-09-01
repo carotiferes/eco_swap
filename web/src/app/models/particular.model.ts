@@ -11,5 +11,6 @@ export interface ParticularModel {
 	tipoDocumento: string,
 	publicaciones?: any[],
 	donaciones?: DonacionModel[],
-	puntaje: number
+	puntaje: number,
+	direcciones: any[]
 }

@@ -3,7 +3,7 @@
 <div id="main-container">
 	<mat-card id="main-card" *ngIf="!loading">
 		<mat-card-header>
-			<div *ngIf="!resetPassword; else resetHeader">
+			<div *ngIf="origin != 'resetPassword'; else resetHeader">
 				<mat-card-title>Registrate!</mat-card-title>
 				<mat-card-subtitle>Completá {{isSwapper ? 'tus datos' : 'los datos de la fundación'}} para crear tu
 					cuenta</mat-card-subtitle>
@@ -31,7 +31,7 @@
 					</mat-form-field>
 				</div>
 				<div class="form-input">
-					<mat-form-field *ngIf="!resetPassword">
+					<mat-form-field *ngIf="origin != 'resetPassword'">
 						<mat-label>Teléfono</mat-label>
 						<input matInput formControlName="telefono" [ngModel]="this.mainForm.get('telefono')!.value"
 							(keyup)="formatearTelefono()">
@@ -76,7 +76,7 @@
 					</mat-form-field>
 				</div>
 			</form>
-			<form [formGroup]="particularForm" *ngIf="isSwapper && !resetPassword" class="form">
+			<form [formGroup]="particularForm" *ngIf="isSwapper && origin != 'resetPassword'" class="form">
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>Nombre</mat-label>
@@ -100,7 +100,8 @@
 					<mat-form-field>
 						<mat-label>Tipo Documento</mat-label>
 						<!-- <input matInput formControlName="tipoDocumento"> -->
-						<mat-select formControlName="tipoDocumento" name="tipoDocumento">
+						<mat-select formControlName="tipoDocumento" name="tipoDocumento"
+						(selectionChange)="formatDocument($event)">
 							<mat-option *ngFor="let tipo of tiposDocumento" [value]="tipo.nombre">
 								{{tipo.descripcion}}
 							</mat-option>
@@ -117,12 +118,15 @@
 						<mat-error *ngIf="particularForm.get('nroDocumento')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
+						<mat-error *ngIf="particularForm.get('nroDocumento')!.hasError('pattern')">
+							Campo inválido
+						</mat-error>
 					</mat-form-field>
 				</div>
 				<div class="form-input">
-					<mat-form-field>
+					<mat-form-field floatLabel="always">
 						<mat-label>Fecha de Nacimiento</mat-label>
-						<input matInput formControlName="fechaNacimiento" [matDatepicker]="picker">
+						<input matInput formControlName="fechaNacimiento" [matDatepicker]="picker" readonly>
 						<mat-hint>DD/MM/YYYY</mat-hint>
 						<mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
 						<mat-datepicker #picker></mat-datepicker>
@@ -132,7 +136,7 @@
 					</mat-form-field>
 				</div>
 			</form>
-			<form [formGroup]="fundacionForm" *ngIf="!isSwapper && !resetPassword" class="form">
+			<form [formGroup]="fundacionForm" *ngIf="!isSwapper && origin != 'resetPassword'" class="form">
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>Nombre / Razón Social</mat-label>
@@ -153,7 +157,7 @@
 				</div>
 			</form>
 			<div style="margin: 20px 5% 0px; font-weight: bold;">Dirección</div>
-			<form [formGroup]="direccionForm" *ngIf="!resetPassword" class="form">
+			<form [formGroup]="direccionForm" *ngIf="origin != 'resetPassword'" class="form">
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>Calle</mat-label>
@@ -196,12 +200,13 @@
 			</form>
 		</mat-card-content>
 		<mat-card-actions class="buttons">
-			<button mat-raised-button color="primary" (click)="crearCuenta();
+			<button mat-raised-button color="primary" (click)="submit();
 					mainForm.markAllAsTouched();
 					mainForm.valid;
 					isSwapper && particularForm.valid;
 					!isSwapper && fundacionForm.valid">
-				{{resetPassword ? 'ACTUALIZAR CONTRASEÑA' : 'CREAR CUENTA'}}
+				{{origin == 'resetPassword' ? 'ACTUALIZAR CONTRASEÑA' :
+				(origin == 'createAccount' ? 'CREAR CUENTA' : 'GUARDAR CAMBIOS')}}
 			</button>
 		</mat-card-actions>
 	</mat-card>

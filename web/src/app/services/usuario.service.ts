@@ -23,6 +23,10 @@ export class UsuarioService {
 		return this.backendService.post(URL_NAME, 'ms-autenticacion/api/v1/usuario/signup', user);
 	}
 
+	editUser(user: any){
+		return this.backendService.post(URL_NAME, 'ms-autenticacion/api/v1/usuario/edit', user);
+	}
+
 	getTiposDocumentos() {
 		return this.backendService.get(URL_NAME, 'ms-autenticacion/api/v1/tiposDocumentos');
 	}
