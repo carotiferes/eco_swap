@@ -30,6 +30,7 @@ export class FormColectaComponent  {
 	estados_productos: string[];
 
 	loadingImg: boolean = false;
+	showErrors: boolean = false;
 
 	constructor(private fb: FormBuilder, private route: ActivatedRoute, private donacionesService: DonacionesService,
 		private auth: AuthService, private router: Router, private dateAdapter: DateAdapter<Date>) {
@@ -40,11 +41,11 @@ export class FormColectaComponent  {
 
 		this.colectaForm = fb.group({
 			s_titulo: ['', Validators.required],
-			s_descripcion: [''],
+			s_descripcion: ['', Validators.required],
 			//id_fundacion: [userData?.id || ''],
 			productos: this.fb.array([]),
 			file_name: [this.fileName],
-			file: [''],
+			file: ['', Validators.required],
 			file_source: [''],
 			fecha_inicio: ['', Validators.required],
 			fecha_fin: ['', Validators.required]
@@ -71,6 +72,7 @@ export class FormColectaComponent  {
 
 	crearColecta() {
 		console.log(this.colectaForm.value);
+		this.showErrors = true;
 		if(this.colectaForm.valid){
 			const productos: any[] = [];
 			for (const producto of this.getProductosArray.value) {
@@ -133,7 +135,8 @@ export class FormColectaComponent  {
 
 	removeImagen(url: string){
 		let imgIndex = this.colectaForm.controls['file_source'].value.findIndex((item: string) => item == url)
-		this.colectaForm.controls['file_source'].value.splice(imgIndex, 1)
+		this.colectaForm.controls['file_source'].value.splice(imgIndex, 1);
+		this.colectaForm.controls['file'].setValue('')
 	}
 
 	showMessage(title: string, text: string, icon:'warning'| 'error'| 'success'| 'info'| 'question'){

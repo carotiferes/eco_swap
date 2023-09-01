@@ -74,6 +74,9 @@
 							<mat-icon>add</mat-icon>
 							<label>Agregar Producto</label>
 						</button>
+						<mat-error *ngIf="getProductosArray.length == 0 && showErrors">
+							La colecta debe tener al menos 1 producto
+						</mat-error>
 					</div>
 				</section>
 
@@ -83,6 +86,9 @@
 					<label for="file">Imagen de la Colecta</label>
 					<input formControlName="file" id="file" type="file" class="form-control"
 						(change)="onFileChange($event)">
+					<mat-error *ngIf="colectaForm.get('file')!.hasError('required') && showErrors">
+						La colecta debe tener al menos 1 imagen
+					</mat-error>
 					<app-spinner [loading]="loadingImg"></app-spinner>
 				</div>
 
