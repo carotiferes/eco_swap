@@ -56,7 +56,6 @@ public class ColectaController {
         Optional<Fundacion> optionalFundacion = criteriaBuilderQueries.getFundacionPorUsuario(user.getIdUsuario());
         Fundacion fundacion = optionalFundacion.orElseThrow(() -> new EntityNotFoundException("¡La fundacion no existe!"));
 
-        //final var usuario = this.jwtService.getParticularPorJwt(requestColecta.getJwt());
         log.info(">> Request de creación de colecta: {}", requestColecta.getTitulo());
 
         Colecta colecta = new Colecta();

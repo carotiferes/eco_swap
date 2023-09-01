@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import msAutenticacion.domain.responses.DTOs.DireccionDTO;
 
+import java.util.Objects;
+
 
 @Entity
 @Table(name = "Direcciones")
@@ -21,7 +23,7 @@ public class Direccion {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long idDireccion;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JsonBackReference
     private Usuario usuario;
 
