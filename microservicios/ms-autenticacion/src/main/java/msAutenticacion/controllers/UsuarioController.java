@@ -3,17 +3,22 @@ package msAutenticacion.controllers;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import msAutenticacion.domain.entities.Direccion;
 import msAutenticacion.domain.entities.Fundacion;
 import msAutenticacion.domain.entities.Particular;
 import msAutenticacion.domain.entities.Usuario;
+import msAutenticacion.domain.entities.enums.TipoDocumento;
 import msAutenticacion.domain.model.EnumValue;
+import msAutenticacion.domain.model.UsuarioContext;
 import msAutenticacion.domain.model.enums.TipoDocumentoEnum;
+import msAutenticacion.domain.requests.RequestEditProfile;
 import msAutenticacion.domain.requests.RequestLogin;
 import msAutenticacion.domain.requests.RequestPassword;
 import msAutenticacion.domain.requests.RequestSignUp;
 import msAutenticacion.domain.responses.DTOs.TipoDocumentoDTO;
 import msAutenticacion.domain.responses.DTOs.UsuarioDTO;
 import msAutenticacion.domain.responses.ResponseLogin;
+import msAutenticacion.domain.responses.ResponseUpdateEntity;
 import msAutenticacion.exceptions.LoginUserBlockedException;
 import msAutenticacion.exceptions.LoginUserException;
 import msAutenticacion.exceptions.LoginUserWrongCredentialsException;
@@ -22,10 +27,12 @@ import msAutenticacion.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +45,6 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
-
     @Autowired
     private CriteriaBuilderQueries criteriaBuilderQueries;
 
@@ -103,6 +109,17 @@ public class UsuarioController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(tiposDocumento);
     }
+
+    @PutMapping(path = "/usuario/edit", consumes = JSON, produces = JSON)
+    @Transactional
+    public ResponseEntity<ResponseUpdateEntity> editProfile(@RequestBody @Valid RequestEditProfile requestEditProfile){
+        final Usuario user = UsuarioContext.getUsuario();
+        log.info("Editar perfil >> Editando el perfil: {}", user.getEmail());
+        ResponseUpdateEntity responseUpdateEntity = usuarioService.editarUsuario(requestEditProfile, user);
+        return ResponseEntity.ok(responseUpdateEntity);
+
+    }
+
 
 
     private String obtenerDescripcion(TipoDocumentoEnum tipoProducto) {

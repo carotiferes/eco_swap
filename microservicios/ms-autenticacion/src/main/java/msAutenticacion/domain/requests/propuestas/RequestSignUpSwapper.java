@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Data
 @Builder
-public class RequestSigninSwapper {
+public class RequestSignUpSwapper {
 
     @NotNull
     private LocalDate fechaNacimiento;

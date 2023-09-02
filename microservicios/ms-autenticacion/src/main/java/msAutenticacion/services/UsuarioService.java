@@ -3,27 +3,36 @@ package msAutenticacion.services;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaDelete;
+import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
 import msAutenticacion.domain.entities.Direccion;
+import msAutenticacion.domain.entities.Fundacion;
+import msAutenticacion.domain.entities.Particular;
 import msAutenticacion.domain.entities.Usuario;
+import msAutenticacion.domain.entities.enums.TipoDocumento;
 import msAutenticacion.domain.repositories.DireccionRepository;
 import msAutenticacion.domain.repositories.UsuarioRepository;
-import msAutenticacion.domain.requests.RequestConfirm;
-import msAutenticacion.domain.requests.RequestLogin;
-import msAutenticacion.domain.requests.RequestPassword;
-import msAutenticacion.domain.requests.RequestSignUp;
+import msAutenticacion.domain.requests.*;
 import msAutenticacion.domain.requests.propuestas.RequestDireccion;
+import msAutenticacion.domain.responses.ResponseUpdateEntity;
 import msAutenticacion.exceptions.LoginUserBlockedException;
 import msAutenticacion.exceptions.LoginUserWrongCredentialsException;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -35,22 +44,29 @@ public class UsuarioService {
     private final FundacionService fundacionService;
     private final ParticularService particularService;
     private  final DireccionRepository direccionRepository;
+    private final EntityManager entityManager;
     private final EmailService emailService;
     private static final String JSON = "application/JSON";
     private static final String prvKey = "3c0s2ap231023914523";
 
     private static final String PEPPER = "c";
 
+    private final CriteriaBuilderQueries criteriaBuilderQueries;
+
     public UsuarioService(UsuarioRepository usuarioRepository,
                           FundacionService fundacionService,
                           ParticularService particularService,
                           DireccionRepository direccionRepository,
-                          EmailService emailService) {
+                          EntityManager entityManager,
+                          EmailService emailService,
+                          CriteriaBuilderQueries criteriaBuilderQueries) {
         this.usuarioRepository = usuarioRepository;
         this.fundacionService = fundacionService;
         this.particularService = particularService;
         this.direccionRepository = direccionRepository;
+        this.entityManager = entityManager;
         this.emailService = emailService;
+        this.criteriaBuilderQueries = criteriaBuilderQueries;
     }
 
     public Optional<Usuario> obtenerUsuario(Long userId) {
@@ -85,6 +101,28 @@ public class UsuarioService {
                         "Gracias por sumarte a ECOSWAP",
                         usuario,
                         codigoConfirmacion));
+    }
+
+    public ResponseUpdateEntity editarUsuario(RequestEditProfile requestEditProfile, Usuario user){
+        try{
+            eliminarDireccionesAntiguas(user);
+            crearNuevaDireccion(requestEditProfile, user);
+            actualizarUsuario(requestEditProfile, user);
+            usuarioRepository.save(user);
+
+            ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
+            responseUpdateEntity.setStatus(HttpStatus.OK.name());
+            responseUpdateEntity.setDescripcion("Perfil editado correctamente");
+            log.info("<< Perfil {} editado correctamente", user.getEmail());
+            return responseUpdateEntity;
+        }
+        catch(Exception e){
+            ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
+            responseUpdateEntity.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.name());
+            responseUpdateEntity.setDescripcion("Error al intentar editar el perfil " + user.getEmail() + "El mensaje de error es " + e.getMessage());
+            log.info("<< Error al intentar editar el perfil {}. El mensaje de error es: {} ", user.getEmail(), e.getMessage());
+            return responseUpdateEntity;
+        }
     }
     
 
@@ -220,6 +258,38 @@ public class UsuarioService {
         } catch (JWTCreationException | NoSuchAlgorithmException exception){
             log.error(("login: JWT dió error durante la creación: " + exception.getMessage()));
             return "";
+        }
+    }
+
+    private void eliminarDireccionesAntiguas(Usuario user) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaDelete<Direccion> delete = criteriaBuilder.createCriteriaDelete(Direccion.class);
+        Root<Direccion> direccionRoot = delete.from(Direccion.class);
+        delete.where(criteriaBuilder.equal(direccionRoot.get("usuario"), user));
+        entityManager.createQuery(delete).executeUpdate();
+    }
+
+    private void crearNuevaDireccion(RequestEditProfile requestEditProfile, Usuario user) {
+        Direccion nuevaDireccion = new Direccion();
+        nuevaDireccion.setUsuario(user);
+        nuevaDireccion.setDireccion(requestEditProfile.getDireccion().getDireccion());
+        nuevaDireccion.setPiso(requestEditProfile.getDireccion().getPiso());
+        nuevaDireccion.setDpto(requestEditProfile.getDireccion().getDepartamento());
+        nuevaDireccion.setAltura(requestEditProfile.getDireccion().getAltura());
+        nuevaDireccion.setCodigoPostal(requestEditProfile.getDireccion().getCodigoPostal());
+
+        List<Direccion> direcciones = new ArrayList<>();
+        direcciones.add(nuevaDireccion);
+        user.setDirecciones(direcciones);
+    }
+
+    private void actualizarUsuario(RequestEditProfile requestEditProfile, Usuario user) {
+        user.setTelefono(requestEditProfile.getTelefono());
+
+        if (user.isSwapper()) {
+            // Resto de la lógica para usuarios swapper
+        } else {
+            // Resto de la lógica para otros tipos de usuarios
         }
     }
 

@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class RequestSigninFundacion {
+public class RequestSignUpFundacion {
 
     @NotNull
     private String nombre;
