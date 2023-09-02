@@ -16,80 +16,72 @@ import { ErrorComponent } from './pages/error/error.component';
 import { FormPublicacionComponent } from './pages/form-publicacion/form-publicacion.component';
 import { PublicacionComponent } from './pages/publicacion/publicacion.component';
 
-const routes: Routes = [{
-	path: '',
-	component: HomeComponent
-}, {
-	path: 'home',
-	component: HomeComponent
-}, {
-	path: 'login',
-	component: LoginComponent
-}, {
-	path: 'publicaciones',
-	component: PublicacionesComponent
-}, {
-	path: 'colectas',
-	component: ColectasComponent
-}, {
-	path: 'mis-colectas',
-	component: ColectasComponent,
-	canActivate: [AuthGuard]
-},{
-	path: 'registro',
-	component: RegistroComponent
-},{
-	path: 'perfil',
-	component: PerfilComponent,
-	canActivate: [AuthGuard]
-},{
-	path: 'edit-perfil',
-	component: RegistroComponent,
-	canActivate: [AuthGuard]
-},{
-	path: 'form-colecta',
-	component: FormColectaComponent,
-	canActivate: [AuthGuard]
-},{
-	path: 'colecta/:id_colecta',
-	component: ColectaComponent,
-	//canActivate: [AuthGuard]
-},{
-	path: 'donacion/:id_colecta',
-	component: FormDonacionComponent,
-	canActivate: [AuthGuard]
-},{
-	path: 'mis-donaciones',
-	component: DonacionesComponent,
-	canActivate: [AuthGuard]
-},{
-	path: 'reset-password',
-	component: RegistroComponent
-},{
-	path: 'form-publicacion',
-	component: FormPublicacionComponent,
-	//canActivate: [AuthGuard] TODO: CAMBIAR CUANDO LA INFO DEL USER ESTE EN LOCAL STORAGE
-},{
-	path: 'publicacion/:id_publicacion',
-	component: PublicacionComponent,
-},{
-	path: 'mis-publicaciones',
-	component: PublicacionesComponent,
-	canActivate: [AuthGuard]
-},{
-	path: 'mis-compras',
-	component: PublicacionesComponent,
-	canActivate: [AuthGuard]
-},{
-	path: 'error',
-	component: ErrorComponent
-},{
-	path: '**',
-	component: NotFoundComponent
-}];
+const routes: Routes = [
+	{ path: '', component: HomeComponent },
+	{ path: 'home', loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule) },
+	{ path: 'login', loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule) },
+	{ path: 'registro', loadChildren: () => import('./pages/registro/registro.module').then(m => m.RegistroModule) },
+	{ path: 'publicaciones', loadChildren: () => import('./pages/publicaciones/publicaciones.module').then(m => m.PublicacionesModule) },
+	{ path: 'publicacion/:id_publicacion', loadChildren: () => import('./pages/publicacion/publicacion.module').then(m => m.PublicacionModule) },
+	{ path: 'not-found', loadChildren: () => import('./pages/not-found/not-found.module').then(m => m.NotFoundModule) },
+	{ path: 'error', loadChildren: () => import('./pages/error/error.module').then(m => m.ErrorModule) },
+	{ path: 'colectas', loadChildren: () => import('./pages/colectas/colectas.module').then(m => m.ColectasModule) },
+	{ path: 'colecta/:id_colecta', loadChildren: () => import('./pages/colecta/colecta.module').then(m => m.ColectaModule) },
+	{
+		path: 'perfil',
+		loadChildren: () => import('./pages/perfil/perfil.module').then(m => m.PerfilModule),
+		canActivate: [AuthGuard]
+	},
+	{
+		path: 'form-publicacion',
+		loadChildren: () => import('./pages/form-publicacion/form-publicacion.module').then(m => m.FormPublicacionModule),
+		canActivate: [AuthGuard]
+	},
+	{
+		path: 'donacion/:id_colecta',
+		loadChildren: () => import('./pages/form-donacion/form-donacion.module').then(m => m.FormDonacionModule),
+		canActivate: [AuthGuard]
+	},
+	{
+		path: 'form-colecta',
+		loadChildren: () => import('./pages/form-colecta/form-colecta.module').then(m => m.FormColectaModule),
+		canActivate: [AuthGuard]
+	},
+	{
+		path: 'mis-donaciones',
+		loadChildren: () => import('./pages/donaciones/donaciones.module').then(m => m.DonacionesModule),
+		canActivate: [AuthGuard]
+	},
+	{
+		path: 'mis-colectas',
+		loadChildren: () => import('./pages/colectas/colectas.module').then(m => m.ColectasModule),
+		canActivate: [AuthGuard]
+	},
+	{
+		path: 'mis-publicaciones',
+		loadChildren: () => import('./pages/publicaciones/publicaciones.module').then(m => m.PublicacionesModule),
+		canActivate: [AuthGuard]
+	},
+	{
+		path: 'mis-compras',
+		loadChildren: () => import('./pages/publicaciones/publicaciones.module').then(m => m.PublicacionesModule),
+		canActivate: [AuthGuard]
+	},
+	{
+		path: 'edit-perfil',
+		loadChildren: () => import('./pages/registro/registro.module').then(m => m.RegistroModule),
+		canActivate: [AuthGuard]
+	},
+	{
+		path: 'reset-password',
+		loadChildren: () => import('./pages/registro/registro.module').then(m => m.RegistroModule),
+		canActivate: [AuthGuard]
+	},
+	{ path: '**', component: NotFoundComponent },
+];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+	imports: [RouterModule.forRoot(routes)],
+	exports: [RouterModule]
 })
 export class AppRoutingModule { }

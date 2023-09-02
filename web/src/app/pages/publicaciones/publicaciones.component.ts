@@ -42,7 +42,7 @@ export class PublicacionesComponent {
 	}
 
 	addPublicacion(){
-		this.router.navigate(['form-publicacion'])
+		//this.router.navigate(['form-publicacion'])
 		if(this.auth.isUserLoggedIn) {
 			this.router.navigate(['form-publicacion'])
 		} else {
