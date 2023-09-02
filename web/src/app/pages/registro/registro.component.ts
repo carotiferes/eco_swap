@@ -8,6 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { PhoneNumberPipe } from 'src/app/pipes/phone-number.pipe';
 import { CustomDateAdapter } from 'src/app/pipes/date-adapter';
+import { Location } from '@angular/common';
 
 @Component({
 	selector: 'app-registro',
@@ -36,7 +37,7 @@ export class RegistroComponent {
 	tiposDocumento: any[] = [];
 
 	constructor(private fb: FormBuilder, private dateAdapter: DateAdapter<Date>,
-		private usuarioService: UsuarioService, private route: ActivatedRoute,
+		private usuarioService: UsuarioService, private location: Location,
 		private auth: AuthService, private router: Router,
 		private cdr: ChangeDetectorRef, private phoneNumberPipe: PhoneNumberPipe) {
 		this.mainForm = fb.group({
@@ -70,18 +71,17 @@ export class RegistroComponent {
 		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 		this.dateAdapter.setLocale('es-AR'); // DD/mm/YYYY
 
-		route.url.subscribe(a => {
-			if (a[0].path == 'reset-password') {
-				this.origin = 'resetPassword';
-			} else if (a[0].path == 'edit-perfil') {
-				this.origin = 'editAccount';
-				this.mainForm.controls['password'].disable();
-				this.mainForm.controls['confirmPassword'].disable();
-				this.mainForm.controls['email'].disable();
-			} else {
-				this.mainForm.controls['telefono'].addValidators(Validators.required)
-			}
-		});
+		const url = location.path()
+		if (url == '/reset-password') {
+			this.origin = 'resetPassword';
+		} else if (url == '/edit-perfil') {
+			this.origin = 'editAccount';
+			this.mainForm.controls['password'].disable();
+			this.mainForm.controls['confirmPassword'].disable();
+			this.mainForm.controls['email'].disable();
+		} else {
+			this.mainForm.controls['telefono'].addValidators(Validators.required)
+		}
 	}
 
 	ngOnInit(): void {
