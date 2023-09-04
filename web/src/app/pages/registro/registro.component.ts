@@ -291,7 +291,7 @@ export class RegistroComponent {
 			denyButtonText: deny,
 			icon,
 			allowOutsideClick: icon == 'success' ? false : true,
-			input: icon == 'success' ? 'text' : undefined,
+			input: origin == 'send_again' ? 'text' : undefined,
 			reverseButtons: true
 		}).then(({ isConfirmed, value, isDenied }) => {
 			console.log(value);
@@ -301,6 +301,8 @@ export class RegistroComponent {
 			if(isConfirmed){
 				if(origin == 'ir_a_home') {
 					this.router.navigate(['home'])
+				} else if(origin == 'edit') {
+					this.router.navigate(['perfil'])
 				}
 			}
 		})

@@ -24,7 +24,7 @@ export class UsuarioService {
 	}
 
 	editUser(user: any){
-		return this.backendService.post(URL_NAME, 'ms-autenticacion/api/v1/usuario/edit', user);
+		return this.backendService.put(URL_NAME, 'ms-autenticacion/api/v1/usuario/edit', user);
 	}
 
 	getTiposDocumentos() {

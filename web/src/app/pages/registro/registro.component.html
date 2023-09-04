@@ -114,7 +114,7 @@
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>Número de Documento</mat-label>
-						<input matInput formControlName="nroDocumento">
+						<input matInput formControlName="nroDocumento" type="number">
 						<mat-error *ngIf="particularForm.get('nroDocumento')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
@@ -149,7 +149,7 @@
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>CUIT</mat-label>
-						<input matInput formControlName="cuit">
+						<input matInput formControlName="cuit" type="number">
 						<mat-error *ngIf="fundacionForm.get('cuit')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
@@ -170,7 +170,7 @@
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>Altura</mat-label>
-						<input matInput formControlName="altura">
+						<input matInput formControlName="altura" type="number">
 						<mat-error *ngIf="direccionForm.get('altura')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
@@ -179,7 +179,7 @@
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>Piso</mat-label>
-						<input matInput formControlName="piso">
+						<input matInput formControlName="piso" type="number">
 					</mat-form-field>
 				</div>
 				<div class="form-input">
@@ -191,7 +191,7 @@
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>Código Postal</mat-label>
-						<input matInput formControlName="codigoPostal">
+						<input matInput formControlName="codigoPostal" type="number">
 						<mat-error *ngIf="direccionForm.get('codigoPostal')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
