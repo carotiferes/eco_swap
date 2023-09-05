@@ -13,6 +13,10 @@ public class AllowedUrlsProvider {
                 // SWAGGER
                 "/swagger-ui/*",
                 "/v3/api-docs",
-                "/v3/api-docs/*");
+                "/v3/api-docs/*",
+                "/ms-autenticacion/api/v1/usuario/login",
+                "/ms-autenticacion/api/v1/tiposDocumentos",
+                "/ms-autenticacion/api/v1/usuario/signup"
+        );
     }
 }

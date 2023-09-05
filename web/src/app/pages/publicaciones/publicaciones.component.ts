@@ -106,16 +106,9 @@ export class PublicacionesComponent {
 		}
 	}
 
-	goToPublicacion(publicacion: PublicacionModel){
-		this.router.navigate(['publicacion/'+publicacion.idPublicacion])
-	}
-
 	limpiarFiltros() {
 		this.formFiltros.reset()
 		this.filtrarPublicaciones()
 	}
 
-	getImagen(img: string) {
-		return this.truequesService.getImagen(img)
-	}
 }
