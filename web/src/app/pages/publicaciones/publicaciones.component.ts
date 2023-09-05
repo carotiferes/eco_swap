@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PublicacionModel } from 'src/app/models/publicacion.model';
 import { AuthService } from 'src/app/services/auth.service';
+import { ComprasService } from 'src/app/services/compras.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { ShowErrorService } from 'src/app/services/show-error.service';
 import { TruequesService } from 'src/app/services/trueques.service';
@@ -26,7 +27,7 @@ export class PublicacionesComponent {
 
 	constructor(private router: Router, private auth: AuthService, private fb: FormBuilder,
 		private productosService: ProductosService, private showErrorService: ShowErrorService,
-		private truequesService: TruequesService){
+		private truequesService: TruequesService, private comprasService: ComprasService){
 
 		this.formFiltros = fb.group({
 			fundacion: [''],
@@ -102,7 +103,15 @@ export class PublicacionesComponent {
 				}
 			})
 		} else { // myCompras
-
+			this.comprasService.getMyCompras().subscribe({
+				next: (data: any) => {
+					console.log(data);
+					this.publicacionesToShow = data;
+					this.publicacionesToShow.map(item => {
+						item.parsedImagenes = item.imagenes.split('|')
+					})
+				}
+			})
 		}
 	}
 
