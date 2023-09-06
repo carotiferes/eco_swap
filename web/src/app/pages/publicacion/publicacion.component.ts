@@ -64,7 +64,8 @@ export class PublicacionComponent {
 				data: {
 				  publicacion: this.publicacion,
 				},
-				minWidth: 100
+				minWidth: 100,
+				maxHeight: '90vh'
 			  });
 		} else {
 			Swal.fire({

@@ -1,8 +1,10 @@
 <div class="card-deck">
-	<div class="card row" *ngFor="let publicacion of publicacionesToShow" (click)="goToPublicacion(publicacion)">
+	<div class="card row" *ngFor="let publicacion of publicacionesToShow" (click)="clicked(publicacion)"
+	[ngClass]="origin=='intercambio' && publicacion.idPublicacion == cardSelected ? 'selected-card' : ''">
 		<div class="col-sm-4" style="display: flex; justify-content: center;">
 			<img class="card-img" *ngIf="publicacion.parsedImagenes && publicacion.parsedImagenes.length > 0"
-			[src]="getImagen(publicacion.parsedImagenes![0])"> <!-- *ngFor="let img of publicacion.parsedImagenes" -->
+			[src]="getImagen(publicacion.parsedImagenes![0])" 
+			[ngClass]="origin=='publicaciones' ? 'big':'small'"> <!-- *ngFor="let img of publicacion.parsedImagenes" -->
 		</div>
 		<div class="card-body col-sm-6">
 			<h2 class="card-title">{{publicacion.titulo}}</h2>
@@ -13,7 +15,7 @@
 				Precio de venta: ${{publicacion.precioVenta}}
 			</div>
 		</div>
-		<div class="card-fundacion col-sm-2">
+		<div class="card-fundacion col-sm-2" *ngIf="origin=='publicaciones'">
 			<img class="img-fundacion" src="assets/persona.png">
 			<h4>{{publicacion.particularDTO.nombre + ' ' + publicacion.particularDTO.apellido}}</h4>
 			<h6>{{publicacion.fechaPublicacion | date: 'dd/MM/yyyy' }}</h6>
