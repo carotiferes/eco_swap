@@ -1,4 +1,4 @@
 {
-	"URImsUsuarios": "http://localhost:8080/",
-	"URImsAutenticacion": "http://localhost:8085/"
+	"URImsUsuarios": "8080/",
+	"URImsAutenticacion": "8085/"
 }

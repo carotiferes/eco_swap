@@ -1,12 +1,16 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
+import { environment } from 'src/environments/environment';
 const properties = require('../core/properties.json')
 
 @Injectable()
 export class HttpBackEnd {
 
-	constructor(private httpClient: HttpClient) { }
+	constructor(private httpClient: HttpClient) {
+		console.log('ENVIRONMENT', environment);
+		
+	}
 
 	get(urlName: string, endpoint: string, params?: any) {
 		const URL = this.getUrlByName(urlName);
@@ -59,7 +63,7 @@ export class HttpBackEnd {
 		return data;
 	}
 
-	private getUrlByName(urlName: string): string {
-		return properties[urlName] || 'http://localhost:8080/';
+	getUrlByName(urlName: string): string {
+		return environment.apiUrl + (properties[urlName] || '8080/');
 	}
 }

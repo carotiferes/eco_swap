@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpBackEnd } from './httpBackend.service';
+import { environment } from 'src/environments/environment';
 
-const URL = 'http://localhost:8080/'
+const URL = environment.apiUrl + '8080/';
 const URL_NAME = 'URImsUsuarios'
 
 @Injectable({
@@ -40,7 +41,8 @@ export class DonacionesService {
 	}
 
 	getImagen(img: string){
-		return URL + 'api/getImage/' + img;
+		console.log('Constructed URL:', `${URL}/api/getImage/${img}`); // Log the constructed URL
+  		return `${URL}/api/getImage/${img}`;
 	}
 
 	cambiarEstadoDonacion(id_colecta: any, id_donacion: number, body: any){
