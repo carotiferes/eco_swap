@@ -204,7 +204,12 @@
 					mainForm.markAllAsTouched();
 					mainForm.valid;
 					isSwapper && particularForm.valid;
-					!isSwapper && fundacionForm.valid">
+					!isSwapper && fundacionForm.valid;
+					direccionForm.valid"
+					[disabled]="!mainForm.valid ||
+					(isSwapper && !particularForm.valid) ||
+					(!isSwapper && !fundacionForm.valid) ||
+					!direccionForm.valid">
 				{{origin == 'resetPassword' ? 'ACTUALIZAR CONTRASEÑA' :
 				(origin == 'createAccount' ? 'CREAR CUENTA' : 'GUARDAR CAMBIOS')}}
 			</button>
