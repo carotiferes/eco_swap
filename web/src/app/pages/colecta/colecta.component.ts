@@ -40,13 +40,13 @@ export class ColectaComponent {
 			if(!this.id_colecta) showErrorService.show('Error!', 'No pudimos encontrar la información de la colecta que seleccionaste, por favor volvé a intentarlo más tarde.')
 		})
 		this.userData = { isSwapper: auth.isUserSwapper(), isLoggedIn: auth.isUserLoggedIn }
-		usuarioService.getUserByID(auth.getUserID()).subscribe({
-			next: (res: any) => {
-				this.userInfo = res;
-				console.log(this.userInfo);
-				
-			}
-		})
+		if(this.userData && this.userData.isLoggedIn){
+			usuarioService.getUserByID(auth.getUserID()).subscribe({
+				next: (res: any) => {
+					this.userInfo = res;
+				}
+			})
+		}
 	}
 	
 	ngOnInit(): void {
