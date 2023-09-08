@@ -41,8 +41,8 @@ export class DonacionesService {
 	}
 
 	getImagen(img: string){
-		console.log('Constructed URL:', `${URL}/api/getImage/${img}`); // Log the constructed URL
-  		return `${URL}/api/getImage/${img}`;
+		console.log('Constructed URL:', `${URL}api/getImage/${img}`); // Log the constructed URL
+  		return `${URL}api/getImage/${img}`;
 	}
 
 	cambiarEstadoDonacion(id_colecta: any, id_donacion: number, body: any){

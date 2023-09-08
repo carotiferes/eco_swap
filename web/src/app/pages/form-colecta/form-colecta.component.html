@@ -41,7 +41,7 @@
 					</div>
 					<div>
 						<div *ngFor="let producto of getProductosArray.controls; let i=index" class="producto"
-							[formGroupName]="i">
+							[formGroupName]="i" [ngClass]="producto.hasError('min') ? 'show-product-error' : ''">
 							<mat-form-field>
 								<input matInput placeholder="Descripción*" formControlName="s_descripcion">
 								<mat-error *ngIf="producto.get('s_descripcion')!.hasError('required')">
@@ -50,7 +50,10 @@
 							</mat-form-field>
 							<mat-form-field>
 								<mat-label>Cantidad solicitada</mat-label>
-								<input matInput formControlName="n_cantidad_solicitada" type="number">
+								<input matInput formControlName="n_cantidad_solicitada" type="number" min="0">
+								<mat-error *ngIf="producto.get('n_cantidad_solicitada')!.hasError('min')" class="error">
+									El valor debe ser mayor a 0.
+								</mat-error>
 							</mat-form-field>
 							<mat-form-field>
 								<mat-label>Tipo</mat-label>
