@@ -85,7 +85,7 @@ export class FormDonacionComponent implements OnInit {
 				caracteristicas: sendCaracteristicas,
 				imagenes: this.donacionForm.controls['file_source'].value
 			}
-			console.log(objetoToSend);
+			console.log('obj to send',objetoToSend);
 	
 			this.donacionesService.crearDonacion(this.colecta.idColecta, objetoToSend).subscribe({
 				next: (res) => {

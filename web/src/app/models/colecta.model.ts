@@ -8,7 +8,8 @@ export interface ColectaModel {
 	descripcion: string,
 	fundacionDTO: FundacionModel,
 	imagen: string,
-	fechaSolicitud: Date,
+	fechaInicio: Date,
+	fechaFin: Date,
 	productos: ProductoModel[],
 	donaciones: DonacionModel[]
 }

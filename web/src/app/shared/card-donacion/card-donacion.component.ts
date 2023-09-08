@@ -25,7 +25,7 @@ export class CardDonacionComponent implements OnInit{
 	constructor(private donacionesService: DonacionesService){	}
 	
 	ngOnInit(): void {
-		console.log(this.donacion, this.usuarioHeader,this.donacion.caracteristicaDonacion);
+		//console.log(this.donacion, this.usuarioHeader,this.donacion.caracteristicaDonacion);
 		for (const [i, caract] of this.donacion.caracteristicaDonacion.entries()) {
 			if(caract.caracteristica && i == 0) this.caracteristicas = caract.caracteristica
 			else if(caract.caracteristica) this.caracteristicas += ' - '+caract.caracteristica
@@ -49,10 +49,12 @@ export class CardDonacionComponent implements OnInit{
 	changeEstadoDonacion(donacion: DonacionModel, status: string){
 		this.donacionesService.cambiarEstadoDonacion(this.id_colecta, donacion.idDonacion, {
 			nuevoEstado: status
-		}).subscribe(res => {
-			console.log(res);
-			this.donacion.estadoDonacion = status;
-			this.statusChanged.emit();
+		}).subscribe({
+			next: res => {
+				console.log(res);
+				this.donacion.estadoDonacion = status;
+				this.statusChanged.emit();
+			}
 		})
 	}
 
