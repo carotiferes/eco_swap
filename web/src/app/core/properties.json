@@ -1,4 +1,5 @@
 {
-	"URImsUsuarios": "http://ec2-3-93-54-229.compute-1.amazonaws.com:8080/",
-	"URImsAutenticacion": "http://ec2-3-93-54-229.compute-1.amazonaws.com:8085/"
+
+	"URImsUsuarios": "8080/",
+	"URImsAutenticacion": "8085/"
 }

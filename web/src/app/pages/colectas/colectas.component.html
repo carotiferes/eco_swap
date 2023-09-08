@@ -62,7 +62,8 @@
 		</div>
 	</div>
 	<div class="floating-button-container" *ngIf="!userData.isSwapper">
-		<button mat-fab color="primary" aria-label="Agregar Colecta" (click)="addColecta()">
+		<button mat-fab color="primary" aria-label="Agregar Colecta" (click)="addColecta()"
+		matTooltip="Agregar Colecta" matTooltipPosition="before">
 			<mat-icon>add</mat-icon>
 		</button>
 	</div>

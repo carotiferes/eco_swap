@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
-import { MAT_DATE_LOCALE, NativeDateAdapter } from '@angular/material/core';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 import Swal from 'sweetalert2';
 import { DateAdapter } from '@angular/material/core';
 import { UsuarioService } from 'src/app/services/usuario.service';
@@ -8,6 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { PhoneNumberPipe } from 'src/app/pipes/phone-number.pipe';
 import { CustomDateAdapter } from 'src/app/pipes/date-adapter';
+import { Location } from '@angular/common';
 
 @Component({
 	selector: 'app-registro',
@@ -15,7 +16,7 @@ import { CustomDateAdapter } from 'src/app/pipes/date-adapter';
 	styleUrls: ['./registro.component.scss'],
 	providers: [
 		{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
-		{provide: DateAdapter, useClass: CustomDateAdapter }
+		{ provide: DateAdapter, useClass: CustomDateAdapter }
 	]
 })
 export class RegistroComponent {
@@ -29,21 +30,21 @@ export class RegistroComponent {
 
 	screenWidth: number;
 
-	resetPassword: boolean = false;
-	passwordIcon: string = 'visibility';
+	origin: 'resetPassword' | 'createAccount' | 'editAccount' = 'createAccount';
+	passwordIcon: string = 'visibility_off';
 	passwordType: string = 'password';
 
 	tiposDocumento: any[] = [];
 
 	constructor(private fb: FormBuilder, private dateAdapter: DateAdapter<Date>,
-		private usuarioService: UsuarioService, private route: ActivatedRoute,
+		private usuarioService: UsuarioService, private location: Location,
 		private auth: AuthService, private router: Router,
 		private cdr: ChangeDetectorRef, private phoneNumberPipe: PhoneNumberPipe) {
 		this.mainForm = fb.group({
 			//username: [''], TODO: POR AHORA USO EMAIL
 			email: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)]],
 			telefono: ['', [Validators.required, this.telefonoValidator()]],
-			password: ['', [Validators.required, Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,32}$/), this.validarConfirmPassword(),]],
+			password: ['', [Validators.required, Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=!*\-_.,])[a-zA-Z\d@#$%^&+=!*\-_.,]{8,32}$/), this.validarConfirmPassword(),]],
 			confirmPassword: ['', [Validators.required, this.validarConfirmPassword()]],
 		})
 		this.particularForm = fb.group({
@@ -70,23 +71,69 @@ export class RegistroComponent {
 		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 		this.dateAdapter.setLocale('es-AR'); // DD/mm/YYYY
 
-		route.url.subscribe(a => {
-			if (a[0].path == 'reset-password') {
-				this.resetPassword = true;
-			} else {
-				this.mainForm.controls['telefono'].addValidators(Validators.required)
-			}
-		});
+		const url = location.path()
+		if (url == '/reset-password') {
+			this.origin = 'resetPassword';
+		} else if (url == '/edit-perfil') {
+			this.origin = 'editAccount';
+			this.mainForm.controls['password'].disable();
+			this.mainForm.controls['confirmPassword'].disable();
+			this.mainForm.controls['email'].disable();
+		} else {
+			this.mainForm.controls['telefono'].addValidators(Validators.required)
+		}
 	}
 
 	ngOnInit(): void {
-		if (!this.resetPassword) this.selectTipoPerfil();
-		else this.loading = false;
+		if (this.origin == 'createAccount') this.selectTipoPerfil();
+		else if(this.origin == 'editAccount'){
+			this.loadUserInfo();
+			this.loading = false;
+		} else this.loading = false;
 		this.getTiposDocumentos()
 	}
 
 	ngOnDestroy(): void {
 		Swal.close()
+	}
+
+	loadUserInfo() {
+		this.usuarioService.getUserByID(this.auth.getUserID()).subscribe({
+			next: (user: any) => {
+				console.log(user);
+				this.mainForm.patchValue({
+					email: user.email,
+					telefono: user.telefono,
+				})
+
+				if(user.particularDTO){
+					this.particularForm.patchValue({
+						nombre: user.particularDTO.nombre,
+						apellido: user.particularDTO.apellido,
+						tipoDocumento: user.particularDTO.tipoDocumento,
+						nroDocumento: user.particularDTO.dni,
+						fechaNacimiento: user.particularDTO.fechaNacimiento,
+					})
+				} else {
+					this.fundacionForm.patchValue({
+						nombre: user.fundacionDTO.nombre,
+						cuit: user.fundacionDTO.cuil
+					})
+				}
+
+				this.direccionForm.patchValue({
+					direccion: user.particularDTO ? user.particularDTO.direcciones[0].direccion : user.fundacionDTO.direcciones[0].direccion,
+					altura: user.particularDTO ? user.particularDTO.direcciones[0].altura : user.fundacionDTO.direcciones[0].altura,
+					piso: user.particularDTO ? user.particularDTO.direcciones[0].piso : user.fundacionDTO.direcciones[0].piso,
+					departamento: user.particularDTO ? user.particularDTO.direcciones[0].departamento : user.fundacionDTO.direcciones[0].departamento,
+					codigoPostal: user.particularDTO ? user.particularDTO.direcciones[0].codigoPostal : user.fundacionDTO.direcciones[0].codigoPostal,
+				})
+			},
+			error: (error) => {
+				console.log('error', error);
+				
+			}
+		})
 	}
 
 	selectTipoPerfil() {
@@ -128,10 +175,10 @@ export class RegistroComponent {
 		})
 	}
 
-	crearCuenta() {
+	submit() {
 		console.log('registro', this.mainForm.value);
 		if (this.mainForm.valid) {
-			if (this.resetPassword) {
+			if (this.origin == 'resetPassword') {
 				const body = {
 					username: this.mainForm.controls['email'].value,
 					nuevoPassword: this.mainForm.controls['password'].value,
@@ -195,22 +242,37 @@ export class RegistroComponent {
 	
 					console.log(user);
 					if(validDataForm){
-						this.usuarioService.createUser(user).subscribe({
-							next: (id_user: any) => {
-								console.log('next', id_user);
-								// TODO: REVISAR CON EMAILS. esperar 1 min antes de dejarlo enviar devuelta
-								this.showMessage('¡Gracias por registrarte!',
-									`Te enviamos un email a la cuenta que ingresaste,
-									con un código para verificar tu cuenta. Por favor ingresalo a continuación.
-									Si no verificás la cuenta ahora, podrás hacerlo la próxima vez que inicies sesión.`,
-									'Confirmar', 'send_again', 'success', 'No recibí el email')
-							},
-							error: (e) => {
-								console.error('error', e);
-								this.showMessage('Error!', 'Ha ocurrido un error al crear la cuenta', 'OK', 'error', 'error')
-							},
-							complete: () => console.info('signup complete')
-						})
+						if(this.origin == 'createAccount') {
+							this.usuarioService.createUser(user).subscribe({
+								next: (id_user: any) => {
+									console.log('next', id_user);
+									// TODO: REVISAR CON EMAILS. esperar 1 min antes de dejarlo enviar devuelta
+									this.showMessage('¡Gracias por registrarte!',
+										`Te enviamos un email a la cuenta que ingresaste,
+										con un código para verificar tu cuenta. Por favor ingresalo a continuación.
+										Si no verificás la cuenta ahora, podrás hacerlo la próxima vez que inicies sesión.`,
+										'Confirmar', 'send_again', 'success', 'No recibí el email')
+								},
+								error: (e) => {
+									console.error('error', e);
+									if(e.message.includes('duplicate'))
+									this.showMessage('Error!', 'Ya existe un usuario con el email ingresado.', 'OK', 'error', 'error')
+									else this.showMessage('Error!', 'Ha ocurrido un error al crear la cuenta', 'OK', 'error', 'error')
+								},
+								//complete: () => console.info('signup complete')
+							})
+						} else {
+							this.usuarioService.editUser(user).subscribe({
+								next: (id_user: any) => {
+									console.log('next', id_user);
+									this.showMessage('¡Éxito!', `Tus datos se editaron exitosamente.`, 'Genial!', 'edit', 'success')
+								},
+								error: (e) => {
+									console.error('error', e);
+									this.showMessage('Error!', 'Ha ocurrido un error al editar la cuenta', 'OK', 'error', 'error')
+								}
+							})
+						}
 					}
 				} else {
 					this.showMessage('¡Campos incorrectos!', 'Por favor, revisá los campos y volvé a intentar', 'OK', '', 'error')
@@ -231,16 +293,19 @@ export class RegistroComponent {
 			denyButtonText: deny,
 			icon,
 			allowOutsideClick: icon == 'success' ? false : true,
-			input: icon == 'success' ? 'text' : undefined,
+			input: origin == 'send_again' ? 'text' : undefined,
 			reverseButtons: true
 		}).then(({ isConfirmed, value, isDenied }) => {
 			console.log(value);
 			if (isDenied && origin == 'send_again') {
 				// TODO: RESEND EMAIL
+				this.router.navigate(['login'])
 			}
 			if(isConfirmed){
 				if(origin == 'ir_a_home') {
 					this.router.navigate(['home'])
+				} else if(origin == 'edit') {
+					this.router.navigate(['perfil'])
 				}
 			}
 		})
@@ -290,4 +355,18 @@ export class RegistroComponent {
 	refreshValidity() {
 		this.mainForm.updateValueAndValidity()
 	}
+
+	formatDocument(event: any) {
+		console.log(event);
+		switch (event.value) {
+			case 'DNI': //
+				this.particularForm.controls['nroDocumento'].addValidators(Validators.pattern(/^\d{7,8}$/))
+				break;
+		
+			default:
+				this.particularForm.controls['nroDocumento'].addValidators(Validators.pattern(/^\d{7,8}$/))
+				break;
+		}
+	}
+	
 }

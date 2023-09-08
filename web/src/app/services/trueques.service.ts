@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpBackEnd } from './httpBackend.service';
+import { environment } from 'src/environments/environment';
 
-const URL = 'http://localhost:8080/'
+const URL = environment.apiUrl + '8080/';
 const URL_NAME = 'URImsUsuarios'
 
 @Injectable({
@@ -28,6 +29,6 @@ export class TruequesService {
 	}
 
 	getImagen(img: string){
-		return URL + 'api/getImage/' + img;
+		return this.backendService.getUrlByName(URL_NAME) + 'api/getImage/' + img;
 	}
 }

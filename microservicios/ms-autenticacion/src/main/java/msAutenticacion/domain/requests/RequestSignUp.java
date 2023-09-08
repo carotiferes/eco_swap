@@ -6,8 +6,8 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Data;
 import msAutenticacion.domain.requests.propuestas.RequestDireccion;
-import msAutenticacion.domain.requests.propuestas.RequestSigninFundacion;
-import msAutenticacion.domain.requests.propuestas.RequestSigninSwapper;
+import msAutenticacion.domain.requests.propuestas.RequestSignUpFundacion;
+import msAutenticacion.domain.requests.propuestas.RequestSignUpSwapper;
 
 @Data
 @Builder
@@ -32,9 +32,9 @@ public class RequestSignUp {
     private String confirmPassword;
 
     //FUNDACION Y PARTICULAR PUEDEN SER NULL, SI EXISTE 1 NO PUEDE EXISTIR LA OTRA
-    private RequestSigninFundacion fundacion;
+    private RequestSignUpFundacion fundacion;
 
-    private RequestSigninSwapper particular;
+    private RequestSignUpSwapper particular;
 
     @NotNull
     private RequestDireccion direccion;

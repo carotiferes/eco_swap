@@ -97,6 +97,14 @@
 	.main-data {
 		grid-template-columns: 1fr 1fr !important;
 	}
+	
+	.error {
+		font-size: 10px;
+	}
+
+	.show-product-error {
+		padding-bottom: 20px;
+	}
 }
 
 @media (min-width: 0px) and (max-width: 576px) {

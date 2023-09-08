@@ -44,8 +44,10 @@
 		}
 
 		.div-cambiar-pass {
-			text-align: center;
+			//text-align: center;
     		margin-top: 15px;
+			display: flex;
+    		justify-content: space-evenly;
 		}
 	}
 }

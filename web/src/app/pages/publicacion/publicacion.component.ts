@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PublicacionModel } from 'src/app/models/publicacion.model';
 import { AuthService } from 'src/app/services/auth.service';
@@ -6,6 +7,7 @@ import { ShowErrorService } from 'src/app/services/show-error.service';
 import { TruequesService } from 'src/app/services/trueques.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import Swal from 'sweetalert2';
+import { TrocarModalComponent } from './trocar-modal/trocar-modal.component';
 
 @Component({
 	selector: 'app-publicacion',
@@ -24,7 +26,7 @@ export class PublicacionComponent {
 
 	constructor(private truequeService: TruequesService, private route: ActivatedRoute,
 		private showErrorService: ShowErrorService, private auth: AuthService,
-		private router: Router, private usuarioService: UsuarioService){
+		private router: Router, private usuarioService: UsuarioService, public dialog: MatDialog){
 		route.paramMap.subscribe(params => {
 			console.log(params);
 			this.id_publicacion = params.get('id_publicacion') || 0;
@@ -34,7 +36,7 @@ export class PublicacionComponent {
 		usuarioService.getUserByID(auth.getUserID()).subscribe({
 			next: (res: any) => {
 				this.userInfo = res;
-				//console.log(this.userInfo);
+				console.log(this.publicacion, this.userInfo);
 				if(this.publicacion.particularDTO.idParticular == this.userInfo.particularDTO.idParticular)
 					this.showButtons = false;
 			}
@@ -58,7 +60,13 @@ export class PublicacionComponent {
 
 	intercambiar() {
 		if(this.auth.isUserLoggedIn) {
-			
+			this.dialog.open(TrocarModalComponent, {
+				data: {
+				  publicacion: this.publicacion,
+				},
+				minWidth: 100,
+				maxHeight: '90vh'
+			  });
 		} else {
 			Swal.fire({
 				title: '¡Necesitás una cuenta!',

@@ -3,7 +3,7 @@
 <div id="main-container">
 	<mat-card id="main-card" *ngIf="!loading">
 		<mat-card-header>
-			<div *ngIf="!resetPassword; else resetHeader">
+			<div *ngIf="origin != 'resetPassword'; else resetHeader">
 				<mat-card-title>Registrate!</mat-card-title>
 				<mat-card-subtitle>Completá {{isSwapper ? 'tus datos' : 'los datos de la fundación'}} para crear tu
 					cuenta</mat-card-subtitle>
@@ -30,8 +30,8 @@
 						</mat-error>
 					</mat-form-field>
 				</div>
-				<div class="form-input">
-					<mat-form-field *ngIf="!resetPassword">
+				<div class="form-input" [ngClass]="mainForm.get('telefono')!.hasError('formatoInvalido') ? 'form-input-medium-error':''">
+					<mat-form-field *ngIf="origin != 'resetPassword'">
 						<mat-label>Teléfono</mat-label>
 						<input matInput formControlName="telefono" [ngModel]="this.mainForm.get('telefono')!.value"
 							(keyup)="formatearTelefono()">
@@ -44,20 +44,20 @@
 						</mat-error>
 					</mat-form-field>
 				</div>
-				<div class="form-input">
+				<div class="form-input" [ngClass]="mainForm.get('password')!.hasError('pattern') ? 'form-input-long-error':''">
 					<mat-form-field>
-						<mat-label>Password</mat-label>
+						<mat-label>Contraseña</mat-label>
 						<input matInput formControlName="password" [type]="passwordType" (change)="refreshValidity()">
 						<mat-icon matSuffix (click)="togglePassword()" class="eye">{{passwordIcon}}</mat-icon>
 						<mat-error *ngIf="mainForm.get('password')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
-						<mat-error *ngIf="mainForm.get('password')!.hasError('differentPassword')">
+						<mat-error *ngIf="mainForm.get('password')!.hasError('differentPassword') && !mainForm.get('password')!.hasError('pattern')">
 							Las contraseñas no coinciden
 						</mat-error>
 						<mat-error *ngIf="mainForm.get('password')!.hasError('pattern')">
-							La contraseña debe tener entre 8 y 32 caracteres y al menos 1 minúscula, 1 mayúscula y 1
-							número.
+							Debe tener de 8 a 32 caracteres, 1 minúscula, 1 mayúscula, 1
+							número y 1 caracter especial.
 						</mat-error>
 					</mat-form-field>
 				</div>
@@ -76,7 +76,7 @@
 					</mat-form-field>
 				</div>
 			</form>
-			<form [formGroup]="particularForm" *ngIf="isSwapper && !resetPassword" class="form">
+			<form [formGroup]="particularForm" *ngIf="isSwapper && origin != 'resetPassword'" class="form">
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>Nombre</mat-label>
@@ -100,7 +100,8 @@
 					<mat-form-field>
 						<mat-label>Tipo Documento</mat-label>
 						<!-- <input matInput formControlName="tipoDocumento"> -->
-						<mat-select formControlName="tipoDocumento" name="tipoDocumento">
+						<mat-select formControlName="tipoDocumento" name="tipoDocumento"
+						(selectionChange)="formatDocument($event)">
 							<mat-option *ngFor="let tipo of tiposDocumento" [value]="tipo.nombre">
 								{{tipo.descripcion}}
 							</mat-option>
@@ -113,16 +114,19 @@
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>Número de Documento</mat-label>
-						<input matInput formControlName="nroDocumento">
+						<input matInput formControlName="nroDocumento" type="number">
 						<mat-error *ngIf="particularForm.get('nroDocumento')!.hasError('required')">
 							Campo obligatorio
+						</mat-error>
+						<mat-error *ngIf="particularForm.get('nroDocumento')!.hasError('pattern')">
+							Campo inválido
 						</mat-error>
 					</mat-form-field>
 				</div>
 				<div class="form-input">
-					<mat-form-field>
+					<mat-form-field floatLabel="always">
 						<mat-label>Fecha de Nacimiento</mat-label>
-						<input matInput formControlName="fechaNacimiento" [matDatepicker]="picker">
+						<input matInput formControlName="fechaNacimiento" [matDatepicker]="picker" readonly>
 						<mat-hint>DD/MM/YYYY</mat-hint>
 						<mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
 						<mat-datepicker #picker></mat-datepicker>
@@ -132,7 +136,7 @@
 					</mat-form-field>
 				</div>
 			</form>
-			<form [formGroup]="fundacionForm" *ngIf="!isSwapper && !resetPassword" class="form">
+			<form [formGroup]="fundacionForm" *ngIf="!isSwapper && origin != 'resetPassword'" class="form">
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>Nombre / Razón Social</mat-label>
@@ -145,7 +149,7 @@
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>CUIT</mat-label>
-						<input matInput formControlName="cuit">
+						<input matInput formControlName="cuit" type="number">
 						<mat-error *ngIf="fundacionForm.get('cuit')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
@@ -153,7 +157,7 @@
 				</div>
 			</form>
 			<div style="margin: 20px 5% 0px; font-weight: bold;">Dirección</div>
-			<form [formGroup]="direccionForm" *ngIf="!resetPassword" class="form">
+			<form [formGroup]="direccionForm" *ngIf="origin != 'resetPassword'" class="form">
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>Calle</mat-label>
@@ -166,7 +170,7 @@
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>Altura</mat-label>
-						<input matInput formControlName="altura">
+						<input matInput formControlName="altura" type="number">
 						<mat-error *ngIf="direccionForm.get('altura')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
@@ -175,7 +179,7 @@
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>Piso</mat-label>
-						<input matInput formControlName="piso">
+						<input matInput formControlName="piso" type="number">
 					</mat-form-field>
 				</div>
 				<div class="form-input">
@@ -187,7 +191,7 @@
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>Código Postal</mat-label>
-						<input matInput formControlName="codigoPostal">
+						<input matInput formControlName="codigoPostal" type="number">
 						<mat-error *ngIf="direccionForm.get('codigoPostal')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
@@ -196,12 +200,18 @@
 			</form>
 		</mat-card-content>
 		<mat-card-actions class="buttons">
-			<button mat-raised-button color="primary" (click)="crearCuenta();
+			<button mat-raised-button color="primary" (click)="submit();
 					mainForm.markAllAsTouched();
 					mainForm.valid;
 					isSwapper && particularForm.valid;
-					!isSwapper && fundacionForm.valid">
-				{{resetPassword ? 'ACTUALIZAR CONTRASEÑA' : 'CREAR CUENTA'}}
+					!isSwapper && fundacionForm.valid;
+					direccionForm.valid"
+					[disabled]="!mainForm.valid ||
+					(isSwapper && !particularForm.valid) ||
+					(!isSwapper && !fundacionForm.valid) ||
+					!direccionForm.valid">
+				{{origin == 'resetPassword' ? 'ACTUALIZAR CONTRASEÑA' :
+				(origin == 'createAccount' ? 'CREAR CUENTA' : 'GUARDAR CAMBIOS')}}
 			</button>
 		</mat-card-actions>
 	</mat-card>

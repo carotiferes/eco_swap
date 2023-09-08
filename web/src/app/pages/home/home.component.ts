@@ -8,11 +8,18 @@ import { UsuarioService } from 'src/app/services/usuario.service';
 })
 export class HomeComponent {
 
-	images = [
-		'assets/banners/portadas-01.jpg', 'assets/banners/portadas-02.jpg',
-		'assets/banners/portadas-03.jpg', 'assets/banners/portadas-04.jpg'
-	]
+	screenWidth: number;
+	folder: string = 'banners';
+	images: string[] = []
 
 	constructor(private service: UsuarioService){
+		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+		if(this.screenWidth < 576) {
+			this.folder = 'banners-mobile';
+		}
+		for (let index = 1; index <= 4; index++) {
+			this.images.push(`assets/${this.folder}/0${index}.jpg`)
+			
+		}
 	}
 }
