@@ -27,15 +27,11 @@ import msAutenticacion.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -76,9 +72,9 @@ public class UsuarioController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<Long> postSignUp(@RequestBody RequestSignUp body){
         log.info("postSignUp: creando nuevo usuario: "+ body.getEmail());
-        Long userId = usuarioService.crearUsuario(body);
-        log.info("postSignUp: Usuario creado con ID: "+ userId);
-        return ResponseEntity.ok(userId);
+        Usuario usuarioCreado = usuarioService.crearUsuario(body);
+        log.info("postSignUp: Usuario creado con ID: "+ usuarioCreado.getIdUsuario());
+        return ResponseEntity.ok(usuarioCreado.getIdUsuario());
     }
 
     @PutMapping(path = "/usuario/password", produces = JSON)
