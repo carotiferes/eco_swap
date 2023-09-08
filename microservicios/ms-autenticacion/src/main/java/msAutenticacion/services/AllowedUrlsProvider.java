@@ -17,7 +17,8 @@ public class AllowedUrlsProvider {
                 "/ms-autenticacion/api/v1/usuario/login",
                 "/ms-autenticacion/api/v1/tiposDocumentos",
                 "/ms-autenticacion/api/v1/usuario/signup",
-                "/ms-autenticacion/api/v1/usuario/confirmar"
+                "/ms-autenticacion/api/v1/usuario/confirmar",
+                "/ms-autenticacion/api/v1/usuario/reenvio/*"
         );
     }
 }

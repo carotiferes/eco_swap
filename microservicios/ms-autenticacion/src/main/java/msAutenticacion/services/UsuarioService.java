@@ -180,6 +180,16 @@ public class UsuarioService {
         return passwordHashGuardado.equals(passwordHashIngresado);
     }
 
+    public void reenviarCodigoConfirmacion(Long idUsuario) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new EntityNotFoundException("No fue encontrado el usuario: " + idUsuario));
+
+        String nuevoTkn = this.crearSalt();
+        usuario.setConfirmCodigo(nuevoTkn);
+        usuarioRepository.save(usuario);
+        emailService.reenvioEmailConfirmacion(usuario, nuevoTkn);
+    }
+
     private String crearPassword(String password, String salt) {
         String passwordAHashear = password + salt + PEPPER;
         return getSHA256(passwordAHashear);

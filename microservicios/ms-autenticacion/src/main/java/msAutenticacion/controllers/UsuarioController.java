@@ -127,6 +127,18 @@ public class UsuarioController {
         return ResponseEntity.ok(responseUpdateEntity);
     }
 
+    @PatchMapping(path = "/usuario/reenvio/{id_usuario}", consumes = JSON, produces = JSON)
+    @ResponseStatus(HttpStatus.OK)
+    @Transactional
+    public ResponseEntity<ResponseUpdateEntity> confirmarProfile(@PathVariable(name = "id_usuario") Long idUsuario){
+        log.info(">> Reenvio de email con nuevo token al usuario: {}", idUsuario);
+        usuarioService.reenviarCodigoConfirmacion(idUsuario);
+        ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
+        responseUpdateEntity.setDescripcion("Nuevo código de confirmación generado con éxito y email enviado.");
+        responseUpdateEntity.setStatus(HttpStatus.OK.name());
+        return ResponseEntity.ok(responseUpdateEntity);
+    }
+
 
 
     private String obtenerDescripcion(TipoDocumentoEnum tipoProducto) {
