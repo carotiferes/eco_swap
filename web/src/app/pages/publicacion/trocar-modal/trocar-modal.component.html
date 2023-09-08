@@ -17,7 +17,14 @@
 		</div>
 	</div>
 	<div class="mis-publicaciones">
-		Seleccioná una de tus publicaciones para intercambiar!
-		<app-deck-publicaciones [publicacionesToShow]="misPublicaciones"></app-deck-publicaciones>
+		<h3 style="text-align: center;">Seleccioná una de tus publicaciones para intercambiar!</h3>
+		<div>
+			<app-deck-publicaciones [publicacionesToShow]="misPublicaciones" origin="intercambio"
+			(selectedCard)="selectCard($event)"></app-deck-publicaciones>
+		</div>
 	</div>
+</div>
+<div id="trocar-buttons">
+	<button mat-raised-button color="light">CANCELAR</button>
+	<button mat-raised-button color="primary" [disabled]="!cardSelected">SOLICITAR INTERCAMBIO</button>
 </div>

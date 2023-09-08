@@ -31,7 +31,7 @@ export class RegistroComponent {
 	screenWidth: number;
 
 	origin: 'resetPassword' | 'createAccount' | 'editAccount' = 'createAccount';
-	passwordIcon: string = 'visibility';
+	passwordIcon: string = 'visibility_off';
 	passwordType: string = 'password';
 
 	tiposDocumento: any[] = [];
@@ -44,7 +44,7 @@ export class RegistroComponent {
 			//username: [''], TODO: POR AHORA USO EMAIL
 			email: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)]],
 			telefono: ['', [Validators.required, this.telefonoValidator()]],
-			password: ['', [Validators.required, Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,32}$/), this.validarConfirmPassword(),]],
+			password: ['', [Validators.required, Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=!*\-_.,])[a-zA-Z\d@#$%^&+=!*\-_.,]{8,32}$/), this.validarConfirmPassword(),]],
 			confirmPassword: ['', [Validators.required, this.validarConfirmPassword()]],
 		})
 		this.particularForm = fb.group({
@@ -255,7 +255,9 @@ export class RegistroComponent {
 								},
 								error: (e) => {
 									console.error('error', e);
-									this.showMessage('Error!', 'Ha ocurrido un error al crear la cuenta', 'OK', 'error', 'error')
+									if(e.message.includes('duplicate'))
+									this.showMessage('Error!', 'Ya existe un usuario con el email ingresado.', 'OK', 'error', 'error')
+									else this.showMessage('Error!', 'Ha ocurrido un error al crear la cuenta', 'OK', 'error', 'error')
 								},
 								//complete: () => console.info('signup complete')
 							})
@@ -297,6 +299,7 @@ export class RegistroComponent {
 			console.log(value);
 			if (isDenied && origin == 'send_again') {
 				// TODO: RESEND EMAIL
+				this.router.navigate(['login'])
 			}
 			if(isConfirmed){
 				if(origin == 'ir_a_home') {

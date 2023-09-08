@@ -17,7 +17,7 @@ export class LoginComponent {
 	@ViewChild('user') userHtml: ElementRef | undefined;
 	@ViewChild('password') passwordHtml: ElementRef | undefined;
 
-	passwordIcon: string = 'visibility';
+	passwordIcon: string = 'visibility_off';
 	passwordType: string = 'password';
 
 	//TODO: loading on submit

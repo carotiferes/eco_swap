@@ -30,7 +30,7 @@
 						</mat-error>
 					</mat-form-field>
 				</div>
-				<div class="form-input">
+				<div class="form-input" [ngClass]="mainForm.get('telefono')!.hasError('formatoInvalido') ? 'form-input-medium-error':''">
 					<mat-form-field *ngIf="origin != 'resetPassword'">
 						<mat-label>Teléfono</mat-label>
 						<input matInput formControlName="telefono" [ngModel]="this.mainForm.get('telefono')!.value"
@@ -44,20 +44,20 @@
 						</mat-error>
 					</mat-form-field>
 				</div>
-				<div class="form-input">
+				<div class="form-input" [ngClass]="mainForm.get('password')!.hasError('pattern') ? 'form-input-long-error':''">
 					<mat-form-field>
-						<mat-label>Password</mat-label>
+						<mat-label>Contraseña</mat-label>
 						<input matInput formControlName="password" [type]="passwordType" (change)="refreshValidity()">
 						<mat-icon matSuffix (click)="togglePassword()" class="eye">{{passwordIcon}}</mat-icon>
 						<mat-error *ngIf="mainForm.get('password')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
-						<mat-error *ngIf="mainForm.get('password')!.hasError('differentPassword')">
+						<mat-error *ngIf="mainForm.get('password')!.hasError('differentPassword') && !mainForm.get('password')!.hasError('pattern')">
 							Las contraseñas no coinciden
 						</mat-error>
 						<mat-error *ngIf="mainForm.get('password')!.hasError('pattern')">
-							La contraseña debe tener entre 8 y 32 caracteres y al menos 1 minúscula, 1 mayúscula y 1
-							número.
+							Debe tener de 8 a 32 caracteres, 1 minúscula, 1 mayúscula, 1
+							número y 1 caracter especial.
 						</mat-error>
 					</mat-form-field>
 				</div>
@@ -204,7 +204,12 @@
 					mainForm.markAllAsTouched();
 					mainForm.valid;
 					isSwapper && particularForm.valid;
-					!isSwapper && fundacionForm.valid">
+					!isSwapper && fundacionForm.valid;
+					direccionForm.valid"
+					[disabled]="!mainForm.valid ||
+					(isSwapper && !particularForm.valid) ||
+					(!isSwapper && !fundacionForm.valid) ||
+					!direccionForm.valid">
 				{{origin == 'resetPassword' ? 'ACTUALIZAR CONTRASEÑA' :
 				(origin == 'createAccount' ? 'CREAR CUENTA' : 'GUARDAR CAMBIOS')}}
 			</button>

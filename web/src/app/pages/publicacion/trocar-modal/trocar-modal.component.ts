@@ -16,6 +16,7 @@ export class TrocarModalComponent {
 	loading: boolean = false;
 
 	misPublicaciones: PublicacionModel[] = [];
+	cardSelected?: number;
 
 	constructor(@Inject(MAT_DIALOG_DATA) public data: any, private truequeService: TruequesService){
 		console.log(data);
@@ -41,5 +42,9 @@ export class TrocarModalComponent {
 
 	getImage(image: any) {
 		return this.truequeService.getImagen(image)
+	}
+
+	selectCard(cardId: any) {
+		this.cardSelected = cardId;
 	}
 }

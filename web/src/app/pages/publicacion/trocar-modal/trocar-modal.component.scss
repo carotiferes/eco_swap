@@ -1,6 +1,6 @@
 #main-trocar {
 	display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 2fr;
     justify-items: center;
     align-items: center;
 
@@ -16,6 +16,24 @@
 			border-radius: 10px;
 		}
 	}
+
+	.mis-publicaciones {
+		overflow: auto;
+		height: 70vh;
+		padding: 10px;
+	}
+}
+
+#trocar-buttons {
+	display: grid;
+    grid-template-columns: 1fr 1fr;
+	justify-items: center;
+	margin: 10px;
+	gap: 10px;
+
+	button {
+		max-width: 70%;
+	}
 }
 
 @media (min-width: 0px) and (max-width: 576px) {
@@ -27,5 +45,12 @@
 			border-right: none !important;
 			border-bottom: 1px solid grey;
 		}
+
+		.mis-publicaciones {
+			height: 40vh !important;
+		}
+	}
+	#trocar-buttons {
+		grid-template-columns: 1fr !important;
 	}
 }
