@@ -31,9 +31,13 @@
 				<div class="form-col">
 					<mat-form-field>
 						<mat-label>Valor <b>mínimo</b> de trueque</mat-label>
-						<input matInput formControlName="valorMinimo" type="number">
+						<input matInput formControlName="valorMinimo" type="number"
+						[max]="publicacionForm.get('valorMaximo')!.value || null">
 						<mat-error *ngIf="publicacionForm.get('valorMinimo')!.hasError('required')">
 							Campo obligatorio
+						</mat-error>
+						<mat-error *ngIf="publicacionForm.get('valorMinimo')!.hasError('max')">
+							Debe ser menor al valor máximo ingresado.
 						</mat-error>
 					</mat-form-field>
 				</div>
@@ -41,9 +45,13 @@
 				<div class="form-col">
 					<mat-form-field>
 						<mat-label>Valor <b>máximo</b> de trueque</mat-label>
-						<input matInput formControlName="valorMaximo" type="number">
+						<input matInput formControlName="valorMaximo" type="number"
+						[min]="publicacionForm.get('valorMinimo')!.value || null">
 						<mat-error *ngIf="publicacionForm.get('valorMaximo')!.hasError('required')">
 							Campo obligatorio
+						</mat-error>
+						<mat-error *ngIf="publicacionForm.get('valorMaximo')!.hasError('min')">
+							Debe ser mayor al valor mínimo ingresado.
 						</mat-error>
 					</mat-form-field>
 				</div>
