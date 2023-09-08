@@ -101,3 +101,15 @@ html, body {
 .example-panel {
 	min-width: 350px !important;
 }
+
+.form-input.form-input-long-error {
+	.mat-mdc-form-field-subscript-wrapper {
+		height: 70px !important;
+	}
+}
+
+.form-input.form-input-medium-error {
+	.mat-mdc-form-field-subscript-wrapper {
+		height: 45px !important;
+	}
+}
