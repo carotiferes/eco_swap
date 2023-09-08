@@ -2,7 +2,9 @@ package msAutenticacion.exceptions.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import msAutenticacion.exceptions.UserCreationException;
+import msAutenticacion.exceptions.ValidationUserException;
 import msAutenticacion.exceptions.responses.UserCreationExceptionResponse;
+import msAutenticacion.exceptions.responses.ValidationUserExceptionResponse;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,17 @@ public class UserCreationExceptionHandler {
         response.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         log.error(">> {}", exception.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    @ExceptionHandler(ValidationUserException.class)
+    public ResponseEntity<ValidationUserExceptionResponse> handleValidationException(ValidationUserException exception){
+        ValidationUserExceptionResponse response = new ValidationUserExceptionResponse();
+        response.setDescripcion(exception.getMessage());
+        Date date = new Date();
+        response.setTimestamp(date.getTime());
+        response.setHttpStatus(HttpStatus.BAD_REQUEST);
+        log.error(">> {}", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<UserCreationExceptionResponse> handleDataIntegrityViolationException(DataIntegrityViolationException exception) {
