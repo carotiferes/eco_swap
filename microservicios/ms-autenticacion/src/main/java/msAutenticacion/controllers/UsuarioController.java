@@ -11,10 +11,7 @@ import msAutenticacion.domain.entities.enums.TipoDocumento;
 import msAutenticacion.domain.model.EnumValue;
 import msAutenticacion.domain.model.UsuarioContext;
 import msAutenticacion.domain.model.enums.TipoDocumentoEnum;
-import msAutenticacion.domain.requests.RequestEditProfile;
-import msAutenticacion.domain.requests.RequestLogin;
-import msAutenticacion.domain.requests.RequestPassword;
-import msAutenticacion.domain.requests.RequestSignUp;
+import msAutenticacion.domain.requests.*;
 import msAutenticacion.domain.responses.DTOs.TipoDocumentoDTO;
 import msAutenticacion.domain.responses.DTOs.UsuarioDTO;
 import msAutenticacion.domain.responses.ResponseLogin;
@@ -24,6 +21,7 @@ import msAutenticacion.exceptions.LoginUserException;
 import msAutenticacion.exceptions.LoginUserWrongCredentialsException;
 import msAutenticacion.services.CriteriaBuilderQueries;
 import msAutenticacion.services.UsuarioService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -77,14 +75,18 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioCreado.getIdUsuario());
     }
 
-    @PutMapping(path = "/usuario/password", produces = JSON)
+    @PatchMapping(path = "/usuario/password", produces = JSON)
     @Transactional
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseEntity<HttpStatus> putPassword(@RequestBody RequestPassword body){
-        log.info("putPassword: Actualizar contraseña para usuario: "+ body.getUsername());
-        usuarioService.actualizarContrasenia(body);
-        log.info("putPassword: Contraseña actualizada para usuario: "+ body.getUsername());
-        return ResponseEntity.ok(HttpStatus.ACCEPTED);
+    public ResponseEntity<ResponseUpdateEntity> putPassword(@RequestBody RequestPassword body){
+        final Usuario user = UsuarioContext.getUsuario();
+        log.info("putPassword: Actualizar contraseña para usuario: "+ user.getIdUsuario());
+        usuarioService.actualizarContrasenia(body, user.getIdUsuario());
+        log.info("putPassword: Contraseña actualizada para usuario: "+ user.getIdUsuario());
+        ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
+        responseUpdateEntity.setDescripcion("Contraseña cambiada exitosamente.");
+        responseUpdateEntity.setStatus(HttpStatus.OK.name());
+        return ResponseEntity.ok(responseUpdateEntity);
     }
 
     @PatchMapping(path = "/usuario/login", produces = JSON)
@@ -107,6 +109,7 @@ public class UsuarioController {
     }
 
     @PutMapping(path = "/usuario/edit", consumes = JSON, produces = JSON)
+    @ResponseStatus(HttpStatus.OK)
     @Transactional
     public ResponseEntity<ResponseUpdateEntity> editProfile(@RequestBody @Valid RequestEditProfile requestEditProfile){
         final Usuario user = UsuarioContext.getUsuario();
@@ -116,6 +119,29 @@ public class UsuarioController {
 
     }
 
+    @PatchMapping(path = "/usuario/confirmar", consumes = JSON, produces = JSON)
+    @ResponseStatus(HttpStatus.OK)
+    @Transactional
+    public ResponseEntity<ResponseUpdateEntity> confirmarProfile(@RequestBody @Valid RequestConfirm requestConfirm){
+        log.info(">> Confirmación de usuario: {}", requestConfirm.getIdUsuario());
+        Boolean confirmado = usuarioService.confirmarUsuario(requestConfirm);
+        ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
+        responseUpdateEntity.setDescripcion("Validado: " + confirmado.toString().toUpperCase());
+        responseUpdateEntity.setStatus(HttpStatus.OK.name());
+        return ResponseEntity.ok(responseUpdateEntity);
+    }
+
+    @PatchMapping(path = "/usuario/reenvio/{id_usuario}", consumes = JSON, produces = JSON)
+    @ResponseStatus(HttpStatus.OK)
+    @Transactional
+    public ResponseEntity<ResponseUpdateEntity> confirmarProfile(@PathVariable(name = "id_usuario") Long idUsuario){
+        log.info(">> Reenvio de email con nuevo token al usuario: {}", idUsuario);
+        usuarioService.reenviarCodigoConfirmacion(idUsuario);
+        ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
+        responseUpdateEntity.setDescripcion("Nuevo código de confirmación generado con éxito y email enviado.");
+        responseUpdateEntity.setStatus(HttpStatus.OK.name());
+        return ResponseEntity.ok(responseUpdateEntity);
+    }
 
 
     private String obtenerDescripcion(TipoDocumentoEnum tipoProducto) {

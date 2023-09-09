@@ -35,6 +35,21 @@ public class EmailService {
         });
     }
 
+    public void reenvioEmailConfirmacion(Usuario usuario, String codigoConfirmacion) {
+        /*
+        Método asincrónico, obtenido de https://www.baeldung.com/java-asynchronous-programming
+        Tiene la ventaja de ser método nativo de Java 8.
+         */
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                return sendConfirmEmail(usuario.getEmail(), "Reenvío de código de confirmación", usuario, codigoConfirmacion);
+            } catch (Exception e) {
+                log.error("Error al enviar correo de confirmación: {}", e.getMessage(), e);
+                return false; // O manejar el error de acuerdo a tus necesidades
+            }
+        });
+    }
+
     private Boolean sendConfirmEmail(String toEmail, String subject, Usuario usuario, String codigoActivacion) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("no-responde@ecoswap.com");
