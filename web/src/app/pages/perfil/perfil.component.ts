@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { UsuarioModel } from 'src/app/models/usuario.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-perfil',
@@ -32,18 +33,21 @@ export class PerfilComponent {
 	}
 
 	getUserInformation(){
-		this.usuarioService.getUserByID(this.auth.getUserID()).subscribe({
-			next: (res: any) => {
-				console.log(res);
-				this.user = res;
-				this.configureColumns();
-
-			},
-			error: (error) => {
-				console.log('error', error);
-				
-			}
-		})
+		const id = this.auth.getUserID();
+		if(id) {
+			this.usuarioService.getUserByID(id).subscribe({
+				next: (res: any) => {
+					console.log(res);
+					this.user = res;
+					this.configureColumns();
+	
+				},
+				error: (error) => {
+					console.log('error', error);
+					
+				}
+			})
+		} else Swal.fire('Error!', 'Ocurrió un error al traer tu información. Intentalo devuelta más tarde', 'error')
 	}
 
 	edit() {

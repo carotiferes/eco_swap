@@ -241,7 +241,7 @@ public class UsuarioService {
                 .intentos(0)
                 .puntaje(0)
                 .validado(false)
-                .bloqueado(true)
+                .bloqueado(false)
                 .build();
     }
     

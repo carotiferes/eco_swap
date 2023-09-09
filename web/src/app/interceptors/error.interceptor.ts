@@ -29,6 +29,8 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 				return event;
 			  }),
 			catchError((err) => {
+				console.log('aa',err.status);
+				
 				let error: BackendError = { message: '', severity: ErrorSeverity.INFO, code: '' };
 				
 				if (err instanceof ErrorEvent) { // client side error
@@ -39,7 +41,8 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 				} else { // server side error
 					error = this.handleBackendError(error, err);
 					console.log('Server error with code: ' + JSON.stringify(err));
-					this.showErrorService.show('Error!', 'Ocurrió un error con el servidor. Por favor volvé a intentar más tarde.')
+					if(err.status == 0)this.showErrorService.show('Error!', 'Ocurrió un error con el servidor. Por favor volvé a intentar más tarde.')
+					if(err.status >= 500)this.showErrorService.show('Error!', 'Ocurrió un error con el servidor. Por favor volvé a intentar más tarde.')
 				}
 				return throwError(() => error);
 			})

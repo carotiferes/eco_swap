@@ -4,6 +4,7 @@ import { HttpBackEnd } from './httpBackend.service';
 import Swal from 'sweetalert2';
 import jwtDecode from 'jwt-decode';
 import { UsuarioService } from './usuario.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 const URL_NAME = 'URImsAutenticacion'
 
@@ -14,8 +15,10 @@ export class AuthService {
 
 	isUserLoggedIn: boolean;
 	userData: any;
+	isUserValidated: boolean = false;
 
-	constructor(private router: Router, private backendService: HttpBackEnd, private usuarioService: UsuarioService) {
+	constructor(private router: Router, private backendService: HttpBackEnd, private usuarioService: UsuarioService,
+		private snackbar: MatSnackBar) {
 		if(this.getUserLogin()) this.isUserLoggedIn = true;
 		else this.isUserLoggedIn = false;
 	}
@@ -27,14 +30,60 @@ export class AuthService {
 				// TODO: GET USER INFO TO SAVE IN LOCAL STORAGE (AT LEAST IS_SWAPPER)
 				this.setLocalStorage('userToken', v.token);
 				const userData: any = jwtDecode(v.token)
-				this.setLocalStorage('isSwapper', JSON.stringify(userData.esParticular));
-				this.isUserLoggedIn = true;
-				this.setUserLoggedIn();
-				this.router.navigate([''])
+				console.log('data', userData);
+				if(userData.usuarioValidado) {
+					this.isUserValidated = true;
+					this.setLocalStorage('isSwapper', JSON.stringify(userData.esParticular));
+					this.isUserLoggedIn = true;
+					this.setUserLoggedIn();
+					this.router.navigate([''])
+				} else {
+					Swal.fire({
+						title: '¡Validá tu cuenta!',
+						text: 'Ingresá el código que recibiste por mail para validar tu cuenta.',
+						confirmButtonText: 'CONFIRMAR',
+						showDenyButton: true,
+						denyButtonText: 'Volver a enviar el mail',
+						icon: 'info',
+						allowOutsideClick: false,
+						input: 'text',
+						reverseButtons: true,
+						preDeny: () => {
+							this.sendEmailAgain(userData.id).subscribe({
+								next: (res) => {
+									console.log(res);
+									this.snackbar.open('Se envió el nuevo mail!', '', {
+										horizontalPosition: 'center',
+										verticalPosition: 'top',
+										duration: 3000
+									})
+								}
+							})
+							return false;
+						}
+					}).then(({isConfirmed, value, isDenied}) => {
+						if(isConfirmed) {
+							this.usuarioService.confirmarCuenta(userData.id, value).subscribe({
+								next: (res) => {
+									console.log(res);
+									this.router.navigate(['/'])
+									Swal.fire('Excelente!', 'Tu cuenta fue verificada, ya podes usar Ecoswap!', 'success')
+								},
+								error: (error) => {
+									console.log(error);
+									if(error.message.descripcion == "El código es incorrecto") {
+										Swal.fire('Código incorrecto!', 'El código ingresado es incorrecto. Iniciá sesión y volvé a intentarlo.', 'error')
+										this.router.navigate(['/login'])
+									}
+								}
+							})
+						}
+					})
+				}
 			},
 			error: (e) => {
 				console.error('error:', e);
-				Swal.fire('¡Error!', 'Ocurrió un error. Por favor revisá los campos e intentá nuevamente.', 'error')
+				Swal.fire('¡Error!', e.message.descripcion/* 'Ocurrió un error. Por favor revisá los campos e intentá nuevamente.' */, 'error')
 			},
 			complete: () => console.info('login complete') 
 		})
@@ -49,28 +98,13 @@ export class AuthService {
 	}
 
 	getUserID() {
-		const tkn = localStorage.getItem('userToken')
-		const decodedToken: any = jwtDecode(tkn || '')
-		return decodedToken.id;
-		/*const decodedToken: any = jwtDecode(tkn || '')
-		this.usuarioService.getUserByID(decodedToken.id).subscribe({
-				next: (res) => {
-					this.userData = res;
-					return this.userData;
-				},
-				error: (error) => {
-					console.log(error);
-					return this.userData;
-				}
-			})
-			 if(tkn) {
-		}
-		else return this.userData; */
-		/* const data = localStorage.getItem('userData');
-		if(data && data != 'undefined'){
-			const user = JSON.parse(data as string);
-			return user;
-		} else return {} */
+		if(this.isUserLoggedIn){
+			const tkn = localStorage.getItem('userToken')
+			if(tkn) {
+				const decodedToken: any = jwtDecode(tkn)
+				return decodedToken.id;
+			} else return null;
+		} else return null;
 	}
 
 	getUserLogin() {
@@ -94,5 +128,9 @@ export class AuthService {
 
 	resetPassword(body: any){ /* body: { username: string, nuevoPassword: string, confirmarPassword: string } */
 		return this.backendService.put(URL_NAME, 'ms-autenticacion/api/v1/usuario/password', body);
+	}
+
+	sendEmailAgain(id_usuario: number) {
+		return this.backendService.patch(URL_NAME, `ms-autenticacion/api/v1/usuario/reenvio/${id_usuario}`, {});
 	}
 }

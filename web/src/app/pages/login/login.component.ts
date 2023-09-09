@@ -2,6 +2,7 @@ import { Component, ElementRef, ViewChild, ViewEncapsulation } from '@angular/co
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import Swal from 'sweetalert2';
+import { Location } from '@angular/common';
 
 @Component({
 	selector: 'app-login',
@@ -22,7 +23,7 @@ export class LoginComponent {
 
 	//TODO: loading on submit
 
-	constructor(private auth: AuthService, private router: Router) { }
+	constructor(private auth: AuthService, private router: Router, private location: Location) {}
 
 	ngOnInit(): void {
 		if(this.auth.isUserLoggedIn){
