@@ -75,14 +75,18 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioCreado.getIdUsuario());
     }
 
-    @PutMapping(path = "/usuario/password", produces = JSON)
+    @PatchMapping(path = "/usuario/password", produces = JSON)
     @Transactional
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseEntity<HttpStatus> putPassword(@RequestBody RequestPassword body){
-        log.info("putPassword: Actualizar contraseña para usuario: "+ body.getUsername());
-        usuarioService.actualizarContrasenia(body);
-        log.info("putPassword: Contraseña actualizada para usuario: "+ body.getUsername());
-        return ResponseEntity.ok(HttpStatus.ACCEPTED);
+    public ResponseEntity<ResponseUpdateEntity> putPassword(@RequestBody RequestPassword body){
+        final Usuario user = UsuarioContext.getUsuario();
+        log.info("putPassword: Actualizar contraseña para usuario: "+ user.getIdUsuario());
+        usuarioService.actualizarContrasenia(body, user.getIdUsuario());
+        log.info("putPassword: Contraseña actualizada para usuario: "+ user.getIdUsuario());
+        ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
+        responseUpdateEntity.setDescripcion("Contraseña cambiada exitosamente.");
+        responseUpdateEntity.setStatus(HttpStatus.OK.name());
+        return ResponseEntity.ok(responseUpdateEntity);
     }
 
     @PatchMapping(path = "/usuario/login", produces = JSON)
@@ -138,7 +142,6 @@ public class UsuarioController {
         responseUpdateEntity.setStatus(HttpStatus.OK.name());
         return ResponseEntity.ok(responseUpdateEntity);
     }
-
 
 
     private String obtenerDescripcion(TipoDocumentoEnum tipoProducto) {

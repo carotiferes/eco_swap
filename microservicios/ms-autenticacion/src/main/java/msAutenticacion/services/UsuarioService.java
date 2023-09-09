@@ -16,10 +16,7 @@ import msAutenticacion.domain.repositories.UsuarioRepository;
 import msAutenticacion.domain.requests.*;
 import msAutenticacion.domain.requests.propuestas.RequestDireccion;
 import msAutenticacion.domain.responses.ResponseUpdateEntity;
-import msAutenticacion.exceptions.LoginUserBlockedException;
-import msAutenticacion.exceptions.LoginUserWrongCredentialsException;
-import msAutenticacion.exceptions.UserCreationException;
-import msAutenticacion.exceptions.ValidationUserException;
+import msAutenticacion.exceptions.*;
 import msAutenticacion.exceptions.events.UsuarioCreadoEvent;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +31,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -108,16 +106,21 @@ public class UsuarioService {
             return responseUpdateEntity;
         }
     }
-    
 
+    public void actualizarContrasenia(RequestPassword request, Long idUsuario) {
+        log.info(("actualizarContrasenia: Actualizar contraseña para usuarioId: " + idUsuario));
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new EntityNotFoundException("No fue encontrado el usuario: " + idUsuario));
 
-    public void actualizarContrasenia(RequestPassword request) {
-        log.info(("actualizarContrasenia: Actualizar contraseña para usuarioId: " + request.getUsername()));
-        Usuario usuario = usuarioRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new EntityNotFoundException("No fue encontrado el usuario: " + request.getUsername()));
-        usuario.setPassword(request.getNuevoPassword());
+        String newPassword = crearPassword(request.getNuevaPassword(),usuario.getSalt());
+        if(!Objects.equals(newPassword, usuario.getPassword()))
+            usuario.setPassword(crearPassword(request.getNuevaPassword(),usuario.getSalt()));
+        else
+            throw new PasswordUpdateException("No es válido cambiar por la misma contraseña. Por favor, ingresar otra.");
+
+        usuario.setPassword(newPassword);
         usuarioRepository.save(usuario);
-        log.info(("actualizarContrasenia: Se ha actualizar con ÉXITO la contraseña para usuarioId: " + request.getUsername()));
+        log.info(("actualizarContrasenia: Se ha actualizar con ÉXITO la contraseña para usuarioId: " + usuario.getUsername()));
     }
 
     public Boolean confirmarUsuario(RequestConfirm request) {
@@ -240,8 +243,6 @@ public class UsuarioService {
                 .validado(false)
                 .bloqueado(true)
                 .build();
-
-        // El bloqueado en false, es temporal, hasta que se ponga para ingresar el codigo de confirmación del email.
     }
     
 
