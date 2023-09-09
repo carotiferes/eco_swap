@@ -1,8 +1,12 @@
 package msAutenticacion.exceptions.handler;
 
 import lombok.extern.slf4j.Slf4j;
+import msAutenticacion.exceptions.PasswordUpdateException;
 import msAutenticacion.exceptions.UserCreationException;
+import msAutenticacion.exceptions.ValidationUserException;
+import msAutenticacion.exceptions.responses.PasswordUpdateExceptionResponse;
 import msAutenticacion.exceptions.responses.UserCreationExceptionResponse;
+import msAutenticacion.exceptions.responses.ValidationUserExceptionResponse;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -15,7 +19,7 @@ import java.util.Date;
 @Slf4j
 @ControllerAdvice
 @Order(3)
-public class UserCreationExceptionHandler {
+public class UserExceptionHandler {
     @ExceptionHandler(UserCreationException.class)
     public ResponseEntity<UserCreationExceptionResponse> handleUserCreationException(UserCreationException exception){
         UserCreationExceptionResponse response = new UserCreationExceptionResponse();
@@ -26,6 +30,29 @@ public class UserCreationExceptionHandler {
         log.error(">> {}", exception.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+
+    @ExceptionHandler(ValidationUserException.class)
+    public ResponseEntity<ValidationUserExceptionResponse> handleValidationException(ValidationUserException exception){
+        ValidationUserExceptionResponse response = new ValidationUserExceptionResponse();
+        response.setDescripcion(exception.getMessage());
+        Date date = new Date();
+        response.setTimestamp(date.getTime());
+        response.setHttpStatus(HttpStatus.BAD_REQUEST);
+        log.error(">> {}", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(PasswordUpdateException.class)
+    public ResponseEntity<PasswordUpdateExceptionResponse> handlePasswordUpdateException(PasswordUpdateException exception){
+        PasswordUpdateExceptionResponse response = new PasswordUpdateExceptionResponse();
+        response.setDescripcion(exception.getMessage());
+        Date date = new Date();
+        response.setTimestamp(date.getTime());
+        response.setHttpStatus(HttpStatus.BAD_REQUEST);
+        log.error(">> {}", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<UserCreationExceptionResponse> handleDataIntegrityViolationException(DataIntegrityViolationException exception) {
         UserCreationExceptionResponse response = new UserCreationExceptionResponse();

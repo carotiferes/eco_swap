@@ -9,10 +9,10 @@ import lombok.Data;
 @Builder
 public class RequestConfirm {
 
-    @NotNull(message = "username es un campo obligatorio")
-    private String username;
+    @NotNull(message = "Es necesario un id del usuario para la confirmación")
+    private Long idUsuario;
 
     @NotNull(message = "Codigo es un campo obligatorio")
-    @Size(max = 6, min = 6, message = "El código es el incorrecto")
+    @Size(max = 5, min = 5, message = "El código es incorrecto")
     private String codigo;
 }

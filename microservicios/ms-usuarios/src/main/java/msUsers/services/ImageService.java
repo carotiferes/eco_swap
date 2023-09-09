@@ -42,7 +42,7 @@ public class ImageService {
         File directory = new File(directorioActual + pathFilesystem);
         if (!directory.exists()) {
             if (directory.mkdirs()) {
-                log.info("Directorio de almacenamiento creado correctamente.");
+                log.info(">> Directorio de almacenamiento creado correctamente.");
             }
         }
 
