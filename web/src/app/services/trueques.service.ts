@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpBackEnd } from './httpBackend.service';
 import { environment } from 'src/environments/environment';
 
-const URL = environment.apiUrl + '8080/';
+//const URL = environment.apiUrl + '8080/';
 const URL_NAME = 'URImsUsuarios'
 
 @Injectable({

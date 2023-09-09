@@ -64,6 +64,8 @@ export class HttpBackEnd {
 	}
 
 	getUrlByName(urlName: string): string {
+		console.log('ENV URL', environment.apiUrl);
+		
 		return environment.apiUrl + (properties[urlName] || '8080/');
 	}
 }
