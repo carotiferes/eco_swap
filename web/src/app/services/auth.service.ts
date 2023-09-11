@@ -66,8 +66,13 @@ export class AuthService {
 							this.usuarioService.confirmarCuenta(userData.id, value).subscribe({
 								next: (res) => {
 									console.log(res);
-									this.router.navigate(['/'])
+									//this.router.navigate(['/'])
 									Swal.fire('Excelente!', 'Tu cuenta fue verificada, ya podes usar Ecoswap!', 'success')
+									this.isUserValidated = true;
+									this.setLocalStorage('isSwapper', JSON.stringify(userData.esParticular));
+									this.isUserLoggedIn = true;
+									this.setUserLoggedIn();
+									this.router.navigate([''])
 								},
 								error: (error) => {
 									console.log(error);

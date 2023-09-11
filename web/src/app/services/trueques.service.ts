@@ -17,7 +17,7 @@ export class TruequesService {
 	}
 
 	getPublicaciones(filtros: any = {}){
-		return this.backendService.get(URL_NAME, 'api/publicacioness', filtros);
+		return this.backendService.get(URL_NAME, 'api/publicaciones', filtros);
 	}
 
 	getMisPublicaciones(){
