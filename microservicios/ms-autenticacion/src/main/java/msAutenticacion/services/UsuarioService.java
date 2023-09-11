@@ -10,21 +10,19 @@ import jakarta.persistence.criteria.CriteriaDelete;
 import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
 import msAutenticacion.domain.entities.Direccion;
-import msAutenticacion.domain.entities.Fundacion;
-import msAutenticacion.domain.entities.Particular;
 import msAutenticacion.domain.entities.Usuario;
-import msAutenticacion.domain.entities.enums.TipoDocumento;
 import msAutenticacion.domain.repositories.DireccionRepository;
 import msAutenticacion.domain.repositories.UsuarioRepository;
 import msAutenticacion.domain.requests.*;
 import msAutenticacion.domain.requests.propuestas.RequestDireccion;
 import msAutenticacion.domain.responses.ResponseUpdateEntity;
-import msAutenticacion.exceptions.LoginUserBlockedException;
-import msAutenticacion.exceptions.LoginUserWrongCredentialsException;
+import msAutenticacion.exceptions.*;
+import msAutenticacion.exceptions.events.UsuarioCreadoEvent;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.security.*;
@@ -33,74 +31,58 @@ import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
 public class UsuarioService {
-
-    private final UsuarioRepository usuarioRepository;
-    private final FundacionService fundacionService;
-    private final ParticularService particularService;
-    private  final DireccionRepository direccionRepository;
-    private final EntityManager entityManager;
-    private final EmailService emailService;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+    @Autowired
+    private FundacionService fundacionService;
+    @Autowired
+    private ParticularService particularService;
+    @Autowired
+    private DireccionRepository direccionRepository;
+    @Autowired
+    private EntityManager entityManager;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private  CriteriaBuilderQueries criteriaBuilderQueries;
     private static final String JSON = "application/JSON";
     private static final String prvKey = "3c0s2ap231023914523";
-
     private static final String PEPPER = "c";
-
-    private final CriteriaBuilderQueries criteriaBuilderQueries;
-
-    public UsuarioService(UsuarioRepository usuarioRepository,
-                          FundacionService fundacionService,
-                          ParticularService particularService,
-                          DireccionRepository direccionRepository,
-                          EntityManager entityManager,
-                          EmailService emailService,
-                          CriteriaBuilderQueries criteriaBuilderQueries) {
-        this.usuarioRepository = usuarioRepository;
-        this.fundacionService = fundacionService;
-        this.particularService = particularService;
-        this.direccionRepository = direccionRepository;
-        this.entityManager = entityManager;
-        this.emailService = emailService;
-        this.criteriaBuilderQueries = criteriaBuilderQueries;
-    }
 
     public Optional<Usuario> obtenerUsuario(Long userId) {
         return usuarioRepository.findById(userId);
     }
-    public Long crearUsuario(RequestSignUp signUp) {
+
+    public Usuario crearUsuario(RequestSignUp signUp){
         log.info("crearUsuario: Usuario a crear:" + signUp.getUsername());
         RequestDireccion direccionCrear = signUp.getDireccion();
         Usuario usuario = this.crearUsuarioBuilder(signUp);
         Direccion direccion = this.crearDireccion(usuario, direccionCrear);
         Direccion direccionCreada = direccionRepository.save(direccion);
         log.info("crearUsuario: Direccion creado con ID:" + direccionCreada.getIdDireccion());
-        Usuario usuarioCreado = null;
-        if(usuario.isSwapper()) {
-            usuarioCreado = particularService.crearUser(direccionCreada.getUsuario(), signUp);
-        } else {
-            usuarioCreado = fundacionService.crearUser(direccionCreada.getUsuario(), signUp);
-        }
-        log.info("crearUsuario: Usuario creado con ID: {}", usuarioCreado.getIdUsuario());
-        this.enviarEmailConfirmacion(usuarioCreado, usuarioCreado.getConfirmCodigo());
-        return usuarioCreado.getIdUsuario();
-    }
+        Usuario usuarioCreado;
 
-    private void enviarEmailConfirmacion(Usuario usuario, String codigoConfirmacion) {
-        /*
-        Método asincrónico, obtenido de https://www.baeldung.com/java-asynchronous-programming
-        Tiene la ventaja de ser método nativo de Java 8.
-         */
-        CompletableFuture.supplyAsync(() ->
-                emailService.sendConfirmEmail(
-                        usuario.getEmail(),
-                        "Gracias por sumarte a ECOSWAP",
-                        usuario,
-                        codigoConfirmacion));
+        try {
+            if (usuario.isSwapper())
+                usuarioCreado = particularService.crearUser(direccionCreada.getUsuario(), signUp);
+            else
+                usuarioCreado = fundacionService.crearUser(direccionCreada.getUsuario(), signUp);
+
+            log.info("crearUsuario: Usuario creado con ID: {}", usuarioCreado.getIdUsuario());
+            UsuarioCreadoEvent usuarioCreadoEvent = new UsuarioCreadoEvent(this, usuarioCreado);
+            eventPublisher.publishEvent(usuarioCreadoEvent);
+            return usuarioCreado;
+        } catch (Exception e) {
+            throw new UserCreationException("Error en la creación del usuario: " + e.getMessage());
+        }
     }
 
     public ResponseUpdateEntity editarUsuario(RequestEditProfile requestEditProfile, Usuario user){
@@ -124,33 +106,47 @@ public class UsuarioService {
             return responseUpdateEntity;
         }
     }
-    
 
+    public void actualizarContrasenia(RequestPassword request, Long idUsuario) {
+        log.info(("actualizarContrasenia: Actualizar contraseña para usuarioId: " + idUsuario));
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new EntityNotFoundException("No fue encontrado el usuario: " + idUsuario));
 
-    public void actualizarContrasenia(RequestPassword request) {
-        log.info(("actualizarContrasenia: Actualizar contraseña para usuarioId: " + request.getUsername()));
-        Usuario usuario = usuarioRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new EntityNotFoundException("No fue encontrado el usuario: " + request.getUsername()));
-        usuario.setPassword(request.getNuevoPassword());
+        String newPassword = crearPassword(request.getNuevaPassword(),usuario.getSalt());
+        if(!Objects.equals(newPassword, usuario.getPassword()))
+            usuario.setPassword(crearPassword(request.getNuevaPassword(),usuario.getSalt()));
+        else
+            throw new PasswordUpdateException("No es válido cambiar por la misma contraseña. Por favor, ingresar otra.");
+
+        usuario.setPassword(newPassword);
         usuarioRepository.save(usuario);
-        log.info(("actualizarContrasenia: Se ha actualizar con ÉXITO la contraseña para usuarioId: " + request.getUsername()));
+        log.info(("actualizarContrasenia: Se ha actualizar con ÉXITO la contraseña para usuarioId: " + usuario.getUsername()));
     }
 
     public Boolean confirmarUsuario(RequestConfirm request) {
-        log.info("confirmarUsuario: Confirmar usuarioId {}", request.getUsername());
-        Usuario usuario = usuarioRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new EntityNotFoundException("No fue encontrado el usuarioId: " + request.getUsername()));
-        if(usuario.getConfirmCodigo().equals(request.getCodigo())){
-            usuario.setConfirmCodigo("");
-            usuario.setBloqueado(false);
-            usuario.setValidado(true);
-            usuarioRepository.save(usuario);
-            log.info(("confirmarUsuario: Confirmación exitosa para userId: "
-                    + request.getUsername()));
-            return true;
+        log.info("confirmarUsuario: Confirmar usuarioId {}", request.getIdUsuario());
+        try {
+            Usuario usuario = usuarioRepository.findById(request.getIdUsuario())
+                    .orElseThrow(() -> new EntityNotFoundException("No fue encontrado el usuario con ID: " + request.getIdUsuario()));
+
+            if(usuario.isValidado())
+                throw new ValidationUserException("Usuario ya validado.");
+
+            if (usuario.getConfirmCodigo().equals(request.getCodigo())) {
+                usuario.setConfirmCodigo("");
+                usuario.setBloqueado(false);
+                usuario.setValidado(true);
+                usuarioRepository.save(usuario);
+                log.info(("confirmarUsuario: Confirmación exitosa para userId: " + usuario.getUsername()));
+                return true;
+            } else {
+                log.info("confirmarUsuario: Código inválido.");
+                throw new ValidationUserException("Error durante la confirmación del usuario: " + usuario.getUsername() + ". Código inválido.");
+            }
+        } catch (EntityNotFoundException e) {
+            log.error("Error durante la confirmación del usuario: " + e.getMessage());
+            return false;
         }
-        log.info("confirmarUsuario: Confirmación de ususario para usuarioId {} falló: ", request.getUsername());
-        throw new EntityNotFoundException("Error durante la confirmación del usaurioId: " + request.getUsername());
     }
 
     public String login(RequestLogin request) throws NoSuchAlgorithmException {
@@ -185,6 +181,16 @@ public class UsuarioService {
 
     private Boolean compararContrasenias(String passwordHashIngresado, String passwordHashGuardado) {
         return passwordHashGuardado.equals(passwordHashIngresado);
+    }
+
+    public void reenviarCodigoConfirmacion(Long idUsuario) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new EntityNotFoundException("No fue encontrado el usuario: " + idUsuario));
+
+        String nuevoTkn = this.crearSalt();
+        usuario.setConfirmCodigo(nuevoTkn);
+        usuarioRepository.save(usuario);
+        emailService.reenvioEmailConfirmacion(usuario, nuevoTkn);
     }
 
     private String crearPassword(String password, String salt) {
@@ -235,10 +241,8 @@ public class UsuarioService {
                 .intentos(0)
                 .puntaje(0)
                 .validado(false)
-                .bloqueado(false) //CUANDO SE CREA UN USUARIO, ESTE DEBE CONFIRMAR POR MAIL PRIMERO.
+                .bloqueado(false)
                 .build();
-
-        // El bloqueado en false, es temporal, hasta que se ponga para ingresar el codigo de confirmación del email.
     }
     
 
@@ -254,6 +258,7 @@ public class UsuarioService {
                     .withClaim("email", usuario.getEmail())
                     .withClaim("id", usuario.getIdUsuario())
                     .withClaim("esParticular", usuario.isSwapper())
+                    .withClaim("usuarioValidado", usuario.isValidado())
                     .sign(algorithm);
         } catch (JWTCreationException | NoSuchAlgorithmException exception){
             log.error(("login: JWT dió error durante la creación: " + exception.getMessage()));

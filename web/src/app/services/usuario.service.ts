@@ -30,4 +30,8 @@ export class UsuarioService {
 	getTiposDocumentos() {
 		return this.backendService.get(URL_NAME, 'ms-autenticacion/api/v1/tiposDocumentos');
 	}
+
+	confirmarCuenta(idUsuario: number, codigo: string) {
+		return this.backendService.patch(URL_NAME, 'ms-autenticacion/api/v1/usuario/confirmar', {idUsuario, codigo});
+	}
 }

@@ -20,6 +20,7 @@ export class PublicacionComponent {
 	publicacion!: PublicacionModel;
 	id_publicacion: any;
 
+	userData: any;
 	userInfo: any;
 
 	showButtons: boolean = true;
@@ -33,14 +34,20 @@ export class PublicacionComponent {
 			if(!this.id_publicacion) showErrorService.show('Error!', 'No pudimos encontrar la información de la colecta que seleccionaste, por favor volvé a intentarlo más tarde.')
 			else this.getPublicacion(this.id_publicacion)
 		})
-		usuarioService.getUserByID(auth.getUserID()).subscribe({
-			next: (res: any) => {
-				this.userInfo = res;
-				console.log(this.publicacion, this.userInfo);
-				if(this.publicacion.particularDTO.idParticular == this.userInfo.particularDTO.idParticular)
-					this.showButtons = false;
-			}
-		})
+		//console.log('PRE USER DATA');
+		this.userData = { isSwapper: auth.isUserSwapper(), isLoggedIn: auth.isUserLoggedIn }
+		console.log('POST USER DATA', this.userData);
+		
+		if(this.userData && this.userData.isLoggedIn){
+			usuarioService.getUserByID(auth.getUserID()).subscribe({
+				next: (res: any) => {
+					this.userInfo = res;
+					console.log(this.publicacion, this.userInfo);
+					if(this.publicacion.particularDTO.idParticular == this.userInfo.particularDTO.idParticular)
+						this.showButtons = false;
+				}
+			})
+		}
 	}
 
 	getPublicacion(id: number){

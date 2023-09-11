@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpBackEnd } from './httpBackend.service';
 import { environment } from 'src/environments/environment';
 
-const URL = environment.apiUrl + '8080/';
+//const URL = environment.apiUrl + '8080/';
 const URL_NAME = 'URImsUsuarios'
 
 @Injectable({
@@ -17,7 +17,7 @@ export class TruequesService {
 	}
 
 	getPublicaciones(filtros: any = {}){
-		return this.backendService.get(URL_NAME, 'api/publicaciones', filtros);
+		return this.backendService.get(URL_NAME, 'api/publicacioness', filtros);
 	}
 
 	getMisPublicaciones(){

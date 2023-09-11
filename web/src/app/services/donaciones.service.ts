@@ -41,7 +41,7 @@ export class DonacionesService {
 	}
 
 	getImagen(img: string){
-		console.log('Constructed URL:', `${URL}api/getImage/${img}`); // Log the constructed URL
+		//console.log('Constructed URL:', `${URL}api/getImage/${img}`); // Log the constructed URL
   		return `${URL}api/getImage/${img}`;
 	}
 

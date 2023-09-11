@@ -9,6 +9,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { PhoneNumberPipe } from 'src/app/pipes/phone-number.pipe';
 import { CustomDateAdapter } from 'src/app/pipes/date-adapter';
 import { Location } from '@angular/common';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
 	selector: 'app-registro',
@@ -35,10 +36,11 @@ export class RegistroComponent {
 	passwordType: string = 'password';
 
 	tiposDocumento: any[] = [];
+	id_user?: number;
 
 	constructor(private fb: FormBuilder, private dateAdapter: DateAdapter<Date>,
 		private usuarioService: UsuarioService, private location: Location,
-		private auth: AuthService, private router: Router,
+		private auth: AuthService, private router: Router, private snackbar: MatSnackBar,
 		private cdr: ChangeDetectorRef, private phoneNumberPipe: PhoneNumberPipe) {
 		this.mainForm = fb.group({
 			//username: [''], TODO: POR AHORA USO EMAIL
@@ -98,42 +100,45 @@ export class RegistroComponent {
 	}
 
 	loadUserInfo() {
-		this.usuarioService.getUserByID(this.auth.getUserID()).subscribe({
-			next: (user: any) => {
-				console.log(user);
-				this.mainForm.patchValue({
-					email: user.email,
-					telefono: user.telefono,
-				})
-
-				if(user.particularDTO){
-					this.particularForm.patchValue({
-						nombre: user.particularDTO.nombre,
-						apellido: user.particularDTO.apellido,
-						tipoDocumento: user.particularDTO.tipoDocumento,
-						nroDocumento: user.particularDTO.dni,
-						fechaNacimiento: user.particularDTO.fechaNacimiento,
+		const id = this.auth.getUserID();
+		if(id) {
+			this.usuarioService.getUserByID(this.auth.getUserID()).subscribe({
+				next: (user: any) => {
+					console.log(user);
+					this.mainForm.patchValue({
+						email: user.email,
+						telefono: user.telefono,
 					})
-				} else {
-					this.fundacionForm.patchValue({
-						nombre: user.fundacionDTO.nombre,
-						cuit: user.fundacionDTO.cuil
+	
+					if(user.particularDTO){
+						this.particularForm.patchValue({
+							nombre: user.particularDTO.nombre,
+							apellido: user.particularDTO.apellido,
+							tipoDocumento: user.particularDTO.tipoDocumento,
+							nroDocumento: user.particularDTO.dni,
+							fechaNacimiento: user.particularDTO.fechaNacimiento,
+						})
+					} else {
+						this.fundacionForm.patchValue({
+							nombre: user.fundacionDTO.nombre,
+							cuit: user.fundacionDTO.cuil
+						})
+					}
+	
+					this.direccionForm.patchValue({
+						direccion: user.particularDTO ? user.particularDTO.direcciones[0].direccion : user.fundacionDTO.direcciones[0].direccion,
+						altura: user.particularDTO ? user.particularDTO.direcciones[0].altura : user.fundacionDTO.direcciones[0].altura,
+						piso: user.particularDTO ? user.particularDTO.direcciones[0].piso : user.fundacionDTO.direcciones[0].piso,
+						departamento: user.particularDTO ? user.particularDTO.direcciones[0].departamento : user.fundacionDTO.direcciones[0].departamento,
+						codigoPostal: user.particularDTO ? user.particularDTO.direcciones[0].codigoPostal : user.fundacionDTO.direcciones[0].codigoPostal,
 					})
+				},
+				error: (error) => {
+					console.log('error', error);
+					
 				}
-
-				this.direccionForm.patchValue({
-					direccion: user.particularDTO ? user.particularDTO.direcciones[0].direccion : user.fundacionDTO.direcciones[0].direccion,
-					altura: user.particularDTO ? user.particularDTO.direcciones[0].altura : user.fundacionDTO.direcciones[0].altura,
-					piso: user.particularDTO ? user.particularDTO.direcciones[0].piso : user.fundacionDTO.direcciones[0].piso,
-					departamento: user.particularDTO ? user.particularDTO.direcciones[0].departamento : user.fundacionDTO.direcciones[0].departamento,
-					codigoPostal: user.particularDTO ? user.particularDTO.direcciones[0].codigoPostal : user.fundacionDTO.direcciones[0].codigoPostal,
-				})
-			},
-			error: (error) => {
-				console.log('error', error);
-				
-			}
-		})
+			})
+		} else Swal.fire('Error!', 'Ocurrió un error al traer tu información. Intentalo devuelta más tarde', 'error')
 	}
 
 	selectTipoPerfil() {
@@ -246,6 +251,7 @@ export class RegistroComponent {
 							this.usuarioService.createUser(user).subscribe({
 								next: (id_user: any) => {
 									console.log('next', id_user);
+									this.id_user = id_user;
 									// TODO: REVISAR CON EMAILS. esperar 1 min antes de dejarlo enviar devuelta
 									this.showMessage('¡Gracias por registrarte!',
 										`Te enviamos un email a la cuenta que ingresaste,
@@ -294,18 +300,47 @@ export class RegistroComponent {
 			icon,
 			allowOutsideClick: icon == 'success' ? false : true,
 			input: origin == 'send_again' ? 'text' : undefined,
-			reverseButtons: true
+			reverseButtons: true,
+			preDeny: () => {
+				if(this.id_user) this.auth.sendEmailAgain(this.id_user).subscribe({
+					next: (res) => {
+						console.log(res);
+						this.snackbar.open('Se envió el nuevo mail!', '', {
+							horizontalPosition: 'center',
+							verticalPosition: 'top',
+							duration: 3000
+						})
+					}
+				})
+				return false;
+			}
 		}).then(({ isConfirmed, value, isDenied }) => {
 			console.log(value);
-			if (isDenied && origin == 'send_again') {
+			/* if (isDenied && origin == 'send_again') {
 				// TODO: RESEND EMAIL
 				this.router.navigate(['login'])
-			}
+			} */
 			if(isConfirmed){
 				if(origin == 'ir_a_home') {
 					this.router.navigate(['home'])
 				} else if(origin == 'edit') {
 					this.router.navigate(['perfil'])
+				} else if (origin == 'send_again') {
+					if(this.id_user) this.usuarioService.confirmarCuenta(this.id_user, value).subscribe({
+						next: (res) => {
+							console.log(res);
+							Swal.fire('Excelente!', 'Tu cuenta fue verificada, ya podes usar Ecoswap!', 'success')
+							this.router.navigate(['/'])
+						},
+						error: (error) => {
+							console.log(error);
+							if(error.message.descripcion == "El código es incorrecto") {
+								Swal.fire('Código incorrecto!', 'El código ingresado es incorrecto. Iniciá sesión y volvé a intentarlo.', 'error')
+								this.router.navigate(['/login'])
+							}
+						}
+					})
+					else Swal.fire('Error!', 'Ocurrió un error al activar tu cuenta. Por favor intentalo más tarde', 'error')
 				}
 			}
 		})

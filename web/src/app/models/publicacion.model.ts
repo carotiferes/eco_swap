@@ -15,5 +15,6 @@ export interface PublicacionModel {
 	tipoPublicacion: string,
 	precioVenta: number,
 	valorTruequeMax: number,
-	valorTruequeMin: number
+	valorTruequeMin: number,
+	caracteristicaProducto: any[]
 }

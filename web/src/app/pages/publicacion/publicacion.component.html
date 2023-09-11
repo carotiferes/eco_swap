@@ -39,10 +39,10 @@
 					Precio de venta: ${{publicacion.precioVenta}}
 				</div>
 				<div class="caracteristicas">
-					<!-- TODO: ADD CARACTERISTICAS
-						<div *ngFor="let producto of publicacion.productos" class="producto">
-						{{producto.descripcion}}: {{producto.cantidadRecibida}}
-					</div> -->
+					<b>Características:</b>
+					<div *ngFor="let caract of publicacion.caracteristicaProducto" class="producto">
+						{{caract.caracteristica}}
+					</div>
 				</div>
 			</div>
 		</mat-card-content>

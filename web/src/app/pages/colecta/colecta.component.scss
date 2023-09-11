@@ -14,7 +14,9 @@
 	}
 
 	.div-header {
-		display: flex;
+		//display: flex;
+		display: grid;
+    	grid-template-columns: 1fr 1fr;
 		width: 100%;
 		justify-content: space-between;
 		align-items: flex-end;
@@ -107,6 +109,10 @@
 
 	.donacion-card-content {
 		display: grid;
+		grid-template-columns: 1fr !important;
+	}
+
+	.div-header {
 		grid-template-columns: 1fr !important;
 	}
 }

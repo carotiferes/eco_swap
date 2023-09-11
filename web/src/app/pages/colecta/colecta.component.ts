@@ -57,21 +57,16 @@ export class ColectaComponent {
 		this.donacionesService.getColecta(this.id_colecta).subscribe({
 			next: (colecta: any) => {
 				if (colecta) {
-					console.log(colecta);
-					
+					//console.log(colecta);
 					this.colecta = colecta;
-
 					this.colecta.imagen = this.getImage(this.colecta.imagen);
 
 					this.productoService.getProductosColecta(colecta.idColecta).subscribe({
 						next: (res: any) => {
-							console.log(res);
-							
 							colecta.productos = res;
 						},
 						error: (error) => {
 							console.log('error', error);
-							
 						}
 					})
 
@@ -145,14 +140,14 @@ export class ColectaComponent {
 	}
 
 	showDireccion(usuario: any){
-		console.log( usuario);
+		//console.log( usuario);
 		let stringDir: string = ''
 		for (const dir of usuario.direcciones) {
 			if(dir.direccion) {
 				stringDir += (dir.direccion + ' '+ dir.altura)
 			}
 		}
-		console.log(stringDir);
+		//console.log(stringDir);
 
 		const dirArray = stringDir.split(' ')
 		Swal.fire({
@@ -173,6 +168,16 @@ export class ColectaComponent {
 
 	isArray(item:any){
 		return item.constructor === Array;
+	}
+
+	parseVigencia() {
+		//console.log(this.colecta.fechaInicio , this.colecta.fechaFin);
+		
+		if(this.colecta.fechaInicio && this.colecta.fechaFin) {
+			return 'Desde el ' + (new Date(this.colecta.fechaInicio)).toLocaleDateString() + ' hasta el ' + (new Date(this.colecta.fechaFin)).toLocaleDateString()
+		} else if (this.colecta.fechaInicio) {
+			return 'A partir del ' + (new Date(this.colecta.fechaInicio)).toLocaleDateString();
+		} else return '';
 	}
 
 }
