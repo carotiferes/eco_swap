@@ -10,7 +10,10 @@ import jakarta.persistence.criteria.CriteriaDelete;
 import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
 import msAutenticacion.domain.entities.Direccion;
+import msAutenticacion.domain.entities.Fundacion;
+import msAutenticacion.domain.entities.Particular;
 import msAutenticacion.domain.entities.Usuario;
+import msAutenticacion.domain.entities.enums.TipoDocumento;
 import msAutenticacion.domain.repositories.DireccionRepository;
 import msAutenticacion.domain.repositories.UsuarioRepository;
 import msAutenticacion.domain.requests.*;
@@ -90,7 +93,7 @@ public class UsuarioService {
             eliminarDireccionesAntiguas(user);
             crearNuevaDireccion(requestEditProfile, user);
             actualizarUsuario(requestEditProfile, user);
-            usuarioRepository.save(user);
+            entityManager.merge(user);
 
             ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
             responseUpdateEntity.setStatus(HttpStatus.OK.name());
@@ -292,9 +295,18 @@ public class UsuarioService {
         user.setTelefono(requestEditProfile.getTelefono());
 
         if (user.isSwapper()) {
-            // Resto de la lógica para usuarios swapper
+            Optional<Particular> optionalParticular = criteriaBuilderQueries.getParticularPorUsuario(user.getIdUsuario());
+            Particular particular = optionalParticular.get();
+            particular.setFechaNacimiento(requestEditProfile.getParticular().getFechaNacimiento());
+            particular.setDni(requestEditProfile.getParticular().getDni());
+            particular.setNombre(requestEditProfile.getParticular().getNombre());
+            particular.setApellido(requestEditProfile.getParticular().getApellido());
+            particular.setTipoDocumento(TipoDocumento.valueOf(requestEditProfile.getParticular().getTipoDocumento()));
         } else {
-            // Resto de la lógica para otros tipos de usuarios
+            Optional<Fundacion> optionalFundacion = criteriaBuilderQueries.getFundacionPorUsuario(user.getIdUsuario());
+            Fundacion fundacion = optionalFundacion.get();
+            fundacion.setCuil(requestEditProfile.getFundacion().getCuil());
+            fundacion.setNombre(requestEditProfile.getFundacion().getNombre());
         }
     }
 
