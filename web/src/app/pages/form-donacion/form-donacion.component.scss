@@ -69,7 +69,9 @@
 			}
 
 			.caracteristica {
-				display: flex;
+				display: grid;
+    			grid-template-columns: 5fr 1fr;
+				align-items: center;
 			}
 
 			.file-label {

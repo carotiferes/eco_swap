@@ -46,7 +46,8 @@
 						<div *ngFor="let caracteristica of getCaracteristicasArray.controls; let i=index"
 							class="caracteristica" [formGroupName]="i">
 							<mat-form-field>
-								<input matInput placeholder="Descripción*" formControlName="s_descripcion">
+								<textarea matInput placeholder="Descripción*" formControlName="s_descripcion" cdkTextareaAutosize
+								#autosize="cdkTextareaAutosize"></textarea>
 								<mat-error *ngIf="caracteristica.get('s_descripcion')!.hasError('pattern')">
 									El campo no puede contener <b>;</b>
 								</mat-error>
