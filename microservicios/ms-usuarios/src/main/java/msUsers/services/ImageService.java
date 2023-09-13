@@ -61,7 +61,7 @@ public class ImageService {
         String storagePath = directorioActual + pathFilesystem + imageName;
 
         // Solo se ejecuta cuando commitee correctamente.
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
                 File directory = new File(directorioActual + pathFilesystem);
