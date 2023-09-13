@@ -53,7 +53,7 @@ export class RegistroComponent {
 			nombre: ['', Validators.required],
 			apellido: ['', Validators.required],
 			tipoDocumento: ['', Validators.required],
-			nroDocumento: ['', Validators.required], // TODO: por ahora paso nro a cuil y dni
+			nroDocumento: [{value:'', disabled: true}, Validators.required], // TODO: por ahora paso nro a cuil y dni
 			fechaNacimiento: ['', Validators.required],
 			//cuil: [''],
 		})
@@ -393,13 +393,14 @@ export class RegistroComponent {
 
 	formatDocument(event: any) {
 		console.log(event);
+		this.particularForm.controls['nroDocumento'].enable();
 		switch (event.value) {
 			case 'DNI': //
-				this.particularForm.controls['nroDocumento'].addValidators(Validators.pattern(/^\d{7,8}$/))
+				this.particularForm.controls['nroDocumento'].addValidators(Validators.pattern(/^(?!0+$)[1-9]\d{6,7}$/))
 				break;
 		
 			default:
-				this.particularForm.controls['nroDocumento'].addValidators(Validators.pattern(/^\d{7,8}$/))
+				this.particularForm.controls['nroDocumento'].addValidators(Validators.pattern(/^(?!0+$)[1-9]\d{6,7}$/))
 				break;
 		}
 	}
