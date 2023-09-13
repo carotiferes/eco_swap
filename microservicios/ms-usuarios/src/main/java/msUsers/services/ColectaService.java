@@ -67,10 +67,9 @@ public class ColectaService {
                 nombreImagenes.add(imageService.saveImage(request.getImagenes().get(i)));
             }
 
-            // ToDo: Cambiar imageService para que haga guardado diferido (por si falla la creacion de la donación).
-
             donacionNueva.setImagenes(String.join("|", nombreImagenes));
             var entity = this.donacionesRepository.save(donacionNueva);
+            this.donacionesRepository.save(donacionNueva);
             log.info("<< Donacion creado con ID: {}", entity.getIdDonacion());
         } catch (Exception e){
             throw new DonacionCreationException("Error al crear la donacion: " + e.getMessage());
