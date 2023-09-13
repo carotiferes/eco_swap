@@ -102,9 +102,12 @@ html, body {
 	min-width: 350px !important;
 }
 
-.form-input.form-input-long-error {
-	.mat-mdc-form-field-subscript-wrapper {
-		height: 70px !important;
+.form-input,
+.form-col {
+	&.form-input-long-error {
+		.mat-mdc-form-field-subscript-wrapper {
+			height: 70px !important;
+		}
 	}
 }
 

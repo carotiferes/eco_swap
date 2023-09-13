@@ -120,4 +120,9 @@ export class FormPublicacionComponent {
 			})
 		}
 	}
+
+	allowVenta(event: any) {
+		if(event.checked) this.publicacionForm.controls['precioVenta'].addValidators(Validators.required);
+		else this.publicacionForm.controls['precioVenta'].removeValidators(Validators.required)
+	}
 }

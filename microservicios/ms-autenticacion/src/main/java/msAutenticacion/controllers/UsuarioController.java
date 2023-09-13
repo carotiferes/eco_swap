@@ -101,10 +101,12 @@ public class UsuarioController {
     }
 
     @GetMapping(path = "/tiposDocumentos", produces = JSON)
-    public ResponseEntity<List<TipoDocumentoDTO>> getTiposProductos() {
+    public ResponseEntity<List<TipoDocumentoDTO>> getTipoDocumentos() {
+        log.info(">> Ingresando a getTipoDocumentos");
         List<TipoDocumentoDTO> tiposDocumento = Arrays.stream(TipoDocumentoEnum.values()).
                 map(tipoDocumento -> new TipoDocumentoDTO(tipoDocumento.name(),obtenerDescripcion(tipoDocumento)))
                 .collect(Collectors.toList());
+        log.info("<< Retornando listado de tipoDocumentos: {}", tiposDocumento);
         return ResponseEntity.ok(tiposDocumento);
     }
 

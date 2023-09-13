@@ -29,35 +29,40 @@
 				</div>
 
 				<div class="form-col">
-					<mat-form-field>
+					<mat-form-field floatLabel="always">
 						<mat-label>Valor <b>mínimo</b> de trueque</mat-label>
-						<input matInput formControlName="valorMinimo" type="number"
+						<input matInput formControlName="valorMinimo" type="number" [min]="0"
 						[max]="publicacionForm.get('valorMaximo')!.value || null">
+						<span matTextPrefix>$&nbsp;</span>
 						<mat-error *ngIf="publicacionForm.get('valorMinimo')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
 						<mat-error *ngIf="publicacionForm.get('valorMinimo')!.hasError('max')">
 							Debe ser menor al valor máximo ingresado.
 						</mat-error>
+						<mat-error *ngIf="publicacionForm.get('valorMinimo')!.hasError('min')">
+							Debe ser mayor a cero.
+						</mat-error>
 					</mat-form-field>
 				</div>
 
-				<div class="form-col">
-					<mat-form-field>
+				<div class="form-col" [ngClass]="publicacionForm.get('valorMaximo')!.hasError('min') ? 'form-input-long-error':''">
+					<mat-form-field floatLabel="always">
 						<mat-label>Valor <b>máximo</b> de trueque</mat-label>
 						<input matInput formControlName="valorMaximo" type="number"
-						[min]="publicacionForm.get('valorMinimo')!.value || null">
+						[min]="publicacionForm.get('valorMinimo')!.value || 0">
+						<span matTextPrefix>$&nbsp;</span>
 						<mat-error *ngIf="publicacionForm.get('valorMaximo')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
 						<mat-error *ngIf="publicacionForm.get('valorMaximo')!.hasError('min')">
-							Debe ser mayor al valor mínimo ingresado.
+							Debe ser mayor al valor mínimo ingresado y mayor a cero.
 						</mat-error>
 					</mat-form-field>
 				</div>
 
 				<div class="form-col">
-					<mat-checkbox formControlName="finalidadVenta">
+					<mat-checkbox formControlName="finalidadVenta" (change)="allowVenta($event)">
 						<label class="caract-label">
 							Acepta Venta
 							<mat-icon class="material-icons-outlined" style="color: var(--grey-text); margin: 5px;"
@@ -76,9 +81,10 @@
 				</div>
 
 				<div class="form-col">
-					<mat-form-field *ngIf="publicacionForm.get('finalidadVenta')?.value">
+					<mat-form-field *ngIf="publicacionForm.get('finalidadVenta')?.value" floatLabel="always">
 						<mat-label>Precio de Venta</mat-label>
 						<input matInput formControlName="precioVenta" type="text">
+						<span matTextPrefix>$&nbsp;</span>
 						<mat-error *ngIf="publicacionForm.get('precioVenta')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
@@ -99,7 +105,8 @@
 						<div *ngFor="let caracteristica of getCaracteristicasArray.controls; let i=index"
 							class="caracteristica" [formGroupName]="i">
 							<mat-form-field>
-								<input matInput placeholder="Descripción*" formControlName="s_descripcion">
+								<textarea matInput placeholder="Descripción*" formControlName="s_descripcion" cdkTextareaAutosize
+								#autosize="cdkTextareaAutosize"></textarea>
 								<mat-error *ngIf="caracteristica.get('s_descripcion')!.hasError('pattern')">
 									El campo no puede contener <b>;</b>
 								</mat-error>
