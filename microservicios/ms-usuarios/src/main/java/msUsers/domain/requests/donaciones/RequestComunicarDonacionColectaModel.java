@@ -1,5 +1,6 @@
 package msUsers.domain.requests.donaciones;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
@@ -24,7 +25,7 @@ public class RequestComunicarDonacionColectaModel {
 
         private String mensaje;
 
-        @NotNull(message = "Se necesita al menos una caracterìstica sobre el producto.")
+        @NotEmpty(message = "Se necesita al menos una caracterìstica sobre el producto.")
         private List<String> caracteristicas;
 
         @NotNull(message = "Las donaciones deben contener imagenes.")

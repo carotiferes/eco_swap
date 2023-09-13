@@ -51,6 +51,8 @@ public class ColectaService {
 
         if(request.getCantidadOfrecida() > producto.getCantidadSolicitada())
             throw new DonacionCreationException("Error: Cantidad ofrecida mayor a la requerida.");
+        if(LocalDate.now().isBefore(colecta.getFechaInicio()) || LocalDate.now().isAfter(colecta.getFechaFin()))
+            throw new DonacionCreationException("Colecta expirada.");
 
         try{
             Donacion donacionNueva = new Donacion();
@@ -69,7 +71,6 @@ public class ColectaService {
 
             donacionNueva.setImagenes(String.join("|", nombreImagenes));
             var entity = this.donacionesRepository.save(donacionNueva);
-            this.donacionesRepository.save(donacionNueva);
             log.info("<< Donacion creado con ID: {}", entity.getIdDonacion());
         } catch (Exception e){
             throw new DonacionCreationException("Error al crear la donacion: " + e.getMessage());
