@@ -65,6 +65,10 @@ public class UsuarioService {
     }
 
     public Usuario crearUsuario(RequestSignUp signUp){
+
+        if(this.usuarioRepository.findByUsername(signUp.getUsername()).isPresent())
+            throw new UserCreationException("Ya hay alguien registrado con el email " + signUp.getEmail() + " en nuestra base de datos.");
+
         log.info("crearUsuario: Usuario a crear:" + signUp.getUsername());
         RequestDireccion direccionCrear = signUp.getDireccion();
         Usuario usuario = this.crearUsuarioBuilder(signUp);
