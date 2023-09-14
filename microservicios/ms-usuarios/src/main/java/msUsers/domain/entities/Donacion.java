@@ -37,7 +37,6 @@ public class Donacion {
     private Particular particular;
 
     @ManyToOne(cascade = CascadeType.ALL)
-//    @JsonBackReference
     private Producto producto;
 
     @OneToMany(cascade = CascadeType.ALL)

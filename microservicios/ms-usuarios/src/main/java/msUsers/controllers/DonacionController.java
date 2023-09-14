@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.entities.*;
 import msUsers.domain.entities.enums.EstadoDonacion;
 import msUsers.domain.model.UsuarioContext;
+import msUsers.domain.repositories.ColectasRepository;
 import msUsers.domain.repositories.DonacionesRepository;
 import msUsers.domain.repositories.ParticularesRepository;
 import msUsers.domain.requests.donaciones.RequestCambiarEstadoDonacion;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
 
@@ -37,6 +39,8 @@ public class DonacionController {
 
     @Autowired
     DonacionesRepository donacionesRepository;
+    @Autowired
+    ColectasRepository colectasRepository;
     @Autowired
     ColectaService colectaService;
     @Autowired
@@ -53,6 +57,7 @@ public class DonacionController {
     @Transactional
     public ResponseEntity<ResponseUpdateEntity> cambiarEstadoDonacion(
             @PathVariable("id_donacion") Long idDonacion,
+            @PathVariable("id_colecta") Long idColecta,
             @RequestBody @Valid RequestCambiarEstadoDonacion request) {
 
         log.info(">> Se va cambiar el estado de la donacion {} a {}", idDonacion, request.getNuevoEstado());
@@ -74,6 +79,18 @@ public class DonacionController {
             donacion.setEstadoDonacion(nuevoEstado);
 
             this.donacionesRepository.save(donacion);
+
+            if(nuevoEstado.equals(EstadoDonacion.RECIBIDA)){
+                final var colecta = this.colectasRepository.findById(idColecta).
+                        orElseThrow(() -> new EntityNotFoundException("No fue encontrada la colecta: " + idColecta));
+                colecta.getProductos().forEach(prod -> {
+                    if(prod.getIdProducto() == donacion.getProducto().getIdProducto()){
+                        prod.setCantidadRecibida(prod.getCantidadRecibida() + donacion.getCantidadDonacion());
+                        log.info("Ahora son {} unidades recibidas del producto {}", prod.getCantidadRecibida(), prod.getDescripcion());
+                    }
+                });
+                this.entityManager.merge(colecta);
+            }
 
             ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
             responseUpdateEntity.setStatus(HttpStatus.OK.name());
