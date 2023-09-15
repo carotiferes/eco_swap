@@ -3,9 +3,11 @@ package msAutenticacion.exceptions.handler;
 import lombok.extern.slf4j.Slf4j;
 import msAutenticacion.exceptions.PasswordUpdateException;
 import msAutenticacion.exceptions.UserCreationException;
+import msAutenticacion.exceptions.UserDuplicatedException;
 import msAutenticacion.exceptions.ValidationUserException;
 import msAutenticacion.exceptions.responses.PasswordUpdateExceptionResponse;
 import msAutenticacion.exceptions.responses.UserCreationExceptionResponse;
+import msAutenticacion.exceptions.responses.UserDuplicatedExceptionResponse;
 import msAutenticacion.exceptions.responses.ValidationUserExceptionResponse;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -29,6 +31,17 @@ public class UserExceptionHandler {
         response.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         log.error(">> {}", exception.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    @ExceptionHandler(UserDuplicatedException.class)
+    public ResponseEntity<UserDuplicatedExceptionResponse> handleUserCreationException(UserDuplicatedException exception){
+        UserDuplicatedExceptionResponse response = new UserDuplicatedExceptionResponse();
+        response.setDescripcion(exception.getMessage());
+        Date date = new Date();
+        response.setTimestamp(date.getTime());
+        response.setHttpStatus(HttpStatus.CONFLICT);
+        log.error(">> {}", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     @ExceptionHandler(ValidationUserException.class)
