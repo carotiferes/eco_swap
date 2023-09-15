@@ -100,7 +100,7 @@ export class FormDonacionComponent implements OnInit {
 				},
 				error: (error) =>{
 					console.log('error creando donacion', error);
-					this.showMessage('Ocurrió un error', 'No pudimos crear la donacion. Intentá nuevamente luego.', 'error')
+					//this.showMessage('Ocurrió un error', 'No pudimos crear la donacion. Intentá nuevamente luego.', 'error')
 				}
 			})
 		} //else this.showMessage('Error en los campos.', 'Revisá los campos y completalos correctamente.', 'error')

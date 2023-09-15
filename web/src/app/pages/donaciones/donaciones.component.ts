@@ -36,7 +36,7 @@ export class DonacionesComponent {
 			},
 			error: (error) => {
 				console.log(error);
-				this.showErrorService.show('Error!', 'Ocurrió un error al traer la información de tus donaciones. Intentá nuevamente más tarde.')
+				//this.showErrorService.show('Error!', 'Ocurrió un error al traer la información de tus donaciones. Intentá nuevamente más tarde.')
 			}
 		})
 

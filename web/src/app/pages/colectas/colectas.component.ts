@@ -76,7 +76,7 @@ export class ColectasComponent implements OnInit {
 				},
 				error: (error) => {
 					console.log('error mis colectas', error);
-					this.showErrorService.show('Ocurrió un error!', 'Ocurrió un error al traer las colectas de la fundación. Por favor volvé a intentarlo más tarde.')
+					//this.showErrorService.show('Ocurrió un error!', 'Ocurrió un error al traer las colectas de la fundación. Por favor volvé a intentarlo más tarde.')
 					this.loading = false;
 				}
 			})
@@ -101,7 +101,7 @@ export class ColectasComponent implements OnInit {
 				},
 				error: (error) => {
 					console.log('error all colectas', error);
-					this.showErrorService.show('Ocurrió un error!', 'Ocurrió un error al traer las colectas. Por favor volvé a intentarlo más tarde.')
+					//this.showErrorService.show('Ocurrió un error!', 'Ocurrió un error al traer las colectas. Por favor volvé a intentarlo más tarde.')
 					this.loading = false;
 				}
 			})
@@ -140,7 +140,7 @@ export class ColectasComponent implements OnInit {
 			},
 			error: (e) => {
 				console.error('error', e);
-				this.showErrorService.show('Error!', 'Ha ocurrido un error al traer los tipos de producto')
+				//this.showErrorService.show('Error!', 'Ha ocurrido un error al traer los tipos de producto')
 			},
 			complete: () => console.info('complete')
 		});

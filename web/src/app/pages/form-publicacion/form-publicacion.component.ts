@@ -117,7 +117,7 @@ export class FormPublicacionComponent {
 				},
 				error: (error) => {
 					console.log('error creando publicacion', error);
-					Swal.fire('¡Error!', 'Ocurrió un error al crear la publicación. Intentalo nuevamente', 'error')
+					//Swal.fire('¡Error!', 'Ocurrió un error al crear la publicación. Intentalo nuevamente', 'error')
 				}
 			})
 		}

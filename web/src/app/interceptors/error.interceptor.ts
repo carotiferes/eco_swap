@@ -41,8 +41,12 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 				} else { // server side error
 					error = this.handleBackendError(error, err);
 					console.log('Server error with code: ' + JSON.stringify(err));
-					if(err.status == 0)this.showErrorService.show('Error!', 'Ocurrió un error con el servidor. Por favor volvé a intentar más tarde.')
-					if(err.status >= 500)this.showErrorService.show('Error!', 'Ocurrió un error con el servidor. Por favor volvé a intentar más tarde.')
+					if(err.status >= 500)
+						this.showErrorService.show('Error!', 'Ocurrió un error con el servidor. Por favor volvé a intentar más tarde.')
+					else if(err.status >= 400)
+						this.showErrorService.show('Error!', err.error.descripcion || 'Ha ocurrido un error. Por favor volvé a intentar más tarde.')
+					else if(err.status == 0)
+						this.showErrorService.show('Error!', 'Ocurrió un error con el servidor. Por favor volvé a intentar más tarde.')
 				}
 				return throwError(() => error);
 			})

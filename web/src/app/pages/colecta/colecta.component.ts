@@ -100,7 +100,7 @@ export class ColectaComponent {
 			},
 			error: (error) => {
 				console.log(error);
-				this.showErrorService.show('Error!', 'Ocurrió un error al traer la información de la colecta que seleccionaste. Intentá nuevamente más tarde.')
+				//this.showErrorService.show('Error!', 'Ocurrió un error al traer la información de la colecta que seleccionaste. Intentá nuevamente más tarde.')
 			}
 		})
 	}

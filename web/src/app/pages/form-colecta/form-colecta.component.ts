@@ -103,7 +103,7 @@ export class FormColectaComponent  {
 				},
 				error: (error) => {
 					console.log('error al crear colecta', error);
-					this.showMessage('Ocurrió un error', 'No pudimos crear la colecta. Intentá nuevamente luego.', 'error')
+					//this.showMessage('Ocurrió un error', 'No pudimos crear la colecta. Intentá nuevamente luego.', 'error')
 				}
 			})
 		} else {

@@ -28,10 +28,10 @@ export class AuthService {
 			next: (v: any) => {
 				console.log('response:', v);
 				// TODO: GET USER INFO TO SAVE IN LOCAL STORAGE (AT LEAST IS_SWAPPER)
-				this.setLocalStorage('userToken', v.token);
 				const userData: any = jwtDecode(v.token)
 				console.log('data', userData);
 				if(userData.usuarioValidado) {
+					this.setLocalStorage('userToken', v.token);
 					this.isUserValidated = true;
 					this.setLocalStorage('isSwapper', JSON.stringify(userData.esParticular));
 					this.isUserLoggedIn = true;
@@ -45,7 +45,7 @@ export class AuthService {
 						showDenyButton: true,
 						denyButtonText: 'Volver a enviar el mail',
 						icon: 'info',
-						allowOutsideClick: false,
+						//allowOutsideClick: false,
 						input: 'text',
 						reverseButtons: true,
 						preDeny: () => {
@@ -76,10 +76,10 @@ export class AuthService {
 								},
 								error: (error) => {
 									console.log(error);
-									if(error.message.descripcion == "El código es incorrecto") {
+									/* if(error.message.descripcion == "El código es incorrecto") {
 										Swal.fire('Código incorrecto!', 'El código ingresado es incorrecto. Iniciá sesión y volvé a intentarlo.', 'error')
 										this.router.navigate(['/login'])
-									}
+									} */
 								}
 							})
 						}

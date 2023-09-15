@@ -68,7 +68,7 @@ export class PublicacionesComponent {
 			},
 			error: (e) => {
 				console.error('error', e);
-				this.showErrorService.show('Error!', 'Ha ocurrido un error al traer los tipos de producto')
+				//this.showErrorService.show('Error!', 'Ha ocurrido un error al traer los tipos de producto')
 			},
 			//complete: () => console.info('complete')
 		});

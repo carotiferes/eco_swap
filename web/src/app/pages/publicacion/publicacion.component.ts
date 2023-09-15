@@ -60,7 +60,7 @@ export class PublicacionComponent {
 			},
 			error: (error) => {
 				console.log(error);
-				this.showErrorService.show('Error!', 'No pudimos encontrar la información de la colecta que seleccionaste, por favor volvé a intentarlo más tarde.')
+				//this.showErrorService.show('Error!', 'No pudimos encontrar la información de la colecta que seleccionaste, por favor volvé a intentarlo más tarde.')
 			}
 		})
 	}

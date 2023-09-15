@@ -261,9 +261,9 @@ export class RegistroComponent {
 								},
 								error: (e) => {
 									console.error('error', e);
-									if(e.message.includes('duplicate'))
+									/* if(e.message.includes('duplicate'))
 									this.showMessage('Error!', 'Ya existe un usuario con el email ingresado.', 'OK', 'error', 'error')
-									else this.showMessage('Error!', 'Ha ocurrido un error al crear la cuenta', 'OK', 'error', 'error')
+									else this.showMessage('Error!', 'Ha ocurrido un error al crear la cuenta', 'OK', 'error', 'error') */
 								},
 								//complete: () => console.info('signup complete')
 							})
@@ -275,7 +275,7 @@ export class RegistroComponent {
 								},
 								error: (e) => {
 									console.error('error', e);
-									this.showMessage('Error!', 'Ha ocurrido un error al editar la cuenta', 'OK', 'error', 'error')
+									//this.showMessage('Error!', 'Ha ocurrido un error al editar la cuenta', 'OK', 'error', 'error')
 								}
 							})
 						}
@@ -334,10 +334,10 @@ export class RegistroComponent {
 						},
 						error: (error) => {
 							console.log(error);
-							if(error.message.descripcion == "El código es incorrecto") {
+							/* if(error.message.descripcion == "El código es incorrecto") {
 								Swal.fire('Código incorrecto!', 'El código ingresado es incorrecto. Iniciá sesión y volvé a intentarlo.', 'error')
 								this.router.navigate(['/login'])
-							}
+							} */
 						}
 					})
 					else Swal.fire('Error!', 'Ocurrió un error al activar tu cuenta. Por favor intentalo más tarde', 'error')
