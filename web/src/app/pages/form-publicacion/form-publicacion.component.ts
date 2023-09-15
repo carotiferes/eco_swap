@@ -15,6 +15,7 @@ export class FormPublicacionComponent {
 	images: any[] = [];
 
 	loading: boolean = false;
+	showErrors: boolean = false;
 
 	constructor(private fb: FormBuilder, private truequeService: TruequesService, private router: Router){
 		this.publicacionForm = fb.group({
@@ -25,7 +26,7 @@ export class FormPublicacionComponent {
 			finalidadVenta: [false],
 			precioVenta: [''],
 			caracteristicas: this.fb.array([]),
-			file: [''],
+			file: ['', Validators.required],
 			file_source: [''],
 			tipoProducto: [''],
 			idParticular: [''],
@@ -79,6 +80,7 @@ export class FormPublicacionComponent {
 	}
 
 	publicar(){
+		this.showErrors = true;
 		if(this.publicacionForm.valid){
 			let caracteristicas: any[] = this.getCaracteristicasArray.value || [];
 			let sendCaracteristicas: string[] = [];

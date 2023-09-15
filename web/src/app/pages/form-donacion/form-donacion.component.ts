@@ -21,6 +21,7 @@ export class FormDonacionComponent implements OnInit {
 
 	loading: boolean = true;
 	id_colecta?: string;
+	showErrors: boolean = false;
 
 	constructor(private fb: FormBuilder, private route: ActivatedRoute, private router: Router,
 		private donacionesService: DonacionesService, private auth: AuthService) {
@@ -33,7 +34,7 @@ export class FormDonacionComponent implements OnInit {
 		this.donacionForm = fb.group({
 			producto: ['', Validators.required],
 			caracteristicas: this.fb.array([]),
-			file: [''],
+			file: ['', Validators.required],
 			file_source: ['', Validators.required],
 			n_cantidad: ['', Validators.required],
 			mensaje: ['']
@@ -70,6 +71,7 @@ export class FormDonacionComponent implements OnInit {
 
 	confirmarDonacion() {
 		console.log(this.donacionForm.value);
+		this.showErrors = true;
 		
 		if(this.donacionForm.valid){
 			let caracteristicas: any[] = this.getCaracteristicasArray.value || [];
@@ -101,7 +103,7 @@ export class FormDonacionComponent implements OnInit {
 					this.showMessage('Ocurrió un error', 'No pudimos crear la donacion. Intentá nuevamente luego.', 'error')
 				}
 			})
-		} else this.showMessage('Error en los campos.', 'Revisá los campos y completalos correctamente.', 'error')
+		} //else this.showMessage('Error en los campos.', 'Revisá los campos y completalos correctamente.', 'error')
 	}
 
 	removeCaracteristica(i: number) {

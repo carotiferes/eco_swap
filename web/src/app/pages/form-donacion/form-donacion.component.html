@@ -64,6 +64,9 @@
 							<mat-icon>add</mat-icon>
 							<label>Agregar Característica</label>
 						</button>
+						<mat-error *ngIf="getCaracteristicasArray.length == 0 && showErrors">
+							La donación debe tener al menos 1 característica
+						</mat-error>
 					</div>
 				</section>
 
@@ -77,6 +80,9 @@
 					</button>
 					<input formControlName="file" id="file" type="file" class="form-control hidden" multiple=""
 						(change)="onFileChange($event)" #file>
+					<mat-error *ngIf="donacionForm.get('file')!.hasError('required') && showErrors">
+						La publicación debe tener al menos 1 imagen
+					</mat-error>
 					<div class="form-col form-imgs">
 						<div class="show-image" *ngFor='let url of images; let i = index;' (click)="removeImagen(i)" >
 							<div class="image" >
