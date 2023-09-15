@@ -19,6 +19,7 @@ import { PhoneNumberPipe } from './pipes/phone-number.pipe';
 import { DateAdapter } from '@angular/material/core';
 import { CustomDateAdapter } from './pipes/date-adapter';
 import { CommonModule } from '@angular/common';
+import { CuitPipe } from './pipes/cuit.pipe';
 
 @NgModule({
 	declarations: [
@@ -47,6 +48,7 @@ import { CommonModule } from '@angular/common';
 			multi: true,
 		},
 		PhoneNumberPipe,
+		CuitPipe,
 		{provide: DateAdapter, useClass: CustomDateAdapter }
 	],
 	bootstrap: [AppComponent]

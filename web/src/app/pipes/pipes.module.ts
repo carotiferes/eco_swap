@@ -4,17 +4,20 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PasswordPipe } from './password.pipe';
 import { PhoneNumberPipe } from './phone-number.pipe';
 import { SafeHtmlPipe } from './safe-html.pipe';
+import { CuitPipe } from './cuit.pipe';
 
 @NgModule({
 	declarations: [
 		PasswordPipe,
     	SafeHtmlPipe,
-      	PhoneNumberPipe
+      	PhoneNumberPipe,
+       CuitPipe
 	],
 	exports: [
 		PasswordPipe,
     	SafeHtmlPipe,
-      	PhoneNumberPipe
+      	PhoneNumberPipe,
+		CuitPipe
 	],
 	imports: [
 		MaterialModule,

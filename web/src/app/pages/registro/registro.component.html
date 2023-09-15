@@ -148,10 +148,14 @@
 				</div>
 				<div class="form-input">
 					<mat-form-field>
-						<mat-label>CUIT</mat-label>
-						<input matInput formControlName="cuit" type="number">
+						<mat-label>CUIT</mat-label><!-- type="number" -->
+						<input matInput formControlName="cuit"  (keyup)="formatearCUIT()">
+						<mat-hint>Formato: 20-12345678-9</mat-hint>
 						<mat-error *ngIf="fundacionForm.get('cuit')!.hasError('required')">
 							Campo obligatorio
+						</mat-error>
+						<mat-error *ngIf="fundacionForm.get('cuit')!.hasError('invalidCUIT')">
+							CUIT inválido
 						</mat-error>
 					</mat-form-field>
 				</div>

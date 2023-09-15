@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import Swal from 'sweetalert2';
 import { DateAdapter } from '@angular/material/core';
@@ -10,6 +10,7 @@ import { PhoneNumberPipe } from 'src/app/pipes/phone-number.pipe';
 import { CustomDateAdapter } from 'src/app/pipes/date-adapter';
 import { Location } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CuitPipe } from 'src/app/pipes/cuit.pipe';
 
 @Component({
 	selector: 'app-registro',
@@ -41,7 +42,8 @@ export class RegistroComponent {
 	constructor(private fb: FormBuilder, private dateAdapter: DateAdapter<Date>,
 		private usuarioService: UsuarioService, private location: Location,
 		private auth: AuthService, private router: Router, private snackbar: MatSnackBar,
-		private cdr: ChangeDetectorRef, private phoneNumberPipe: PhoneNumberPipe) {
+		private cdr: ChangeDetectorRef, private phoneNumberPipe: PhoneNumberPipe,
+		private cuitPipe: CuitPipe) {
 		this.mainForm = fb.group({
 			//username: [''], TODO: POR AHORA USO EMAIL
 			email: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)]],
@@ -59,7 +61,7 @@ export class RegistroComponent {
 		})
 		this.fundacionForm = fb.group({
 			nombre: ['', Validators.required],
-			cuit: ['', Validators.required],
+			cuit: ['', [Validators.required, isValidCUIT]],
 		})
 
 		this.direccionForm = fb.group({
@@ -404,5 +406,46 @@ export class RegistroComponent {
 				break;
 		}
 	}
+
+	formatearCUIT() {
+		this.fundacionForm.get('cuit')?.setValue(this.cuitPipe.transform(this.fundacionForm.get('cuit')?.value)); // Esto fuerza el cambio del valor
+		this.cdr.detectChanges(); // Detectamos los cambios manualmente
+	}
 	
+}
+
+function isValidCUIT(control: FormControl): { [key: string]: boolean } | null {
+	const cuit = control.value;
+	
+	if (!cuit) {
+	  return null; // Handle empty input
+	}
+  
+	// Ensure the CUIT matches the format: 11-11111111-1 or 11-11111111-11
+	const regex = /^\d{2}-\d{8,9}-\d{1,2}$/;
+  
+	if (!regex.test(cuit)) {
+	  return { 'invalidCUIT': true };
+	}
+  
+	// Extract the numeric part for calculation
+	const numericPart: string = cuit.replace(/-/g, '');
+  
+	// Calculate the verifier digit
+	const verifierDigit = parseInt(numericPart.charAt(numericPart.length-1));
+	const factors = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
+	let sum = 0;
+  
+	for (let i = 0; i < 10; i++) {
+	  sum += parseInt(numericPart.charAt(i)) * factors[i];
+	}
+  
+	const remainder = sum % 11;
+	const calculatedVerifierDigit = remainder === 0 ? 0 : 11 - remainder;
+  
+	if (calculatedVerifierDigit !== verifierDigit) {
+	  return { 'invalidCUIT': true };
+	}
+  
+	return null; // CUIT is valid
 }
