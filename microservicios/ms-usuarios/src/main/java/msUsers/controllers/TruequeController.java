@@ -80,7 +80,7 @@ public class TruequeController {
         return ResponseEntity.ok(truequesDTO);
     }
 
-    @GetMapping(path = "/publicacion/{id_publicacion}/trueque", produces = json)
+    @GetMapping(path = "/publicacion/{id_publicacion}/trueques", produces = json)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<PublicacionDTO>> listPublicacionesParaTrueque(@PathVariable("id_publicacion") Long id) {
 

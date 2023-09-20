@@ -28,6 +28,8 @@ public class Trueque {
 
     public TruequeDTO toDTO() {
         TruequeDTO truequeDTO = new TruequeDTO();
+        truequeDTO.setIdTrueque(idTrueque);
+        truequeDTO.setEstadoTrueque(estadoTrueque);
         truequeDTO.setPublicacionDTOpropuesta(publicacionPropuesta.toDTO());
         truequeDTO.setPublicacionDTOorigen(publicacionOrigen.toDTO());
         return truequeDTO;
