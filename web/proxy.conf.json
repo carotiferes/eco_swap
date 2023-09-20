@@ -1,6 +1,9 @@
 {
   "/api": {
-    "target": "http://ec2-3-93-54-229.compute-1.amazonaws.com:8080",
+    "target": "https://ecoswapp.com:8080",
     "secure": true
   }
+  
 }
+
+
