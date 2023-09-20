@@ -6,10 +6,9 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.*;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import msUsers.domain.entities.Producto;
-import msUsers.domain.entities.Publicacion;
-import msUsers.domain.entities.Trueque;
+import msUsers.domain.entities.*;
 import msUsers.domain.entities.enums.EstadoTrueque;
+import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.repositories.PublicacionesRepository;
 import msUsers.domain.repositories.TruequesRepository;
 import msUsers.domain.requests.RequestTrueque;
@@ -18,6 +17,7 @@ import msUsers.domain.responses.DTOs.PublicacionDTO;
 import msUsers.domain.responses.DTOs.TruequeDTO;
 import msUsers.domain.responses.ResponsePostEntityCreation;
 import msUsers.domain.responses.ResponseUpdateEntity;
+import msUsers.services.CriteriaBuilderQueries;
 import msUsers.services.TruequeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +29,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -45,6 +46,9 @@ public class TruequeController {
     @Autowired
     private TruequeService truequeService;
 
+    @Autowired
+    private CriteriaBuilderQueries criteriaBuilderQueries;
+
     private static final String json = "application/json";
 
     @GetMapping(path = "/trueque/{id_trueque}", produces = json)
@@ -57,7 +61,7 @@ public class TruequeController {
         return ResponseEntity.ok(truequeDTO);
     }
 
-    @GetMapping(path = "/trueque/{id_trueque}/publicacion/{id_publicacion}", produces = json)
+    @GetMapping(path = "/publicacion/{id_publicacion}/trueques", produces = json)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<TruequeDTO>> getTruequesXIdPublicacionOrigen(@PathVariable("id_publicacion") Long id) {
 
@@ -76,9 +80,13 @@ public class TruequeController {
         return ResponseEntity.ok(truequesDTO);
     }
 
-    @GetMapping(path = "/trueque/{id_trueque}/publicaciones", produces = json)
+    @GetMapping(path = "/publicacion/{id_publicacion}/trueque", produces = json)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<PublicacionDTO>> listPublicacionesParaTrueque(@PathVariable("id_trueque") Long id) {
+    public ResponseEntity<List<PublicacionDTO>> listPublicacionesParaTrueque(@PathVariable("id_publicacion") Long id) {
+
+        final Usuario user = UsuarioContext.getUsuario();
+        Optional<Particular> optionalParticular = criteriaBuilderQueries.getParticularPorUsuario(user.getIdUsuario());
+        Particular particular = optionalParticular.orElseThrow(() -> new EntityNotFoundException("No fue encontrado el particular."));
 
         log.info(">> Se va a buscar publicaciones para hacer trueque con la publicacion: {}", id);
 
@@ -92,7 +100,8 @@ public class TruequeController {
         Predicate predicate = criteriaBuilder.and(
                 criteriaBuilder.lessThanOrEqualTo(root.get("valorTruequeMin"), publicacion.getValorTruequeMax()),
                 criteriaBuilder.greaterThanOrEqualTo(root.get("valorTruequeMax"), publicacion.getValorTruequeMin()),
-                criteriaBuilder.notEqual(root.get("idPublicacion"),publicacion.getIdPublicacion())
+                criteriaBuilder.notEqual(root.get("idPublicacion"),publicacion.getIdPublicacion()),
+                criteriaBuilder.equal(root.get("particular").get("idParticular"), publicacion.getParticular().getIdParticular())
         );
 
         query.where(predicate);
