@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "https://ecoswapp.com:8080",
+    "target": "https://ecoswap.com.ar:8080",
     "secure": true
   }
   
