@@ -48,4 +48,27 @@
 			width: 30px;
 		}
 	}
+
+	.buttons {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		margin: 10px auto;
+		
+		button {
+			text-transform: uppercase;
+			width: 100%;
+		}
+	}
+}
+
+@media (min-width: 0px) and (max-width: 576px) {
+	.buttons {
+		width: 50% !important;
+		
+		button {
+			text-transform: uppercase;
+			width: 100%;
+		}
+	}
 }

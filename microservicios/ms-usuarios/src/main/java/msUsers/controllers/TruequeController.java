@@ -80,7 +80,7 @@ public class TruequeController {
         return ResponseEntity.ok(truequesDTO);
     }
 
-    @GetMapping(path = "/publicacion/{id_publicacion}/trueques", produces = json)
+    @GetMapping(path = "/{id_publicacion}/publicaciones", produces = json)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<PublicacionDTO>> listPublicacionesParaTrueque(@PathVariable("id_publicacion") Long id) {
 
@@ -135,7 +135,8 @@ public class TruequeController {
             return ResponseEntity.badRequest().body(responseUpdateEntity);
         }
 
-        if(EstadoTrueque.valueOf(request.getNuevoEstado()).equals(EstadoTrueque.RECHAZADO)) {
+        if(EstadoTrueque.valueOf(request.getNuevoEstado()).equals(EstadoTrueque.RECHAZADO) ||
+                EstadoTrueque.valueOf(request.getNuevoEstado()).equals(EstadoTrueque.CANCELADO)) {
             EstadoTrueque nuevoEstado = EstadoTrueque.valueOf(request.getNuevoEstado());
             trueque.setEstadoTrueque(nuevoEstado);
         } else {

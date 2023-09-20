@@ -7,7 +7,7 @@ export interface PublicacionModel {
 	idPublicacion: number,
 	titulo: string,
 	descripcion: string,
-	estado: string,
+	estadoPublicacion: string,
 	particularDTO: ParticularModel,
 	fechaPublicacion: Date,
 	imagenes: string,
@@ -16,5 +16,6 @@ export interface PublicacionModel {
 	precioVenta: number,
 	valorTruequeMax: number,
 	valorTruequeMin: number,
-	caracteristicaProducto: any[]
+	caracteristicaProducto: any[],
+	estadoTrueque?: string
 }

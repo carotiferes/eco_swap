@@ -51,4 +51,19 @@
 			<button mat-raised-button color="accent" (click)="comprar()" *ngIf="publicacion.tipoPublicacion == 'VENTA_Y_TRUEQUE'">QUIERO COMPRAR</button>
 		</mat-card-actions>
 	</mat-card>
+
+	<h3 style="margin: 20px 0 0 5px; font-weight: bold;">
+		{{this.userType == 'publicacionPropuesta' ? 'Mi propuesta' : 'Propuestas de intercambio'}}
+	</h3>
+	<div *ngIf="publicacionesToShow.length == 0 && !loading" style="text-align: center;">Esta publicación no tiene propuestas aún!</div>
+	<app-deck-publicaciones *ngIf="publicacionesToShow.length > 0" [publicacionesToShow]="publicacionesToShow"
+		origin="propuestas"
+		[buttons]="this.userType == 'publicacionPropuesta' ? 
+			[{name: 'cancelar', icon: 'close', color: 'warn', status: 'CANCELADO'}]
+			: [
+				{name: 'aceptar', icon: 'check', color: 'primary', status: 'APROBADO'},
+				{name: 'rechazar', icon: 'close', color: 'warn', status: 'RECHAZADO'},
+				{name: 'recibida', icon: 'done_all', color: 'primary', status: 'RECIBIDO'},
+			]" (changeStatus)="changeStatusTrueque($event)"></app-deck-publicaciones>
+			
 </div>

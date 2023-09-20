@@ -11,12 +11,17 @@ import { TruequesService } from 'src/app/services/trueques.service';
 export class DeckPublicacionesComponent {
 
 	@Input() publicacionesToShow: PublicacionModel[] = [];
-	@Input() origin: 'publicaciones' | 'intercambio' = 'publicaciones';
+	@Input() origin: 'publicaciones' | 'intercambio' | 'propuestas' = 'publicaciones';
+	@Input() buttons: {name: string, icon: string, color: string, status: string}[] = [];
 	cardSelected?: number;
 
 	@Output() selectedCard = new EventEmitter<any>();
+	@Output() changeStatus = new EventEmitter<any>();
 
-	constructor(private truequesService: TruequesService, private router: Router) {}
+	constructor(private truequesService: TruequesService, private router: Router) {
+		console.log(this.publicacionesToShow, this.buttons);
+		
+	}
 
 	getImagen(img: string) {
 		return this.truequesService.getImagen(img)
@@ -32,5 +37,9 @@ export class DeckPublicacionesComponent {
 
 	goToPublicacion(publicacion: PublicacionModel){
 		this.router.navigate(['publicacion/'+publicacion.idPublicacion])
+	}
+
+	changeEstadoPublicacion(publicacion: PublicacionModel, newStatus: string) {
+		this.changeStatus.emit({publicacion, newStatus});
 	}
 }

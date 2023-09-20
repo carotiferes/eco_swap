@@ -31,12 +31,7 @@ export class AuthService {
 				const userData: any = jwtDecode(v.token)
 				console.log('data', userData);
 				if(userData.usuarioValidado) {
-					this.setLocalStorage('userToken', v.token);
-					this.isUserValidated = true;
-					this.setLocalStorage('isSwapper', JSON.stringify(userData.esParticular));
-					this.isUserLoggedIn = true;
-					this.setUserLoggedIn();
-					this.router.navigate([''])
+					this.setValidatedUser(v.token, userData)
 				} else {
 					Swal.fire({
 						title: '¡Validá tu cuenta!',
@@ -68,11 +63,7 @@ export class AuthService {
 									console.log(res);
 									//this.router.navigate(['/'])
 									Swal.fire('Excelente!', 'Tu cuenta fue verificada, ya podes usar Ecoswap!', 'success')
-									this.isUserValidated = true;
-									this.setLocalStorage('isSwapper', JSON.stringify(userData.esParticular));
-									this.isUserLoggedIn = true;
-									this.setUserLoggedIn();
-									this.router.navigate([''])
+									this.setValidatedUser(v.token, userData)
 								},
 								error: (error) => {
 									console.log(error);
@@ -92,6 +83,15 @@ export class AuthService {
 			},
 			complete: () => console.info('login complete') 
 		})
+	}
+
+	setValidatedUser(token: string, userData: any){
+		this.setLocalStorage('userToken', token);
+		this.isUserValidated = true;
+		this.setLocalStorage('isSwapper', JSON.stringify(userData.esParticular));
+		this.isUserLoggedIn = true;
+		this.setUserLoggedIn();
+		this.router.navigate([''])
 	}
 
 	setLocalStorage(key: string, data: string) {
