@@ -39,6 +39,8 @@ export class RegistroComponent {
 	tiposDocumento: any[] = [];
 	id_user?: number;
 
+	loadingSave: boolean = false;
+
 	constructor(private fb: FormBuilder, private dateAdapter: DateAdapter<Date>,
 		private usuarioService: UsuarioService, private location: Location,
 		private auth: AuthService, private router: Router, private snackbar: MatSnackBar,
@@ -183,6 +185,7 @@ export class RegistroComponent {
 	}
 
 	submit() {
+		this.loadingSave = true;
 		console.log('registro', this.mainForm.value);
 		if (this.mainForm.valid) {
 			if (this.origin == 'resetPassword') {
@@ -194,10 +197,11 @@ export class RegistroComponent {
 				this.auth.resetPassword(body).subscribe({
 					next: (res) => {
 						console.log(res);
-
+						this.loadingSave = false;
 					},
 					error: (error) => {
 						console.log('error:', error);
+						this.loadingSave = false;
 
 					},
 					//complete: () => {}
@@ -234,6 +238,7 @@ export class RegistroComponent {
 							validDataForm = true;
 						} else {
 							this.showMessage('¡Campos incorrectos!', 'Por favor, revisá los campos y volvé a intentar', 'OK', '', 'error')
+							this.loadingSave = false;
 						}
 					} else {
 						if (this.fundacionForm.valid) {
@@ -244,6 +249,7 @@ export class RegistroComponent {
 							validDataForm = true;
 						} else {
 							this.showMessage('¡Campos incorrectos!', 'Por favor, revisá los campos y volvé a intentar', 'OK', '', 'error')
+							this.loadingSave = false;
 						}
 					}
 	
@@ -260,12 +266,14 @@ export class RegistroComponent {
 										con un código para verificar tu cuenta. Por favor ingresalo a continuación.
 										Si no verificás la cuenta ahora, podrás hacerlo la próxima vez que inicies sesión.`,
 										'Confirmar', 'send_again', 'success', 'No recibí el email')
+									this.loadingSave = false;
 								},
 								error: (e) => {
 									console.error('error', e);
 									/* if(e.message.includes('duplicate'))
 									this.showMessage('Error!', 'Ya existe un usuario con el email ingresado.', 'OK', 'error', 'error')
 									else this.showMessage('Error!', 'Ha ocurrido un error al crear la cuenta', 'OK', 'error', 'error') */
+									this.loadingSave = false;
 								},
 								//complete: () => console.info('signup complete')
 							})
@@ -274,20 +282,24 @@ export class RegistroComponent {
 								next: (id_user: any) => {
 									console.log('next', id_user);
 									this.showMessage('¡Éxito!', `Tus datos se editaron exitosamente.`, 'Genial!', 'edit', 'success')
+									this.loadingSave = false;
 								},
 								error: (e) => {
 									console.error('error', e);
 									//this.showMessage('Error!', 'Ha ocurrido un error al editar la cuenta', 'OK', 'error', 'error')
+									this.loadingSave = false;
 								}
 							})
 						}
 					}
 				} else {
 					this.showMessage('¡Campos incorrectos!', 'Por favor, revisá los campos y volvé a intentar', 'OK', '', 'error')
+					this.loadingSave = false;
 				}
 			}
 		} else {
 			this.showMessage('¡Campos incorrectos!', 'Por favor, revisá los campos y volvé a intentar', 'OK', '', 'error')
+			this.loadingSave = false;
 		}
 	}
 

@@ -22,6 +22,7 @@ export class FormDonacionComponent implements OnInit {
 	loading: boolean = true;
 	id_colecta?: string;
 	showErrors: boolean = false;
+	loadingSave: boolean = false;
 
 	constructor(private fb: FormBuilder, private route: ActivatedRoute, private router: Router,
 		private donacionesService: DonacionesService, private auth: AuthService) {
@@ -74,6 +75,7 @@ export class FormDonacionComponent implements OnInit {
 		this.showErrors = true;
 		
 		if(this.donacionForm.valid){
+			this.loadingSave = true;
 			let caracteristicas: any[] = this.getCaracteristicasArray.value || [];
 			let sendCaracteristicas: string[] = [];
 			caracteristicas.forEach(item => {
@@ -97,9 +99,11 @@ export class FormDonacionComponent implements OnInit {
 						this.router.navigateByUrl('colecta/'+ this.id_colecta)
 					}
 					else this.showMessage('Ocurrió un error', 'No pudimos crear la donacion. Intentá nuevamente luego.', 'error')
+					this.loading = false;
 				},
 				error: (error) =>{
 					console.log('error creando donacion', error);
+					this.loadingSave = false;
 					//this.showMessage('Ocurrió un error', 'No pudimos crear la donacion. Intentá nuevamente luego.', 'error')
 				}
 			})

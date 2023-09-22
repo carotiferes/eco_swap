@@ -31,6 +31,7 @@ export class FormColectaComponent  {
 
 	loadingImg: boolean = false;
 	showErrors: boolean = false;
+	loadingSave: boolean = false;
 
 	constructor(private fb: FormBuilder, private route: ActivatedRoute, private donacionesService: DonacionesService,
 		private auth: AuthService, private router: Router, private dateAdapter: DateAdapter<Date>) {
@@ -74,6 +75,7 @@ export class FormColectaComponent  {
 		console.log(this.colectaForm.value);
 		this.showErrors = true;
 		if(this.colectaForm.valid){
+			this.loadingSave = true;
 			const productos: any[] = [];
 			for (const producto of this.getProductosArray.value) {
 				productos.push({
@@ -100,9 +102,11 @@ export class FormColectaComponent  {
 						this.router.navigateByUrl('mis-colectas')
 					}
 					else this.showMessage('Ocurrió un error', 'No pudimos crear la colecta. Intentá nuevamente luego.', 'error')
+					this.loadingSave = false;
 				},
 				error: (error) => {
 					console.log('error al crear colecta', error);
+					this.loadingSave = false;
 					//this.showMessage('Ocurrió un error', 'No pudimos crear la colecta. Intentá nuevamente luego.', 'error')
 				}
 			})

@@ -16,6 +16,7 @@ export class FormPublicacionComponent {
 
 	loading: boolean = false;
 	showErrors: boolean = false;
+	loadingSave: boolean = false;
 
 	constructor(private fb: FormBuilder, private truequeService: TruequesService, private router: Router){
 		this.publicacionForm = fb.group({
@@ -82,6 +83,7 @@ export class FormPublicacionComponent {
 	publicar(){
 		this.showErrors = true;
 		if(this.publicacionForm.valid){
+			this.loadingSave = true;
 			let caracteristicas: any[] = this.getCaracteristicasArray.value || [];
 			let sendCaracteristicas: string[] = [];
 			caracteristicas.forEach(item => {
@@ -114,9 +116,11 @@ export class FormPublicacionComponent {
 					}).then(({isConfirmed}) => {
 						this.router.navigate(['mis-publicaciones'])
 					})
+					this.loadingSave = false;
 				},
 				error: (error) => {
 					console.log('error creando publicacion', error);
+					this.loadingSave = false;
 					//Swal.fire('¡Error!', 'Ocurrió un error al crear la publicación. Intentalo nuevamente', 'error')
 				}
 			})

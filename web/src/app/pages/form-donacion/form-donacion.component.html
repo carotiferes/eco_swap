@@ -109,10 +109,11 @@
 			</form>
 		</mat-card-content>
 		<mat-card-actions class="buttons">
-			<button mat-raised-button color="primary"
+			<button mat-raised-button color="primary" [disabled]="loadingSave"
 				(click)="confirmarDonacion();donacionForm.markAllAsTouched(); donacionForm.valid">
 				CONFIRMAR DONACIÓN
 			</button>
+			<mat-spinner *ngIf="loadingSave" diameter="20" style="margin-left: 10px;"></mat-spinner>
 		</mat-card-actions>
 	</mat-card>
 </div>

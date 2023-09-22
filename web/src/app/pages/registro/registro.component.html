@@ -216,6 +216,7 @@
 					!direccionForm.valid">
 				{{origin == 'resetPassword' ? 'ACTUALIZAR CONTRASEÑA' :
 				(origin == 'createAccount' ? 'CREAR CUENTA' : 'GUARDAR CAMBIOS')}}
+				<mat-spinner *ngIf="loadingSave" diameter="20" style="margin-left: 10px;"></mat-spinner>
 			</button>
 		</mat-card-actions>
 	</mat-card>

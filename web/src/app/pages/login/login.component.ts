@@ -20,12 +20,14 @@ export class LoginComponent {
 
 	passwordIcon: string = 'visibility_off';
 	passwordType: string = 'password';
+	loadingSave: boolean = false;
 
 	//TODO: loading on submit
 
 	constructor(private auth: AuthService, private router: Router, private location: Location) {}
 
 	ngOnInit(): void {
+		this.loadingSave = false;
 		if(this.auth.isUserLoggedIn){
 			this.router.navigate([''])
 		}
@@ -34,11 +36,13 @@ export class LoginComponent {
 	onSubmit() {
 		this.username = this.userHtml?.nativeElement.value;
 		this.password = this.passwordHtml?.nativeElement.value;
-
+		
 		if (!this.username || !this.password) {
 			Swal.fire({ title: 'Campos incompletos!', text: 'Por favor completá todos los campos antes de continuar.', icon: 'error' })
 		} else {
+			this.loadingSave = true;
 			this.auth.login(this.username, this.password);
+			//this.loadingSave = false;
 		}
 	}
 
