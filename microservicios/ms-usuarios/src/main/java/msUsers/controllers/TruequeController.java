@@ -179,7 +179,7 @@ public class TruequeController {
         return ResponseEntity.ok(responseUpdateEntity);
     }
 
-    @PostMapping(path = "/trueque", produces = json)
+    @PostMapping(path = "/trueque", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public ResponseEntity<ResponsePostEntityCreation> crearTrueque(@RequestBody @Valid RequestTrueque request) {
@@ -209,6 +209,26 @@ public class TruequeController {
         log.info("<< Trueque creado con ID: {}", entity.getIdTrueque());
 
         return ResponseEntity.created(location).body(responsePostEntityCreation);
+    }
+
+    @GetMapping(path = "/trueques/particular/{id_particular}", produces = json)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<TruequeDTO>> getTruequesPropuestasPorParticular(@PathVariable(name = "id_particular") Long idParticular) {
+
+        log.info(">> Listado de trueques donde la publicacion propuesta pertenezca al particular de id: {}", idParticular);
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Trueque> query = criteriaBuilder.createQuery(Trueque.class);
+        Root<Trueque> root = query.from(Trueque.class);
+
+        Predicate predicate = criteriaBuilder.equal(root.get("publicacionPropuesta").get("particular").get("idParticular"), idParticular);
+
+        query.where(predicate);
+
+        List<Trueque> trueques = entityManager.createQuery(query).getResultList();
+        List<TruequeDTO> truequesDTOs = trueques.stream().map(Trueque::toDTO).toList();
+        log.info(">> {} trueques encontrados donde la publicacion propuesta pertenece al particular de id {}", truequesDTOs.size(), idParticular);
+
+        return ResponseEntity.ok(truequesDTOs);
     }
 
 }
