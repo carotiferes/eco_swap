@@ -31,7 +31,7 @@ public class Fundacion implements Serializable{
     private String nombre;
 
     @NotNull
-    @Size(max = 11)
+    @Size(max = 13)
     @Column(unique = true)
     private String cuil;
 

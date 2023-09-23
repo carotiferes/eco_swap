@@ -31,7 +31,6 @@ public class Usuario {
     @Size(min = 6, max = 50)
     private String username;
 
-    //  @NotNull
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<Direccion> direcciones;
