@@ -7,4 +7,11 @@ import { Component } from '@angular/core';
 })
 export class FooterComponent {
 
+	showFooter: boolean = false;
+
+	constructor() {
+		setTimeout(() => {
+			this.showFooter = true;
+		}, 2000);
+	}
 }

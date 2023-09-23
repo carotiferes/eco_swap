@@ -26,7 +26,10 @@
 	<div class="row" *ngIf="!loading">
 		<div *ngIf="publicacionesToShow.length==0" style="text-align: center;">No hay publicaciones para mostrar</div>
 		<div><!-- class="col-lg-6" -->
-			<app-deck-publicaciones [publicacionesToShow]="publicacionesToShow"></app-deck-publicaciones>
+			<app-deck-publicaciones [publicacionesToShow]="paginatedPublicaciones"></app-deck-publicaciones>
+			<mat-paginator [pageSizeOptions]="[5, 10, 25]" [pageSize]="pageSize" [showFirstLastButtons]="true"
+				[length]="publicacionesToShow.length" #paginator (page)="changePage($event)" style="border-radius: 15px;">
+			</mat-paginator>
 		</div>
 	</div>
 	<div class="floating-button-container">

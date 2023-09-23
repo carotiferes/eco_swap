@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FundacionModel } from 'src/app/models/fundacion.model';
 import { ColectaModel } from 'src/app/models/colecta.model';
@@ -11,6 +11,7 @@ import { map, startWith } from 'rxjs/operators';
 import { ProductosService } from 'src/app/services/productos.service';
 import Swal from 'sweetalert2';
 import { ShowErrorService } from 'src/app/services/show-error.service';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
 	selector: 'app-colectas',
@@ -22,6 +23,7 @@ export class ColectasComponent implements OnInit {
 	colectas: ColectaModel[] = [];
 	isMyColectas: boolean = false;
 	showColectas: ColectaModel[] = [];
+	paginatedColectas: ColectaModel[] = [];
 	userData: any;
 
 	loading: boolean = true;
@@ -31,6 +33,9 @@ export class ColectasComponent implements OnInit {
 	optionsFundaciones: any[] = [/* { idFundacion: 1, nombre: 'Tzedaka' }, { idFundacion: 2, nombre: 'Cruz Roja' } */];
 	filteredOptions: Observable<any[]>;
 	filtros: any = {};
+
+	pageSize = 10;
+	@ViewChild(MatPaginator) paginator!: MatPaginator;
 
 	constructor(private router: Router, private auth: AuthService,
 		private donacionesService: DonacionesService, private fundacionesService: FundacionesService,
@@ -68,10 +73,11 @@ export class ColectasComponent implements OnInit {
 			this.donacionesService.getMisColectas().subscribe({
 				next: (res: any) => {
 					this.colectas = res;
-					this.showColectas = this.colectas;
+					this.showColectas = this.colectas.slice(0, this.pageSize);
 					this.showColectas.map(item => {
 						item.imagen = this.donacionesService.getImagen(item.imagen)
 					})
+					this.paginatedColectas = this.showColectas.slice(0, this.pageSize);
 					this.loading = false;
 				},
 				error: (error) => {
@@ -97,6 +103,7 @@ export class ColectasComponent implements OnInit {
 					this.showColectas.map(item => {
 						item.imagen = this.donacionesService.getImagen(item.imagen)
 					})
+					this.paginatedColectas = this.showColectas.slice(0, this.pageSize);
 					this.loading = false;
 				},
 				error: (error) => {
@@ -162,5 +169,11 @@ export class ColectasComponent implements OnInit {
 
 	goToColecta(colecta: ColectaModel) {
 		this.router.navigateByUrl('colecta/' + colecta.idColecta)
+	}
+
+	changePage(event: any) {
+		const startIndex = event.pageIndex * event.pageSize;
+		const endIndex = startIndex + event.pageSize;
+		this.paginatedColectas = this.showColectas.slice(startIndex, endIndex);
 	}
 }

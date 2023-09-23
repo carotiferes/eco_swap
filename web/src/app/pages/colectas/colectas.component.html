@@ -36,7 +36,7 @@
 		<div *ngIf="showColectas.length==0" style="text-align: center;">No hay colectas para mostrar</div>
 		<div><!-- class="col-lg-6" -->
 			<div class="card-deck">
-				<div class="card row" *ngFor="let colecta of showColectas" (click)="goToColecta(colecta)">
+				<div class="card row" *ngFor="let colecta of paginatedColectas" (click)="goToColecta(colecta)">
 					<div class="col-sm-4" style="display: flex; justify-content: center;">
 						<img class="card-img" [src]="colecta.imagen ? colecta.imagen : 'assets/fundacion.png'">
 					</div>
@@ -58,6 +58,9 @@
 						<h4>{{colecta.fundacionDTO.nombre}}</h4>
 					</div>
 				</div>
+				<mat-paginator [pageSizeOptions]="[5, 10, 25]" [pageSize]="pageSize" [showFirstLastButtons]="true"
+				[length]="showColectas.length" #paginator (page)="changePage($event)" style="border-radius: 15px;">
+				</mat-paginator>
 			</div>
 		</div>
 	</div>

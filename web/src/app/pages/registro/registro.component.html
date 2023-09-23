@@ -1,6 +1,9 @@
 <app-header url="registro"></app-header>
 
 <div id="main-container" class="app-main-div">
+	<div *ngIf="loading" style="height: 65vh; display: flex; justify-content: center;">
+		<mat-spinner diameter="20"></mat-spinner>
+	</div>
 	<mat-card id="main-card" *ngIf="!loading">
 		<mat-card-header>
 			<div *ngIf="origin != 'resetPassword'; else resetHeader">
