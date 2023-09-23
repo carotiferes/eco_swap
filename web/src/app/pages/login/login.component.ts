@@ -42,7 +42,7 @@ export class LoginComponent {
 		} else {
 			this.loadingSave = true;
 			this.auth.login(this.username, this.password);
-			//this.loadingSave = false;
+			this.loadingSave = false;
 		}
 	}
 

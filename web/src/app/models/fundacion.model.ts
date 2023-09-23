@@ -1,5 +1,6 @@
 import { UsuarioModel } from "./usuario.model";
 import { ColectaModel } from "./colecta.model";
+import { DireccionModel } from "./direccion.model";
 
 export interface FundacionModel {
 	idFundacion: number,
@@ -7,5 +8,6 @@ export interface FundacionModel {
 	cuil: string,
 	usuario: UsuarioModel,
 	colectas: ColectaModel[],
-	puntaje?: number
+	puntaje?: number,
+	direcciones: DireccionModel[]
 }
