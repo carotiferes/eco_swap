@@ -3,7 +3,7 @@
 
 	#form-filtros {
 		display: grid;
-		grid-template-columns: 1fr 1fr 1fr 1fr;
+		grid-template-columns: 1fr 1fr 2fr;
 		justify-items: center;
 		align-items: baseline;
 		
@@ -14,7 +14,7 @@
 
 		button {
 			margin: 2px;
-			max-width: 40%;
+			//max-width: 40%;
 		}
 
 		

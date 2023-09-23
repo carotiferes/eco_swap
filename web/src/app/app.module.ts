@@ -20,12 +20,11 @@ import { DateAdapter } from '@angular/material/core';
 import { CustomDateAdapter } from './pipes/date-adapter';
 import { CommonModule } from '@angular/common';
 import { CuitPipe } from './pipes/cuit.pipe';
+import { FooterModule } from './layout/footer/footer.module';
 
 @NgModule({
 	declarations: [
 		AppComponent,
-		FooterComponent,
-		
 	],
 	imports: [
 		CommonModule,
@@ -37,7 +36,8 @@ import { CuitPipe } from './pipes/cuit.pipe';
 		HttpClientModule,
 		FormsModule,
 		ReactiveFormsModule,
-		SharedModule
+		SharedModule,
+		FooterModule
 	],
 	providers: [
 		HttpBackEnd,

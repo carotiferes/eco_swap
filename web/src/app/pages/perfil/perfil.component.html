@@ -1,6 +1,6 @@
 <app-header></app-header>
 
-<div id="main-perfil" *ngIf="user">
+<div id="main-perfil" *ngIf="user" class="app-main-div">
 	<div class="profile-img">
 		<img [src]="userData.isSwapper ? 'assets/persona.png' : 'assets/fundacion.png'">
 	</div>
@@ -67,8 +67,8 @@
 								</div>
 							</mat-grid-list>
 							<div class="div-cambiar-pass">
-								<button mat-raised-button color="accent" (click)="edit()">EDITAR INFORMACIÓN</button>
-								<button mat-raised-button color="primary">CAMBIAR CONTRASEÑA</button>
+								<button mat-fab extended color="accent" (click)="edit()">EDITAR INFORMACIÓN</button>
+								<button mat-fab extended color="primary">CAMBIAR CONTRASEÑA</button>
 							</div>
 						</ng-template>
 					</div>
@@ -100,7 +100,7 @@
 								</div>
 							</mat-grid-list>
 							<div class="div-cambiar-pass">
-								<button mat-raised-button color="accent" (click)="edit()">EDITAR INFORMACIÓN</button>
+								<button mat-fab extended color="accent" (click)="edit()">EDITAR INFORMACIÓN</button>
 							</div>
 						</ng-template>
 					</div>
@@ -158,7 +158,7 @@
 									</div>
 								</mat-grid-list>
 								<div class="div-cambiar-pass">
-									<button mat-raised-button color="accent" (click)="edit()">EDITAR INFORMACIÓN</button>
+									<button mat-fab extended color="accent" (click)="edit()">EDITAR INFORMACIÓN</button>
 								</div>
 							</div>
 						</ng-template>

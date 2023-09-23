@@ -24,7 +24,7 @@
 			<h6>{{publicacion.fechaPublicacion | date: 'dd/MM/yyyy' }}</h6>
 		</div>
 		<div class="col-3 buttons" *ngIf="origin=='propuestas'">
-			<button *ngFor="let button of buttons" mat-raised-button [color]="button.color"
+			<button *ngFor="let button of buttons" mat-fab extended [color]="button.color"
 			[disabled]="button.status != 'RECIBIDO' ? 
 			publicacion.estadoTrueque != 'PENDIENTE' : publicacion.estadoTrueque != 'ACEPTADO'"
 			(click)="changeEstadoPublicacion(publicacion, button.status); $event.stopPropagation()">

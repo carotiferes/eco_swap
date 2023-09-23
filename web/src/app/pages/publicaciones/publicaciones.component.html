@@ -1,6 +1,6 @@
 <app-header [title]="origin == 'all' ? 'Publicaciones' : (origin == 'myPublicaciones' ? 'Mis Publicaciones' : 'Mis Compras')"></app-header>
 
-<div id="main-publicaciones">
+<div id="main-publicaciones" class="app-main-div">
 	<div class="row">
 		<form [formGroup]="formFiltros" id="form-filtros" *ngIf="origin == 'all'">
 			<mat-form-field appearance="outline">
@@ -17,8 +17,8 @@
 				<!-- <input matInput formControlName="tipoProducto"> -->
 			</mat-form-field>
 			<div style="text-align: center;">
-				<button mat-raised-button color="primary" (click)="filtrarPublicaciones()">FILTRAR</button>
-				<button mat-raised-button (click)="limpiarFiltros()">LIMPIAR</button>
+				<button mat-fab extended color="primary" (click)="filtrarPublicaciones()">FILTRAR</button>
+				<button mat-fab extended (click)="limpiarFiltros()" style="background-color: white;">LIMPIAR</button>
 			</div>
 		</form>
 	</div>

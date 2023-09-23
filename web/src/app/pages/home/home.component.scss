@@ -3,3 +3,26 @@
 		width: 100%;
 	}
 }
+
+.grid-div {
+	width: 100%;
+	padding: 15px 30px;
+
+	.row-div {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 10px;
+		height: 200px;
+
+		.col-div {
+			text-align: center;
+
+			img {
+				height: 200px;
+				object-fit: cover;
+				margin: 0 auto;
+				border-radius: 15px;
+			}
+		}
+	}
+}

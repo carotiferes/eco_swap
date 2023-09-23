@@ -1,6 +1,6 @@
 <app-header></app-header>
 
-<div id="main-colecta">
+<div id="main-colecta" class="app-main-div">
 	<app-spinner [loading]="loading"></app-spinner>
 	<mat-card *ngIf="!loading && colecta && colecta.fundacionDTO"> <!-- && colecta.fundacionDTO.usuario -->
 		<mat-card-header style="border-bottom: solid 1px var(--light-grey); padding-bottom: 10px;">
@@ -40,7 +40,7 @@
 			</div>
 		</mat-card-content>
 		<mat-card-actions class="card-button">
-			<button mat-raised-button color="primary" (click)="donar()" *ngIf="!(userData.isLoggedIn && !userData.isSwapper)">QUIERO DONAR</button>
+			<button mat-fab extended color="primary" (click)="donar()" *ngIf="!(userData.isLoggedIn && !userData.isSwapper)">QUIERO DONAR</button>
 		</mat-card-actions>
 	</mat-card>
 

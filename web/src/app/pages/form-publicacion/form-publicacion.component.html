@@ -1,6 +1,6 @@
 <app-header></app-header>
 
-<div id="main-publicacion">
+<div id="main-publicacion" class="app-main-div">
 	<app-spinner [loading]="loading"></app-spinner>
 	<mat-card id="main-card" *ngIf="!loading">
 		<mat-card-header style="margin-bottom: 20px;">
@@ -119,7 +119,7 @@
 								<mat-icon>delete</mat-icon>
 							</button>
 						</div>
-						<button type="button" (click)="agregarCaracteristica()" mat-raised-button color="light" style="width: 100%;">
+						<button type="button" (click)="agregarCaracteristica()" mat-fab extended color="light" style="width: 100%;">
 							<mat-icon>add</mat-icon>
 							<label>Agregar Característica</label>
 						</button>
@@ -134,7 +134,7 @@
 					<div>
 						<label style="font-weight: 500; font-size: large; margin: 7px 0;">Imágenes</label>
 					</div>
-					<button type="button" mat-raised-button color="light" (click)="file.click()">
+					<button type="button" mat-fab extended color="light" (click)="file.click()">
 						<mat-icon>add</mat-icon>
 						Agregar Imagen
 					</button>
@@ -169,7 +169,7 @@
 			</form>
 		</mat-card-content>
 		<mat-card-actions class="buttons">
-			<button mat-raised-button color="primary" [disabled]="loadingSave"
+			<button mat-fab extended color="primary" [disabled]="loadingSave"
 				(click)="publicar();publicacionForm.markAllAsTouched(); publicacionForm.valid">
 				CREAR PUBLICACIÓN
 			</button>

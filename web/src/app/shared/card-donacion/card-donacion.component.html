@@ -20,7 +20,7 @@
 			<img [src]="getImage(img)" *ngFor="let img of donacion.parsedImagenes" (click)="zoomImage(img)" />
 		</div><!-- *ngFor="let img of donacion.imagenes" -->
 		<div class="donacion-status">
-			<button *ngFor="let button of buttons" mat-raised-button [color]="button.color" 
+			<button *ngFor="let button of buttons" mat-fab extended [color]="button.color" 
 			(click)="changeEstadoDonacion(donacion, button.status)"
 				[disabled]="button.disabled">
 				<mat-icon>{{button.icon}}</mat-icon>

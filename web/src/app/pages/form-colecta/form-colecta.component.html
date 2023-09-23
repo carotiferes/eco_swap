@@ -1,6 +1,6 @@
 <app-header></app-header>
 
-<div id="main-form-colecta">
+<div id="main-form-colecta" class="app-main-div">
 	<mat-card id="main-card">
 		<mat-card-header style="margin-bottom: 20px;">
 			<mat-card-title>Completá los datos de tu colecta!</mat-card-title>
@@ -73,7 +73,7 @@
 								<mat-icon>delete</mat-icon>
 							</button>
 						</div>
-						<button type="button" (click)="agregarProducto()" mat-raised-button>
+						<button type="button" (click)="agregarProducto()" mat-fab extended>
 							<mat-icon>add</mat-icon>
 							<label>Agregar Producto</label>
 						</button>
@@ -109,7 +109,7 @@
 			</form>
 		</mat-card-content>
 		<mat-card-actions class="buttons">
-			<button mat-raised-button color="primary" [disabled]="loadingSave"
+			<button mat-fab extended color="primary" [disabled]="loadingSave"
 				(click)="crearColecta();colectaForm.markAllAsTouched(); colectaForm.valid">
 				CREAR COLECTA
 			</button>
@@ -117,7 +117,6 @@
 		</mat-card-actions>
 	</mat-card>
 </div>
-
 
 <!-- <div class="form-input form-col">
 	<mat-form-field>
