@@ -63,7 +63,7 @@ export class PublicacionComponent {
 				this.publicacion.parsedImagenes = this.publicacion.imagenes.split('|')
 				if (this.publicacion && this.userInfo && this.publicacion.particularDTO.idParticular == this.userInfo.particularDTO.idParticular)
 					this.showButtons = false;
-				this.getTrueques()
+				if(this.userData.isLoggedIn) this.getTrueques()
 			},
 			error: (error) => {
 				console.log(error);

@@ -58,5 +58,9 @@
 				{name: 'rechazar', icon: 'close', color: 'warn', status: 'RECHAZADA', disabled: donacion.estadoDonacion != 'PENDIENTE'},
 				{name: 'recibida', icon: 'done_all', color: 'primary', status: 'RECIBIDA', disabled: donacion.estadoDonacion != 'APROBADA'},
 			]"></app-card-donacion>
+		<mat-paginator [pageSizeOptions]="[5, 10, 25]" [pageSize]="pageSize" [showFirstLastButtons]="true"
+		[length]="donacionesToShow.length" #paginator (page)="changePage($event)" style="border-radius: 15px;"
+		*ngIf="donacionesToShow.length > 0">
+		</mat-paginator>
 	</div>
 </div>

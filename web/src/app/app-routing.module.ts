@@ -7,7 +7,7 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 const routes: Routes = [
 	{ path: '', component: HomeComponent },
 	{ path: 'home', loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule) },
-	{ path: 'login', loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule) },
+	{ path: 'login', loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule), data: { hideFooter: true } },
 	{ path: 'registro', loadChildren: () => import('./pages/registro/registro.module').then(m => m.RegistroModule) },
 	{ path: 'publicaciones', loadChildren: () => import('./pages/publicaciones/publicaciones.module').then(m => m.PublicacionesModule) },
 	{ path: 'publicacion/:id_publicacion', loadChildren: () => import('./pages/publicacion/publicacion.module').then(m => m.PublicacionModule) },

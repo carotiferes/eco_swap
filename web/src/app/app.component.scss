@@ -1,0 +1,33 @@
+.wrapper {
+	display: flex;
+	min-height: 100vh;
+	flex-direction: column;
+}
+
+.content {
+	width: 100vw;
+	flex-grow: 1;
+	background-size: contain;
+	background-position: center;
+}
+
+.footer {
+	background-color: darkgray;
+	width: 100vw;
+	height: 50px;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	flex-direction: row;
+	/* ADDED
+	position: absolute;
+	bottom: 0; */
+}
+
+app-header {
+	width: 100% !important;
+}
+
+* {
+	max-width: 100%;
+}

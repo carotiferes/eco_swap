@@ -30,6 +30,8 @@ export class ColectaComponent {
 	loading: boolean = true;
 	showDonaciones: boolean = false;
 	donacionesToShow: DonacionModel[] = [];
+	paginatedDonaciones: DonacionModel[] = [];
+	pageSize = 5;
 
 	buttonsCard: {name: string, icon: string, color: string, status: string, disabled: string}[] = []
 
@@ -90,6 +92,7 @@ export class ColectaComponent {
 									this.donacionesToShow = donaciones;
 									this.showDonaciones = true;
 								}
+								this.paginatedDonaciones = this.donacionesToShow.slice(0, this.pageSize);
 								console.log(this.showDonaciones);
 							},
 							error: (error) => {
@@ -200,6 +203,12 @@ export class ColectaComponent {
 		} else if (this.colecta.fechaInicio) {
 			return 'A partir del ' + (new Date(this.colecta.fechaInicio)).toLocaleDateString();
 		} else return '';
+	}
+
+	changePage(event: any) {
+		const startIndex = event.pageIndex * event.pageSize;
+		const endIndex = startIndex + event.pageSize;
+		this.paginatedDonaciones = this.donacionesToShow.slice(startIndex, endIndex);
 	}
 
 }

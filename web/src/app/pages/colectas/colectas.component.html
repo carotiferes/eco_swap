@@ -59,7 +59,8 @@
 					</div>
 				</div>
 				<mat-paginator [pageSizeOptions]="[5, 10, 25]" [pageSize]="pageSize" [showFirstLastButtons]="true"
-				[length]="showColectas.length" #paginator (page)="changePage($event)" style="border-radius: 15px;">
+				[length]="showColectas.length" #paginator (page)="changePage($event)" style="border-radius: 15px;"
+				*ngIf="showColectas.length > 0">
 				</mat-paginator>
 			</div>
 		</div>
