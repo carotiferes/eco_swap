@@ -79,9 +79,9 @@ public class UsuarioService {
 
         try {
             if (usuario.isSwapper())
-                usuarioCreado = particularService.crearUser(direccionCreada.getUsuario(), signUp);
+                usuarioCreado = particularService.crearUser(usuario, signUp);
             else
-                usuarioCreado = fundacionService.crearUser(direccionCreada.getUsuario(), signUp);
+                usuarioCreado = fundacionService.crearUser(usuario, signUp);
 
             log.info("crearUsuario: Usuario creado con ID: {}", usuarioCreado.getIdUsuario());
             UsuarioCreadoEvent usuarioCreadoEvent = new UsuarioCreadoEvent(this, usuarioCreado);

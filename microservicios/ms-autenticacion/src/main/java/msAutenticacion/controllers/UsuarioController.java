@@ -65,11 +65,11 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioDTO);
     }
 
-    @PostMapping(path = "/usuario/signup", produces = JSON)
+    @PostMapping(path = "/usuario/signup", consumes = JSON, produces = JSON)
     @Transactional
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Long> postSignUp(@RequestBody RequestSignUp body){
-        log.info("postSignUp: creando nuevo usuario: "+ body.getEmail());
+        log.info("postSignUp: creando nuevo usuario: " + body.getEmail());
         Usuario usuarioCreado = usuarioService.crearUsuario(body);
         log.info("postSignUp: Usuario creado con ID: "+ usuarioCreado.getIdUsuario());
         return ResponseEntity.ok(usuarioCreado.getIdUsuario());
@@ -90,6 +90,7 @@ public class UsuarioController {
     }
 
     @PatchMapping(path = "/usuario/login", produces = JSON)
+    @ResponseStatus(HttpStatus.OK)
     @Transactional(noRollbackFor = {LoginUserException.class, LoginUserBlockedException.class, LoginUserWrongCredentialsException.class})
     public ResponseEntity<ResponseLogin> patchLogin(@RequestBody @Valid RequestLogin body) throws NoSuchAlgorithmException {
         log.info("postLogin: Intento de login para usuario: "+ body.getUsername());
@@ -101,6 +102,7 @@ public class UsuarioController {
     }
 
     @GetMapping(path = "/tiposDocumentos", produces = JSON)
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<TipoDocumentoDTO>> getTipoDocumentos() {
         log.info(">> Ingresando a getTipoDocumentos");
         List<TipoDocumentoDTO> tiposDocumento = Arrays.stream(TipoDocumentoEnum.values()).
