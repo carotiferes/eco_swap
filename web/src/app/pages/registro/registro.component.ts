@@ -260,22 +260,13 @@ export class RegistroComponent {
 								next: (id_user: any) => {
 									console.log('next', id_user);
 									this.id_user = id_user;
-									// TODO: REVISAR CON EMAILS. esperar 1 min antes de dejarlo enviar devuelta
-									this.showMessage('¡Gracias por registrarte!',
-										`Te enviamos un email a la cuenta que ingresaste,
-										con un código para verificar tu cuenta. Por favor ingresalo a continuación.
-										Si no verificás la cuenta ahora, podrás hacerlo la próxima vez que inicies sesión.`,
-										'Confirmar', 'send_again', 'success', 'No recibí el email')
+									this.messageWithTimer();
 									this.loadingSave = false;
 								},
 								error: (e) => {
 									console.error('error', e);
-									/* if(e.message.includes('duplicate'))
-									this.showMessage('Error!', 'Ya existe un usuario con el email ingresado.', 'OK', 'error', 'error')
-									else this.showMessage('Error!', 'Ha ocurrido un error al crear la cuenta', 'OK', 'error', 'error') */
 									this.loadingSave = false;
 								},
-								//complete: () => console.info('signup complete')
 							})
 						} else {
 							this.usuarioService.editUser(user).subscribe({
@@ -304,57 +295,19 @@ export class RegistroComponent {
 	}
 
 	showMessage(title: string, text: string, confirm: string, origin: string,
-		icon: 'success' | 'error' | 'warning', deny?: string) {
+		icon: 'success' | 'error' | 'warning') {
 		Swal.fire({
 			title,
 			text,
 			confirmButtonText: confirm,
-			showDenyButton: deny ? true : false,
-			denyButtonText: deny,
 			icon,
-			allowOutsideClick: icon == 'success' ? false : true,
-			input: origin == 'send_again' ? 'text' : undefined,
-			reverseButtons: true,
-			preDeny: () => {
-				if(this.id_user) this.auth.sendEmailAgain(this.id_user).subscribe({
-					next: (res) => {
-						console.log(res);
-						this.snackbar.open('Se envió el nuevo mail!', '', {
-							horizontalPosition: 'center',
-							verticalPosition: 'top',
-							duration: 3000
-						})
-					}
-				})
-				return false;
-			}
-		}).then(({ isConfirmed, value, isDenied }) => {
-			console.log(value);
-			/* if (isDenied && origin == 'send_again') {
-				// TODO: RESEND EMAIL
-				this.router.navigate(['login'])
-			} */
-			if(isConfirmed){
+			allowOutsideClick: icon == 'success' ? false : true
+		}).then(({ isConfirmed }) => {
+			if(isConfirmed && icon != 'error'){
 				if(origin == 'ir_a_home') {
 					this.router.navigate(['home'])
 				} else if(origin == 'edit') {
 					this.router.navigate(['perfil'])
-				} else if (origin == 'send_again') {
-					if(this.id_user) this.usuarioService.confirmarCuenta(this.id_user, value).subscribe({
-						next: (res) => {
-							console.log(res);
-							Swal.fire('Excelente!', 'Tu cuenta fue verificada, ya podes usar Ecoswap!', 'success')
-							this.router.navigate(['/'])
-						},
-						error: (error) => {
-							console.log(error);
-							/* if(error.message.descripcion == "El código es incorrecto") {
-								Swal.fire('Código incorrecto!', 'El código ingresado es incorrecto. Iniciá sesión y volvé a intentarlo.', 'error')
-								this.router.navigate(['/login'])
-							} */
-						}
-					})
-					else Swal.fire('Error!', 'Ocurrió un error al activar tu cuenta. Por favor intentalo más tarde', 'error')
 				}
 			}
 		})
@@ -422,6 +375,73 @@ export class RegistroComponent {
 	formatearCUIT() {
 		this.fundacionForm.get('cuit')?.setValue(this.cuitPipe.transform(this.fundacionForm.get('cuit')?.value)); // Esto fuerza el cambio del valor
 		this.cdr.detectChanges(); // Detectamos los cambios manualmente
+	}
+
+	messageWithTimer() {
+		let countdownTime = 60;
+		Swal.fire({
+			title: '¡Gracias por registrarte!',
+			text: `Te enviamos un email a la cuenta que ingresaste, con un código para verificar tu cuenta. Por favor ingresalo a continuación. Si no verificás la cuenta ahora, podrás hacerlo la próxima vez que inicies sesión.`,
+			icon: 'success',
+			showDenyButton: true,
+			allowOutsideClick: false, allowEscapeKey: false,
+			denyButtonText: 'Reenviar email en 60 segundos',
+			denyButtonColor: '#ae59db', confirmButtonColor: '#87db59',
+			confirmButtonText: 'Confirmar',
+			input: 'text',
+			didOpen: () => {
+				const denyButton: any = document.querySelector('.swal2-deny');
+				const countdownInterval = setInterval(() => {
+					countdownTime--;
+					if (denyButton) {
+						denyButton.setAttribute('style', 'background-color: #a3a3a3;');
+						denyButton.textContent = `Reenviar email en ${countdownTime} segundos`;
+					}
+					if (countdownTime <= 0 && denyButton) {
+						denyButton.disabled = false;
+						denyButton.setAttribute('style', 'background-color: #9c30d4;');
+						denyButton.textContent = `Reenviar email`;
+						clearInterval(countdownInterval);
+					}
+				}, 1000);
+			},
+			preDeny: () => {
+				console.log('pre deny', countdownTime);
+				if (this.id_user && countdownTime == 0 ) {
+					this.auth.sendEmailAgain(this.id_user).subscribe({
+						next: (res) => {
+							console.log(res);
+							this.snackbar.open('Se envió el nuevo mail!', '', {
+								horizontalPosition: 'center',
+								verticalPosition: 'top',
+								duration: 3000
+							})
+						}
+					})
+				}
+				return false;
+			},
+			reverseButtons: true
+		}).then(({ isConfirmed, value }) => {
+			console.log(isConfirmed);
+
+			if (isConfirmed && this.id_user) {
+				console.log('conf', value);
+				
+				this.usuarioService.confirmarCuenta(this.id_user, value).subscribe({
+					next: (res) => {
+						console.log(res);
+						Swal.fire('Excelente!', 'Tu cuenta fue verificada, ya podes usar Ecoswap!', 'success')
+						this.router.navigate(['/'])
+					},
+					error: (error) => {
+						console.log(error);
+						this.router.navigate(['/login'])
+					}
+				});
+				//else Swal.fire('Error!', 'Ocurrió un error al activar tu cuenta. Por favor intentalo más tarde', 'error')
+			}
+		})
 	}
 	
 }
