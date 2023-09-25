@@ -11,7 +11,7 @@ import { TruequesService } from 'src/app/services/trueques.service';
 export class DeckPublicacionesComponent {
 
 	@Input() publicacionesToShow: PublicacionModel[] = [];
-	@Input() origin: 'publicaciones' | 'intercambio' | 'propuestas' = 'publicaciones';
+	@Input() origin: 'publicaciones' | 'intercambio' | 'propuestas' | 'mis-publicaciones' = 'publicaciones';
 	@Input() buttons: {name: string, icon: string, color: string, status: string}[] = [];
 	cardSelected?: number;
 
@@ -28,7 +28,7 @@ export class DeckPublicacionesComponent {
 	}
 
 	clicked(publicacion: PublicacionModel) {
-		if(this.origin == 'publicaciones') this.goToPublicacion(publicacion);
+		if(this.origin == 'publicaciones' || this.origin == 'mis-publicaciones') this.goToPublicacion(publicacion);
 		else {
 			this.cardSelected = publicacion.idPublicacion;
 			this.selectedCard.emit(this.cardSelected);
