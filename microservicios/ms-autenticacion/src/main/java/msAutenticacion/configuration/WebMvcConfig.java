@@ -11,8 +11,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    @Value("${url.host}")
+    @Value("${url.host.domain}")
     private String urlHost;
+
+    @Value("${url.host.subdomain}")
+    private String urlHost2;
 
     @Autowired
     private JwtInterceptor jwtInterceptor;
@@ -27,7 +30,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(urlHost)
+                .allowedOrigins(urlHost, urlHost2)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH") // Agrega aquí los métodos permitidos
                 .allowedHeaders("Content-Type", "Authorization", "Access-Control-Allow-Origin") // Agrega aquí los encabezados permitidos en tus solicitudes
                 .allowCredentials(true)
