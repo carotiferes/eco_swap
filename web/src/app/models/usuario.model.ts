@@ -1,11 +1,19 @@
+import { FundacionModel } from "./fundacion.model";
+import { ParticularModel } from "./particular.model";
+
 export interface UsuarioModel {
-	idPerfil: number,
+	idUsuario: number,
 	username: string,
-	email: string,
-	particular: boolean,
 	password: string,
-	puntaje: number,
+	salt: string,
 	telefono: string,
+	email: string,
+	puntaje: number,
+	intentos: number,
+	bloqueado: boolean,
+	swapper: boolean,
 	opiniones: any[],
-	direcciones: any[]
+	direcciones: any[],
+	particularDTO: ParticularModel,
+	fundacionDTO: FundacionModel
 }

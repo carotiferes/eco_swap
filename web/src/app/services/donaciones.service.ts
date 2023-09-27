@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpBackEnd } from './httpBackend.service';
+import { environment } from 'src/environments/environment';
 
-const URL = 'http://localhost:8080/'
+const URL = environment.apiUrl + '8080/';
+const URL_NAME = 'URImsUsuarios'
 
 @Injectable({
 	providedIn: 'root'
@@ -11,38 +13,39 @@ export class DonacionesService {
 	constructor(private backendService: HttpBackEnd) { }
 
 	crearColecta(body: any) {
-		console.log(body);
-		const test = this.backendService.post('api/colecta', body);
-		console.log('aaaa', test);
-
-		return test
+		return this.backendService.post(URL_NAME, 'api/colecta', body);
 	}
 
-	getColectas(filtros?: any){
-		return this.backendService.get('api/colectas', filtros);
+	getAllColectas(filtros?: any){
+		return this.backendService.get(URL_NAME, 'api/colectas', filtros);
+	}
+
+	getMisColectas(){
+		return this.backendService.get(URL_NAME, 'api/misColectas');
 	}
 
 	getColecta(id_colecta: any){
-		return this.backendService.get('api/colecta/'+id_colecta);
+		return this.backendService.get(URL_NAME, 'api/colecta/'+id_colecta);
 	}
 
-	getDonaciones(id_colecta: any){
-		return this.backendService.get('api/colecta/'+id_colecta+'/donaciones');
+	getDonacionesColecta(id_colecta: any){
+		return this.backendService.get(URL_NAME, 'api/colecta/'+id_colecta+'/donaciones');
 	}
 
-	getAllDonaciones(id_particular: any){
-		return this.backendService.get('api/'+id_particular+'/donaciones');
+	getMisDonaciones(){
+		return this.backendService.get(URL_NAME, 'api/particular/misDonaciones');
 	}
 
 	crearDonacion(id_colecta: number, body: any){
-		return this.backendService.post('api/colecta/'+id_colecta+'/donaciones', body);
+		return this.backendService.post(URL_NAME, 'api/colecta/'+id_colecta+'/crearDonacion', body);
 	}
 
 	getImagen(img: string){
-		return URL + 'api/getImage/' + img;
+		//console.log('Constructed URL:', `${URL}api/getImage/${img}`); // Log the constructed URL
+  		return `${URL}api/getImage/${img}`;
 	}
 
 	cambiarEstadoDonacion(id_colecta: any, id_donacion: number, body: any){
-		return this.backendService.put('api/colecta/'+id_colecta+'/donaciones/'+id_donacion, body);
+		return this.backendService.put(URL_NAME, 'api/colecta/'+id_colecta+'/donaciones/'+id_donacion, body);
 	}
 }

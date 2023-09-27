@@ -1,0 +1,42 @@
+#main-publicaciones {
+	padding: 2%;
+
+	#form-filtros {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr 1fr;
+		justify-items: center;
+		align-items: baseline;
+		
+		mat-form-field {
+			max-width: 100%;
+			padding: 5px;
+		}
+
+		button {
+			margin: 2px;
+			max-width: 40%;
+		}
+
+		
+	}
+
+	
+
+	.floating-button-container {
+		position: fixed;
+		right: 25px;
+		bottom: 40px;
+	}
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+	#form-filtros {
+		grid-template-columns: 1fr 1fr !important;
+	}
+}
+
+@media (min-width: 0px) and (max-width: 576px) {
+	#form-filtros {
+		grid-template-columns: 1fr !important;
+	}
+}

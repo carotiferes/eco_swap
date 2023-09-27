@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DonacionModel } from 'src/app/models/donacion.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
+import { ShowErrorService } from 'src/app/services/show-error.service';
 import { MapComponent } from 'src/app/shared/map/map.component';
 import Swal from 'sweetalert2';
 
@@ -14,27 +15,29 @@ import Swal from 'sweetalert2';
 export class DonacionesComponent {
 
 	donaciones: DonacionModel[] = [];
-	userData: any;
 
 	buttonsCard: {name: string, icon: string, color: string, status: string, disabled: string}[] = []
 
 	constructor(public dialog: MatDialog, private donacionesService: DonacionesService,
-		private auth: AuthService) {
+		private auth: AuthService, private showErrorService: ShowErrorService) {
 		this.getDonaciones()
 	}
 
 	getDonaciones() {
-		this.userData = this.auth.getUserData();
-		console.log(this.userData);
-
-		this.donacionesService.getAllDonaciones(this.userData.id_particular).subscribe((res: any) => {
-			console.log(res);
-
-			this.donaciones = res;
-			this.donaciones.map((donacion: any) => {
-				if(donacion.idDonacion) donacion['last_status'] = donacion.estado;
-				if(donacion.imagenes) donacion.parsedImagenes = donacion.imagenes.split('|')
-			})
+		this.donacionesService.getMisDonaciones().subscribe({
+			next: (res: any) => {
+				if(res){
+					this.donaciones = res;
+					this.donaciones.map((donacion: any) => {
+						if(donacion.idDonacion) donacion['last_status'] = donacion.estado;
+						if(donacion.imagenes) donacion.parsedImagenes = donacion.imagenes.split('|')
+					})
+				} else this.showErrorService.show('Error!', 'No se encontró la información de tus donaciones. Intentá nuevamente más tarde.')
+			},
+			error: (error) => {
+				console.log(error);
+				//this.showErrorService.show('Error!', 'Ocurrió un error al traer la información de tus donaciones. Intentá nuevamente más tarde.')
+			}
 		})
 
 	}

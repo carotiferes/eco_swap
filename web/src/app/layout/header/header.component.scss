@@ -59,6 +59,22 @@ mat-toolbar-row div {
 				.nav-white {
 					color: var(--white);
 				}
+
+				.dropdown {
+					margin-right: 20px;
+
+				}
+				.dropdown-item:hover {
+					cursor: pointer;
+				}
+				.dropdown-menu {
+					background-color: var(--primary-color);
+					border: none;
+					box-shadow: 2px 2px 4px 0px #007707;
+					left: -75px;
+					right: 5px;
+					top: 56px;
+				}
 			}
 
 			.nav-link {

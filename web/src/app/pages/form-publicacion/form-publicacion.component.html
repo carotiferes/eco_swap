@@ -1,0 +1,178 @@
+<app-header></app-header>
+
+<div id="main-publicacion">
+	<app-spinner [loading]="loading"></app-spinner>
+	<mat-card id="main-card" *ngIf="!loading">
+		<mat-card-header style="margin-bottom: 20px;">
+			<mat-card-title>Completá los datos de tu publicación!</mat-card-title>
+		</mat-card-header>
+		<mat-card-content>
+			<form [formGroup]="publicacionForm" class="form">
+				<div class="form-col">
+					<mat-form-field>
+						<mat-label>Título</mat-label>
+						<input matInput formControlName="titulo" type="text">
+						<mat-error *ngIf="publicacionForm.get('titulo')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
+				</div>
+
+				<div class="form-col">
+					<mat-form-field>
+						<mat-label>Descripción</mat-label>
+						<input matInput formControlName="descripcion" type="text">
+						<mat-error *ngIf="publicacionForm.get('descripcion')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
+				</div>
+
+				<div class="form-col">
+					<mat-form-field floatLabel="always">
+						<mat-label>Valor <b>mínimo</b> de trueque</mat-label>
+						<input matInput formControlName="valorMinimo" type="number" [min]="0"
+						[max]="publicacionForm.get('valorMaximo')!.value || null">
+						<span matTextPrefix>$&nbsp;</span>
+						<mat-error *ngIf="publicacionForm.get('valorMinimo')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+						<mat-error *ngIf="publicacionForm.get('valorMinimo')!.hasError('max')">
+							Debe ser menor al valor máximo ingresado.
+						</mat-error>
+						<mat-error *ngIf="publicacionForm.get('valorMinimo')!.hasError('min')">
+							Debe ser mayor a cero.
+						</mat-error>
+					</mat-form-field>
+				</div>
+
+				<div class="form-col" [ngClass]="publicacionForm.get('valorMaximo')!.hasError('min') ? 'form-input-long-error':''">
+					<mat-form-field floatLabel="always">
+						<mat-label>Valor <b>máximo</b> de trueque</mat-label>
+						<input matInput formControlName="valorMaximo" type="number"
+						[min]="publicacionForm.get('valorMinimo')!.value || 0">
+						<span matTextPrefix>$&nbsp;</span>
+						<mat-error *ngIf="publicacionForm.get('valorMaximo')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+						<mat-error *ngIf="publicacionForm.get('valorMaximo')!.hasError('min')">
+							Debe ser mayor al valor mínimo ingresado y mayor a cero.
+						</mat-error>
+					</mat-form-field>
+				</div>
+
+				<div class="form-col">
+					<mat-checkbox formControlName="finalidadVenta" (change)="allowVenta($event)">
+						<label class="caract-label">
+							Acepta Venta
+							<mat-icon class="material-icons-outlined" style="color: var(--grey-text); margin: 5px;"
+								matTooltip="Si chequeás este campo, además de propuestas de intercambio, te pueden llegar propuestas de compra de tu producto.">
+									info
+							</mat-icon>
+						</label>
+					</mat-checkbox>
+					<mat-form-field hidden >
+						<!-- <mat-label>Acepta Venta</mat-label> -->
+						<input matInput type="text">
+						<!-- <mat-error *ngIf="publicacionForm.get('titulo')!.hasError('required')">
+							Campo obligatorio
+						</mat-error> -->
+					</mat-form-field>
+				</div>
+
+				<div class="form-col">
+					<mat-form-field *ngIf="publicacionForm.get('finalidadVenta')?.value" floatLabel="always">
+						<mat-label>Precio de Venta</mat-label>
+						<input matInput formControlName="precioVenta" type="text">
+						<span matTextPrefix>$&nbsp;</span>
+						<mat-error *ngIf="publicacionForm.get('precioVenta')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
+				</div>
+
+				<section formArrayName="caracteristicas" class="form-col">
+					<div>
+						<label class="caract-label">
+							Características
+							<mat-icon class="material-icons-outlined"
+							matTooltip="Por favor incluir medidas, estado del producto,  material del producto y cualquier característica que identifique a tu producto">
+								info
+							</mat-icon>
+						</label>
+					</div>
+					<div>
+						<div *ngFor="let caracteristica of getCaracteristicasArray.controls; let i=index"
+							class="caracteristica" [formGroupName]="i">
+							<mat-form-field>
+								<textarea matInput placeholder="Descripción*" formControlName="s_descripcion" cdkTextareaAutosize
+								#autosize="cdkTextareaAutosize"></textarea>
+								<mat-error *ngIf="caracteristica.get('s_descripcion')!.hasError('pattern')">
+									El campo no puede contener <b>;</b>
+								</mat-error>
+								<mat-error *ngIf="caracteristica.get('s_descripcion')!.hasError('required')">
+									Campo obligatorio
+								</mat-error>
+							</mat-form-field>
+							<button type="button" (click)="removeCaracteristica(i)" mat-icon-button color="light"
+							style="height: 60px; margin-left: 5px;">
+								<mat-icon>delete</mat-icon>
+							</button>
+						</div>
+						<button type="button" (click)="agregarCaracteristica()" mat-raised-button color="light" style="width: 100%;">
+							<mat-icon>add</mat-icon>
+							<label>Agregar Característica</label>
+						</button>
+						<mat-error *ngIf="getCaracteristicasArray.length == 0 && showErrors">
+							La publicación debe tener al menos 1 característica
+						</mat-error>
+					</div>
+					<div></div>
+				</section>
+
+				<section class="form-col">
+					<div>
+						<label style="font-weight: 500; font-size: large; margin: 7px 0;">Imágenes</label>
+					</div>
+					<button type="button" mat-raised-button color="light" (click)="file.click()">
+						<mat-icon>add</mat-icon>
+						Agregar Imagen
+					</button>
+					<input formControlName="file" id="file" type="file" class="form-control hidden" multiple=""
+						(change)="onFileChange($event)" #file>
+					<mat-error *ngIf="publicacionForm.get('file')!.hasError('required') && showErrors">
+						La publicación debe tener al menos 1 imagen
+					</mat-error>
+					<div class="form-col form-imgs">
+						<div class="show-image" *ngFor='let url of images; let i = index;' (click)="removeImagen(i)" >
+							<div class="image" >
+								<div class="overlay">
+								</div>
+								<mat-icon class="update" color="primary">delete</mat-icon>
+								<img [src]="url" class="img-producto">
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- <div class="form-col mensaje-field">
+					<mat-form-field>
+						<mat-label>Mensaje Adicional</mat-label>
+						<textarea matInput
+						cdkTextareaAutosize
+						#autosize="cdkTextareaAutosize"
+						cdkAutosizeMinRows="1"
+						cdkAutosizeMaxRows="5"
+						formControlName="mensaje"></textarea>
+					</mat-form-field>
+				</div> -->
+			</form>
+		</mat-card-content>
+		<mat-card-actions class="buttons">
+			<button mat-raised-button color="primary"
+				(click)="publicar();publicacionForm.markAllAsTouched(); publicacionForm.valid">
+				CREAR PUBLICACIÓN
+			</button>
+		</mat-card-actions>
+	</mat-card>
+</div>

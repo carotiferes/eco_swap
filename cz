@@ -1,0 +1,56 @@
+[1mdiff --git a/microservicios/ms-autenticacion/src/main/resources/application.properties b/microservicios/ms-autenticacion/src/main/resources/application.properties[m
+[1mindex d297a11..2953e66 100644[m
+[1m--- a/microservicios/ms-autenticacion/src/main/resources/application.properties[m
+[1m+++ b/microservicios/ms-autenticacion/src/main/resources/application.properties[m
+[36m@@ -17,11 +17,11 @@[m [mspring.application.name = ecoSwap[m
+ spring.mvc.validation.enabled = true[m
+ [m
+ # SSL[m
+[31m-security.require-ssl=true[m
+[31m-server.ssl.key-store: keystore.p12[m
+[31m-server.ssl.key-store-password: 3C0sw4p2023[m
+[31m-server.ssl.keyStoreType: PKCS12[m
+[31m-server.ssl.keyAlias: tomcat[m
+[32m+[m[32m#security.require-ssl=true[m
+[32m+[m[32m#server.ssl.key-store: keystore.p12[m
+[32m+[m[32m#server.ssl.key-store-password: 3C0sw4p2023[m
+[32m+[m[32m#server.ssl.keyStoreType: PKCS12[m
+[32m+[m[32m#server.ssl.keyAlias: tomcat[m
+ [m
+ # Network[m
+ server.port=8085[m
+[36m@@ -33,13 +33,13 @@[m [mspringdoc.swagger-ui.path=/swagger-ui-custom.html[m
+ springdoc.swagger-ui.operationsSorter=method[m
+ [m
+ # Connection with the Local MySQL Database [username and password could be different][m
+[31m-#spring.datasource.url=jdbc:mysql://localhost:3306/ecoswap[m
+[31m-#spring.datasource.username=root[m
+[31m-#spring.datasource.password=admin[m
+[32m+[m[32mspring.datasource.url=jdbc:mysql://localhost:3310/ecoswap[m
+[32m+[m[32mspring.datasource.username=root[m
+[32m+[m[32mspring.datasource.password=m4c4c0s2109![m
+ [m
+[31m-spring.datasource.url=jdbc:mysql://database-1.c81mvghxejl4.us-east-1.rds.amazonaws.com/ecoswap[m
+[31m-spring.datasource.username=admin[m
+[31m-spring.datasource.password=iPK1ZlYVi3vT5Rz43Ojm[m
+[32m+[m[32m#spring.datasource.url=jdbc:mysql://database-1.c81mvghxejl4.us-east-1.rds.amazonaws.com/ecoswap[m
+[32m+[m[32m#spring.datasource.username=admin[m
+[32m+[m[32m#spring.datasource.password=iPK1ZlYVi3vT5Rz43Ojm[m
+ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver[m
+ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect[m
+ [m
+[36m@@ -50,9 +50,11 @@[m [mspring.jpa.hibernate.ddl-auto=update[m
+ [m
+ [m
+ #EMAILS CONFIGURATIONS[m
+[31m-spring.mail.host=smtp.gmail.com[m
+[32m+[m[32mspring.mail.host=smtp.zoho.com[m
+ spring.mail.port=587[m
+[31m-spring.mail.username=damikreuter@frba.utn.edu.ar[m
+[31m-spring.mail.password=gydntbsspusfcdrz[m
+[32m+[m[32mspring.mail.username=webmaster@ecoswap.com.ar[m
+[32m+[m[32mspring.mail.password=3Lp4t04rrug4d02109![m
+[32m+[m
+ spring.mail.properties.mail.smtp.auth=true[m
+ spring.mail.properties.mail.smtp.starttls.enable=true[m
+[32m+[m[32m#spring.mail.properties.mail.smtp.startssl.enable:true[m

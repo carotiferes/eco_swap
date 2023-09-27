@@ -21,7 +21,7 @@ export class HeaderComponent {
 
 	userData: any;
 	isUserLoggedIn: boolean;
-	profileType?: 'particular' | 'fundacion';
+	profileType: 'particular' | 'fundacion';
 
 	constructor(private router: Router, private auth: AuthService){
 		this.mainTabs = menuData.filter((item: MenuModel) => item.type == 'pages')
@@ -29,21 +29,11 @@ export class HeaderComponent {
 		this.url = router.url;
 
 		this.isUserLoggedIn = auth.isUserLoggedIn
-		console.log(this.isUserLoggedIn);
-		if(this.isUserLoggedIn){
-			this.userData = auth.getUserData()
-			this.profileType = this.userData.isSwapper ? 'particular' : 'fundacion';
-			console.log(this.userData, this.profileType);
-		}
-		
+		this.profileType = auth.isUserSwapper() ? 'particular' : 'fundacion';
 	}
 
 	goTo(path: string){
 		this.router.navigateByUrl(path)
-	}
-
-	goToMy(path: string){
-		this.router.navigateByUrl(path + '/' + this.userData.id_perfil)
 	}
 
 	logOut(){

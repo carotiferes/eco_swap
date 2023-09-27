@@ -41,7 +41,7 @@
 					</div>
 					<div>
 						<div *ngFor="let producto of getProductosArray.controls; let i=index" class="producto"
-							[formGroupName]="i">
+							[formGroupName]="i" [ngClass]="producto.hasError('min') ? 'show-product-error' : ''">
 							<mat-form-field>
 								<input matInput placeholder="Descripción*" formControlName="s_descripcion">
 								<mat-error *ngIf="producto.get('s_descripcion')!.hasError('required')">
@@ -50,11 +50,14 @@
 							</mat-form-field>
 							<mat-form-field>
 								<mat-label>Cantidad solicitada</mat-label>
-								<input matInput formControlName="n_cantidad_solicitada" type="number">
+								<input matInput formControlName="n_cantidad_solicitada" type="number" min="0">
+								<mat-error *ngIf="producto.get('n_cantidad_solicitada')!.hasError('min')" class="error">
+									El valor debe ser mayor a 0.
+								</mat-error>
 							</mat-form-field>
 							<mat-form-field>
 								<mat-label>Tipo</mat-label>
-								<mat-select formControlName="tipo_producto" (selectionChange)="test()">
+								<mat-select formControlName="tipo_producto">
 									<mat-option *ngFor="let tipo of tipos_productos" [value]="tipo">
 										{{tipo}}
 									</mat-option>
@@ -74,6 +77,9 @@
 							<mat-icon>add</mat-icon>
 							<label>Agregar Producto</label>
 						</button>
+						<mat-error *ngIf="getProductosArray.length == 0 && showErrors">
+							La colecta debe tener al menos 1 producto
+						</mat-error>
 					</div>
 				</section>
 
@@ -83,6 +89,9 @@
 					<label for="file">Imagen de la Colecta</label>
 					<input formControlName="file" id="file" type="file" class="form-control"
 						(change)="onFileChange($event)">
+					<mat-error *ngIf="colectaForm.get('file')!.hasError('required') && showErrors">
+						La colecta debe tener al menos 1 imagen
+					</mat-error>
 					<app-spinner [loading]="loadingImg"></app-spinner>
 				</div>
 

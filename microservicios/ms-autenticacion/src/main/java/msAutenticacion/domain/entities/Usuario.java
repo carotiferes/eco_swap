@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import msAutenticacion.domain.responses.DTOs.UsuarioDTO;
 import org.hibernate.validator.constraints.Range;
 
 import java.util.List;
@@ -22,8 +23,8 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "idUsuario")
-    private long id;
+    @Column(name = "id_usuario")
+    private long idUsuario;
 
     @NotNull
     @Column(unique = true)
@@ -40,7 +41,7 @@ public class Usuario {
     private String password;
 
     @NotNull
-    @Size(max = 6)
+    @Size(max = 10)
     private String salt;
 
     private String jwtPrivateKey;
@@ -50,7 +51,7 @@ public class Usuario {
     private String confirmCodigo;
 
     @NotNull
-    @Size(max = 10)
+    @Size(max = 12)
     private String telefono;
 
     @NotNull
@@ -58,8 +59,8 @@ public class Usuario {
     @Column(unique = true)
     private String email;
 
-    @Range(min = 0, max = 100)
-    private String puntaje;
+    @Range(min = 0, max = 5)
+    private Integer puntaje;
 
     @NotNull
     private boolean isSwapper;
@@ -70,11 +71,28 @@ public class Usuario {
     @Column(columnDefinition = "boolean default 1")
     private boolean bloqueado;
 
+    @Column(name = "validado", columnDefinition = "boolean default 0")
+    private boolean validado;
+
     @OneToMany(mappedBy = "usuarioOpina", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Opinion> opiniones;
 
-    public void aumentarIntetoEn1() {
+    public void aumentarIntentoEn1() {
         this.setIntentos(intentos+1);
+    }
+
+    public UsuarioDTO toDTO(){
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setIdUsuario(idUsuario);
+        usuarioDTO.setPuntaje(puntaje);
+        usuarioDTO.setEmail(email);
+        usuarioDTO.setSwapper(isSwapper());
+        usuarioDTO.setTelefono(telefono);
+        usuarioDTO.setUsername(username);
+        usuarioDTO.setBloqueado(bloqueado);
+        usuarioDTO.setValidado(validado);
+        usuarioDTO.setIntentos(intentos);
+        return usuarioDTO;
     }
 
 }

@@ -1,6 +1,9 @@
 {
   "/api": {
-    "target": "http://localhost:8080",
-    "secure": false
+    "target": "https://ecoswap.com.ar:8080",
+    "secure": true
   }
+  
 }
+
+

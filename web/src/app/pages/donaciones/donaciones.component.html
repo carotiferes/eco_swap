@@ -3,6 +3,6 @@
 <div>
 	<div *ngFor="let donacion of donaciones">
 		<app-card-donacion [donacion]="donacion" *ngIf="donacion.idDonacion"
-		[usuarioHeader]="donacion.producto.colecta.fundacion" [buttons]="[{name: 'cancelar', icon: 'close', color: 'warn', status: 'CANCELADA', disabled: donacion.estadoDonacion != 'PENDIENTE'}]"></app-card-donacion>
+		[usuarioHeader]="donacion.producto.colectaDTO.fundacionDTO" [buttons]="[{name: 'cancelar', icon: 'close', color: 'warn', status: 'CANCELADA', disabled: donacion.estadoDonacion != 'PENDIENTE'}]"></app-card-donacion>
 	</div>
 </div>

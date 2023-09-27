@@ -20,7 +20,6 @@ public class CaracteristicaDonacion {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     private Long userId;
     private String caracteristica;
 

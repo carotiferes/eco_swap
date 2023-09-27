@@ -1,11 +1,12 @@
 <mat-card style="margin: 10px;">
-	<mat-card-header style="border-bottom: solid 1px var(--light-grey);">
+	<mat-card-header class="header">
 		<div mat-card-avatar class="donacion-example-header-image"></div>
 		<mat-card-title>{{usuarioHeader.nombre}} {{usuarioHeader.apellido}}</mat-card-title>
 		<mat-card-subtitle>
-			<mat-icon *ngFor="let i of getStars(usuarioHeader.usuario.puntaje)" color="primary">star</mat-icon>
-			<mat-icon *ngFor="let i of getStars(5-(usuarioHeader.usuario.puntaje))" class="empty-star">star</mat-icon>
+			<mat-icon *ngFor="let i of getStars(usuarioHeader.puntaje)" color="primary">star</mat-icon>
+			<mat-icon *ngFor="let i of getStars(5-(usuarioHeader.puntaje))" class="empty-star">star</mat-icon>
 		</mat-card-subtitle>
+		<div style="text-align: right;">{{donacion.fechaDonacion | date: 'dd/MM/yyyy'}}</div>
 	</mat-card-header>
 	<mat-card-content class="donacion-card-content">
 		<div>
@@ -13,7 +14,7 @@
 			<p>Cantidad: {{donacion.cantidadDonacion}}</p>
 			<p [class.aprobada]="donacion.estadoDonacion == 'APROBADA'"
 				[class.rechazada]="donacion.estadoDonacion == 'RECHAZADA'">Estado: {{donacion.estadoDonacion}}</p>
-			<p>{{caracteristicas.length > 0 ? 'Características:' + caracteristicas : ''}}</p>
+			<p>{{caracteristicas.length > 0 ? 'Características: ' + caracteristicas : ''}}</p>
 		</div>
 		<div class="imagenes">
 			<img [src]="getImage(img)" *ngFor="let img of donacion.parsedImagenes" (click)="zoomImage(img)" />

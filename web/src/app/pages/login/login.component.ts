@@ -2,6 +2,7 @@ import { Component, ElementRef, ViewChild, ViewEncapsulation } from '@angular/co
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import Swal from 'sweetalert2';
+import { Location } from '@angular/common';
 
 @Component({
 	selector: 'app-login',
@@ -12,41 +13,49 @@ import Swal from 'sweetalert2';
 export class LoginComponent {
 
 	username: string = '';
-	//password: string = '';
+	password: string = '';
 
 	@ViewChild('user') userHtml: ElementRef | undefined;
-	//@ViewChild('password') passwordHtml: ElementRef | undefined;
+	@ViewChild('password') passwordHtml: ElementRef | undefined;
+
+	passwordIcon: string = 'visibility_off';
+	passwordType: string = 'password';
 
 	//TODO: loading on submit
 
-	constructor(private auth: AuthService, private router: Router) { }
+	constructor(private auth: AuthService, private router: Router, private location: Location) {}
+
+	ngOnInit(): void {
+		if(this.auth.isUserLoggedIn){
+			this.router.navigate([''])
+		}
+	}
 
 	onSubmit() {
 		this.username = this.userHtml?.nativeElement.value;
-		//this.password = this.passwordHtml?.nativeElement.value;
-		const users = this.auth.getPossibleUsers
-		if (!this.username /* || !this.password */) {
+		this.password = this.passwordHtml?.nativeElement.value;
+
+		if (!this.username || !this.password) {
 			Swal.fire({ title: 'Campos incompletos!', text: 'Por favor completá todos los campos antes de continuar.', icon: 'error' })
 		} else {
-			if(!users.includes(this.username)){
-				Swal.fire({ title: 'Usuario inválido!', text: 'Por favor ingresá un usuario válido para continuar.', icon: 'error' })
-			} else {
-				this.auth.login(this.username/* , this.password */);
-				//TODO: then and catch
-				let userData = this.auth.getUserData()
-	
-				userData.isSwapper ? this.router.navigateByUrl('/colectas') : this.router.navigateByUrl('/colectas')
-			}
+			this.auth.login(this.username, this.password);
 		}
 	}
 
 	createAccount(){
-		Swal.fire({
-			title: '¡Te damos la bienvenida!',
-			text: `Nos alegra que te quieras sumar a nuestra comunidad, para hacerlo, dejanos tu email
-				y te mandaremos tu usuario para que puedas ingresar.`,
-			icon: 'success',
-			input: 'email'
-		})
+		this.router.navigate(['registro'])
+	}
+
+	goToHome(){
+		this.router.navigate(['home'])
+	}
+
+	resetPassword(){
+		this.router.navigate(['reset-password'])
+	}
+
+	togglePassword(){
+		this.passwordType = this.passwordType === 'text' ? 'password' : 'text';
+		this.passwordIcon = this.passwordIcon === 'visibility' ? 'visibility_off' : 'visibility';
 	}
 }

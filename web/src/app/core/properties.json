@@ -1,3 +1,5 @@
 {
-	"URI": "http://localhost:8080/"
+
+	"URImsUsuarios": "8080/",
+	"URImsAutenticacion": "8085/"
 }

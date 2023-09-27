@@ -6,10 +6,11 @@ export interface DonacionModel {
 	descripcion: string,
 	cantidadDonacion: number,
 	estadoDonacion: string,
-	particular: ParticularModel
+	particularDTO: ParticularModel
 	producto: ProductoModel,
 	caracteristicaDonacion: any[],
 	imagenes: any,
 	parsedImagenes: string[],
-	nombreProducto?: string
+	nombreProducto?: string,
+	fechaDonacion: Date
 }

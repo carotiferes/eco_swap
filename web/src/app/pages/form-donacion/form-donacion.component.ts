@@ -19,10 +19,9 @@ export class FormDonacionComponent implements OnInit {
 
 	images: any[] = [];
 
-	userData: any;
-
 	loading: boolean = true;
 	id_colecta?: string;
+	showErrors: boolean = false;
 
 	constructor(private fb: FormBuilder, private route: ActivatedRoute, private router: Router,
 		private donacionesService: DonacionesService, private auth: AuthService) {
@@ -35,20 +34,25 @@ export class FormDonacionComponent implements OnInit {
 		this.donacionForm = fb.group({
 			producto: ['', Validators.required],
 			caracteristicas: this.fb.array([]),
-			file: [''],
+			file: ['', Validators.required],
 			file_source: ['', Validators.required],
 			n_cantidad: ['', Validators.required],
 			mensaje: ['']
 		})
 
 		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
-		this.userData = auth.getUserData();
 	}
 
 	ngOnInit(): void {
-		this.donacionesService.getColectas().subscribe((res: any) => {
-			this.colecta = res.find((item: any) => item.idColecta == this.id_colecta)
-			this.loading = false;
+		this.donacionesService.getColecta(this.id_colecta).subscribe({
+			next: (res: any) => {
+				this.colecta = res;
+				this.loading = false;
+			},
+			error: (error) => {
+				console.log(error);
+				
+			}
 		})
 	}
 
@@ -67,6 +71,7 @@ export class FormDonacionComponent implements OnInit {
 
 	confirmarDonacion() {
 		console.log(this.donacionForm.value);
+		this.showErrors = true;
 		
 		if(this.donacionForm.valid){
 			let caracteristicas: any[] = this.getCaracteristicasArray.value || [];
@@ -75,27 +80,30 @@ export class FormDonacionComponent implements OnInit {
 				sendCaracteristicas.push(item.s_descripcion);
 			})
 			const objetoToSend = {
-				idParticular: this.userData.id_particular,
-				colectaProductoModel: {
-					tipoProducto: "MUEBLES",
-					productoId: this.donacionForm.controls['producto'].value,
-					cantidadOfrecida: this.donacionForm.controls['n_cantidad'].value,
-					mensaje: this.donacionForm.controls['mensaje'].value,
-					caracteristicas: sendCaracteristicas,
-					imagenes: this.donacionForm.controls['file_source'].value
-				}
+				tipoProducto: "MUEBLES",
+				productoId: this.donacionForm.controls['producto'].value,
+				cantidadOfrecida: this.donacionForm.controls['n_cantidad'].value,
+				mensaje: this.donacionForm.controls['mensaje'].value,
+				caracteristicas: sendCaracteristicas,
+				imagenes: this.donacionForm.controls['file_source'].value
 			}
-			console.log(objetoToSend);
+			console.log('obj to send',objetoToSend);
 	
-			this.donacionesService.crearDonacion(this.colecta.idColecta, objetoToSend).subscribe(res => {
-				console.log(res);
-				if(JSON.parse(JSON.stringify(res)).descripcion)	{
-					this.showMessage('Donación Creada!', 'La donacion se creó exitosamente. Ahora te toca a vos! Llevá tu donación a la fundación para que la puedan empezar a usar.', 'success')
-					this.router.navigateByUrl('colecta/'+ this.id_colecta)
+			this.donacionesService.crearDonacion(this.colecta.idColecta, objetoToSend).subscribe({
+				next: (res) => {
+					console.log(res);
+					if(JSON.parse(JSON.stringify(res)).descripcion)	{
+						this.showMessage('Donación Creada!', 'La donacion se creó exitosamente. Ahora te toca a vos! Llevá tu donación a la fundación para que la puedan empezar a usar.', 'success')
+						this.router.navigateByUrl('colecta/'+ this.id_colecta)
+					}
+					else this.showMessage('Ocurrió un error', 'No pudimos crear la donacion. Intentá nuevamente luego.', 'error')
+				},
+				error: (error) =>{
+					console.log('error creando donacion', error);
+					//this.showMessage('Ocurrió un error', 'No pudimos crear la donacion. Intentá nuevamente luego.', 'error')
 				}
-				else this.showMessage('Ocurrió un error', 'No pudimos crear la donacion. Intentá nuevamente luego.', 'error')
 			})
-		} else this.showMessage('Error en los campos.', 'Revisá los campos y completalos correctamente.', 'error')
+		} //else this.showMessage('Error en los campos.', 'Revisá los campos y completalos correctamente.', 'error')
 	}
 
 	removeCaracteristica(i: number) {
@@ -108,18 +116,13 @@ export class FormDonacionComponent implements OnInit {
 			var filesAmount = event.target.files.length;
 			for (let i = 0; i < filesAmount; i++) {
 				var reader = new FileReader();
-
 				reader.onload = (event: any) => {
 					this.images.push(event.target.result);
-
 					this.donacionForm.patchValue({
 						file_source: this.images
 					});
 				}
-
 				reader.readAsDataURL(event.target.files[i]);
-				console.log(this.images, this.donacionForm.controls['file_source']);
-
 			}
 		}
 	}

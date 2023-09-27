@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpBackEnd } from './httpBackend.service';
+import Swal from 'sweetalert2';
+import jwtDecode from 'jwt-decode';
+import { UsuarioService } from './usuario.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
+const URL_NAME = 'URImsAutenticacion'
 
 @Injectable({
 	providedIn: 'root'
@@ -7,54 +14,84 @@ import { Router } from '@angular/router';
 export class AuthService {
 
 	isUserLoggedIn: boolean;
+	userData: any;
+	isUserValidated: boolean = false;
 
-	possibleUsers = ['mromero', 'sgomez', 'tzedaka', 'cruzroja']
-
-	constructor(private router: Router) {
+	constructor(private router: Router, private backendService: HttpBackEnd, private usuarioService: UsuarioService,
+		private snackbar: MatSnackBar) {
 		if(this.getUserLogin()) this.isUserLoggedIn = true;
 		else this.isUserLoggedIn = false;
 	}
 
 	login(username: string, password?: string) {
-		console.log(username, password);
-		// TODO: CHANGE FROM HARDCODED DATA TO CALL BACKEND (access token)
-		let userData: any;
-		if(username == 'mromero'){
-			userData = {
-				username,
-				id_perfil: 1,
-				id_particular: 1,
-				isSwapper: true
-			}
-		} else if(username == 'sgomez'){
-			userData = {
-				username,
-				id_perfil: 4,
-				id_particular: 2,
-				isSwapper: true
-			}
-		} else if(username == 'tzedaka'){
-			userData = {
-				username,
-				id_perfil: 2,
-				id_fundacion: 1,
-				isSwapper: false
-			}
-		} else {
-			userData = {
-				username,
-				id_perfil: 3,
-				id_fundacion: 2,
-				isSwapper: false
-			}
-		}
-		this.setLocalStorage('userData', JSON.stringify(userData));
-		this.isUserLoggedIn = true;
-		this.setUserLoggedIn()
-	}
-
-	get getPossibleUsers(){
-		return this.possibleUsers
+		this.backendService.patch(URL_NAME, 'ms-autenticacion/api/v1/usuario/login', {username, password}).subscribe({
+			next: (v: any) => {
+				console.log('response:', v);
+				// TODO: GET USER INFO TO SAVE IN LOCAL STORAGE (AT LEAST IS_SWAPPER)
+				const userData: any = jwtDecode(v.token)
+				console.log('data', userData);
+				if(userData.usuarioValidado) {
+					this.setLocalStorage('userToken', v.token);
+					this.isUserValidated = true;
+					this.setLocalStorage('isSwapper', JSON.stringify(userData.esParticular));
+					this.isUserLoggedIn = true;
+					this.setUserLoggedIn();
+					this.router.navigate([''])
+				} else {
+					Swal.fire({
+						title: '¡Validá tu cuenta!',
+						text: 'Ingresá el código que recibiste por mail para validar tu cuenta.',
+						confirmButtonText: 'CONFIRMAR',
+						showDenyButton: true,
+						denyButtonText: 'Volver a enviar el mail',
+						icon: 'info',
+						//allowOutsideClick: false,
+						input: 'text',
+						reverseButtons: true,
+						preDeny: () => {
+							this.sendEmailAgain(userData.id).subscribe({
+								next: (res) => {
+									console.log(res);
+									this.snackbar.open('Se envió el nuevo mail!', '', {
+										horizontalPosition: 'center',
+										verticalPosition: 'top',
+										duration: 3000
+									})
+								}
+							})
+							return false;
+						}
+					}).then(({isConfirmed, value, isDenied}) => {
+						if(isConfirmed) {
+							this.usuarioService.confirmarCuenta(userData.id, value).subscribe({
+								next: (res) => {
+									console.log(res);
+									//this.router.navigate(['/'])
+									Swal.fire('Excelente!', 'Tu cuenta fue verificada, ya podes usar Ecoswap!', 'success')
+									this.isUserValidated = true;
+									this.setLocalStorage('isSwapper', JSON.stringify(userData.esParticular));
+									this.isUserLoggedIn = true;
+									this.setUserLoggedIn();
+									this.router.navigate([''])
+								},
+								error: (error) => {
+									console.log(error);
+									/* if(error.message.descripcion == "El código es incorrecto") {
+										Swal.fire('Código incorrecto!', 'El código ingresado es incorrecto. Iniciá sesión y volvé a intentarlo.', 'error')
+										this.router.navigate(['/login'])
+									} */
+								}
+							})
+						}
+					})
+				}
+			},
+			error: (e) => {
+				console.error('error:', e);
+				Swal.fire('¡Error!', e.message.descripcion/* 'Ocurrió un error. Por favor revisá los campos e intentá nuevamente.' */, 'error')
+			},
+			complete: () => console.info('login complete') 
+		})
 	}
 
 	setLocalStorage(key: string, data: string) {
@@ -62,26 +99,43 @@ export class AuthService {
 	}
 
 	setUserLoggedIn() {
-		localStorage.setItem(
-			'userLoggedIn',
-			this.isUserLoggedIn ? 'true' : 'false'
-		);
+		localStorage.setItem('userLoggedIn', this.isUserLoggedIn ? 'true' : 'false');
 	}
 
-	getUserData() {
-		const user = JSON.parse(localStorage.getItem('userData') as string);
-		return user;
+	getUserID() {
+		if(this.isUserLoggedIn){
+			const tkn = localStorage.getItem('userToken')
+			if(tkn) {
+				const decodedToken: any = jwtDecode(tkn)
+				return decodedToken.id;
+			} else return null;
+		} else return null;
 	}
 
 	getUserLogin() {
 		return localStorage.getItem('userLoggedIn');
 	}
 
+	isUserSwapper() {
+		const is = localStorage.getItem('isSwapper')
+		if(is) return JSON.parse(is);
+	}
+
+	getUserToken(){
+		return localStorage.getItem('userToken');
+	}
+
 	logout() {
 		this.isUserLoggedIn = false;
 		localStorage.clear();
-		this.router.navigate(['/']);
-		console.log(localStorage.getItem('userData'));
-		
+		this.router.navigate(['/login']);
+	}
+
+	resetPassword(body: any){ /* body: { username: string, nuevoPassword: string, confirmarPassword: string } */
+		return this.backendService.put(URL_NAME, 'ms-autenticacion/api/v1/usuario/password', body);
+	}
+
+	sendEmailAgain(id_usuario: number) {
+		return this.backendService.patch(URL_NAME, `ms-autenticacion/api/v1/usuario/reenvio/${id_usuario}`, {});
 	}
 }

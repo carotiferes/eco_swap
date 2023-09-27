@@ -1,100 +1,103 @@
 package msUsers.services;
 
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.entities.*;
 import msUsers.domain.entities.enums.EstadoDonacion;
 import msUsers.domain.repositories.*;
 import msUsers.domain.requests.donaciones.RequestComunicarDonacionColectaModel;
+import msUsers.exceptions.DonacionCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class ColectaService {
 
     @Autowired
-    ColectaRepository colectaRepository;
-
+    private ColectasRepository colectasRepository;
     @Autowired
-    ImageService imageService;
-
+    private ImageService imageService;
     @Autowired
-    ParticularRepository particularRepository;
-
+    private ParticularesRepository particularesRepository;
     @Autowired
-    ProductoRepository productoRepository;
-
+    private ProductosRepository productosRepository;
     @Autowired
-    DonacionesRepository donacionesRepository;
-
+    private EntityManager entityManager;
     @Autowired
-    MensajeRespuestaRepository mensajeRespuestaRepository;
+    private DonacionesRepository donacionesRepository;
     @Autowired
-    CaracteristicaDonacionRepository caracteristicaDonacionRepository;
+    private MensajeRespuestaRepository mensajeRespuestaRepository;
+    @Autowired
+    private CaracteristicaDonacionRepository caracteristicaDonacionRepository;
 
-    public void crearDonacionComunicacion(RequestComunicarDonacionColectaModel request, Long idColecta) {
-           log.info(">> SERVICE: Se comenzo la creacion de donacion para la colecta: {}", idColecta);
-           Colecta colecta = colectaRepository.findById(idColecta).get();
-           Producto producto = colecta.getProductos().
+    public void crearDonacion(RequestComunicarDonacionColectaModel request, Long idColecta, Long idParticular) {
+        log.info(">> SERVICE: Se comenzo la creacion de donacion para la colecta: {}", idColecta);
+        Colecta colecta = colectasRepository.findById(idColecta).get();
+        Producto producto = colecta.getProductos().
                    stream()
-                   .filter(x -> x.getIdProducto() == request.getColectaProductoModel().getProductoId())
+                   .filter(x -> x.getIdProducto() == request.getProductoId())
                    .findAny().get();
-           List<CaracteristicaDonacion> lista = request.getColectaProductoModel()
-                   .getCaracteristicas()
+        List<CaracteristicaDonacion> lista = request.getCaracteristicas()
                    .stream()
-                   .map(s -> CaracteristicaDonacion.armarCarateristica(s, request.getIdParticular()))
+                   .map(s -> CaracteristicaDonacion.armarCarateristica(s, idParticular))
                    .toList();
-           Particular particular = particularRepository.findById(request.getIdParticular()).get();
+        Particular particular = particularesRepository.findById(idParticular).get();
 
-           //TODO: Revisar que no se creen las imagenes si falla la creación de la donación
-           List<String> nombreImagenes = new ArrayList<>();
-           for (int i = 0; i < request.getColectaProductoModel().getImagenes().size(); i++) {
-               nombreImagenes.add(imageService.saveImage(request.getColectaProductoModel().getImagenes().get(i)));
-           }
+        if(request.getCantidadOfrecida() > producto.getCantidadSolicitada())
+            throw new DonacionCreationException("Error: Cantidad ofrecida mayor a la requerida.");
+        if(LocalDate.now().isBefore(colecta.getFechaInicio()) || LocalDate.now().isAfter(colecta.getFechaFin()))
+            throw new DonacionCreationException("Colecta expirada.");
 
-           Donacion donacionNueva = new Donacion();
-           donacionNueva.setCantidadDonacion(request.getColectaProductoModel().getCantidadOfrecida());
-           donacionNueva.setDescripcion(request.getColectaProductoModel().getMensaje());
-           donacionNueva.setEstadoDonacion(EstadoDonacion.PENDIENTE);
-           donacionNueva.setParticular(particular);
-           donacionNueva.setProducto(producto);
-           donacionNueva.setCaracteristicaDonacion(lista);
-           donacionNueva.setImagenes(String.join("|", nombreImagenes));
+        try{
+            Donacion donacionNueva = new Donacion();
+            donacionNueva.setCantidadDonacion(request.getCantidadOfrecida());
+            donacionNueva.setDescripcion(request.getMensaje());
+            donacionNueva.setEstadoDonacion(EstadoDonacion.PENDIENTE);
+            donacionNueva.setParticular(particular);
+            donacionNueva.setProducto(producto);
+            donacionNueva.setCaracteristicaDonacion(lista);
+            donacionNueva.setFechaDonacion(LocalDate.now());
 
-           var entity = this.donacionesRepository.save(donacionNueva);
+            List<String> nombreImagenes = new ArrayList<>();
+            for (int i = 0; i < request.getImagenes().size(); i++) {
+                nombreImagenes.add(imageService.saveImage(request.getImagenes().get(i)));
+            }
 
-           log.info("<< Donacion creado con ID: {}", entity.getIdDonacion());
-           List<Donacion> listaDonaciones = colecta.getProductos().stream().flatMap(prod -> prod.getDonaciones().stream()).toList();
-           log.info("<< Listado de donaciones originales de solciitud ID de donaciones: {}, cantidad original {}",
-                   idColecta, listaDonaciones.size());
+            donacionNueva.setImagenes(String.join("|", nombreImagenes));
+            var entity = this.donacionesRepository.save(donacionNueva);
+            log.info("<< Donacion creado con ID: {}", entity.getIdDonacion());
+        } catch (Exception e){
+            throw new DonacionCreationException("Error al crear la donacion: " + e.getMessage());
+        }
 
-           log.info("<< Colecta actualizado con ID de donaciones: {}",
-                   listaDonaciones
-                           .stream()
-                           .map(Donacion::getIdDonacion)
-                           .toList());
+        List<Donacion> listaDonaciones = colecta.getProductos().stream().flatMap(prod -> prod.getDonaciones().stream()).toList();
+
+        log.info("<< Listado de donaciones originales de solciitud ID de donaciones: {}, cantidad original {}", idColecta, listaDonaciones.size());
+        log.info("<< Colecta actualizada con ID de donaciones: {}", listaDonaciones.stream().map(Donacion::getIdDonacion).toList());
     }
 
-    public List<Donacion> obtenerTodasLasDonacionesComunicacion(Long idcolecta) {
-        log.info(">> Obtener todas las donaciones de comunicacion de una Colecta: {}", idcolecta);
-        List<Donacion> donacioncolectas = colectaRepository.findById(idcolecta).get().getProductos().
-                stream().flatMap(prod -> prod.getDonaciones().stream()).toList();;
-        log.info("<< Cantidad obtenidas: {}", donacioncolectas.size());
-        return donacioncolectas;
+    public List<Donacion> obtenerTodasLasDonaciones(Long idColecta) {
+        log.info(">> Obtener todas las donaciones de la Colecta: {}", idColecta);
+        Colecta colecta = this.colectasRepository.findById(idColecta)
+                        .orElseThrow(() -> new EntityNotFoundException("No fue encontrada la colecta: " + idColecta));
+        List<Donacion> donaciones = colecta.getProductos().stream().flatMap(prod -> prod.getDonaciones().stream()).toList();;
+        log.info("<< Cantidad obtenidas: {}", donaciones.size());
+        return donaciones;
 
     }
 
-    public Donacion obtenerdonacionesComunicacionXId(Long idDonacionComunicacion) {
-        log.info(">> Obtener 1 donacion de comunicacion de colecta x id: {}", idDonacionComunicacion);
-        return donacionesRepository.findById(idDonacionComunicacion).
-                orElseThrow(() -> new EntityNotFoundException("No fue encontrado la comunicacion de donacion con ID: "
-                        + idDonacionComunicacion));
+    public Donacion obtenerDonacionXIdDonacion(Long idDonacion) {
+        log.info(">> Obtener donacion de colecta x id: {}", idDonacion);
+        return donacionesRepository.findById(idDonacion).
+                orElseThrow(() -> new EntityNotFoundException("No fue encontrado la donacion con ID: " + idDonacion));
     }
+
 /* POSTERGAMOS ESTE DESARROLLO
     //PUEDE ACTUALIZAR LA DONACION E INCLUSO LA colecta
     public void agregarMensajeParaDonacionComunicacion(

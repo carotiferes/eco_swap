@@ -32,13 +32,38 @@ $eco-swap: (
 	)
 );
 
+$contrast: (
+	50: #f1e3f8,
+	100: #dcb9ef,
+	200: #c58ae5,
+	300: #ae59db,
+	400: #9c30d4,
+	500: #8800c6,
+	600: #7800c1,
+	700: #6000ba,
+	800: #4802b2,
+	900: #0007a4,
+	contrast: (
+		50: #effae8,
+		100: #d7f3c6,
+		200: #bceba1,
+		300: #9fe27a,
+		400: #87db59,
+		500: #6fd437,
+		600: #5fc32f,
+		700: #47ae24,
+		800: #2e9a19,
+		900: #007707
+	)
+);
+
 $eco-swap-primary: mat.define-palette($eco-swap, 400);
-$eco-swap-accent: mat.define-palette($eco-swap, 300);// TODO: check accent color
+$eco-swap-accent: mat.define-palette($contrast, 200);
 
 $eco-swap-theme: mat.define-light-theme((
  color: (
    primary: $eco-swap-primary,
-   accent: $eco-swap-accent,
+   accent: $eco-swap-accent
  ),
  typography: mat.define-typography-config(),
  density: 0,
@@ -75,4 +100,19 @@ html, body {
 
 .example-panel {
 	min-width: 350px !important;
+}
+
+.form-input,
+.form-col {
+	&.form-input-long-error {
+		.mat-mdc-form-field-subscript-wrapper {
+			height: 70px !important;
+		}
+	}
+}
+
+.form-input.form-input-medium-error {
+	.mat-mdc-form-field-subscript-wrapper {
+		height: 45px !important;
+	}
 }

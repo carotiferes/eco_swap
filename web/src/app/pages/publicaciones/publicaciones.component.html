@@ -1,0 +1,46 @@
+<app-header [title]="origin == 'all' ? 'Publicaciones' : (origin == 'myPublicaciones' ? 'Mis Publicaciones' : 'Mis Compras')"></app-header>
+
+<div id="main-publicaciones">
+	<div class="row">
+		<form [formGroup]="formFiltros" id="form-filtros" *ngIf="origin == 'all'">
+			<mat-form-field appearance="outline">
+				<mat-label>Código Postal</mat-label>
+				<input matInput formControlName="codigoPostal" type="number">
+			</mat-form-field>
+			<mat-form-field appearance="outline">
+				<mat-label>Tipo del Producto</mat-label>
+				<mat-select formControlName="tipoProducto" panelClass="example-panel">
+					<mat-option *ngFor="let tipo of tipos_productos" [value]="tipo.nombre">
+						{{tipo.descripcion}}
+					</mat-option>
+				</mat-select>
+				<!-- <input matInput formControlName="tipoProducto"> -->
+			</mat-form-field>
+			<div style="text-align: center;">
+				<button mat-raised-button color="primary" (click)="filtrarPublicaciones()">FILTRAR</button>
+				<button mat-raised-button (click)="limpiarFiltros()">LIMPIAR</button>
+			</div>
+		</form>
+	</div>
+	<app-spinner [loading]="loading"></app-spinner>
+	<div class="row" *ngIf="!loading">
+		<div *ngIf="publicacionesToShow.length==0" style="text-align: center;">No hay publicaciones para mostrar</div>
+		<div><!-- class="col-lg-6" -->
+			<app-deck-publicaciones [publicacionesToShow]="publicacionesToShow"></app-deck-publicaciones>
+		</div>
+	</div>
+	<div class="floating-button-container">
+		<button mat-fab color="primary" aria-label="Agregar Publicación" (click)="addPublicacion()"
+		matTooltip="Agregar Publicación" matTooltipPosition="before">
+			<mat-icon>add</mat-icon>
+		</button>
+	</div>
+</div>
+
+<!-- <div style="display: flex;
+justify-content: center;
+flex-direction: column;
+align-items: center;">
+	<img src="assets/logo_green.png" style="max-width: 300px;">
+	<h3>¡Muy pronto podrás acceder a esta página!</h3>
+</div> -->

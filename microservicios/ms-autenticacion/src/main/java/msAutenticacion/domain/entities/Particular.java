@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import msAutenticacion.domain.entities.enums.TipoDocumento;
+import msAutenticacion.domain.responses.DTOs.ParticularDTO;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,10 +23,11 @@ public class Particular {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id_particular")
     private long idParticular;
 
     @OneToOne
-    @JoinColumn(name = "id_particular")
+    @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
     @NotNull
@@ -56,5 +58,19 @@ public class Particular {
     private List<Publicacion> publicaciones;
     @OneToMany(mappedBy = "particular",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Donacion> donaciones;
+
+    public ParticularDTO toDTO() {
+        ParticularDTO particularDTO = new ParticularDTO();
+        particularDTO.setIdParticular(idParticular);
+        particularDTO.setNombre(nombre);
+        particularDTO.setApellido(apellido);
+        particularDTO.setFechaNacimiento(fechaNacimiento);
+        particularDTO.setDni(dni);
+        particularDTO.setCuil(cuil);
+        particularDTO.setTipoDocumento(tipoDocumento);
+        particularDTO.setPuntaje(usuario.getPuntaje());
+        particularDTO.setDirecciones(usuario.getDirecciones().stream().map(Direccion::toDTO).toList());
+        return particularDTO;
+    }
 }
 

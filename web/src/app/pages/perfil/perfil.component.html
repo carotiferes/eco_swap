@@ -1,33 +1,166 @@
 <app-header></app-header>
 
-<div id="main-perfil">
+<div id="main-perfil" *ngIf="user">
 	<div class="profile-img">
-		<img [src]="isSwapper ? 'assets/persona.png' : 'assets/fundacion.png'">
+		<img [src]="userData.isSwapper ? 'assets/persona.png' : 'assets/fundacion.png'">
 	</div>
-	<h4>{{userInfo.s_nombre}} {{userInfo.s_apellido}}</h4>
+	<!-- <h4>{{userInfo.s_nombre}} {{userInfo.s_apellido}}</h4> -->
 	<mat-card id="main-perfil-card">
 		<div ngbAccordion>
-			<div ngbAccordionItem *ngFor="let accordion of showableAccordions()">
+			<div ngbAccordionItem>
 				<h2 ngbAccordionHeader class="mb-0">
-					<button ngbAccordionButton>{{accordion.title}}</button>
+					<button ngbAccordionButton>Información Básica</button>
 				</h2>
 				<div ngbAccordionCollapse>
 					<div ngbAccordionBody>
 						<ng-template>
-							<mat-grid-list [cols]="columns" rowHeight="40px" class="grid-list">
-								<div *ngFor="let attr of accordion.attributes">
-									<mat-grid-tile colspan="1" *ngIf="attr.value">
-										<b>{{attr.title}}</b>
+							<mat-grid-list [cols]="columns" rowHeight="40px" class="grid-list" *ngIf="userData.isSwapper">
+								<div>
+									<mat-grid-tile colspan="1">
+										<b>Nombre completo</b>
 									</mat-grid-tile>
-									<mat-grid-tile colspan="1" *ngIf="attr.value && attr.name != 'n_puntaje'">
-										{{attr.name != 's_contrasena' ? attr.value : (attr.value | password)}}
+									<mat-grid-tile colspan="1">
+										{{user.particularDTO.nombre}} {{user.particularDTO.apellido}}
 									</mat-grid-tile>
-									<mat-grid-tile colspan="1" *ngIf="attr.value && attr.name == 'n_puntaje'">
-										<mat-icon *ngFor="let i of [].constructor(attr.value)" color="primary">star</mat-icon>
-										<mat-icon *ngFor="let i of [].constructor(5-attr.value)" class="empty-star">star</mat-icon>
+								</div>
+								<div>
+									<mat-grid-tile colspan="1">
+										<b>Tipo de documento</b>
+									</mat-grid-tile>
+									<mat-grid-tile colspan="1">
+										{{user.particularDTO.tipoDocumento}}
+									</mat-grid-tile>
+								</div>
+								<div>
+									<mat-grid-tile colspan="1">
+										<b>Número de documento</b>
+									</mat-grid-tile>
+									<mat-grid-tile colspan="1">
+										{{user.particularDTO.dni}}
+									</mat-grid-tile>
+								</div>
+								<div>
+									<mat-grid-tile colspan="1">
+										<b>Fecha de nacimiento</b>
+									</mat-grid-tile>
+									<mat-grid-tile colspan="1">
+										{{user.particularDTO.fechaNacimiento | date : 'dd/MM/yyyy'}}
 									</mat-grid-tile>
 								</div>
 							</mat-grid-list>
+							<mat-grid-list [cols]="columns" rowHeight="40px" class="grid-list" *ngIf="!userData.isSwapper">
+								<div>
+									<mat-grid-tile colspan="1">
+										<b>Nombre</b>
+									</mat-grid-tile>
+									<mat-grid-tile colspan="1">
+										{{user.fundacionDTO.nombre}}
+									</mat-grid-tile>
+								</div>
+								<div>
+									<mat-grid-tile colspan="1">
+										<b>CUIT</b>
+									</mat-grid-tile>
+									<mat-grid-tile colspan="1">
+										{{user.fundacionDTO.cuil}}
+									</mat-grid-tile>
+								</div>
+							</mat-grid-list>
+							<div class="div-cambiar-pass">
+								<button mat-raised-button color="accent" (click)="edit()">EDITAR INFORMACIÓN</button>
+								<button mat-raised-button color="primary">CAMBIAR CONTRASEÑA</button>
+							</div>
+						</ng-template>
+					</div>
+				</div>
+			</div>
+			<div ngbAccordionItem>
+				<h2 ngbAccordionHeader class="mb-0">
+					<button ngbAccordionButton>Información de Contacto</button>
+				</h2>
+				<div ngbAccordionCollapse>
+					<div ngbAccordionBody>
+						<ng-template>
+							<mat-grid-list [cols]="columns" rowHeight="40px" class="grid-list" *ngIf="userData.isSwapper">
+								<div>
+									<mat-grid-tile colspan="1">
+										<b>Email</b>
+									</mat-grid-tile>
+									<mat-grid-tile colspan="1">
+										{{user.email}}
+									</mat-grid-tile>
+								</div>
+								<div>
+									<mat-grid-tile colspan="1">
+										<b>Teléfono</b>
+									</mat-grid-tile>
+									<mat-grid-tile colspan="1">
+										{{user.telefono | phoneNumber}}
+									</mat-grid-tile>
+								</div>
+							</mat-grid-list>
+							<div class="div-cambiar-pass">
+								<button mat-raised-button color="accent" (click)="edit()">EDITAR INFORMACIÓN</button>
+							</div>
+						</ng-template>
+					</div>
+				</div>
+			</div>
+			<div ngbAccordionItem>
+				<h2 ngbAccordionHeader class="mb-0">
+					<button ngbAccordionButton>Dirección</button>
+				</h2>
+				<div ngbAccordionCollapse>
+					<div ngbAccordionBody>
+						<ng-template>
+							<div > <!-- *ngFor="let direccion of user.particularDTO.direcciones; let i=index" -->
+								<!-- Dirección {{i+1}} -->
+								<mat-grid-list [cols]="columns" rowHeight="40px" class="grid-list" *ngIf="userData.isSwapper">
+									<div>
+										<mat-grid-tile colspan="1">
+											<b>Dirección</b>
+										</mat-grid-tile>
+										<mat-grid-tile colspan="1">
+											{{user.particularDTO.direcciones[0].direccion}}
+										</mat-grid-tile>
+									</div>
+									<div>
+										<mat-grid-tile colspan="1">
+											<b>Altura</b>
+										</mat-grid-tile>
+										<mat-grid-tile colspan="1">
+											{{user.particularDTO.direcciones[0].altura}}
+										</mat-grid-tile>
+									</div>
+									<div>
+										<mat-grid-tile colspan="1">
+											<b>Departamento</b>
+										</mat-grid-tile>
+										<mat-grid-tile colspan="1">
+											{{user.particularDTO.direcciones[0].dpto}}
+										</mat-grid-tile>
+									</div>
+									<div>
+										<mat-grid-tile colspan="1">
+											<b>Piso</b>
+										</mat-grid-tile>
+										<mat-grid-tile colspan="1">
+											{{user.particularDTO.direcciones[0].piso}}
+										</mat-grid-tile>
+									</div>
+									<div>
+										<mat-grid-tile colspan="1">
+											<b>Código Postal</b>
+										</mat-grid-tile>
+										<mat-grid-tile colspan="1">
+											{{user.particularDTO.direcciones[0].codigoPostal}}
+										</mat-grid-tile>
+									</div>
+								</mat-grid-list>
+								<div class="div-cambiar-pass">
+									<button mat-raised-button color="accent" (click)="edit()">EDITAR INFORMACIÓN</button>
+								</div>
+							</div>
 						</ng-template>
 					</div>
 				</div>
@@ -35,3 +168,21 @@
 		</div>
 	</mat-card>
 </div>
+
+<!-- <div *ngFor="let attr of accordion.attributes">
+		<mat-grid-tile colspan="1" *ngIf="attr.value">
+			<b>{{attr.title}}</b>
+		</mat-grid-tile>
+		<mat-grid-tile colspan="1" *ngIf="attr.value && attr.name != 'n_puntaje'">
+			{{attr.name != 's_contrasena' ? attr.value : (attr.value | password)}}
+		</mat-grid-tile>
+		<mat-grid-tile colspan="1" *ngIf="attr.value && attr.name == 'n_puntaje'">
+			<mat-icon *ngFor="let i of [].constructor(attr.value)" color="primary">star</mat-icon>
+			<mat-icon *ngFor="let i of [].constructor(5-attr.value)" class="empty-star">star</mat-icon>
+		</mat-grid-tile>
+	</div> -->
+
+	<!-- <mat-grid-tile colspan="1">
+		<mat-icon *ngFor="let i of [].constructor(attr.value)" color="primary">star</mat-icon>
+		<mat-icon *ngFor="let i of [].constructor(5-attr.value)" class="empty-star">star</mat-icon>
+	</mat-grid-tile> -->

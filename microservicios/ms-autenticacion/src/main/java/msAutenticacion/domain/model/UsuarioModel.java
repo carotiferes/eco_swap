@@ -18,7 +18,7 @@ public class UsuarioModel {
 
     public static UsuarioModel crearPerfilRepose(Usuario usuario) {
         return UsuarioModel.builder()
-                .id(usuario.getId())
+                .id(usuario.getIdUsuario())
                 .email(usuario.getEmail())
                 .username(usuario.getUsername())
                 .telefono(usuario.getTelefono())

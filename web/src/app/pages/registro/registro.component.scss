@@ -9,25 +9,23 @@
 			display: grid;
 			align-items: center;
 			margin-top: 20px;
-	
-			&.big-form {
-				grid-template-columns: 1fr 1fr;
-				row-gap: 10px;
-				column-gap: 5%;
-			}
-	
-			&.small-form {
-				grid-template-columns: 1fr;
-				row-gap: 10px;
-				column-gap: 5%;
-			}
+			grid-template-columns: 1fr 1fr;
+			row-gap: 10px;
+			column-gap: 5px;
+			justify-items: center;
 	
 			.form-input {
 				display: flex;
 				justify-content: center;
-	
+				width: 80%;
+
 				mat-form-field {
-					min-width: 250px;
+					width: 100%;
+
+				}
+
+				.eye:hover {
+					cursor: pointer;
 				}
 			}
 		}
@@ -36,5 +34,13 @@
 			display: flex;
 			justify-content: center;
 		}
+	}
+}
+
+@media (min-width: 0px) and (max-width: 768px) {
+	.form {
+		grid-template-columns: 1fr !important;
+		row-gap: 10px !important;
+		column-gap: 5px !important;
 	}
 }

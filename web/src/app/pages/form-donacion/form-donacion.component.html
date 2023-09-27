@@ -35,7 +35,7 @@
 				<section formArrayName="caracteristicas" class="form-col">
 					<div>
 						<label class="caract-label">
-							Caracteristicas
+							Características
 							<mat-icon class="material-icons-outlined"
 							matTooltip="Por favor incluir medidas, estado del producto,  material del producto y cualquier característica que identifique a tu producto">
 								info
@@ -46,7 +46,8 @@
 						<div *ngFor="let caracteristica of getCaracteristicasArray.controls; let i=index"
 							class="caracteristica" [formGroupName]="i">
 							<mat-form-field>
-								<input matInput placeholder="Descripción*" formControlName="s_descripcion">
+								<textarea matInput placeholder="Descripción*" formControlName="s_descripcion" cdkTextareaAutosize
+								#autosize="cdkTextareaAutosize"></textarea>
 								<mat-error *ngIf="caracteristica.get('s_descripcion')!.hasError('pattern')">
 									El campo no puede contener <b>;</b>
 								</mat-error>
@@ -61,8 +62,11 @@
 						</div>
 						<button type="button" (click)="agregarCaracteristica()" mat-raised-button color="light" style="width: 100%;">
 							<mat-icon>add</mat-icon>
-							<label>Agregar Caracteristica</label>
+							<label>Agregar Característica</label>
 						</button>
+						<mat-error *ngIf="getCaracteristicasArray.length == 0 && showErrors">
+							La donación debe tener al menos 1 característica
+						</mat-error>
 					</div>
 				</section>
 
@@ -70,12 +74,15 @@
 					<div>
 						<label style="font-weight: 500; font-size: large; margin: 7px 0;">Imágenes</label>
 					</div>
-					<button type="button" mat-raised-button color="light">
+					<button type="button" mat-raised-button color="light" (click)="file.click()">
 						<mat-icon>add</mat-icon>
-						<label for="file">Agregar Imagen</label>
+						Agregar Imagen
 					</button>
 					<input formControlName="file" id="file" type="file" class="form-control hidden" multiple=""
 						(change)="onFileChange($event)" #file>
+					<mat-error *ngIf="donacionForm.get('file')!.hasError('required') && showErrors">
+						La publicación debe tener al menos 1 imagen
+					</mat-error>
 					<div class="form-col form-imgs">
 						<div class="show-image" *ngFor='let url of images; let i = index;' (click)="removeImagen(i)" >
 							<div class="image" >
@@ -104,7 +111,7 @@
 		<mat-card-actions class="buttons">
 			<button mat-raised-button color="primary"
 				(click)="confirmarDonacion();donacionForm.markAllAsTouched(); donacionForm.valid">
-				CONFIRMAR PROPUESTA
+				CONFIRMAR DONACIÓN
 			</button>
 		</mat-card-actions>
 	</mat-card>

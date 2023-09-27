@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import msAutenticacion.domain.responses.DTOs.FundacionDTO;
 
 import java.io.Serializable;
 import java.util.List;
@@ -43,5 +44,15 @@ public class Fundacion implements Serializable{
 
     @OneToMany(mappedBy = "fundacion", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Colecta> solicitudes;
+
+    public FundacionDTO toDTO() {
+        FundacionDTO fundacionDTO = new FundacionDTO();
+        fundacionDTO.setIdFundacion(idFundacion);
+        fundacionDTO.setNombre(nombre);
+        fundacionDTO.setCuil(cuil);
+        fundacionDTO.setPuntaje(usuario.getPuntaje());
+        fundacionDTO.setDirecciones(usuario.getDirecciones().stream().map(Direccion::toDTO).toList());
+        return fundacionDTO;
+    }
 
 }

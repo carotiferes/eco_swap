@@ -1,8 +1,8 @@
-<app-header [title]="idFundacion ? 'Mis Colectas' : 'Colectas'"></app-header>
+<app-header [title]="isMyColectas ? 'Mis Colectas' : 'Colectas'"></app-header>
 
 <div id="main-donaciones">
 	<div class="row">
-		<form [formGroup]="formFiltros" id="form-filtros" *ngIf="!idFundacion">
+		<form [formGroup]="formFiltros" id="form-filtros" *ngIf="!isMyColectas"> 
 			<mat-form-field class="example-full-width" appearance="outline">
 				<mat-label>Fundación</mat-label>
 				<input type="text" matInput formControlName="fundacion" [matAutocomplete]="auto" style="border: 1px solid red">
@@ -26,7 +26,7 @@
 				<!-- <input matInput formControlName="tipoProducto"> -->
 			</mat-form-field>
 			<div style="text-align: center;">
-				<button mat-raised-button color="primary" (click)="filtrarColectas(true)">FILTRAR</button>
+				<button mat-raised-button color="primary" (click)="filtrarColectas()">FILTRAR</button>
 				<button mat-raised-button (click)="limpiarFiltros()">LIMPIAR</button>
 			</div>
 		</form>
@@ -55,14 +55,15 @@
 					<div class="card-fundacion col-sm-2">
 						<img class="img-fundacion" src="assets/fundacion.png">
 						<!-- TODO: CHANGE TO IMAGE DE LA FUNDACION  -->
-						<h4>{{colecta.fundacion}}</h4>
+						<h4>{{colecta.fundacionDTO.nombre}}</h4>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div class="floating-button-container" *ngIf="!userData.isSwapper">
-		<button mat-fab color="primary" aria-label="Agregar Colecta de donación" (click)="addColecta()">
+		<button mat-fab color="primary" aria-label="Agregar Colecta" (click)="addColecta()"
+		matTooltip="Agregar Colecta" matTooltipPosition="before">
 			<mat-icon>add</mat-icon>
 		</button>
 	</div>

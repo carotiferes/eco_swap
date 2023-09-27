@@ -16,7 +16,7 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "idUsuario")
+    @Column(name = "id_usuario")
     private long idUsuario;
 
     @NotNull
@@ -34,7 +34,7 @@ public class Usuario {
     private String password;
 
     @NotNull
-    @Size(max = 10)
+    @Size(max = 12)
     private String telefono;
 
     @NotNull
@@ -42,11 +42,20 @@ public class Usuario {
     @Column(unique = true)
     private String email;
 
-    @Range(min = 0, max = 100)
-    private String puntaje;
+    @Range(min = 0, max = 5)
+    private Integer puntaje;
 
     @NotNull
     private boolean isSwapper;
+
+    @Column(columnDefinition = "int default 0")
+    private Integer intentos;
+
+    @Column(name = "validado", columnDefinition = "boolean default 0")
+    private boolean validado;
+
+    @Column(columnDefinition = "boolean default 1")
+    private boolean bloqueado;
 
     @OneToMany(mappedBy = "usuarioOpina", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Opinion> opiniones;

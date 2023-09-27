@@ -1,6 +1,5 @@
 package msUsers.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -8,6 +7,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import msUsers.domain.entities.enums.TipoProducto;
+import msUsers.domain.responses.DTOs.ProductoDTO;
 
 import java.util.List;
 
@@ -39,10 +39,25 @@ public class Producto {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_colecta")
-//   @JsonBackReference
     private Colecta colecta;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Publicacion publicacion;
+
+    public ProductoDTO toDTO(boolean includeColecta) {
+        ProductoDTO productoDTO = new ProductoDTO();
+        productoDTO.setIdProducto(idProducto);
+        productoDTO.setTipoProducto(tipoProducto);
+        productoDTO.setDescripcion(descripcion);
+        productoDTO.setTipoProducto(tipoProducto);
+        productoDTO.setCantidadSolicitada(cantidadSolicitada);
+        productoDTO.setCantidadRecibida(cantidadRecibida);
+
+        if (includeColecta && colecta != null) {
+            productoDTO.setColectaDTO(colecta.toDTO(false)); // Evitar recursión en ColectaDTO
+        }
+
+        return productoDTO;
+    }
 
 }

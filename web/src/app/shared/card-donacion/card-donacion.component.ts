@@ -22,14 +22,13 @@ export class CardDonacionComponent implements OnInit{
 	userData: any
 	caracteristicas: string = '';
 
-	constructor(private auth: AuthService, private donacionesService: DonacionesService){
-		this.userData = auth.getUserData();
-	}
+	constructor(private donacionesService: DonacionesService){	}
 	
 	ngOnInit(): void {
-		console.log(this.donacion, this.usuarioHeader,this.donacion.caracteristicaDonacion);
-		for (const caract of this.donacion.caracteristicaDonacion) {
-			if(caract.caracteristica) this.caracteristicas += ' '+caract.caracteristica
+		//console.log(this.donacion, this.usuarioHeader,this.donacion.caracteristicaDonacion);
+		for (const [i, caract] of this.donacion.caracteristicaDonacion.entries()) {
+			if(caract.caracteristica && i == 0) this.caracteristicas = caract.caracteristica
+			else if(caract.caracteristica) this.caracteristicas += ' - '+caract.caracteristica
 		}
 	}
 
@@ -47,13 +46,67 @@ export class CardDonacionComponent implements OnInit{
 		}
 	}
 
-	changeEstadoDonacion(donacion: DonacionModel, status: string){
-		this.donacionesService.cambiarEstadoDonacion(this.id_colecta, donacion.idDonacion, {
-			nuevoEstado: status
-		}).subscribe(res => {
-			console.log(res);
-			this.donacion.estadoDonacion = status;
-			this.statusChanged.emit();
+	changeEstadoDonacion(donacion: DonacionModel, status: string) {
+		let title = '';
+		let text = '';
+		let confirm = '';
+		let cancel = '';
+		let deny = '';
+		let icon: 'success' | 'warning' = 'warning';
+
+		switch (status) {
+			case 'CANCELADA':
+				title = 'Confirmar Cancelación';
+				text = '¿Estás seguro/a que querés cancelar esta donación? La acción es irreversible, pero podrás crear otra donación luego.';
+				deny = 'Sí, cancelar donación';
+				cancel = 'No, mantener donación';
+				icon = 'warning';
+				break;
+			case 'ACEPTADA':
+				title = 'Confirmar Aprobación';
+				text = 'Confirmá que aceptás la donación. Esta acción es irreversible ya que comenzará con el proceso de envío.';
+				confirm = 'Sí, aceptar donación';
+				cancel = 'No, cancelar';
+				icon = 'warning';
+				break;
+			case 'RECHAZADA':
+				title = 'Confirmar Rechazo';
+				text = '¿Estás seguro/a que querés rechazar esta donación? La acción es irreversible.';
+				deny = 'Sí, rechazar donación';
+				cancel = 'No, cancelar';
+				icon = 'warning';
+				break;
+			default:
+				title = 'Confirmar Acción';
+				text = 'Cambiar el estado de la donación es irreversible, ¿Estás seguro/a que querés continuar?';
+				confirm = 'Sí, continuar';
+				cancel = 'No, cancelar';
+				icon = 'warning';
+				break;
+		}
+		Swal.fire({
+			title,
+			text,
+			showConfirmButton: confirm != '',
+			confirmButtonText: confirm,
+			showDenyButton: deny != '',
+			denyButtonText: deny,
+			showCancelButton: cancel != '',
+			cancelButtonText: cancel,
+			icon,
+			reverseButtons: true
+		}).then(({ isConfirmed, isDenied }) => {
+			if (isConfirmed || isDenied) {
+				this.donacionesService.cambiarEstadoDonacion(this.id_colecta, donacion.idDonacion, {
+					nuevoEstado: status
+				}).subscribe({
+					next: res => {
+						console.log(res);
+						this.donacion.estadoDonacion = status;
+						this.statusChanged.emit();
+					}
+				})
+			}
 		})
 	}
 
