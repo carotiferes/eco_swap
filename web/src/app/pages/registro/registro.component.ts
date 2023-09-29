@@ -41,6 +41,9 @@ export class RegistroComponent {
 
 	loadingSave: boolean = false;
 
+	localidades: any[] = [];
+	calles: any[] = [];
+
 	constructor(private fb: FormBuilder, private dateAdapter: DateAdapter<Date>,
 		private usuarioService: UsuarioService, private location: Location,
 		private auth: AuthService, private router: Router, private snackbar: MatSnackBar,
@@ -67,11 +70,12 @@ export class RegistroComponent {
 		})
 
 		this.direccionForm = fb.group({
-			direccion: ['', Validators.required],
-			altura: ['', Validators.required],
-			piso: [''],
-			departamento: [''],
-			codigoPostal: ['', Validators.required],
+			localidad: ['', [Validators.required, this.validateItem.bind(this)]],
+			calle: [{value:'', disabled: true}, [Validators.required, this.validateItem.bind(this)]],
+			altura: [{value:'', disabled: true}, Validators.required],
+			piso: [{value:'', disabled: true}],
+			departamento: [{value:'', disabled: true}],
+			//codigoPostal: ['', Validators.required],
 		})
 
 		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
@@ -96,7 +100,52 @@ export class RegistroComponent {
 			this.loadUserInfo();
 			this.loading = false;
 		} else this.loading = false;
-		this.getTiposDocumentos()
+		this.getTiposDocumentos();
+	}
+
+	getLocalidades() {
+		const locValue = this.direccionForm.controls['localidad'].value;
+		if(locValue.length == 0) {
+			this.direccionForm.controls['calle'].disable();
+			this.direccionForm.controls['altura'].disable()
+			this.direccionForm.controls['piso'].disable()
+			this.direccionForm.controls['departamento'].disable()
+		}
+		else if(locValue.length >= 3) {
+			const apiUrl = 'https://apis.datos.gob.ar/georef/api/localidades?orden=id&provincia=02&nombre='+locValue
+			fetch(apiUrl).then(response => response.json()).then(data => {
+				this.localidades = data.localidades
+			}).catch(error => console.error(error));
+		}
+	}
+
+	getCalles() {
+		const calleInput = this.direccionForm.controls['calle'].value;
+		const locInput = this.direccionForm.controls['localidad'].value.departamento.id;
+		
+		if(calleInput.length == 0) {
+			this.direccionForm.controls['altura'].disable()
+			this.direccionForm.controls['piso'].disable()
+			this.direccionForm.controls['departamento'].disable()
+		}
+		if(calleInput.length >= 3) {
+			const apiUrl = 'https://apis.datos.gob.ar/georef/api/calles?orden=id&provincia=02&departamento='+locInput+'&nombre='+calleInput
+			fetch(apiUrl).then(response => response.json()).then(data => {
+				this.calles = data.calles
+			}).catch(error => console.error(error));
+		}
+	}
+
+	onLocSelected(event: any) {
+		if(event) this.direccionForm.controls['calle'].enable()
+	}
+
+	onCalleSelected(event: any) {
+		if(event) {
+			this.direccionForm.controls['altura'].enable()
+			this.direccionForm.controls['piso'].enable()
+			this.direccionForm.controls['departamento'].enable()
+		}
 	}
 
 	ngOnDestroy(): void {
@@ -130,7 +179,7 @@ export class RegistroComponent {
 					}
 	
 					this.direccionForm.patchValue({
-						direccion: user.particularDTO ? user.particularDTO.direcciones[0].direccion : user.fundacionDTO.direcciones[0].direccion,
+						calle: user.particularDTO ? user.particularDTO.direcciones[0].direccion : user.fundacionDTO.direcciones[0].direccion,
 						altura: user.particularDTO ? user.particularDTO.direcciones[0].altura : user.fundacionDTO.direcciones[0].altura,
 						piso: user.particularDTO ? user.particularDTO.direcciones[0].piso : user.fundacionDTO.direcciones[0].piso,
 						departamento: user.particularDTO ? user.particularDTO.direcciones[0].departamento : user.fundacionDTO.direcciones[0].departamento,
@@ -215,11 +264,11 @@ export class RegistroComponent {
 						telefono: this.mainForm.controls['telefono'].value,
 						confirmPassword: this.mainForm.controls['confirmPassword'].value,
 						direccion: {
+							codigoPostal: this.direccionForm.controls['localidad'].value.nombre,
+							direccion: this.direccionForm.controls['calle'].value.nombre,
 							altura: this.direccionForm.controls['altura'].value,
-							codigoPostal: this.direccionForm.controls['codigoPostal'].value,
-							direccion: this.direccionForm.controls['direccion'].value,
-							departamento: this.direccionForm.controls['departamento'].value,
 							piso: this.direccionForm.controls['piso'].value,
+							departamento: this.direccionForm.controls['departamento'].value,
 						}
 					};
 	
@@ -443,28 +492,37 @@ export class RegistroComponent {
 			}
 		})
 	}
+
+	displayItem(item: any): string {
+		return item ? capitalizeFirstLetter(item.nombre) : '';
+	}
+
+	validateItem(control: AbstractControl): { [key: string]: any } | null {
+		const selectedValue = control.value;
+		const parentFormGroup = control.parent;
+		if (!parentFormGroup) return { invalidSelection: true };
+		const name = Object.keys(parentFormGroup.controls).find((key) => control === parentFormGroup.get(key));
+		
+		if (selectedValue && this.localidades) {
+			const isValid = (name == 'localidad' ? this.localidades : this.calles)
+				.some((item) => item.nombre.toUpperCase() == (selectedValue.nombre || selectedValue).toUpperCase());
+			return isValid ? null : { invalidSelection: true };
+		}
+		return null;
+	}
 	
 }
 
 function isValidCUIT(control: FormControl): { [key: string]: boolean } | null {
 	const cuit = control.value;
 	
-	if (!cuit) {
-	  return null; // Handle empty input
-	}
+	if (!cuit) return null; // Handle empty input
+
+	const regex = /^\d{2}-\d{8,9}-\d{1,2}$/; // Ensure the CUIT matches the format: 11-11111111-1 or 11-11111111-11
+	if (!regex.test(cuit)) return { 'invalidCUIT': true };
   
-	// Ensure the CUIT matches the format: 11-11111111-1 or 11-11111111-11
-	const regex = /^\d{2}-\d{8,9}-\d{1,2}$/;
-  
-	if (!regex.test(cuit)) {
-	  return { 'invalidCUIT': true };
-	}
-  
-	// Extract the numeric part for calculation
-	const numericPart: string = cuit.replace(/-/g, '');
-  
-	// Calculate the verifier digit
-	const verifierDigit = parseInt(numericPart.charAt(numericPart.length-1));
+	const numericPart: string = cuit.replace(/-/g, ''); // Extract the numeric part for calculation
+	const verifierDigit = parseInt(numericPart.charAt(numericPart.length-1)); // Calculate the verifier digit
 	const factors = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
 	let sum = 0;
   
@@ -475,9 +533,10 @@ function isValidCUIT(control: FormControl): { [key: string]: boolean } | null {
 	const remainder = sum % 11;
 	const calculatedVerifierDigit = remainder === 0 ? 0 : 11 - remainder;
   
-	if (calculatedVerifierDigit !== verifierDigit) {
-	  return { 'invalidCUIT': true };
-	}
-  
+	if (calculatedVerifierDigit !== verifierDigit) return { 'invalidCUIT': true };
 	return null; // CUIT is valid
+}
+
+function capitalizeFirstLetter(str: string) {
+	return str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 }

@@ -33,7 +33,8 @@
 						</mat-error>
 					</mat-form-field>
 				</div>
-				<div class="form-input" [ngClass]="mainForm.get('telefono')!.hasError('formatoInvalido') ? 'form-input-medium-error':''">
+				<div class="form-input"
+					[ngClass]="mainForm.get('telefono')!.hasError('formatoInvalido') ? 'form-input-medium-error':''">
 					<mat-form-field *ngIf="origin != 'resetPassword'">
 						<mat-label>Teléfono</mat-label>
 						<input matInput formControlName="telefono" [ngModel]="this.mainForm.get('telefono')!.value"
@@ -47,7 +48,8 @@
 						</mat-error>
 					</mat-form-field>
 				</div>
-				<div class="form-input" [ngClass]="mainForm.get('password')!.hasError('pattern') ? 'form-input-long-error':''">
+				<div class="form-input"
+					[ngClass]="mainForm.get('password')!.hasError('pattern') ? 'form-input-long-error':''">
 					<mat-form-field>
 						<mat-label>Contraseña</mat-label>
 						<input matInput formControlName="password" [type]="passwordType" (change)="refreshValidity()">
@@ -55,7 +57,8 @@
 						<mat-error *ngIf="mainForm.get('password')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
-						<mat-error *ngIf="mainForm.get('password')!.hasError('differentPassword') && !mainForm.get('password')!.hasError('pattern')">
+						<mat-error
+							*ngIf="mainForm.get('password')!.hasError('differentPassword') && !mainForm.get('password')!.hasError('pattern')">
 							Las contraseñas no coinciden
 						</mat-error>
 						<mat-error *ngIf="mainForm.get('password')!.hasError('pattern')">
@@ -80,7 +83,7 @@
 				</div>
 			</form>
 			<form [formGroup]="particularForm" *ngIf="isSwapper && origin != 'resetPassword'" class="form">
-				<div class="form-input">
+				<div class="form-input capitalize-input">
 					<mat-form-field>
 						<mat-label>Nombre</mat-label>
 						<input matInput formControlName="nombre">
@@ -90,7 +93,7 @@
 					</mat-form-field>
 
 				</div>
-				<div class="form-input">
+				<div class="form-input capitalize-input">
 					<mat-form-field>
 						<mat-label>Apellido</mat-label>
 						<input matInput formControlName="apellido">
@@ -104,7 +107,7 @@
 						<mat-label>Tipo Documento</mat-label>
 						<!-- <input matInput formControlName="tipoDocumento"> -->
 						<mat-select formControlName="tipoDocumento" name="tipoDocumento"
-						(selectionChange)="formatDocument($event)">
+							(selectionChange)="formatDocument($event)">
 							<mat-option *ngFor="let tipo of tiposDocumento" [value]="tipo.nombre">
 								{{tipo.descripcion}}
 							</mat-option>
@@ -140,7 +143,7 @@
 				</div>
 			</form>
 			<form [formGroup]="fundacionForm" *ngIf="!isSwapper && origin != 'resetPassword'" class="form">
-				<div class="form-input">
+				<div class="form-input capitalize-input">
 					<mat-form-field>
 						<mat-label>Nombre / Razón Social</mat-label>
 						<input matInput formControlName="nombre">
@@ -152,7 +155,7 @@
 				<div class="form-input">
 					<mat-form-field>
 						<mat-label>CUIT</mat-label><!-- type="number" -->
-						<input matInput formControlName="cuit"  (keyup)="formatearCUIT()">
+						<input matInput formControlName="cuit" (keyup)="formatearCUIT()">
 						<mat-hint>Formato: 20-12345678-9</mat-hint>
 						<mat-error *ngIf="fundacionForm.get('cuit')!.hasError('required')">
 							Campo obligatorio
@@ -165,12 +168,41 @@
 			</form>
 			<div style="margin: 20px 5% 0px; font-weight: bold;">Dirección</div>
 			<form [formGroup]="direccionForm" *ngIf="origin != 'resetPassword'" class="form">
-				<div class="form-input">
-					<mat-form-field>
-						<mat-label>Calle</mat-label>
-						<input matInput formControlName="direccion">
-						<mat-error *ngIf="direccionForm.get('direccion')!.hasError('required')">
+				<div class="form-input capitalize-input">
+					<mat-form-field class="example-full-width">
+						<mat-label>Localidad</mat-label>
+						<input type="text" (input)="getLocalidades()" matInput formControlName="localidad"
+							[matAutocomplete]="autoLoc">
+						<mat-autocomplete #autoLoc="matAutocomplete" requireSelection [displayWith]="displayItem"
+							(optionSelected)="onLocSelected($event.option.value)">
+							<mat-option *ngFor="let loc of localidades" [value]="loc">
+								{{loc.nombre}}
+							</mat-option>
+						</mat-autocomplete>
+						<mat-error *ngIf="direccionForm.get('localidad')!.hasError('required')">
 							Campo obligatorio
+						</mat-error>
+						<mat-error *ngIf="direccionForm.get('localidad')!.hasError('invalidSelection')">
+							Localidad inválida
+						</mat-error>
+					</mat-form-field>
+				</div>
+				<div class="form-input capitalize-input">
+					<mat-form-field class="example-full-width">
+						<mat-label>Calle</mat-label>
+						<input type="text" (input)="getCalles()" matInput formControlName="calle"
+							[matAutocomplete]="autoCalle">
+						<mat-autocomplete #autoCalle="matAutocomplete" requireSelection [displayWith]="displayItem"
+							(optionSelected)="onCalleSelected($event.option.value)">
+							<mat-option *ngFor="let calle of calles" [value]="calle">
+								{{calle.nombre}}
+							</mat-option>
+						</mat-autocomplete>
+						<mat-error *ngIf="direccionForm.get('calle')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+						<mat-error *ngIf="direccionForm.get('calle')!.hasError('invalidSelection')">
+							Localidad inválida
 						</mat-error>
 					</mat-form-field>
 				</div>
@@ -189,19 +221,10 @@
 						<input matInput formControlName="piso" type="number">
 					</mat-form-field>
 				</div>
-				<div class="form-input">
+				<div class="form-input capitalize-input">
 					<mat-form-field>
 						<mat-label>Departamento</mat-label>
 						<input matInput formControlName="departamento">
-					</mat-form-field>
-				</div>
-				<div class="form-input">
-					<mat-form-field>
-						<mat-label>Código Postal</mat-label>
-						<input matInput formControlName="codigoPostal" type="number">
-						<mat-error *ngIf="direccionForm.get('codigoPostal')!.hasError('required')">
-							Campo obligatorio
-						</mat-error>
 					</mat-form-field>
 				</div>
 			</form>
@@ -212,8 +235,7 @@
 					mainForm.valid;
 					isSwapper && particularForm.valid;
 					!isSwapper && fundacionForm.valid;
-					direccionForm.valid"
-					[disabled]="!mainForm.valid ||
+					direccionForm.valid" [disabled]="!mainForm.valid ||
 					(isSwapper && !particularForm.valid) ||
 					(!isSwapper && !fundacionForm.valid) ||
 					!direccionForm.valid">
