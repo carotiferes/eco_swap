@@ -49,9 +49,6 @@ public class Publicacion {
     @Enumerated(EnumType.STRING)
     private TipoProducto tipoProducto;
 
-    @OneToMany(mappedBy = "publicacion", fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-    private List<Producto> productos;
-
     private String imagenes;
 
     public PublicacionDTO toDTO() {
@@ -68,7 +65,6 @@ public class Publicacion {
         publicacionDTO.setValorTruequeMax(valorTruequeMax);
         publicacionDTO.setValorTruequeMin(valorTruequeMin);
         publicacionDTO.setCaracteristicaProducto(caracteristicaProducto);
-        publicacionDTO.setProductos(productos.stream().map(producto -> producto.toDTO(false)).collect(Collectors.toList()));
         return publicacionDTO;
     }
 

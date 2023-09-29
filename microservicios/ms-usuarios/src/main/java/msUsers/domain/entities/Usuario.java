@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import msUsers.domain.responses.DTOs.UsuarioDTO;
 import org.hibernate.validator.constraints.Range;
 
 import java.util.List;
@@ -59,5 +60,21 @@ public class Usuario {
 
     @OneToMany(mappedBy = "usuarioOpina", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Opinion> opiniones;
+
+    public UsuarioDTO toDTO() {
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setIdUsuario(idUsuario);
+        usuarioDTO.setUsername(username);
+        usuarioDTO.setDirecciones(direcciones.stream().map(Direccion::toDTO).toList());
+        usuarioDTO.setTelefono(telefono);
+        usuarioDTO.setEmail(email);
+        usuarioDTO.setPuntaje(puntaje);
+        usuarioDTO.setSwapper(isSwapper);
+        usuarioDTO.setIntentos(intentos);
+        usuarioDTO.setValidado(validado);
+        usuarioDTO.setBloqueado(bloqueado);
+        usuarioDTO.setOpiniones(opiniones.stream().map(Opinion::toDTO).toList());
+        return usuarioDTO;
+    }
 
 }

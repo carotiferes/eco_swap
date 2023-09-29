@@ -3,6 +3,7 @@ package msUsers.domain.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import msUsers.domain.responses.DTOs.OpinionDTO;
 
 @Entity
 @Table(name = "Opiniones")
@@ -24,4 +25,12 @@ public class Opinion{
     private Usuario usuarioOpinado;
 
     // ToDo: ¿Las opiniones tendrán fecha?
+
+    public OpinionDTO toDTO(){
+        OpinionDTO opinionDTO = new OpinionDTO();
+        opinionDTO.setIdOpinion(idOpinion);
+        opinionDTO.setDescripcion(descripcion);
+        opinionDTO.setValoracion(valoracion);
+        return opinionDTO;
+    }
 }
