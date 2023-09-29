@@ -146,19 +146,14 @@ export class ColectaComponent {
 	}
 
 	showDireccion(fundacion: any){
-		console.log( fundacion);
-		let stringDir: string = ''
-		for (const dir of fundacion.direcciones) {
-			if(dir.direccion) {
-				stringDir += (dir.direccion + ' '+ dir.altura)
-			}
-		}
+		console.log(fundacion);
+		let stringDir: string = fundacion.direcciones[0].direccion + fundacion.direcciones[0].altura || '';
+		const localidad = fundacion.direcciones[0].codigoPostal || '';
 
-		const apiUrl = `https://apis.datos.gob.ar/georef/api/direcciones?direccion=${encodeURIComponent(stringDir)}`
-		fetch(apiUrl)
-		  .then(response => response.json())
-		  .then(data => {
-			console.log(data);
+		const apiUrl = `https://apis.datos.gob.ar/georef/api/direcciones?provincia=02&localidad=${localidad}
+		&direccion=${encodeURIComponent(stringDir)}`
+		fetch(apiUrl).then(response => response.json()).then(data => {
+			//console.log(data);
 			if(data.cantidad > 0) {
 				const lat = data.direcciones[0].ubicacion.lat;
 		      	const lon = data.direcciones[0].ubicacion.lon;
@@ -171,20 +166,25 @@ export class ColectaComponent {
 					data: {lat, lon}
 				});
 			}
-		  })
-		  .catch(error => console.error(error));
+		  }).catch(error => console.error(error));
 
-		/* const dirArray = stringDir.split(' ')
-		Swal.fire({
-			title: 'Información de la fundación',
-			text: stringDir + ' https://www.google.com/maps/search/?api=1&query='+dirArray[0]+'+'+dirArray[1],
-			html: `
-			
-			<p style="font-weight: 500;"><b>Dirección: </b>${stringDir}</p>
-			<a href="https://www.google.com/maps/search/?api=1&query=${dirArray[0]}+${dirArray[1]}" target="_blank">Ver en Google Maps</a>`,
-			//iconHtml: `<span class="material-icons-outlined"> place </span>`
-			icon: 'info'
-		})//<p style="font-weight: 400;"><b>Email: </b>${usuario.email}</p> */
+	}
+
+	showContactInfo(fundacion: any) {
+		console.log(fundacion, this.userInfo);
+		/* this.fundacionesService.getFundacion(fundacion.idFundacion).subscribe({
+			next: (res: any) => {
+				console.log(res);
+				
+				Swal.fire({
+					title: 'Información de la fundación '+ res,
+					html: `
+					`,//<p style="font-weight: 400;"><b>Email: </b>${usuario.email}</p>
+					//iconHtml: `<span class="material-icons-outlined"> place </span>`
+					icon: 'info'
+				})
+			}
+		}) */
 	}
 
 	getImage(image: any ){
