@@ -67,7 +67,6 @@
 								</div>
 							</mat-grid-list>
 							<div class="div-cambiar-pass">
-								<button mat-fab extended color="accent" (click)="edit()">EDITAR INFORMACIÓN</button>
 								<button mat-fab extended color="primary">CAMBIAR CONTRASEÑA</button>
 							</div>
 						</ng-template>
@@ -99,9 +98,6 @@
 									</mat-grid-tile>
 								</div>
 							</mat-grid-list>
-							<div class="div-cambiar-pass">
-								<button mat-fab extended color="accent" (click)="edit()">EDITAR INFORMACIÓN</button>
-							</div>
 						</ng-template>
 					</div>
 				</div>
@@ -157,9 +153,6 @@
 										</mat-grid-tile>
 									</div>
 								</mat-grid-list>
-								<div class="div-cambiar-pass">
-									<button mat-fab extended color="accent" (click)="edit()">EDITAR INFORMACIÓN</button>
-								</div>
 							</div>
 						</ng-template>
 					</div>
@@ -167,6 +160,9 @@
 			</div>
 		</div>
 	</mat-card>
+	<div class="div-edit-info">
+		<button mat-fab extended color="accent" (click)="edit()">EDITAR INFORMACIÓN</button>
+	</div>
 </div>
 
 <!-- <div *ngFor="let attr of accordion.attributes">
