@@ -6,7 +6,7 @@ export interface FundacionModel {
 	idFundacion: number,
 	nombre: string,
 	cuil: string,
-	usuario: UsuarioModel,
+	usuarioDTO: UsuarioModel,
 	colectas: ColectaModel[],
 	puntaje?: number,
 	direcciones: DireccionModel[]

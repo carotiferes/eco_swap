@@ -170,21 +170,16 @@ export class ColectaComponent {
 
 	}
 
-	showContactInfo(fundacion: any) {
+	showContactInfo(fundacion: FundacionModel) {
 		console.log(fundacion, this.userInfo);
-		/* this.fundacionesService.getFundacion(fundacion.idFundacion).subscribe({
-			next: (res: any) => {
-				console.log(res);
-				
-				Swal.fire({
-					title: 'Información de la fundación '+ res,
-					html: `
-					`,//<p style="font-weight: 400;"><b>Email: </b>${usuario.email}</p>
-					//iconHtml: `<span class="material-icons-outlined"> place </span>`
-					icon: 'info'
-				})
-			}
-		}) */
+		Swal.fire({
+			title: 'Información de la fundación: \n '+ fundacion.nombre,
+			html: `
+			<p style="font-weight: 400;"><b>Email: </b>${fundacion.usuarioDTO.email}</p>
+			<p style="font-weight: 400;"><b>Teléfono: </b>${fundacion.usuarioDTO.telefono}</p>
+			`,
+			icon: 'info'
+		})
 	}
 
 	getImage(image: any ){
