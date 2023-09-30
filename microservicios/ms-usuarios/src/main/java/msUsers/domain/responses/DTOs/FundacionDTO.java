@@ -11,4 +11,5 @@ public class FundacionDTO {
     private String cuil;
     private Integer puntaje;
     private List<DireccionDTO> direcciones;
+    private UsuarioDTO usuarioDTO;
 }

@@ -26,6 +26,5 @@ public class PublicacionDTO {
     private Double valorTruequeMin;
     private ParticularDTO particularDTO;
     private List<CaracteristicaProducto> caracteristicaProducto;
-    private List<ProductoDTO> productos;
     private String imagenes;
 }

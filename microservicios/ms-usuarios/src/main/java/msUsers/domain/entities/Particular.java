@@ -58,6 +58,7 @@ public class Particular {
 
     public ParticularDTO toDTO() {
         ParticularDTO particularDTO = new ParticularDTO();
+        particularDTO.setUsuarioDTO(usuario.toDTO());
         particularDTO.setIdParticular(idParticular);
         particularDTO.setNombre(nombre);
         particularDTO.setApellido(apellido);
