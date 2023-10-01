@@ -10,7 +10,7 @@
 					<div mat-card-avatar class="example-header-image"></div>
 					<div>
 						<mat-card-title style="display: flex; align-items: center;">
-							{{publicacion.particularDTO.nombre}} {{publicacion.particularDTO.apellido}}
+							<a [href]="'/perfil/'+publicacion.particularDTO.usuarioDTO.idUsuario">{{publicacion.particularDTO.nombre}} {{publicacion.particularDTO.apellido}}</a>
 							<!-- <mat-icon class="address" (click)="showDireccion(publicacion.fundacion.usuario)">place</mat-icon> -->
 						</mat-card-title>
 						<mat-card-subtitle>

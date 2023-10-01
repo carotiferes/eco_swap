@@ -22,7 +22,7 @@
 			</div>
 		</div>
 		<div class="card-fundacion col-sm-2" *ngIf="origin=='publicaciones' || origin=='mis-publicaciones'">
-			<img class="img-fundacion" src="assets/persona.png">
+			<img class="img-fundacion" src="assets/perfiles/perfiles-17.jpg">
 			<h4>{{publicacion.particularDTO.nombre + ' ' + publicacion.particularDTO.apellido}}</h4>
 			<h6>{{publicacion.fechaPublicacion | date: 'dd/MM/yyyy' }}</h6>
 			<h6 *ngIf="origin=='publicaciones' && publicacion.particularDTO.direcciones.length > 0">{{ publicacion.particularDTO.direcciones[0].codigoPostal }}</h6>

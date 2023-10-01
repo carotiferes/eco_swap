@@ -356,7 +356,7 @@ export class RegistroComponent {
 				if(origin == 'ir_a_home') {
 					this.router.navigate(['home'])
 				} else if(origin == 'edit') {
-					this.router.navigate(['perfil'])
+					this.router.navigate(['mi-perfil'])
 				}
 			}
 		})

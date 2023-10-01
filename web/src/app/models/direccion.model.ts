@@ -1,6 +1,8 @@
-import { UsuarioModel } from "./usuario.model";
-import { ColectaModel } from "./colecta.model";
 
 export interface DireccionModel {
-	
+	codigoPostal: string, // LOCALIDAD
+	direccion: string, // CALLE
+	altura: number,
+	piso: number,
+	departamento: string
 }

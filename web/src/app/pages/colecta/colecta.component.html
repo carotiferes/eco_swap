@@ -9,7 +9,7 @@
 					<div mat-card-avatar class="example-header-image"></div>
 					<div>
 						<mat-card-title style="display: flex; align-items: center;">
-							{{colecta.fundacionDTO.nombre}}
+							<a [href]="'/perfil/'+colecta.fundacionDTO.usuarioDTO.idUsuario">{{colecta.fundacionDTO.nombre}}</a>
 							<mat-icon class="address" (click)="showDireccion(colecta.fundacionDTO)" *ngIf="colecta.fundacionDTO && colecta.fundacionDTO.direcciones.length > 0">place</mat-icon>
 							<mat-icon class="address" (click)="showContactInfo(colecta.fundacionDTO)" *ngIf="colecta.fundacionDTO">info</mat-icon>
 						</mat-card-title>
@@ -24,8 +24,8 @@
 			</div>
 		</mat-card-header>
 		<mat-card-content class="card-content">
-			<img mat-card-image [src]="colecta.imagen ? colecta.imagen : 'assets/fundacion.png'" class="colecta-img"
-				(click)="zoomImage(colecta.imagen ? colecta.imagen.split('/').at(-1) : 'assets/fundacion.png')">
+			<img mat-card-image [src]="colecta.imagen ? colecta.imagen : 'assets/perfiles/perfiles-24.jpg'" class="colecta-img"
+				(click)="zoomImage(colecta.imagen ? colecta.imagen.split('/').at(-1) : 'assets/perfiles/perfiles-24.jpg')">
 			<div>
 				<h2 class="card-title">{{colecta.titulo}}</h2>
 				<div class="descripcion">
