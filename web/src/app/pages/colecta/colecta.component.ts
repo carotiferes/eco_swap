@@ -11,6 +11,8 @@ import { ShowErrorService } from 'src/app/services/show-error.service';
 import { FundacionesService } from 'src/app/services/fundaciones.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
+import { MatDialog } from '@angular/material/dialog';
+import { MapComponent } from 'src/app/shared/map/map.component';
 
 @Component({
   selector: 'app-colecta',
@@ -28,12 +30,15 @@ export class ColectaComponent {
 	loading: boolean = true;
 	showDonaciones: boolean = false;
 	donacionesToShow: DonacionModel[] = [];
+	paginatedDonaciones: DonacionModel[] = [];
+	pageSize = 5;
 
 	buttonsCard: {name: string, icon: string, color: string, status: string, disabled: string}[] = []
 
 	constructor(private route: ActivatedRoute, private router: Router, private auth: AuthService,
 		private donacionesService: DonacionesService, private showErrorService: ShowErrorService,
-		private productoService: ProductosService, private usuarioService: UsuarioService){
+		private productoService: ProductosService, private usuarioService: UsuarioService,
+		public dialog: MatDialog){
 		route.paramMap.subscribe(params => {
 			console.log(params);
 			this.id_colecta = params.get('id_colecta') || '';
@@ -87,6 +92,7 @@ export class ColectaComponent {
 									this.donacionesToShow = donaciones;
 									this.showDonaciones = true;
 								}
+								this.paginatedDonaciones = this.donacionesToShow.slice(0, this.pageSize);
 								console.log(this.showDonaciones);
 							},
 							error: (error) => {
@@ -139,25 +145,39 @@ export class ColectaComponent {
 		}
 	}
 
-	showDireccion(usuario: any){
-		//console.log( usuario);
-		let stringDir: string = ''
-		for (const dir of usuario.direcciones) {
-			if(dir.direccion) {
-				stringDir += (dir.direccion + ' '+ dir.altura)
-			}
-		}
-		//console.log(stringDir);
+	showDireccion(fundacion: any){
+		console.log(fundacion);
+		let stringDir: string = fundacion.direcciones[0].direccion + fundacion.direcciones[0].altura || '';
+		const localidad = fundacion.direcciones[0].codigoPostal || '';
 
-		const dirArray = stringDir.split(' ')
+		const apiUrl = `https://apis.datos.gob.ar/georef/api/direcciones?provincia=02&localidad=${localidad}
+		&direccion=${encodeURIComponent(stringDir)}`
+		fetch(apiUrl).then(response => response.json()).then(data => {
+			//console.log(data);
+			if(data.cantidad > 0) {
+				const lat = data.direcciones[0].ubicacion.lat;
+		      	const lon = data.direcciones[0].ubicacion.lon;
+				  this.dialog.open(MapComponent, {
+					maxWidth: '70vw',
+					maxHeight: '60vh',
+					height: '100%',
+					width: '100%',
+					panelClass: 'full-screen-modal',
+					data: {lat, lon}
+				});
+			}
+		  }).catch(error => console.error(error));
+
+	}
+
+	showContactInfo(fundacion: FundacionModel) {
+		console.log(fundacion, this.userInfo);
 		Swal.fire({
-			title: 'Información de la fundación',
-			text: stringDir + ' https://www.google.com/maps/search/?api=1&query='+dirArray[0]+'+'+dirArray[1],
+			title: 'Información de la fundación: \n '+ fundacion.nombre,
 			html: `
-			<p style="font-weight: 400;"><b>Email: </b>${usuario.email}</p>
-			<p style="font-weight: 500;"><b>Dirección: </b>${stringDir}</p>
-			<a href="https://www.google.com/maps/search/?api=1&query=${dirArray[0]}+${dirArray[1]}" target="_blank">Ver en Google Maps</a>`,
-			//iconHtml: `<span class="material-icons-outlined"> place </span>`
+			<p style="font-weight: 400;"><b>Email: </b>${fundacion.usuarioDTO.email}</p>
+			<p style="font-weight: 400;"><b>Teléfono: </b>${fundacion.usuarioDTO.telefono}</p>
+			`,
 			icon: 'info'
 		})
 	}
@@ -178,6 +198,12 @@ export class ColectaComponent {
 		} else if (this.colecta.fechaInicio) {
 			return 'A partir del ' + (new Date(this.colecta.fechaInicio)).toLocaleDateString();
 		} else return '';
+	}
+
+	changePage(event: any) {
+		const startIndex = event.pageIndex * event.pageSize;
+		const endIndex = startIndex + event.pageSize;
+		this.paginatedDonaciones = this.donacionesToShow.slice(startIndex, endIndex);
 	}
 
 }

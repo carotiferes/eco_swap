@@ -4,7 +4,7 @@
 		<div class="col-sm-4" style="display: flex; justify-content: center;">
 			<img class="card-img" *ngIf="publicacion.parsedImagenes && publicacion.parsedImagenes.length > 0"
 			[src]="getImagen(publicacion.parsedImagenes![0])" 
-			[ngClass]="origin=='publicaciones' ? 'big':'small'"> <!-- *ngFor="let img of publicacion.parsedImagenes" -->
+			[ngClass]="origin=='publicaciones' || origin=='mis-publicaciones' ? 'big':'small'"> <!-- *ngFor="let img of publicacion.parsedImagenes" -->
 		</div>
 		<div class="card-body col-sm-5">
 			<h2 class="card-title">{{publicacion.titulo}}</h2>
@@ -15,13 +15,17 @@
 				Precio de venta: ${{publicacion.precioVenta}}
 			</div>
 			<div class="estado" *ngIf="origin=='propuestas'">
-				Estado: {{publicacion.estadoTrueque}}
+				Estado del trueque: {{publicacion.estadoTrueque}}
+			</div>
+			<div class="estado-publicacion" *ngIf="origin=='mis-publicaciones'">
+				Estado de la publicación: {{publicacion.estadoPublicacion}}
 			</div>
 		</div>
-		<div class="card-fundacion col-sm-2" *ngIf="origin=='publicaciones'">
-			<img class="img-fundacion" src="assets/persona.png">
+		<div class="card-fundacion col-sm-2" *ngIf="origin=='publicaciones' || origin=='mis-publicaciones'">
+			<img class="img-fundacion" src="assets/perfiles/perfiles-17.jpg">
 			<h4>{{publicacion.particularDTO.nombre + ' ' + publicacion.particularDTO.apellido}}</h4>
 			<h6>{{publicacion.fechaPublicacion | date: 'dd/MM/yyyy' }}</h6>
+			<h6 *ngIf="origin=='publicaciones' && publicacion.particularDTO.direcciones.length > 0">{{ publicacion.particularDTO.direcciones[0].codigoPostal }}</h6>
 		</div>
 		<div class="col-3 buttons" *ngIf="origin=='propuestas'">
 			<button *ngFor="let button of buttons" mat-fab extended [color]="button.color"

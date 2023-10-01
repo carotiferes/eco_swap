@@ -24,6 +24,10 @@
 
 				}
 
+				&.capitalize-input input {
+					text-transform: capitalize;
+				}
+
 				.eye:hover {
 					cursor: pointer;
 				}

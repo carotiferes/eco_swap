@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { PublicacionModel } from 'src/app/models/publicacion.model';
 import { AuthService } from 'src/app/services/auth.service';
@@ -23,7 +24,11 @@ export class PublicacionesComponent {
 	loading: boolean = false;
 
 	publicacionesToShow: PublicacionModel[] = [];
+	paginatedPublicaciones: PublicacionModel[] = [];
 	filtros: any;
+
+	@ViewChild(MatPaginator) paginator!: MatPaginator;
+	pageSize = 5;
 
 	constructor(private router: Router, private auth: AuthService, private fb: FormBuilder,
 		private productosService: ProductosService, private showErrorService: ShowErrorService,
@@ -90,6 +95,7 @@ export class PublicacionesComponent {
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
+					this.paginatedPublicaciones = this.publicacionesToShow.slice(0, this.pageSize);
 				}
 			})
 		} else if(this.origin == 'myPublicaciones'){
@@ -100,6 +106,7 @@ export class PublicacionesComponent {
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
+					this.paginatedPublicaciones = this.publicacionesToShow.slice(0, this.pageSize);
 				}
 			})
 		} else { // myCompras
@@ -118,6 +125,12 @@ export class PublicacionesComponent {
 	limpiarFiltros() {
 		this.formFiltros.reset()
 		this.filtrarPublicaciones()
+	}
+
+	changePage(event: any) {
+		const startIndex = event.pageIndex * event.pageSize;
+		const endIndex = startIndex + event.pageSize;
+		this.paginatedPublicaciones = this.publicacionesToShow.slice(startIndex, endIndex);
 	}
 
 }

@@ -1,0 +1,28 @@
+.image-gallery {
+	display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+
+	.image {
+		width: 100px;
+		border-radius: 50%;
+		box-shadow: 2px 2px 5px var(--dark-grey);
+
+		&:hover {
+			cursor: pointer;
+			filter: brightness(0.7);
+		}
+
+		&.selected {
+			filter: brightness(0.7);
+		}
+	}
+}
+
+.buttons {
+	display: flex;
+    justify-content: center;
+    margin: 20px;
+    gap: 20px;
+}

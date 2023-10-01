@@ -1,29 +1,38 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-//import { Map, Marker, NavigationControl } from 'maplibre-gl';
+import { Component, Inject, OnInit, } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import * as L from 'leaflet';
 
 @Component({
 	selector: 'app-map',
 	templateUrl: './map.component.html',
 	styleUrls: ['./map.component.scss']
 })
-export class MapComponent /* implements AfterViewInit */ {
+export class MapComponent implements OnInit {
 
-	/* map: Map | undefined;
-	@ViewChild('map')
-	private mapContainer!: ElementRef<HTMLElement>;
+	private map!: L.Map;
 
-	ngAfterViewInit() {
-		const initialState = { lng: 139.753, lat: 35.6844, zoom: 14 };
+	constructor(@Inject(MAT_DIALOG_DATA) public data: any,) { }
 
-		this.map = new Map({
-			container: this.mapContainer.nativeElement,
-			style: `https://api.maptiler.com/maps/streets-v2/style.json?key=PVhSIsIisRAZzZjw4a6d`,
-			center: [ -58.44,-34.57],
-  			zoom: 14,
+	ngOnInit(): void {
+		this.initMap();
+	}
+
+	private initMap(): void {
+		// Initialize a map instance and set its center and zoom level
+		this.map = L.map('map').setView([this.data.lat, this.data.lon], 13);
+		// Create a custom icon for the marker
+		const customIcon = L.icon({
+			iconUrl: 'assets/pin-9-64.png',
+			iconSize: [48, 48], // Set the icon size
+			iconAnchor: [24, 48], // Set the anchor point
 		});
 
-		this.map.addControl(new NavigationControl(), 'top-right');
-		new Marker({ color: "#FF0000" }).setLngLat([ -58.44,-34.57]).addTo(this.map);
+		// Create a marker with the custom icon and add it to the map
+		const marker = L.marker([this.data.lat, this.data.lon], { icon: customIcon }).addTo(this.map);
 
-	} */
+		// Add a tile layer (you can use different tile providers)
+		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '© OpenStreetMap contributors'
+		}).addTo(this.map);
+	}
 }

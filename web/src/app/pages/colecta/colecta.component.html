@@ -9,8 +9,9 @@
 					<div mat-card-avatar class="example-header-image"></div>
 					<div>
 						<mat-card-title style="display: flex; align-items: center;">
-							{{colecta.fundacionDTO.nombre}}
-							<mat-icon class="address" (click)="showDireccion(colecta.fundacionDTO.usuario)" *ngIf="colecta.fundacionDTO.usuario">place</mat-icon>
+							<a [href]="'/perfil/'+colecta.fundacionDTO.usuarioDTO.idUsuario">{{colecta.fundacionDTO.nombre}}</a>
+							<mat-icon class="address" (click)="showDireccion(colecta.fundacionDTO)" *ngIf="colecta.fundacionDTO && colecta.fundacionDTO.direcciones.length > 0">place</mat-icon>
+							<mat-icon class="address" (click)="showContactInfo(colecta.fundacionDTO)" *ngIf="colecta.fundacionDTO">info</mat-icon>
 						</mat-card-title>
 						<mat-card-subtitle>
 							<mat-icon *ngFor="let i of [].constructor(colecta.fundacionDTO.puntaje || 0)" color="primary">star</mat-icon>
@@ -23,8 +24,8 @@
 			</div>
 		</mat-card-header>
 		<mat-card-content class="card-content">
-			<img mat-card-image [src]="colecta.imagen ? colecta.imagen : 'assets/fundacion.png'" class="colecta-img"
-				(click)="zoomImage(colecta.imagen ? colecta.imagen.split('/').at(-1) : 'assets/fundacion.png')">
+			<img mat-card-image [src]="colecta.imagen ? colecta.imagen : 'assets/perfiles/perfiles-24.jpg'" class="colecta-img"
+				(click)="zoomImage(colecta.imagen ? colecta.imagen.split('/').at(-1) : 'assets/perfiles/perfiles-24.jpg')">
 			<div>
 				<h2 class="card-title">{{colecta.titulo}}</h2>
 				<div class="descripcion">
@@ -58,5 +59,9 @@
 				{name: 'rechazar', icon: 'close', color: 'warn', status: 'RECHAZADA', disabled: donacion.estadoDonacion != 'PENDIENTE'},
 				{name: 'recibida', icon: 'done_all', color: 'primary', status: 'RECIBIDA', disabled: donacion.estadoDonacion != 'APROBADA'},
 			]"></app-card-donacion>
+		<mat-paginator [pageSizeOptions]="[5, 10, 25]" [pageSize]="pageSize" [showFirstLastButtons]="true"
+		[length]="donacionesToShow.length" #paginator (page)="changePage($event)" style="border-radius: 15px;"
+		*ngIf="donacionesToShow.length > 0">
+		</mat-paginator>
 	</div>
 </div>

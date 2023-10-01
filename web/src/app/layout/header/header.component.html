@@ -32,7 +32,7 @@
 	</div>
 	<div class="collapse navbar-collapse justify-content-end" id="navbarToggler">
 		<ul class="navbar-nav mr-auto mt-2 mt-lg-0 mr-2">
-			<li class="nav-item">
+			<!-- <li class="nav-item">
 				<a class="nav-link nav-white px-2" *ngIf="isUserLoggedIn && this.profileType == 'fundacion'"
 					[href]="'/mis-colectas/'">
 					<b>Mis colectas</b>
@@ -52,16 +52,43 @@
 				<a class="nav-link nav-white px-2" *ngIf="isUserLoggedIn && this.profileType == 'particular'" href="/mis-compras/">
 					<b>Mis compras</b>
 				</a>
-			</li>
+			</li> -->
 			<div ngbDropdown class="dropdown nav-item">
 				<div ngbDropdownToggle class="nav-link nav-white px-2" type="button" id="dropdownMenuButton1" aria-expanded="false">
+					<img [src]="isUserLoggedIn && this.profileType == 'particular' ? 'assets/perfiles/perfiles-17.jpg' : 'assets/perfiles/perfiles-24.jpg'">
 					<b>Mi Cuenta</b>
 				</div>
 				<ul ngbDropdownMenu aria-labelledby="dropdownMenuButton1" class="dropdown-menu-end">
-				  <li><a ngbDropdownItem [href]="'/registro'" class="dropdown-item" *ngIf="!isUserLoggedIn">Crear Cuenta</a></li>
-				  <li><a ngbDropdownItem [href]="'/login'" class="dropdown-item" *ngIf="!isUserLoggedIn">Iniciar Sesión</a></li>
-				  <li><a ngbDropdownItem [href]="'/perfil'" class="dropdown-item" *ngIf="isUserLoggedIn">Mi perfil</a></li>
-				  <li><a ngbDropdownItem (click)="logOut()" class="dropdown-item" *ngIf="isUserLoggedIn">Cerrar Sesión</a></li>
+					<mat-icon class="arrow-top">eject</mat-icon>			
+					<li><a ngbDropdownItem href="/mis-donaciones/" class="dropdown-item" *ngIf="isUserLoggedIn && this.profileType == 'particular'">
+						Mis donaciones
+					</a></li>
+					<li><a ngbDropdownItem href="/mis-publicaciones/" class="dropdown-item" *ngIf="isUserLoggedIn && this.profileType == 'particular'">
+						Mis publicaciones
+					</a></li>
+					<li><a ngbDropdownItem href="/mis-compras/" class="dropdown-item" *ngIf="isUserLoggedIn && this.profileType == 'particular'">
+						Mis compras
+					</a></li>
+
+					<li><a ngbDropdownItem href="/mis-colectas/" class="dropdown-item" *ngIf="isUserLoggedIn && this.profileType == 'fundacion'">
+						Mis colectas
+					</a></li>
+
+					<div style="border-bottom: 1px solid #9fe27a; margin: 10px;"></div>
+					
+					<li><a ngbDropdownItem [href]="'/registro'" class="dropdown-item" *ngIf="!isUserLoggedIn">
+						Crear Cuenta
+					</a></li>
+					<li><a ngbDropdownItem [href]="'/login'" class="dropdown-item" *ngIf="!isUserLoggedIn">
+						Iniciar Sesión
+					</a></li>
+					<li><a ngbDropdownItem [href]="'/mi-perfil'" class="dropdown-item" *ngIf="isUserLoggedIn">
+						Mi perfil
+					</a></li>
+					<li><a ngbDropdownItem (click)="logOut()" class="dropdown-item" *ngIf="isUserLoggedIn">
+						Cerrar Sesión
+					</a></li>
+
 				</ul>
 			  </div>
 		</ul>

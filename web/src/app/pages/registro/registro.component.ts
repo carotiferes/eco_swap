@@ -41,6 +41,9 @@ export class RegistroComponent {
 
 	loadingSave: boolean = false;
 
+	localidades: any[] = [];
+	calles: any[] = [];
+
 	constructor(private fb: FormBuilder, private dateAdapter: DateAdapter<Date>,
 		private usuarioService: UsuarioService, private location: Location,
 		private auth: AuthService, private router: Router, private snackbar: MatSnackBar,
@@ -67,11 +70,12 @@ export class RegistroComponent {
 		})
 
 		this.direccionForm = fb.group({
-			direccion: ['', Validators.required],
-			altura: ['', Validators.required],
-			piso: [''],
-			departamento: [''],
-			codigoPostal: ['', Validators.required],
+			localidad: ['', [Validators.required, this.validateItem.bind(this)]],
+			calle: [{value:'', disabled: true}, [Validators.required, this.validateItem.bind(this)]],
+			altura: [{value:'', disabled: true}, Validators.required],
+			piso: [{value:'', disabled: true}],
+			departamento: [{value:'', disabled: true}],
+			//codigoPostal: ['', Validators.required],
 		})
 
 		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
@@ -96,7 +100,52 @@ export class RegistroComponent {
 			this.loadUserInfo();
 			this.loading = false;
 		} else this.loading = false;
-		this.getTiposDocumentos()
+		this.getTiposDocumentos();
+	}
+
+	getLocalidades() {
+		const locValue = this.direccionForm.controls['localidad'].value;
+		if(locValue.length == 0) {
+			this.direccionForm.controls['calle'].disable();
+			this.direccionForm.controls['altura'].disable()
+			this.direccionForm.controls['piso'].disable()
+			this.direccionForm.controls['departamento'].disable()
+		}
+		else if(locValue.length >= 3) {
+			const apiUrl = 'https://apis.datos.gob.ar/georef/api/localidades?orden=id&provincia=02&nombre='+locValue
+			fetch(apiUrl).then(response => response.json()).then(data => {
+				this.localidades = data.localidades
+			}).catch(error => console.error(error));
+		}
+	}
+
+	getCalles() {
+		const calleInput = this.direccionForm.controls['calle'].value;
+		const locInput = this.direccionForm.controls['localidad'].value.departamento.id;
+		
+		if(calleInput.length == 0) {
+			this.direccionForm.controls['altura'].disable()
+			this.direccionForm.controls['piso'].disable()
+			this.direccionForm.controls['departamento'].disable()
+		}
+		if(calleInput.length >= 3) {
+			const apiUrl = 'https://apis.datos.gob.ar/georef/api/calles?orden=id&provincia=02&departamento='+locInput+'&nombre='+calleInput
+			fetch(apiUrl).then(response => response.json()).then(data => {
+				this.calles = data.calles
+			}).catch(error => console.error(error));
+		}
+	}
+
+	onLocSelected(event: any) {
+		if(event) this.direccionForm.controls['calle'].enable()
+	}
+
+	onCalleSelected(event: any) {
+		if(event) {
+			this.direccionForm.controls['altura'].enable()
+			this.direccionForm.controls['piso'].enable()
+			this.direccionForm.controls['departamento'].enable()
+		}
 	}
 
 	ngOnDestroy(): void {
@@ -130,7 +179,7 @@ export class RegistroComponent {
 					}
 	
 					this.direccionForm.patchValue({
-						direccion: user.particularDTO ? user.particularDTO.direcciones[0].direccion : user.fundacionDTO.direcciones[0].direccion,
+						calle: user.particularDTO ? user.particularDTO.direcciones[0].direccion : user.fundacionDTO.direcciones[0].direccion,
 						altura: user.particularDTO ? user.particularDTO.direcciones[0].altura : user.fundacionDTO.direcciones[0].altura,
 						piso: user.particularDTO ? user.particularDTO.direcciones[0].piso : user.fundacionDTO.direcciones[0].piso,
 						departamento: user.particularDTO ? user.particularDTO.direcciones[0].departamento : user.fundacionDTO.direcciones[0].departamento,
@@ -215,11 +264,11 @@ export class RegistroComponent {
 						telefono: this.mainForm.controls['telefono'].value,
 						confirmPassword: this.mainForm.controls['confirmPassword'].value,
 						direccion: {
+							codigoPostal: this.direccionForm.controls['localidad'].value.nombre,
+							direccion: this.direccionForm.controls['calle'].value.nombre,
 							altura: this.direccionForm.controls['altura'].value,
-							codigoPostal: this.direccionForm.controls['codigoPostal'].value,
-							direccion: this.direccionForm.controls['direccion'].value,
-							departamento: this.direccionForm.controls['departamento'].value,
 							piso: this.direccionForm.controls['piso'].value,
+							departamento: this.direccionForm.controls['departamento'].value,
 						}
 					};
 	
@@ -260,22 +309,13 @@ export class RegistroComponent {
 								next: (id_user: any) => {
 									console.log('next', id_user);
 									this.id_user = id_user;
-									// TODO: REVISAR CON EMAILS. esperar 1 min antes de dejarlo enviar devuelta
-									this.showMessage('¡Gracias por registrarte!',
-										`Te enviamos un email a la cuenta que ingresaste,
-										con un código para verificar tu cuenta. Por favor ingresalo a continuación.
-										Si no verificás la cuenta ahora, podrás hacerlo la próxima vez que inicies sesión.`,
-										'Confirmar', 'send_again', 'success', 'No recibí el email')
+									this.messageWithTimer();
 									this.loadingSave = false;
 								},
 								error: (e) => {
 									console.error('error', e);
-									/* if(e.message.includes('duplicate'))
-									this.showMessage('Error!', 'Ya existe un usuario con el email ingresado.', 'OK', 'error', 'error')
-									else this.showMessage('Error!', 'Ha ocurrido un error al crear la cuenta', 'OK', 'error', 'error') */
 									this.loadingSave = false;
 								},
-								//complete: () => console.info('signup complete')
 							})
 						} else {
 							this.usuarioService.editUser(user).subscribe({
@@ -304,57 +344,19 @@ export class RegistroComponent {
 	}
 
 	showMessage(title: string, text: string, confirm: string, origin: string,
-		icon: 'success' | 'error' | 'warning', deny?: string) {
+		icon: 'success' | 'error' | 'warning') {
 		Swal.fire({
 			title,
 			text,
 			confirmButtonText: confirm,
-			showDenyButton: deny ? true : false,
-			denyButtonText: deny,
 			icon,
-			allowOutsideClick: icon == 'success' ? false : true,
-			input: origin == 'send_again' ? 'text' : undefined,
-			reverseButtons: true,
-			preDeny: () => {
-				if(this.id_user) this.auth.sendEmailAgain(this.id_user).subscribe({
-					next: (res) => {
-						console.log(res);
-						this.snackbar.open('Se envió el nuevo mail!', '', {
-							horizontalPosition: 'center',
-							verticalPosition: 'top',
-							duration: 3000
-						})
-					}
-				})
-				return false;
-			}
-		}).then(({ isConfirmed, value, isDenied }) => {
-			console.log(value);
-			/* if (isDenied && origin == 'send_again') {
-				// TODO: RESEND EMAIL
-				this.router.navigate(['login'])
-			} */
-			if(isConfirmed){
+			allowOutsideClick: icon == 'success' ? false : true
+		}).then(({ isConfirmed }) => {
+			if(isConfirmed && icon != 'error'){
 				if(origin == 'ir_a_home') {
 					this.router.navigate(['home'])
 				} else if(origin == 'edit') {
-					this.router.navigate(['perfil'])
-				} else if (origin == 'send_again') {
-					if(this.id_user) this.usuarioService.confirmarCuenta(this.id_user, value).subscribe({
-						next: (res) => {
-							console.log(res);
-							Swal.fire('Excelente!', 'Tu cuenta fue verificada, ya podes usar Ecoswap!', 'success')
-							this.router.navigate(['/'])
-						},
-						error: (error) => {
-							console.log(error);
-							/* if(error.message.descripcion == "El código es incorrecto") {
-								Swal.fire('Código incorrecto!', 'El código ingresado es incorrecto. Iniciá sesión y volvé a intentarlo.', 'error')
-								this.router.navigate(['/login'])
-							} */
-						}
-					})
-					else Swal.fire('Error!', 'Ocurrió un error al activar tu cuenta. Por favor intentalo más tarde', 'error')
+					this.router.navigate(['mi-perfil'])
 				}
 			}
 		})
@@ -423,28 +425,104 @@ export class RegistroComponent {
 		this.fundacionForm.get('cuit')?.setValue(this.cuitPipe.transform(this.fundacionForm.get('cuit')?.value)); // Esto fuerza el cambio del valor
 		this.cdr.detectChanges(); // Detectamos los cambios manualmente
 	}
+
+	messageWithTimer() {
+		let countdownTime = 60;
+		Swal.fire({
+			title: '¡Gracias por registrarte!',
+			text: `Te enviamos un email a la cuenta que ingresaste, con un código para verificar tu cuenta. Por favor ingresalo a continuación. Si no verificás la cuenta ahora, podrás hacerlo la próxima vez que inicies sesión.`,
+			icon: 'success',
+			showDenyButton: true,
+			allowOutsideClick: false, allowEscapeKey: false,
+			denyButtonText: 'Reenviar email en 60 segundos',
+			denyButtonColor: '#ae59db', confirmButtonColor: '#87db59',
+			confirmButtonText: 'Confirmar',
+			input: 'text',
+			didOpen: () => {
+				const denyButton: any = document.querySelector('.swal2-deny');
+				const countdownInterval = setInterval(() => {
+					countdownTime--;
+					if (denyButton) {
+						denyButton.setAttribute('style', 'background-color: #a3a3a3;');
+						denyButton.textContent = `Reenviar email en ${countdownTime} segundos`;
+					}
+					if (countdownTime <= 0 && denyButton) {
+						denyButton.disabled = false;
+						denyButton.setAttribute('style', 'background-color: #9c30d4;');
+						denyButton.textContent = `Reenviar email`;
+						clearInterval(countdownInterval);
+					}
+				}, 1000);
+			},
+			preDeny: () => {
+				console.log('pre deny', countdownTime);
+				if (this.id_user && countdownTime == 0 ) {
+					this.auth.sendEmailAgain(this.id_user).subscribe({
+						next: (res) => {
+							console.log(res);
+							this.snackbar.open('Se envió el nuevo mail!', '', {
+								horizontalPosition: 'center',
+								verticalPosition: 'top',
+								duration: 3000
+							})
+						}
+					})
+				}
+				return false;
+			},
+			reverseButtons: true
+		}).then(({ isConfirmed, value }) => {
+			console.log(isConfirmed);
+
+			if (isConfirmed && this.id_user) {
+				console.log('conf', value);
+				
+				this.usuarioService.confirmarCuenta(this.id_user, value).subscribe({
+					next: (res) => {
+						console.log(res);
+						Swal.fire('Excelente!', 'Tu cuenta fue verificada, ya podes usar Ecoswap!', 'success')
+						this.router.navigate(['/'])
+					},
+					error: (error) => {
+						console.log(error);
+						this.router.navigate(['/login'])
+					}
+				});
+				//else Swal.fire('Error!', 'Ocurrió un error al activar tu cuenta. Por favor intentalo más tarde', 'error')
+			}
+		})
+	}
+
+	displayItem(item: any): string {
+		return item ? capitalizeFirstLetter(item.nombre) : '';
+	}
+
+	validateItem(control: AbstractControl): { [key: string]: any } | null {
+		const selectedValue = control.value;
+		const parentFormGroup = control.parent;
+		if (!parentFormGroup) return { invalidSelection: true };
+		const name = Object.keys(parentFormGroup.controls).find((key) => control === parentFormGroup.get(key));
+		
+		if (selectedValue && this.localidades) {
+			const isValid = (name == 'localidad' ? this.localidades : this.calles)
+				.some((item) => item.nombre.toUpperCase() == (selectedValue.nombre || selectedValue).toUpperCase());
+			return isValid ? null : { invalidSelection: true };
+		}
+		return null;
+	}
 	
 }
 
 function isValidCUIT(control: FormControl): { [key: string]: boolean } | null {
 	const cuit = control.value;
 	
-	if (!cuit) {
-	  return null; // Handle empty input
-	}
+	if (!cuit) return null; // Handle empty input
+
+	const regex = /^\d{2}-\d{8,9}-\d{1,2}$/; // Ensure the CUIT matches the format: 11-11111111-1 or 11-11111111-11
+	if (!regex.test(cuit)) return { 'invalidCUIT': true };
   
-	// Ensure the CUIT matches the format: 11-11111111-1 or 11-11111111-11
-	const regex = /^\d{2}-\d{8,9}-\d{1,2}$/;
-  
-	if (!regex.test(cuit)) {
-	  return { 'invalidCUIT': true };
-	}
-  
-	// Extract the numeric part for calculation
-	const numericPart: string = cuit.replace(/-/g, '');
-  
-	// Calculate the verifier digit
-	const verifierDigit = parseInt(numericPart.charAt(numericPart.length-1));
+	const numericPart: string = cuit.replace(/-/g, ''); // Extract the numeric part for calculation
+	const verifierDigit = parseInt(numericPart.charAt(numericPart.length-1)); // Calculate the verifier digit
 	const factors = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
 	let sum = 0;
   
@@ -455,9 +533,10 @@ function isValidCUIT(control: FormControl): { [key: string]: boolean } | null {
 	const remainder = sum % 11;
 	const calculatedVerifierDigit = remainder === 0 ? 0 : 11 - remainder;
   
-	if (calculatedVerifierDigit !== verifierDigit) {
-	  return { 'invalidCUIT': true };
-	}
-  
+	if (calculatedVerifierDigit !== verifierDigit) return { 'invalidCUIT': true };
 	return null; // CUIT is valid
+}
+
+function capitalizeFirstLetter(str: string) {
+	return str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 }

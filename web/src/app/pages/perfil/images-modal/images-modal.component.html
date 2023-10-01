@@ -1,0 +1,13 @@
+<div style="margin: 20px;">
+	<h2>Seleccioná una foto de perfil!</h2>
+</div>
+<div class="image-gallery">
+	<img class="image" *ngFor="let image of images" (click)="selectImage(image.id)"
+	[src]="image.name" [alt]="image.name"
+	[ngClass]="image.id == selectedImage ? 'selected':''"/>
+</div>
+<div class="buttons">
+	<button mat-fab extended color="light" (click)="close()">CANCELAR</button>
+	<button mat-fab extended color="primary" (click)="confirm()" [disabled]="!selectedImage">GUARDAR</button>
+
+</div>

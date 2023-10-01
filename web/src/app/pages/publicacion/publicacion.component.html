@@ -10,7 +10,7 @@
 					<div mat-card-avatar class="example-header-image"></div>
 					<div>
 						<mat-card-title style="display: flex; align-items: center;">
-							{{publicacion.particularDTO.nombre}} {{publicacion.particularDTO.apellido}}
+							<a [href]="'/perfil/'+publicacion.particularDTO.usuarioDTO.idUsuario">{{publicacion.particularDTO.nombre}} {{publicacion.particularDTO.apellido}}</a>
 							<!-- <mat-icon class="address" (click)="showDireccion(publicacion.fundacion.usuario)">place</mat-icon> -->
 						</mat-card-title>
 						<mat-card-subtitle>
@@ -20,7 +20,10 @@
 						</mat-card-subtitle>
 					</div>
 				</div>
-				<div>{{publicacion.fechaPublicacion | date: 'dd/MM/yyyy'}}</div>
+				<div class="div-fecha-zona">
+					<div>{{publicacion.fechaPublicacion | date: 'dd/MM/yyyy'}}</div>
+					<div *ngIf="publicacion.particularDTO.direcciones.length > 0">{{publicacion.particularDTO.direcciones[0].codigoPostal}}</div>
+				</div>
 			</div>
 		</mat-card-header>
 		<mat-card-content class="card-content">
@@ -38,7 +41,7 @@
 				<div class="venta" *ngIf="publicacion.tipoPublicacion == 'VENTA_Y_TRUEQUE'">
 					Precio de venta: ${{publicacion.precioVenta}}
 				</div>
-				<div class="caracteristicas">
+				<div class="caracteristicas" *ngIf="publicacion.caracteristicaProducto.length > 0">
 					<b>Características:</b>
 					<div *ngFor="let caract of publicacion.caracteristicaProducto" class="producto">
 						{{caract.caracteristica}}
