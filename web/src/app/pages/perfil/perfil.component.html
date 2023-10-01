@@ -6,8 +6,9 @@
 
 <div id="main-profile" class="app-main-div">
 	<div class="top-div" *ngIf="userToShow">
-		<div class="top-img">
+		<div class="top-img" (click)="selectImage()" [ngClass]="myProfile ? 'editable-img' : ''">
 			<img [src]="userData.isSwapper ? 'assets/perfiles/perfiles-17.jpg' : 'assets/perfiles/perfiles-24.jpg'" alt="">
+			<mat-icon class="edit-icon">edit</mat-icon>
 		</div>
 		<mat-card class="top-text">
 				<h2>{{userToShow.nombre}}</h2>

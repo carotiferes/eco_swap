@@ -7,9 +7,10 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HeaderModule } from 'src/app/layout/header/header.module';
 import { PhoneNumberPipe } from 'src/app/pipes/phone-number.pipe';
 import { PipesModule } from 'src/app/pipes/pipes.module';
+import { ImagesModalComponent } from './images-modal/images-modal.component';
 
 @NgModule({
-  declarations: [PerfilComponent],
+  declarations: [PerfilComponent, ImagesModalComponent],
   imports: [
     CommonModule,
 	PerfilRoutingModule,

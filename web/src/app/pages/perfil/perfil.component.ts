@@ -10,6 +10,7 @@ import { ParticularesService } from 'src/app/services/particulares.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { MapComponent } from 'src/app/shared/map/map.component';
 import Swal from 'sweetalert2';
+import { ImagesModalComponent } from './images-modal/images-modal.component';
 
 @Component({
 	selector: 'app-perfil',
@@ -150,5 +151,19 @@ export class PerfilComponent {
 
 	edit() {
 		this.router.navigate(['edit-perfil'])
+	}
+
+	selectImage() {
+		const dialogRef = this.dialog.open(ImagesModalComponent, {
+			maxWidth: '80vw',
+			maxHeight: '60vh',
+			height: '100%',
+			width: '100%',
+			panelClass: 'full-screen-modal'
+		});
+		dialogRef.afterClosed().subscribe((result) => {
+			console.log('closed', result);
+			
+		})
 	}
 }

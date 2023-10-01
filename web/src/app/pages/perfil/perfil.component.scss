@@ -11,14 +11,51 @@
 		grid-template-columns: 1fr 2fr;
 
 		.top-img {
-			display: flex;
+			position: relative;
+			display: inline-block;
+			border-radius: 50%;
+			height: 145px;
+
+			img {
+				display: block;
+				transition: filter 0.3s;
+				border-radius: 50%;
+				height: 145px;
+				margin: 0 auto;
+			}
+			&.editable-img {
+				&:hover {
+					cursor: pointer;
+	
+					img {
+						filter: brightness(0.7);
+					}
+	
+					.edit-icon {
+						opacity: 1;
+					}
+				}
+	
+				.edit-icon {
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+					font-size: 24px;
+					opacity: 0;
+					transition: opacity 0.3s;
+				}
+
+			}
+
+			/* display: flex;
 			justify-content: center;
 
 			img {
 				border-radius: 50%;
 				background-color: rgb(202, 202, 202);
 				height: 145px;
-			}
+			} */
 		}
 
 		.top-text {
@@ -35,24 +72,30 @@
 
 		.left {
 			text-align: center;
-    		//margin: 20px;
+			//margin: 20px;
 
-			p, a {
+			p,
+			a {
 				display: flex;
 				align-items: center;
 				gap: 5px;
 
 				&.location {
 					text-transform: capitalize;
+
 					&.clickable:hover {
 						cursor: pointer;
 					}
 				}
 			}
 
-			.div-edit-info, .div-cambiar-pass {
+			.div-edit-info,
+			.div-cambiar-pass {
 				margin-top: 20px;
-				*{font-size: 12px;}
+
+				* {
+					font-size: 12px;
+				}
 			}
 		}
 
@@ -67,14 +110,16 @@
 					display: flex;
 					align-items: center;
 					gap: 15px;
-					
+
 					h3 {
 						margin: 0;
 					}
 				}
 
 				.div-opinar {
-					*{font-size: 12px;}
+					* {
+						font-size: 12px;
+					}
 				}
 			}
 
@@ -82,9 +127,21 @@
 				padding: 10px;
 
 				.card-opinion {
-					h4, mat-icon {font-size: 14px !important; margin-bottom: 0;}
-					mat-icon {width: 14px; height: 14px;}
-					div {font-size: 12px !important;}
+
+					h4,
+					mat-icon {
+						font-size: 14px !important;
+						margin-bottom: 0;
+					}
+
+					mat-icon {
+						width: 14px;
+						height: 14px;
+					}
+
+					div {
+						font-size: 12px !important;
+					}
 
 					.valoracion {
 						display: flex;
@@ -92,7 +149,8 @@
 						margin-bottom: 10px;
 					}
 
-					.descripcion, .usuario-opinion {
+					.descripcion,
+					.usuario-opinion {
 						display: grid;
 						grid-template-columns: 1fr 3fr;
 						gap: 10px;
@@ -105,7 +163,9 @@
 }
 
 @media (min-width: 0px) and (max-width: 768px) {
-	.top-div, .bottom-div {
+
+	.top-div,
+	.bottom-div {
 		grid-template-columns: 1fr !important;
 	}
 }
