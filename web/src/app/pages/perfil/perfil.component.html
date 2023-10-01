@@ -1,184 +1,85 @@
 <app-header></app-header>
 
-<div id="main-perfil" *ngIf="user" class="app-main-div">
-	<div class="profile-img">
-		<img [src]="userData.isSwapper ? 'assets/persona.png' : 'assets/fundacion.png'">
-	</div>
-	<!-- <h4>{{userInfo.s_nombre}} {{userInfo.s_apellido}}</h4> -->
-	<mat-card id="main-perfil-card">
-		<div ngbAccordion>
-			<div ngbAccordionItem>
-				<h2 ngbAccordionHeader class="mb-0">
-					<button ngbAccordionButton>Información Básica</button>
-				</h2>
-				<div ngbAccordionCollapse>
-					<div ngbAccordionBody>
-						<ng-template>
-							<mat-grid-list [cols]="columns" rowHeight="40px" class="grid-list" *ngIf="userData.isSwapper">
-								<div>
-									<mat-grid-tile colspan="1">
-										<b>Nombre completo</b>
-									</mat-grid-tile>
-									<mat-grid-tile colspan="1">
-										{{user.particularDTO.nombre}} {{user.particularDTO.apellido}}
-									</mat-grid-tile>
-								</div>
-								<div>
-									<mat-grid-tile colspan="1">
-										<b>Tipo de documento</b>
-									</mat-grid-tile>
-									<mat-grid-tile colspan="1">
-										{{user.particularDTO.tipoDocumento}}
-									</mat-grid-tile>
-								</div>
-								<div>
-									<mat-grid-tile colspan="1">
-										<b>Número de documento</b>
-									</mat-grid-tile>
-									<mat-grid-tile colspan="1">
-										{{user.particularDTO.dni}}
-									</mat-grid-tile>
-								</div>
-								<div>
-									<mat-grid-tile colspan="1">
-										<b>Fecha de nacimiento</b>
-									</mat-grid-tile>
-									<mat-grid-tile colspan="1">
-										{{user.particularDTO.fechaNacimiento | date : 'dd/MM/yyyy'}}
-									</mat-grid-tile>
-								</div>
-							</mat-grid-list>
-							<mat-grid-list [cols]="columns" rowHeight="40px" class="grid-list" *ngIf="!userData.isSwapper">
-								<div>
-									<mat-grid-tile colspan="1">
-										<b>Nombre</b>
-									</mat-grid-tile>
-									<mat-grid-tile colspan="1">
-										{{user.fundacionDTO.nombre}}
-									</mat-grid-tile>
-								</div>
-								<div>
-									<mat-grid-tile colspan="1">
-										<b>CUIT</b>
-									</mat-grid-tile>
-									<mat-grid-tile colspan="1">
-										{{user.fundacionDTO.cuil}}
-									</mat-grid-tile>
-								</div>
-							</mat-grid-list>
-							<div class="div-cambiar-pass">
-								<button mat-fab extended color="primary">CAMBIAR CONTRASEÑA</button>
-							</div>
-						</ng-template>
-					</div>
-				</div>
-			</div>
-			<div ngbAccordionItem>
-				<h2 ngbAccordionHeader class="mb-0">
-					<button ngbAccordionButton>Información de Contacto</button>
-				</h2>
-				<div ngbAccordionCollapse>
-					<div ngbAccordionBody>
-						<ng-template>
-							<mat-grid-list [cols]="columns" rowHeight="40px" class="grid-list" *ngIf="userData.isSwapper">
-								<div>
-									<mat-grid-tile colspan="1">
-										<b>Email</b>
-									</mat-grid-tile>
-									<mat-grid-tile colspan="1">
-										{{user.email}}
-									</mat-grid-tile>
-								</div>
-								<div>
-									<mat-grid-tile colspan="1">
-										<b>Teléfono</b>
-									</mat-grid-tile>
-									<mat-grid-tile colspan="1">
-										{{user.telefono | phoneNumber}}
-									</mat-grid-tile>
-								</div>
-							</mat-grid-list>
-						</ng-template>
-					</div>
-				</div>
-			</div>
-			<div ngbAccordionItem>
-				<h2 ngbAccordionHeader class="mb-0">
-					<button ngbAccordionButton>Dirección</button>
-				</h2>
-				<div ngbAccordionCollapse>
-					<div ngbAccordionBody>
-						<ng-template>
-							<div > <!-- *ngFor="let direccion of user.particularDTO.direcciones; let i=index" -->
-								<!-- Dirección {{i+1}} -->
-								<mat-grid-list [cols]="columns" rowHeight="40px" class="grid-list" *ngIf="userData.isSwapper">
-									<div>
-										<mat-grid-tile colspan="1">
-											<b>Dirección</b>
-										</mat-grid-tile>
-										<mat-grid-tile colspan="1">
-											{{user.particularDTO.direcciones[0].direccion}}
-										</mat-grid-tile>
-									</div>
-									<div>
-										<mat-grid-tile colspan="1">
-											<b>Altura</b>
-										</mat-grid-tile>
-										<mat-grid-tile colspan="1">
-											{{user.particularDTO.direcciones[0].altura}}
-										</mat-grid-tile>
-									</div>
-									<div>
-										<mat-grid-tile colspan="1">
-											<b>Departamento</b>
-										</mat-grid-tile>
-										<mat-grid-tile colspan="1">
-											{{user.particularDTO.direcciones[0].dpto}}
-										</mat-grid-tile>
-									</div>
-									<div>
-										<mat-grid-tile colspan="1">
-											<b>Piso</b>
-										</mat-grid-tile>
-										<mat-grid-tile colspan="1">
-											{{user.particularDTO.direcciones[0].piso}}
-										</mat-grid-tile>
-									</div>
-									<div>
-										<mat-grid-tile colspan="1">
-											<b>Código Postal</b>
-										</mat-grid-tile>
-										<mat-grid-tile colspan="1">
-											{{user.particularDTO.direcciones[0].codigoPostal}}
-										</mat-grid-tile>
-									</div>
-								</mat-grid-list>
-							</div>
-						</ng-template>
-					</div>
-				</div>
-			</div>
+<!-- <app-my-profile *ngIf="myProfile && user && userData" [user]="user" [userData]="userData" [router]="router" [screenWidth]="screenWidth"></app-my-profile> -->
+
+<!-- <app-other-profile *ngIf="user" [user]="user"></app-other-profile> -->
+
+<div id="main-profile" class="app-main-div">
+	<div class="top-div" *ngIf="userToShow">
+		<div class="top-img" (click)="selectImage()" [ngClass]="myProfile ? 'editable-img' : ''">
+			<img [src]="userData.isSwapper ? 'assets/perfiles/perfiles-17.jpg' : 'assets/perfiles/perfiles-24.jpg'" alt="">
+			<mat-icon class="edit-icon">edit</mat-icon>
 		</div>
-	</mat-card>
-	<div class="div-edit-info">
-		<button mat-fab extended color="accent" (click)="edit()">EDITAR INFORMACIÓN</button>
+		<mat-card class="top-text">
+				<h2>{{userToShow.nombre}}</h2>
+				<h4>{{userData.isSwapper ? 'Swapper' : 'Fundación'}}</h4>
+		</mat-card>
 	</div>
-</div>
-
-<!-- <div *ngFor="let attr of accordion.attributes">
-		<mat-grid-tile colspan="1" *ngIf="attr.value">
-			<b>{{attr.title}}</b>
-		</mat-grid-tile>
-		<mat-grid-tile colspan="1" *ngIf="attr.value && attr.name != 'n_puntaje'">
-			{{attr.name != 's_contrasena' ? attr.value : (attr.value | password)}}
-		</mat-grid-tile>
-		<mat-grid-tile colspan="1" *ngIf="attr.value && attr.name == 'n_puntaje'">
-			<mat-icon *ngFor="let i of [].constructor(attr.value)" color="primary">star</mat-icon>
-			<mat-icon *ngFor="let i of [].constructor(5-attr.value)" class="empty-star">star</mat-icon>
-		</mat-grid-tile>
-	</div> -->
-
-	<!-- <mat-grid-tile colspan="1">
-		<mat-icon *ngFor="let i of [].constructor(attr.value)" color="primary">star</mat-icon>
-		<mat-icon *ngFor="let i of [].constructor(5-attr.value)" class="empty-star">star</mat-icon>
-	</mat-grid-tile> -->
+	<div class="bottom-div" *ngIf="userToShow">
+		<mat-card class="left">
+			<p><mat-icon>alternate_email</mat-icon>{{userToShow.email}}</p>
+			<p><mat-icon>phone</mat-icon>{{userToShow.telefono}}</p>
+			<a *ngIf="(!userData.isSwapper || myProfile) && userToShow.direccion" class="location clickable" (click)="showMap(userToShow.direccion)">
+				<mat-icon>place</mat-icon>
+				{{!userData.isSwapper || myProfile ? userToShow.direccion.direccion + ' ' + userToShow.direccion.altura + ' ('+ userToShow.direccion.codigoPostal + ')'
+					: userToShow.direccion.codigoPostal
+				}}
+			</a>
+			<p *ngIf="userData.isSwapper && !myProfile && userToShow.direccion" class="location">
+				<mat-icon>place</mat-icon>
+				{{userData.isSwapper ? userToShow.direccion.codigoPostal :
+					userToShow.direccion.direccion + ' ' + userToShow.direccion.altura + ' ('+ userToShow.direccion.codigoPostal + ')'
+				}}
+			</p>
+			<div class="div-edit-info" *ngIf="myProfile">
+				<button mat-fab extended color="accent" (click)="edit()">EDITAR INFORMACIÓN</button>
+			</div>
+			<div class="div-cambiar-pass" *ngIf="myProfile">
+				<button mat-fab extended color="primary">CAMBIAR CONTRASEÑA</button>
+			</div>
+		</mat-card>
+		<mat-card class="right">
+			<div class="puntaje">
+				<div class="title">
+					<h3>Puntaje:</h3>
+					<div>
+						<mat-icon *ngFor="let i of [].constructor(userToShow.puntaje || 0)" color="primary">star</mat-icon>
+						<mat-icon *ngFor="let i of [].constructor(5-(userToShow.puntaje || 0))" class="empty-star">star</mat-icon>
+					</div>
+					<div>({{userToShow.opiniones?.length || 0}} {{userToShow.opiniones?.length == 1 ? 'opinión' : 'opiniones'}})</div>
+				</div>
+				<div class="div-opinar" *ngIf="!myProfile">
+					<button mat-fab extended color="primary">OPINAR</button>
+				</div>
+			</div>
+			<div class="opiniones">
+				<h3>Opiniones:</h3>
+				<div>
+					<mat-card *ngFor="let opinion of userToShow.opiniones" class="card-opinion">
+						<div class="valoracion">
+							<h4>Valoración:</h4>
+							<div style="margin: 0 10px; display: flex; align-items: center;">
+								<mat-icon *ngFor="let i of [].constructor(opinion.valoracion || 0)" color="primary">star</mat-icon>
+								<mat-icon *ngFor="let i of [].constructor(5-(opinion.valoracion || 0))" class="empty-star">star</mat-icon>
+							</div>
+							<div>
+								({{opinion.usuarioOpina}} - {{opinion.fechaOpinion | date : 'dd/MM/yyyy'}})
+							</div>
+						</div>
+						<!-- <div class="usuario-opinion">
+							<h4>Opinión de:</h4>
+							<div>{{opinion.usuarioOpina}}</div>
+						</div> -->
+						<div class="descripcion">
+							<h4>Descripción:</h4>
+							<div>{{opinion.descripcion}}</div>
+						</div>
+					</mat-card>
+					<mat-paginator [pageSizeOptions]="[5, 10, 25]" [pageSize]="pageSize" [showFirstLastButtons]="true"
+		[length]="userToShow.opiniones.length" #paginator (page)="changePage($event)" style="border-radius: 15px;"
+		*ngIf="userToShow.opiniones && userToShow.opiniones.length > 0"></mat-paginator>
+				</div>
+			</div>
+		</mat-card>
+	</div>
+</div> 

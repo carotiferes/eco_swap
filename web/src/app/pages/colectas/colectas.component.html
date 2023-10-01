@@ -38,7 +38,7 @@
 			<div class="card-deck">
 				<div class="card row" *ngFor="let colecta of paginatedColectas" (click)="goToColecta(colecta)">
 					<div class="col-sm-4" style="display: flex; justify-content: center;">
-						<img class="card-img" [src]="colecta.imagen ? colecta.imagen : 'assets/fundacion.png'">
+						<img class="card-img" [src]="colecta.imagen ? colecta.imagen : 'assets/perfiles/perfiles-24.jpg'">
 					</div>
 					<div class="card-body col-sm-6">
 						<h2 class="card-title">{{colecta.titulo}}</h2>
@@ -53,7 +53,7 @@
 						</div>
 					</div>
 					<div class="card-fundacion col-sm-2">
-						<img class="img-fundacion" src="assets/fundacion.png">
+						<img class="img-fundacion" src="assets/perfiles/perfiles-24.jpg">
 						<!-- TODO: CHANGE TO IMAGE DE LA FUNDACION  -->
 						<h4>{{colecta.fundacionDTO.nombre}}</h4>
 					</div>

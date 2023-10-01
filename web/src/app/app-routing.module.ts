@@ -16,7 +16,12 @@ const routes: Routes = [
 	{ path: 'colectas', loadChildren: () => import('./pages/colectas/colectas.module').then(m => m.ColectasModule) },
 	{ path: 'colecta/:id_colecta', loadChildren: () => import('./pages/colecta/colecta.module').then(m => m.ColectaModule) },
 	{
-		path: 'perfil',
+		path: 'mi-perfil',
+		loadChildren: () => import('./pages/perfil/perfil.module').then(m => m.PerfilModule),
+		canActivate: [AuthGuard]
+	},
+	{
+		path: 'perfil/:id_usuario',
 		loadChildren: () => import('./pages/perfil/perfil.module').then(m => m.PerfilModule),
 		canActivate: [AuthGuard]
 	},

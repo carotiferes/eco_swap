@@ -1,8 +1,9 @@
 import { DonacionModel } from "./donacion.model";
+import { UsuarioModel } from "./usuario.model";
 
 export interface ParticularModel {
 	idParticular: number,
-	usuario: any, // FK
+	//usuario: any, // FK
 	nombre: string,
 	apellido: string,
 	dni: string,
@@ -12,5 +13,6 @@ export interface ParticularModel {
 	publicaciones?: any[],
 	donaciones?: DonacionModel[],
 	puntaje: number,
-	direcciones: any[]
+	direcciones: any[],
+	usuarioDTO: UsuarioModel
 }

@@ -2,9 +2,11 @@
 	padding: 2%;
 
 	.example-header-image {
-		background-image: url('../../../assets/persona.png');
+		background-image: url('../../../assets/perfiles/perfiles-17.jpg');
 		background-size: cover;
 		margin: 0 10px 0 0;
+		width: 60px;
+		height: 60px;
 	}
 
 	mat-card {
@@ -27,6 +29,10 @@
 		.header-info {
 			display: flex;
 			align-items: center;
+
+			a {
+				text-decoration: none;
+			}
 
 		}
 		.div-fecha-zona {
@@ -84,7 +90,7 @@
 	}
 
 	.donacion-example-header-image {
-		background-image: url('../../../assets/persona.png');
+		background-image: url('../../../assets/perfiles/perfiles-17.jpg');
 		background-size: cover;
 	}
 	.donacion-card-content {
