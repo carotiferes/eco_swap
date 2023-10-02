@@ -49,9 +49,12 @@ public class ColectaService {
                    .toList();
         Particular particular = particularesRepository.findById(idParticular).get();
 
-        if(request.getCantidadOfrecida() > producto.getCantidadSolicitada())
+        // Validations
+        if(request.getCantidadOfrecida() > producto.getCantidadSolicitada()-producto.getCantidadRecibida() &&  producto.getCantidadSolicitada() > 0)
             throw new DonacionCreationException("Error: Cantidad ofrecida mayor a la requerida.");
-        if(LocalDate.now().isBefore(colecta.getFechaInicio()) || LocalDate.now().isAfter(colecta.getFechaFin()))
+        if(LocalDate.now().isBefore(colecta.getFechaInicio()))
+            throw new DonacionCreationException("Colecta aun iniciada.");
+        if(LocalDate.now().isAfter(colecta.getFechaFin()))
             throw new DonacionCreationException("Colecta expirada.");
 
         try{
