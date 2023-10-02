@@ -63,6 +63,26 @@
 			font-size: 16px;
 			margin-bottom: 15px;
 		}
+
+		.productos {
+			.icons, .producto {
+				display: grid;
+    			grid-template-columns: 1fr 1fr 1fr;
+				justify-items: center;
+				margin-bottom: 10px;
+
+				span {
+					cursor: default;
+				}
+
+				.scheduled {
+					color: var(--secondary-color);
+				}
+				.received {
+					color: var(--primary-color);
+				}
+			}
+		}
 	}
 
 	.card-button {
