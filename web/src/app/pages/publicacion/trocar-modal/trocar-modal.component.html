@@ -25,6 +25,6 @@
 	</div>
 </div>
 <div id="trocar-buttons">
-	<button mat-fab extended color="light">CANCELAR</button>
+	<button mat-fab extended color="light" (click)="close()">CANCELAR</button>
 	<button mat-fab extended color="primary" [disabled]="!cardSelected" (click)="solicitarTrueque()">SOLICITAR INTERCAMBIO</button>
 </div>

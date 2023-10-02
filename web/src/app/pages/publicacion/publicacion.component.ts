@@ -113,9 +113,9 @@ export class PublicacionComponent {
 				maxHeight: '90vh'
 			});
 
-			this.dialog.afterAllClosed.subscribe((result) => {
-				console.log('aa', result);
-				this.getTrueques()
+			this.dialog.afterAllClosed.subscribe((result: any) => {
+				console.log('result trocar', result);
+				if(result) this.getTrueques()
 			})
 		} else {
 			Swal.fire({

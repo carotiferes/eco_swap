@@ -72,4 +72,8 @@ export class TrocarModalComponent {
 
 		}
 	}
+
+	close() {
+		this.dialogRef.close();
+	}
 }
