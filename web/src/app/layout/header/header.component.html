@@ -60,6 +60,14 @@
 				</div>
 				<ul ngbDropdownMenu aria-labelledby="dropdownMenuButton1" class="dropdown-menu-end">
 					<mat-icon class="arrow-top">eject</mat-icon>			
+					<li><a [href]="'/mi-perfil'" ngbDropdownItem class="dropdown-item" *ngIf="isUserLoggedIn && userData && this.profileType == 'particular'">
+						<b>{{userData.particularDTO.nombre}} {{userData.particularDTO.apellido}}</b>
+					</a></li>
+					<li><a [href]="'/mi-perfil'" ngbDropdownItem class="dropdown-item" *ngIf="isUserLoggedIn && userData && this.profileType == 'fundacion'">
+						<b>{{userData.fundacionDTO.nombre}}</b>
+					</a></li>
+					<div *ngIf="isUserLoggedIn" style="border-bottom: 1px solid #9fe27a; margin: 10px;"></div>
+
 					<li><a ngbDropdownItem href="/mis-donaciones/" class="dropdown-item" *ngIf="isUserLoggedIn && this.profileType == 'particular'">
 						Mis donaciones
 					</a></li>
@@ -74,7 +82,7 @@
 						Mis colectas
 					</a></li>
 
-					<div style="border-bottom: 1px solid #9fe27a; margin: 10px;"></div>
+					<div *ngIf="isUserLoggedIn" style="border-bottom: 1px solid #9fe27a; margin: 10px;"></div>
 					
 					<li><a ngbDropdownItem [href]="'/registro'" class="dropdown-item" *ngIf="!isUserLoggedIn">
 						Crear Cuenta

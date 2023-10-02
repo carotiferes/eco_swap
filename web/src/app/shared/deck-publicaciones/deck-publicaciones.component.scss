@@ -62,6 +62,17 @@
 			text-transform: uppercase;
 			width: 100%;
 		}
+
+		.result-icon {
+			font-size: 40px;
+
+			&.green {
+				color: var(--primary-color);
+			}
+			&.red {
+				color: var(--warn-color);
+			}
+		}
 	}
 }
 
