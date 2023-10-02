@@ -235,7 +235,8 @@
 					mainForm.valid;
 					isSwapper && particularForm.valid;
 					!isSwapper && fundacionForm.valid;
-					direccionForm.valid" [disabled]="!mainForm.valid ||
+					direccionForm.valid" 
+				[disabled]="!mainForm.valid ||
 					(isSwapper && !particularForm.valid) ||
 					(!isSwapper && !fundacionForm.valid) ||
 					!direccionForm.valid">
