@@ -19,7 +19,7 @@ export class DeckPublicacionesComponent {
 	@Output() changeStatus = new EventEmitter<any>();
 
 	constructor(private truequesService: TruequesService, private router: Router) {
-		console.log(this.publicacionesToShow, this.buttons);
+		//console.log(this.publicacionesToShow, this.buttons);
 		
 	}
 

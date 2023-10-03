@@ -10,11 +10,15 @@
 					<div mat-card-avatar class="example-header-image"></div>
 					<div>
 						<mat-card-title style="display: flex; align-items: center;">
-							<a [href]="'/perfil/'+publicacion.particularDTO.usuarioDTO.idUsuario">{{publicacion.particularDTO.nombre}} {{publicacion.particularDTO.apellido}}</a>
+							<a [href]="'/perfil/'+publicacion.particularDTO.usuarioDTO.idUsuario" *ngIf="userData.isLoggedIn">
+								{{publicacion.particularDTO.nombre}} {{publicacion.particularDTO.apellido}}
+							</a>
+							<span *ngIf="!userData.isLoggedIn">{{publicacion.particularDTO.nombre}} {{publicacion.particularDTO.apellido}}</span>
 							<!-- <mat-icon class="address" (click)="showDireccion(publicacion.fundacion.usuario)">place</mat-icon> -->
 						</mat-card-title>
 						<mat-card-subtitle>
-							<mat-icon *ngFor="let i of [].constructor(publicacion.particularDTO.puntaje || 0)" color="primary">star</mat-icon>
+							<mat-icon *ngFor="let i of [].constructor(publicacion.particularDTO.puntaje || 0)"
+								color="primary">star</mat-icon>
 							<mat-icon *ngFor="let i of [].constructor(5-(publicacion.particularDTO.puntaje || 0))"
 								class="empty-star">star</mat-icon>
 						</mat-card-subtitle>
@@ -22,7 +26,8 @@
 				</div>
 				<div class="div-fecha-zona">
 					<div>{{publicacion.fechaPublicacion | date: 'dd/MM/yyyy'}}</div>
-					<div *ngIf="publicacion.particularDTO.direcciones.length > 0">{{publicacion.particularDTO.direcciones[0].codigoPostal}}</div>
+					<div *ngIf="publicacion.particularDTO.direcciones.length > 0">
+						{{publicacion.particularDTO.direcciones[0].codigoPostal}}</div>
 				</div>
 			</div>
 		</mat-card-header>
@@ -36,7 +41,7 @@
 					{{publicacion.descripcion}}
 				</div>
 				<div class="trueque">
-					Valor de trueque: ${{publicacion.valorTruequeMin}} - ${{publicacion.valorTruequeMax}} 
+					Valor de trueque: ${{publicacion.valorTruequeMin}} - ${{publicacion.valorTruequeMax}}
 				</div>
 				<div class="venta" *ngIf="publicacion.tipoPublicacion == 'VENTA_Y_TRUEQUE'">
 					Precio de venta: ${{publicacion.precioVenta}}
@@ -49,24 +54,39 @@
 				</div>
 			</div>
 		</mat-card-content>
-		<mat-card-actions class="card-button" *ngIf="showButtons">
+		<mat-card-actions class="card-button" *ngIf="this.userType != 'publicacionOrigen'">
 			<button mat-fab extended color="primary" (click)="intercambiar()">QUIERO INTERCAMBIAR</button>
-			<button mat-fab extended color="accent" (click)="comprar()" *ngIf="publicacion.tipoPublicacion == 'VENTA_Y_TRUEQUE'">QUIERO COMPRAR</button>
+			<button mat-fab extended color="accent" (click)="comprar()"
+				*ngIf="publicacion.tipoPublicacion == 'VENTA_Y_TRUEQUE'">QUIERO COMPRAR</button>
 		</mat-card-actions>
 	</mat-card>
 
-	<h3 style="margin: 20px 0 0 5px; font-weight: bold;">
-		{{this.userType == 'publicacionPropuesta' ? 'Mi propuesta' : 'Propuestas de intercambio'}}
-	</h3>
-	<div *ngIf="publicacionesToShow.length == 0 && !loading" style="text-align: center;">Esta publicación no tiene propuestas aún!</div>
-	<app-deck-publicaciones *ngIf="publicacionesToShow.length > 0" [publicacionesToShow]="publicacionesToShow"
-		origin="propuestas"
-		[buttons]="this.userType == 'publicacionPropuesta' ? 
-			[{name: 'cancelar', icon: 'close', color: 'warn', status: 'CANCELADO'}]
-			: [
-				{name: 'aceptar', icon: 'check', color: 'primary', status: 'APROBADO'},
-				{name: 'rechazar', icon: 'close', color: 'warn', status: 'RECHAZADO'},
-				{name: 'recibida', icon: 'done_all', color: 'primary', status: 'RECIBIDO'},
-			]" (changeStatus)="changeStatusTrueque($event)"></app-deck-publicaciones>
-			
+	<div *ngIf="userData.isLoggedIn">
+		<div *ngIf="hasApprovedTrueque().length == 0">
+			<h3 style="margin: 20px 0 0 5px; font-weight: bold;">
+				{{this.userType == 'publicacionPropuesta' ? 'Mi Trueque Activo' : 'Propuestas de Trueque'}}
+			</h3>
+			<div *ngIf="showPublicaciones('abiertas').length == 0 && !loading" style="text-align: center;">Esta
+				publicación no tiene nuevas propuestas aún!</div>
+			<app-deck-publicaciones *ngIf="publicacionesToShow.length > 0"
+				[publicacionesToShow]="showPublicaciones('abiertas')" origin="propuestas"
+				[buttons]="getButtonsForCards()" (changeStatus)="changeStatusTrueque($event)"></app-deck-publicaciones>
+		</div>
+
+		<div *ngIf="hasApprovedTrueque().length > 0">
+			<h3 style="margin: 20px 0 0 5px; font-weight: bold;"> Trueque Aceptado </h3>
+			<app-deck-publicaciones *ngIf="publicacionesToShow.length > 0" [publicacionesToShow]="hasApprovedTrueque()"
+				origin="propuestas" [buttons]="[]"
+				(changeStatus)="changeStatusTrueque($event)"></app-deck-publicaciones>
+		</div>
+
+		<div *ngIf="showPublicaciones('cerradas').length > 0">
+			<h3 style="margin: 20px 0 0 5px; font-weight: bold;">
+				Historial de Trueques
+			</h3>
+			<app-deck-publicaciones *ngIf="publicacionesToShow.length > 0"
+				[publicacionesToShow]="showPublicaciones('cerradas')" origin="propuestas" [buttons]="[]"
+				(changeStatus)="changeStatusTrueque($event)"></app-deck-publicaciones>
+		</div>
+	</div>
 </div>

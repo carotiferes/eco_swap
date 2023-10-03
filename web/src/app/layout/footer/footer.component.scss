@@ -13,4 +13,13 @@
     justify-content: flex-end;
     padding: 15px 30px;
 	margin-top: 60px;
+
+	.footer-toolbar {
+		display: flex;
+		justify-content: space-between;
+
+		* {
+			color: white;
+		}
+	}
 }

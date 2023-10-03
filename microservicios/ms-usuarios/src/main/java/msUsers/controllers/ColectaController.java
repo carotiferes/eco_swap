@@ -26,6 +26,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -112,11 +113,15 @@ public class ColectaController {
             Join<Colecta, Fundacion> join = from.join("fundacion");
             predicate = cb.and(predicate, cb.equal(join.get("idFundacion"), request.getIdFundacion()));
         }
-        if (request.getCodigoPostal() != null) {
+
+        if (request.getLocalidades() != null && !request.getLocalidades().isEmpty()) {
             Join<Colecta, Fundacion> fundacionJoin = from.join("fundacion");
             Join<Fundacion, Usuario> usuarioJoin = fundacionJoin.join("usuario");
             Join<Usuario, Direccion> direccionJoin = usuarioJoin.join("direcciones");
-            predicate = cb.and(predicate, cb.equal(direccionJoin.get("codigoPostal"), request.getCodigoPostal()));
+
+            Expression<String> localidadExpression = direccionJoin.get("localidad");
+
+            predicate = cb.and(predicate, localidadExpression.in(request.getLocalidades()));
         }
 
         if (request.getTipoProducto() != null) {

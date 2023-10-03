@@ -32,10 +32,17 @@
 					{{colecta.descripcion}}
 				</div>
 				<div class="productos">
-					<h4><u>Productos</u>:</h4>
+					<h4 style="margin-bottom: 0;"><u>Productos</u>:</h4>
+					<div class="icons">
+						<div></div>
+						<span class="material-icons-outlined scheduled" matTooltip="Productos en camino">schedule_send</span>
+						<span class="material-icons-outlined received" matTooltip="Productos recibidos">real_estate_agent</span>
+					</div>
 					<div *ngFor="let producto of colecta.productos" class="producto">
-						{{producto.descripcion}}: {{producto.cantidadRecibida}}
-						<!-- {{producto.descripcion}} -->
+						<!-- {{producto.descripcion}}: {{producto.cantidadRecibida}} -->
+						<div>{{producto.descripcion}}</div>
+						<div>-</div>
+						<div>{{producto.cantidadRecibida}}</div>
 					</div>
 				</div>
 			</div>

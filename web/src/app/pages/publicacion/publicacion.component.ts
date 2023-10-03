@@ -24,7 +24,6 @@ export class PublicacionComponent {
 	userData: any;
 	userInfo: any;
 
-	showButtons: boolean = true;
 	publicacionesToShow: PublicacionModel[] = [];
 	trueques: TruequeModel[] = [];
 
@@ -34,22 +33,18 @@ export class PublicacionComponent {
 		private showErrorService: ShowErrorService, private auth: AuthService,
 		private router: Router, private usuarioService: UsuarioService, public dialog: MatDialog) {
 
-		//console.log('PRE USER DATA');
 		this.userData = { isSwapper: auth.isUserSwapper(), isLoggedIn: auth.isUserLoggedIn }
-		console.log('POST USER DATA', this.userData);
 
 		if (this.userData && this.userData.isLoggedIn) {
 			usuarioService.getUserByID(auth.getUserID()).subscribe({
 				next: (res: any) => {
 					this.userInfo = res;
-					console.log(this.publicacion, this.userInfo);
 				}
 			})
 		}
 
 		route.paramMap.subscribe(params => {
-			console.log(params);
-			this.id_publicacion = params.get('id_publicacion') || 0;
+			this.id_publicacion = params.get('id_publicacion');
 			if (!this.id_publicacion) showErrorService.show('Error!', 'No pudimos encontrar la información de la colecta que seleccionaste, por favor volvé a intentarlo más tarde.')
 			else this.getPublicacion(this.id_publicacion)
 		})
@@ -58,16 +53,15 @@ export class PublicacionComponent {
 	getPublicacion(id: number) {
 		this.truequeService.getPublicacion(id).subscribe({
 			next: (res: any) => {
-				//console.log(res);
 				this.publicacion = res;
 				this.publicacion.parsedImagenes = this.publicacion.imagenes.split('|')
-				if (this.publicacion && this.userInfo && this.publicacion.particularDTO.idParticular == this.userInfo.particularDTO.idParticular)
-					this.showButtons = false;
+				if (this.publicacion && this.userInfo && this.publicacion.particularDTO.idParticular == this.userInfo.particularDTO.idParticular) {
+					this.userType = 'publicacionOrigen';
+				}
 				if(this.userData.isLoggedIn) this.getTrueques()
 			},
 			error: (error) => {
 				console.log(error);
-				//this.showErrorService.show('Error!', 'No pudimos encontrar la información de la colecta que seleccionaste, por favor volvé a intentarlo más tarde.')
 			}
 		})
 	}
@@ -76,36 +70,53 @@ export class PublicacionComponent {
 		this.loading = true;
 		this.truequeService.getTruequesFromPublicacion(this.publicacion.idPublicacion).subscribe({
 			next: async (trueques: any) => {
-				console.log(trueques, this.userData.isLoggedIn);
+				//console.log('TRUEQUES', trueques);
+				// Todos los trueques en los que esta publicacion es ORIGEN
 				this.trueques = await trueques;
-				if(this.userData.isLoggedIn) {
-					this.publicacionesToShow = [];
-					console.log(this.publicacionesToShow);
+				this.publicacionesToShow = [];
+
+				if(this.userType != 'publicacionOrigen' && this.userData.isLoggedIn) {
+					this.truequeService.getMisPublicaciones().subscribe({
+						next: async (res: any) => {
+							//console.log('PUBLICACIONES DEL USER',await res);
+							// Publicaciones del usuario loggeado
+							const userPublicaciones = await res;
+							for (const trueque of trueques) {
+								const commonItem = userPublicaciones.find((publicacion: PublicacionModel) =>
+									trueque.publicacionDTOpropuesta.idPublicacion == publicacion.idPublicacion)
+								if(commonItem){
+									commonItem.estadoTrueque = trueque.estadoTrueque.trim();
+									this.publicacionesToShow.push(commonItem);
+									this.userType = 'publicacionPropuesta';
+								}
+							}
+							//console.log('TO SHOW',this.publicacionesToShow);
+
+							this.publicacionesToShow.map(item => {
+								item.parsedImagenes = item.imagenes.split('|')
+							})
+							this.loading = false;
+						}, error: () => {this.loading = false}
+					})
 					
+				} else if (this.userType == 'publicacionOrigen' && this.userData.isLoggedIn) {
 					for (const trueque of trueques) {
-						this.userType = trueque.publicacionDTOpropuesta.particularDTO.idParticular == this.userInfo.particularDTO.idParticular ? 'publicacionPropuesta' :
-							trueque.publicacionDTOorigen.idPublicacion == this.publicacion.idPublicacion ? 'publicacionOrigen' : 'notLoggedIn';
-							if(this.userType == 'publicacionOrigen' || this.userType == 'publicacionPropuesta') {
-								trueque.publicacionDTOpropuesta.estadoTrueque = trueque.estadoTrueque.trim();
-								console.log(trueque.estadoTrueque == 'PENDIENTE');
-							
-								await this.publicacionesToShow.push(trueque.publicacionDTOpropuesta)
-						}
+						trueque.publicacionDTOpropuesta.estadoTrueque = trueque.estadoTrueque.trim();
+						this.publicacionesToShow.push(trueque.publicacionDTOpropuesta)
 					}
+					//console.log('TO SHOW',this.publicacionesToShow);
+					this.publicacionesToShow.map(item => {
+						item.parsedImagenes = item.imagenes.split('|')
+					})
+					this.loading = false;
 				}
-				await this.publicacionesToShow.map(item => {
-					item.parsedImagenes = item.imagenes.split('|')
-				})
-				console.log(this.publicacionesToShow);
-				
-				this.loading = false;
-			}
+			}, error: () => {this.loading = false}
 		})
 	}
 
 	intercambiar() {
 		if (this.auth.isUserLoggedIn) {
-			this.dialog.open(TrocarModalComponent, {
+			const dialogRef = this.dialog.open(TrocarModalComponent, {
 				data: {
 					publicacion: this.publicacion,
 				},
@@ -113,9 +124,9 @@ export class PublicacionComponent {
 				maxHeight: '90vh'
 			});
 
-			this.dialog.afterAllClosed.subscribe((result) => {
-				console.log('aa', result);
-				this.getTrueques()
+			dialogRef.afterClosed().subscribe((result: any) => {
+				console.log('result trocar', result);
+				if(result) this.getTrueques()
 			})
 		} else {
 			Swal.fire({
@@ -227,5 +238,38 @@ export class PublicacionComponent {
 				}
 			})
 		}
+	}
+
+	getButtonsForCards() {
+		if(this.userType == 'publicacionPropuesta') {
+			return [{name: 'cancelar', icon: 'close', color: 'warn', status: 'CANCELADO'}];
+		} else if (this.userType == 'publicacionOrigen'){
+			return [
+				{name: 'aceptar', icon: 'check', color: 'primary', status: 'APROBADO'},
+				{name: 'rechazar', icon: 'close', color: 'warn', status: 'RECHAZADO'},
+				{name: 'recibida', icon: 'done_all', color: 'primary', status: 'RECIBIDO'},
+			];
+		} else return [];
+	}
+
+	showPublicaciones(type: 'abiertas' | 'cerradas') {
+		return this.publicacionesToShow.filter(publicacion => {
+			let condition: boolean = false;
+			if(type == 'abiertas') condition = (!!publicacion.estadoTrueque && publicacion.estadoTrueque == 'PENDIENTE' && publicacion.estadoPublicacion == 'PENDIENTE')
+			else condition = (!!publicacion.estadoTrueque && (publicacion.estadoTrueque != 'PENDIENTE' && publicacion.estadoTrueque != 'APROBADO') || publicacion.estadoPublicacion != 'PENDIENTE')
+			return condition;
+		}).sort((a, b) => {
+			if (a.estadoTrueque === 'APROBADO' && b.estadoTrueque !== 'APROBADO') {
+			  return -1; // 'a' comes before 'b'
+			} else if (a.estadoTrueque !== 'APROBADO' && b.estadoTrueque === 'APROBADO') {
+			  return 1; // 'b' comes before 'a'
+			} else {
+			  return 0; // No change in order
+			}
+		  });
+	}
+
+	hasApprovedTrueque() {
+		return this.publicacionesToShow.filter(item => item.estadoTrueque == 'APROBADO')
 	}
 }

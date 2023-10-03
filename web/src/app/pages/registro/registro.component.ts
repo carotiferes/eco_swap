@@ -44,6 +44,8 @@ export class RegistroComponent {
 	localidades: any[] = [];
 	calles: any[] = [];
 
+	closeSwal = true;
+
 	constructor(private fb: FormBuilder, private dateAdapter: DateAdapter<Date>,
 		private usuarioService: UsuarioService, private location: Location,
 		private auth: AuthService, private router: Router, private snackbar: MatSnackBar,
@@ -60,110 +62,62 @@ export class RegistroComponent {
 			nombre: ['', Validators.required],
 			apellido: ['', Validators.required],
 			tipoDocumento: ['', Validators.required],
-			nroDocumento: [{value:'', disabled: true}, Validators.required], // TODO: por ahora paso nro a cuil y dni
+			nroDocumento: [{ value: '', disabled: true }, Validators.required], // TODO: por ahora paso nro a cuil y dni
 			fechaNacimiento: ['', Validators.required],
-			//cuil: [''],
 		})
 		this.fundacionForm = fb.group({
 			nombre: ['', Validators.required],
 			cuit: ['', [Validators.required, isValidCUIT]],
 		})
-
 		this.direccionForm = fb.group({
 			localidad: ['', [Validators.required, this.validateItem.bind(this)]],
-			calle: [{value:'', disabled: true}, [Validators.required, this.validateItem.bind(this)]],
-			altura: [{value:'', disabled: true}, Validators.required],
-			piso: [{value:'', disabled: true}],
-			departamento: [{value:'', disabled: true}],
-			//codigoPostal: ['', Validators.required],
+			calle: [{ value: '', disabled: true }, [Validators.required, this.validateItem.bind(this)]],
+			altura: [{ value: '', disabled: true }, Validators.required],
+			piso: [{ value: '', disabled: true }],
+			departamento: [{ value: '', disabled: true }],
 		})
 
 		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 		this.dateAdapter.setLocale('es-AR'); // DD/mm/YYYY
 
 		const url = location.path()
-		if (url == '/reset-password') {
-			this.origin = 'resetPassword';
-		} else if (url == '/edit-perfil') {
+		if (url == '/reset-password') this.origin = 'resetPassword';
+		else if (url == '/edit-perfil') {
 			this.origin = 'editAccount';
 			this.mainForm.controls['password'].disable();
 			this.mainForm.controls['confirmPassword'].disable();
 			this.mainForm.controls['email'].disable();
-		} else {
-			this.mainForm.controls['telefono'].addValidators(Validators.required)
-		}
+		} else this.mainForm.controls['telefono'].addValidators(Validators.required)
 	}
 
 	ngOnInit(): void {
 		if (this.origin == 'createAccount') this.selectTipoPerfil();
-		else if(this.origin == 'editAccount'){
+		else if (this.origin == 'editAccount') {
 			this.loadUserInfo();
 			this.loading = false;
 		} else this.loading = false;
 		this.getTiposDocumentos();
 	}
 
-	getLocalidades() {
-		const locValue = this.direccionForm.controls['localidad'].value;
-		if(locValue.length == 0) {
-			this.direccionForm.controls['calle'].disable();
-			this.direccionForm.controls['altura'].disable()
-			this.direccionForm.controls['piso'].disable()
-			this.direccionForm.controls['departamento'].disable()
-		}
-		else if(locValue.length >= 3) {
-			const apiUrl = 'https://apis.datos.gob.ar/georef/api/localidades?orden=id&provincia=02&nombre='+locValue
-			fetch(apiUrl).then(response => response.json()).then(data => {
-				this.localidades = data.localidades
-			}).catch(error => console.error(error));
-		}
-	}
-
-	getCalles() {
-		const calleInput = this.direccionForm.controls['calle'].value;
-		const locInput = this.direccionForm.controls['localidad'].value.departamento.id;
-		
-		if(calleInput.length == 0) {
-			this.direccionForm.controls['altura'].disable()
-			this.direccionForm.controls['piso'].disable()
-			this.direccionForm.controls['departamento'].disable()
-		}
-		if(calleInput.length >= 3) {
-			const apiUrl = 'https://apis.datos.gob.ar/georef/api/calles?orden=id&provincia=02&departamento='+locInput+'&nombre='+calleInput
-			fetch(apiUrl).then(response => response.json()).then(data => {
-				this.calles = data.calles
-			}).catch(error => console.error(error));
-		}
-	}
-
-	onLocSelected(event: any) {
-		if(event) this.direccionForm.controls['calle'].enable()
-	}
-
-	onCalleSelected(event: any) {
-		if(event) {
-			this.direccionForm.controls['altura'].enable()
-			this.direccionForm.controls['piso'].enable()
-			this.direccionForm.controls['departamento'].enable()
-		}
-	}
-
 	ngOnDestroy(): void {
-		Swal.close()
+		if(this.closeSwal) Swal.close();
+		this.closeSwal = true;
 	}
 
 	loadUserInfo() {
 		const id = this.auth.getUserID();
-		if(id) {
+		if (id) {
 			this.usuarioService.getUserByID(this.auth.getUserID()).subscribe({
 				next: (user: any) => {
 					console.log(user);
 					this.mainForm.patchValue({
 						email: user.email,
 						telefono: user.telefono,
+						password: user.password,
+						confirmPassword: user.password,
 					})
-	
-					if(user.particularDTO){
+
+					if (user.particularDTO) {
 						this.particularForm.patchValue({
 							nombre: user.particularDTO.nombre,
 							apellido: user.particularDTO.apellido,
@@ -177,21 +131,31 @@ export class RegistroComponent {
 							cuit: user.fundacionDTO.cuil
 						})
 					}
-	
-					this.direccionForm.patchValue({
-						calle: user.particularDTO ? user.particularDTO.direcciones[0].direccion : user.fundacionDTO.direcciones[0].direccion,
-						altura: user.particularDTO ? user.particularDTO.direcciones[0].altura : user.fundacionDTO.direcciones[0].altura,
-						piso: user.particularDTO ? user.particularDTO.direcciones[0].piso : user.fundacionDTO.direcciones[0].piso,
-						departamento: user.particularDTO ? user.particularDTO.direcciones[0].departamento : user.fundacionDTO.direcciones[0].departamento,
-						codigoPostal: user.particularDTO ? user.particularDTO.direcciones[0].codigoPostal : user.fundacionDTO.direcciones[0].codigoPostal,
-					})
+					this.setAddress(user.particularDTO ? user.particularDTO.direcciones[0] : user.fundacionDTO.direcciones[0])
 				},
-				error: (error) => {
-					console.log('error', error);
-					
-				}
+				error: (error) => { console.log('error', error); }
 			})
 		} else Swal.fire('Error!', 'Ocurrió un error al traer tu información. Intentalo devuelta más tarde', 'error')
+	}
+
+	setAddress(direccion: any) {
+		const apiUrl = 'https://apis.datos.gob.ar/georef/api/localidades?orden=id&provincia=02&exacto=true&nombre=' + direccion.codigoPostal
+		fetch(apiUrl).then(response => response.json()).then(data => {
+			if (data.cantidad == 1) this.direccionForm.controls['localidad'].setValue(data.localidades[0]);
+			this.localidades = data.localidades;
+			const locInput = this.direccionForm.controls['localidad'].value.departamento.id;
+			const apiUrl = 'https://apis.datos.gob.ar/georef/api/calles?orden=id&provincia=02&exacto=true&departamento=' + locInput + '&nombre=' + direccion.direccion
+			fetch(apiUrl).then(response => response.json()).then(data => {
+				if (data.cantidad == 1) this.direccionForm.controls['calle'].setValue(data.calles[0]);
+				this.calles = data.calles;
+				this.direccionForm.patchValue({
+					altura: direccion.altura,
+					piso: direccion.piso,
+					departamento: direccion.departamento,
+				})
+				this.direccionForm.enable();
+			}).catch(error => console.error(error));
+		}).catch(error => console.error(error));
 	}
 
 	selectTipoPerfil() {
@@ -208,34 +172,26 @@ export class RegistroComponent {
 			allowOutsideClick: false,
 			allowEscapeKey: false
 		}).then(result => {
-			console.log(result);
 			if (result.isConfirmed) { // FUNDACION
 				this.isSwapper = false;
 				this.particularForm = this.fb.group({})
 			} else { // SWAPPER
 				this.fundacionForm = this.fb.group({})
 			}
-			console.log(this.isSwapper);
 			this.loading = false
 		})
 	}
 
 	getTiposDocumentos() {
 		this.usuarioService.getTiposDocumentos().subscribe({
-			next: (res: any) => {
-				console.log('TIPOS DOC:', res);
-				this.tiposDocumento = res;
-			},
-			error: (error) => {
-				console.log('ERROR TIPOS DOC:', error);
-				
-			}
+			next: (res: any) => { this.tiposDocumento = res; },
+			error: (error) => { console.log('ERROR TIPOS DOC:', error); }
 		})
 	}
 
-	submit() {
+	async submit() {
 		this.loadingSave = true;
-		console.log('registro', this.mainForm.value);
+		//console.log('registro', this.mainForm.value);
 		if (this.mainForm.valid) {
 			if (this.origin == 'resetPassword') {
 				const body = {
@@ -245,18 +201,16 @@ export class RegistroComponent {
 				}
 				this.auth.resetPassword(body).subscribe({
 					next: (res) => {
-						console.log(res);
+						//console.log(res);
 						this.loadingSave = false;
 					},
 					error: (error) => {
 						console.log('error:', error);
 						this.loadingSave = false;
-
-					},
-					//complete: () => {}
+					}
 				})
 			} else {
-				if(this.direccionForm.valid){
+				if (this.direccionForm.valid) {
 					let user: any = {
 						username: this.mainForm.controls['email'].value,
 						email: this.mainForm.controls['email'].value,
@@ -271,9 +225,18 @@ export class RegistroComponent {
 							departamento: this.direccionForm.controls['departamento'].value,
 						}
 					};
-	
+
+					const apiUrl = `https://apis.datos.gob.ar/georef/api/direcciones?provincia=02&localidad=${this.direccionForm.controls['localidad'].value.nombre}&direccion=${encodeURIComponent(this.direccionForm.controls['calle'].value.nombre+this.direccionForm.controls['altura'].value)}`.replace(' ', '');
+					const validAddress = (await fetch(apiUrl).then(response => response.json())).cantidad;
+					if(!validAddress) {
+						console.log('not valid address');
+						Swal.fire('Dirección inválida', 'La dirección que ingresaste no es válida, por favor revisala y volvé a intentar.', 'error')
+						this.loadingSave = false;
+						return;
+					}
+
 					let validDataForm = false;
-	
+
 					if (this.isSwapper) {
 						if (this.particularForm.valid) {
 							user.particular = {
@@ -301,13 +264,12 @@ export class RegistroComponent {
 							this.loadingSave = false;
 						}
 					}
-	
-					console.log(user);
-					if(validDataForm){
-						if(this.origin == 'createAccount') {
+
+					if (validDataForm) {
+						if (this.origin == 'createAccount') {
 							this.usuarioService.createUser(user).subscribe({
 								next: (id_user: any) => {
-									console.log('next', id_user);
+									//console.log('next', id_user);
 									this.id_user = id_user;
 									this.messageWithTimer();
 									this.loadingSave = false;
@@ -320,7 +282,7 @@ export class RegistroComponent {
 						} else {
 							this.usuarioService.editUser(user).subscribe({
 								next: (id_user: any) => {
-									console.log('next', id_user);
+									//console.log('next', id_user);
 									this.showMessage('¡Éxito!', `Tus datos se editaron exitosamente.`, 'Genial!', 'edit', 'success')
 									this.loadingSave = false;
 								},
@@ -343,21 +305,13 @@ export class RegistroComponent {
 		}
 	}
 
-	showMessage(title: string, text: string, confirm: string, origin: string,
-		icon: 'success' | 'error' | 'warning') {
+	showMessage(title: string, text: string, confirm: string, origin: string, icon: 'success' | 'error' | 'warning') {
 		Swal.fire({
-			title,
-			text,
-			confirmButtonText: confirm,
-			icon,
-			allowOutsideClick: icon == 'success' ? false : true
+			title, text, confirmButtonText: confirm, icon, allowOutsideClick: icon == 'success' ? false : true
 		}).then(({ isConfirmed }) => {
-			if(isConfirmed && icon != 'error'){
-				if(origin == 'ir_a_home') {
-					this.router.navigate(['home'])
-				} else if(origin == 'edit') {
-					this.router.navigate(['mi-perfil'])
-				}
+			if (isConfirmed && icon != 'error') {
+				if (origin == 'ir_a_home') this.router.navigate(['home'])
+				else if (origin == 'edit') this.router.navigate(['mi-perfil'])
 			}
 		})
 	}
@@ -367,10 +321,8 @@ export class RegistroComponent {
 			if (control.value) {
 				const password = this.mainForm.controls['password'].value;
 				const confirmPassword = this.mainForm.controls['confirmPassword'].value;
-
-				if (password && confirmPassword && password != confirmPassword) {
-					return { differentPassword: true };
-				} else {
+				if (password && confirmPassword && password != confirmPassword) return { differentPassword: true };
+				else {
 					this.mainForm.controls['password'].setErrors(null);
 					this.mainForm.controls['confirmPassword'].setErrors(null);
 				}
@@ -386,19 +338,17 @@ export class RegistroComponent {
 
 	telefonoValidator(): ValidatorFn {
 		const telefonoPattern = /^11\s\d{4}-\d{4}$/;
-	  
 		return (control: AbstractControl): { [key: string]: any } | null => {
-		  if (!control.value) {
-			// Si el campo está vacío, no se aplica la validación.
-			return null;
-		  }
-	  
-		  const esValido = telefonoPattern.test(control.value);
-		  return esValido ? null : { formatoInvalido: true };
+			if (!control.value) {
+				// Si el campo está vacío, no se aplica la validación.
+				return null;
+			}
+			const esValido = telefonoPattern.test(control.value);
+			return esValido ? null : { formatoInvalido: true };
 		};
 	}
 
-	togglePassword(){
+	togglePassword() {
 		this.passwordType = this.passwordType === 'text' ? 'password' : 'text';
 		this.passwordIcon = this.passwordIcon === 'visibility' ? 'visibility_off' : 'visibility';
 	}
@@ -408,13 +358,11 @@ export class RegistroComponent {
 	}
 
 	formatDocument(event: any) {
-		console.log(event);
 		this.particularForm.controls['nroDocumento'].enable();
 		switch (event.value) {
 			case 'DNI': //
 				this.particularForm.controls['nroDocumento'].addValidators(Validators.pattern(/^(?!0+$)[1-9]\d{6,7}$/))
 				break;
-		
 			default:
 				this.particularForm.controls['nroDocumento'].addValidators(Validators.pattern(/^(?!0+$)[1-9]\d{6,7}$/))
 				break;
@@ -456,7 +404,7 @@ export class RegistroComponent {
 			},
 			preDeny: () => {
 				console.log('pre deny', countdownTime);
-				if (this.id_user && countdownTime == 0 ) {
+				if (this.id_user && countdownTime == 0) {
 					this.auth.sendEmailAgain(this.id_user).subscribe({
 						next: (res) => {
 							console.log(res);
@@ -472,15 +420,12 @@ export class RegistroComponent {
 			},
 			reverseButtons: true
 		}).then(({ isConfirmed, value }) => {
-			console.log(isConfirmed);
-
 			if (isConfirmed && this.id_user) {
-				console.log('conf', value);
-				
 				this.usuarioService.confirmarCuenta(this.id_user, value).subscribe({
 					next: (res) => {
-						console.log(res);
+						//console.log(res);
 						Swal.fire('Excelente!', 'Tu cuenta fue verificada, ya podes usar Ecoswap!', 'success')
+						this.closeSwal = false;
 						this.router.navigate(['/'])
 					},
 					error: (error) => {
@@ -502,7 +447,7 @@ export class RegistroComponent {
 		const parentFormGroup = control.parent;
 		if (!parentFormGroup) return { invalidSelection: true };
 		const name = Object.keys(parentFormGroup.controls).find((key) => control === parentFormGroup.get(key));
-		
+
 		if (selectedValue && this.localidades) {
 			const isValid = (name == 'localidad' ? this.localidades : this.calles)
 				.some((item) => item.nombre.toUpperCase() == (selectedValue.nombre || selectedValue).toUpperCase());
@@ -510,33 +455,81 @@ export class RegistroComponent {
 		}
 		return null;
 	}
-	
+
+
+	getLocalidades() {
+		const locValue = this.direccionForm.controls['localidad'].value;
+		if (locValue.length == 0) {
+			this.direccionForm.controls['calle'].disable();
+			this.direccionForm.controls['altura'].disable()
+			this.direccionForm.controls['piso'].disable()
+			this.direccionForm.controls['departamento'].disable()
+		}
+		else if (locValue.length >= 3) {
+			const apiUrl = 'https://apis.datos.gob.ar/georef/api/localidades?orden=id&provincia=02&nombre=' + locValue
+			fetch(apiUrl).then(response => response.json()).then(data => {
+				this.localidades = data.localidades
+			}).catch(error => console.error(error));
+		}
+	}
+
+	getCalles() {
+		const calleInput = this.direccionForm.controls['calle'].value;
+		const locInput = this.direccionForm.controls['localidad'].value.departamento.id;
+
+		if (calleInput.length == 0) {
+			this.direccionForm.controls['altura'].disable()
+			this.direccionForm.controls['piso'].disable()
+			this.direccionForm.controls['departamento'].disable()
+		}
+		if (calleInput.length >= 3) {
+			const apiUrl = 'https://apis.datos.gob.ar/georef/api/calles?orden=id&provincia=02&departamento=' + locInput + '&nombre=' + calleInput
+			fetch(apiUrl).then(response => response.json()).then(data => {
+				this.calles = data.calles
+			}).catch(error => console.error(error));
+		}
+	}
+
+	onLocSelected(event: any) {
+		if (event) this.direccionForm.controls['calle'].enable()
+	}
+
+	onCalleSelected(event: any) {
+		if (event) {
+			this.direccionForm.controls['altura'].enable()
+			this.direccionForm.controls['piso'].enable()
+			this.direccionForm.controls['departamento'].enable()
+		}
+	}
+
+
 }
 
 function isValidCUIT(control: FormControl): { [key: string]: boolean } | null {
 	const cuit = control.value;
-	
+
 	if (!cuit) return null; // Handle empty input
 
 	const regex = /^\d{2}-\d{8,9}-\d{1,2}$/; // Ensure the CUIT matches the format: 11-11111111-1 or 11-11111111-11
 	if (!regex.test(cuit)) return { 'invalidCUIT': true };
-  
+
 	const numericPart: string = cuit.replace(/-/g, ''); // Extract the numeric part for calculation
-	const verifierDigit = parseInt(numericPart.charAt(numericPart.length-1)); // Calculate the verifier digit
+	const verifierDigit = parseInt(numericPart.charAt(numericPart.length - 1)); // Calculate the verifier digit
 	const factors = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
 	let sum = 0;
-  
+
 	for (let i = 0; i < 10; i++) {
-	  sum += parseInt(numericPart.charAt(i)) * factors[i];
+		sum += parseInt(numericPart.charAt(i)) * factors[i];
 	}
-  
+
 	const remainder = sum % 11;
 	const calculatedVerifierDigit = remainder === 0 ? 0 : 11 - remainder;
-  
+
 	if (calculatedVerifierDigit !== verifierDigit) return { 'invalidCUIT': true };
 	return null; // CUIT is valid
 }
 
 function capitalizeFirstLetter(str: string) {
-	return str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+	if (str) return str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+	else return str;
 }

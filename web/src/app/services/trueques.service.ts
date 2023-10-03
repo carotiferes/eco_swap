@@ -41,10 +41,14 @@ export class TruequesService {
 	}
 
 	getMisPublicacionesForTrueque(idPublicacionOrigen: number){
-		return this.backendService.get(URL_NAME, `api/publicacion/${idPublicacionOrigen}/trueques`);
+		return this.backendService.get(URL_NAME, `api/${idPublicacionOrigen}/publicaciones`);
 	}
 
 	cambiarEstadoTrueque(id_trueque: number, nuevoEstado: string){
 		return this.backendService.put(URL_NAME, `api/trueque/${id_trueque}`, {nuevoEstado});
+	}
+
+	getTruequesParticular(id_particular: number) {
+		return this.backendService.get(URL_NAME, `api/trueques/particular/${id_particular}`);
 	}
 }
