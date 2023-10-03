@@ -13,7 +13,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 })
 @EntityScan(basePackages = "msTransacciones.domain.entities")
 @EnableJpaRepositories("msTransacciones.domain.repositories")
-//@ComponentScan("com.mercadopago")
 public class EcoSwapApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(EcoSwapApplication.class, args);

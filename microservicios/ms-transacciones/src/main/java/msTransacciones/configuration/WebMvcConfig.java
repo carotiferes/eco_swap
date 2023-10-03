@@ -13,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    @Value("${url.host}")
+    @Value("${url.host.domain}")
     private String urlHost;
 
     @Autowired

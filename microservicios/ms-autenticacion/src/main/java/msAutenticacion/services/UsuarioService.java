@@ -227,8 +227,8 @@ public class UsuarioService {
     private Direccion crearDireccion(Usuario usuario, RequestDireccion direccionCrear) {
         return Direccion.builder()
                 .usuario(usuario)
-                .direccion(direccionCrear.getDireccion())
-                .codigoPostal(direccionCrear.getCodigoPostal())
+                .calle(direccionCrear.getCalle())
+                .localidad(direccionCrear.getLocalidad())
                 .altura(direccionCrear.getAltura())
                 .dpto(direccionCrear.getDepartamento())
                 .piso(direccionCrear.getPiso())
@@ -284,11 +284,11 @@ public class UsuarioService {
     private void crearNuevaDireccion(RequestEditProfile requestEditProfile, Usuario user) {
         Direccion nuevaDireccion = new Direccion();
         nuevaDireccion.setUsuario(user);
-        nuevaDireccion.setDireccion(requestEditProfile.getDireccion().getDireccion());
+        nuevaDireccion.setCalle(requestEditProfile.getDireccion().getCalle());
         nuevaDireccion.setPiso(requestEditProfile.getDireccion().getPiso());
         nuevaDireccion.setDpto(requestEditProfile.getDireccion().getDepartamento());
         nuevaDireccion.setAltura(requestEditProfile.getDireccion().getAltura());
-        nuevaDireccion.setCodigoPostal(requestEditProfile.getDireccion().getCodigoPostal());
+        nuevaDireccion.setLocalidad(requestEditProfile.getDireccion().getLocalidad());
 
         List<Direccion> direcciones = new ArrayList<>();
         direcciones.add(nuevaDireccion);
