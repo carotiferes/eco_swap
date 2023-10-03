@@ -10,21 +10,47 @@
 	</ng-template>
 </ngb-carousel>
 
+
 <div class="grid-div">
 	<div class="row-div">
 		<div class="col-div">
-			<img src="assets/home/ultimos-11.jpg">
+			<img src="assets/home/publicaciones.jpg" (click)="goTo('publicaciones')">
 		</div>
 	</div>
 	<div class="row-div">
 		<div></div>
 		<div class="col-div">
-			<img src="assets/home/ultimos-12.jpg">
+			<img src="assets/home/colectas.jpg" (click)="goTo('colectas')">
 		</div>
 	</div>
-	<div class="row-div">
+</div>
+
+<div class="info-bar" [ngClass]="screenWidth < 576 ? 'small-bar' : 'big-bar'">
+	<div class="info-div">
+		<span class="material-icons-outlined">change_circle</span>
+		Intercambiá con otros Swappers!
+	</div>
+
+	<div class="info-div">
+		<span class="material-icons-outlined">volunteer_activism</span>
+		Doná a fundaciones!
+	</div>
+
+	<div class="info-div">
+		<span class="material-icons-outlined">local_shipping</span>
+		Elegí enviar todos tus productos!
+	</div>
+
+	<div class="info-div">
+		<span class="material-icons-outlined">payments</span>
+		Pagá con Mercado Pago!
+	</div>
+</div>
+
+<div class="grid-div">
+	<div class="row-div" *ngIf="!userData.isLoggedIn || (userData.isLoggedIn && userData.isSwapper)">
 		<div class="col-div">
-			<img src="assets/home/subir-publ-14.png">
+			<img src="assets/home/publicar.png" (click)="goTo('form-publicacion', true)">
 		</div>
 	</div>
 </div>

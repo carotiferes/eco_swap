@@ -4,6 +4,29 @@
 	}
 }
 
+.info-bar {
+	background-color: #ddbdef;
+    height: 100px;
+    display: flex;
+    justify-content: space-evenly;
+    margin: 20px 0 !important;
+
+	.info-div {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 135px;
+		justify-content: center;
+		text-align: center;
+		font-size: 16px;
+
+		span {
+			font-size: 32px;
+			color: #2f9a19;
+		}
+	}
+}
+
 .grid-div {
 	width: 100%;
 	padding: 15px 30px;
@@ -22,6 +45,10 @@
 				object-fit: cover;
 				margin: 0 auto;
 				border-radius: 15px;
+
+				&:hover {
+					cursor: pointer;
+				}
 			}
 		}
 	}
