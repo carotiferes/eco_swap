@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import msUsers.domain.entities.enums.TipoProducto;
 
+import java.util.List;
 
 
 @Data
@@ -14,7 +15,7 @@ import msUsers.domain.entities.enums.TipoProducto;
 @Builder
 public class RequestFilterColectas {
     private Long idFundacion;
-    private String codigoPostal;
+    private List<String> localidades;
     private TipoProducto tipoProducto;
 
 }
