@@ -1,7 +1,7 @@
 <app-header [title]="isMyColectas ? 'Mis Colectas' : 'Colectas'"></app-header>
 
 <div id="main-donaciones" class="app-main-div">
-	<mat-accordion>
+	<mat-accordion *ngIf="!isMyColectas">
 		<mat-expansion-panel style="border-radius: 15px;">
 			<mat-expansion-panel-header>
 				<mat-panel-title>
@@ -13,7 +13,7 @@
 					</div>
 				</mat-panel-description>
 			</mat-expansion-panel-header>
-			<form [formGroup]="formFiltros" id="form-filtros" *ngIf="!isMyColectas">
+			<form [formGroup]="formFiltros" id="form-filtros">
 				<mat-form-field class="example-full-width" appearance="outline">
 					<mat-label>Fundación</mat-label>
 					<input type="text" matInput formControlName="fundacion" [matAutocomplete]="auto"

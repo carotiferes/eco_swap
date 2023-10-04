@@ -2,7 +2,7 @@
 	[title]="origin == 'all' ? 'Publicaciones' : (origin == 'myPublicaciones' ? 'Mis Publicaciones' : 'Mis Compras')"></app-header>
 
 <div id="main-publicaciones" class="app-main-div">
-	<mat-accordion>
+	<mat-accordion *ngIf="origin == 'all'">
 		<mat-expansion-panel style="border-radius: 15px;">
 			<mat-expansion-panel-header>
 				<mat-panel-title>
@@ -14,7 +14,7 @@
 					</div>
 				</mat-panel-description>
 			</mat-expansion-panel-header>
-			<form [formGroup]="formFiltros" id="form-filtros" *ngIf="origin == 'all'">
+			<form [formGroup]="formFiltros" id="form-filtros">
 				<mat-form-field class="example-chip-list" appearance="outline">
 					<mat-label>Localidades</mat-label>
 					<mat-chip-grid #chipGrid aria-label="Localidad">

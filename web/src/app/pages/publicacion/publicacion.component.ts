@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PublicacionModel } from 'src/app/models/publicacion.model';
@@ -15,7 +15,7 @@ import { TruequeModel } from 'src/app/models/trueque.model';
 	templateUrl: './publicacion.component.html',
 	styleUrls: ['./publicacion.component.scss']
 })
-export class PublicacionComponent {
+export class PublicacionComponent implements AfterViewInit {
 
 	loading: boolean = false;
 	publicacion!: PublicacionModel;
@@ -34,20 +34,20 @@ export class PublicacionComponent {
 		private router: Router, private usuarioService: UsuarioService, public dialog: MatDialog) {
 
 		this.userData = { isSwapper: auth.isUserSwapper(), isLoggedIn: auth.isUserLoggedIn }
+		this.route.paramMap.subscribe(params => {
+			this.id_publicacion = params.get('id_publicacion');
+		})
+	}
 
+	ngAfterViewInit(): void {
 		if (this.userData && this.userData.isLoggedIn) {
-			usuarioService.getUserByID(auth.getUserID()).subscribe({
+			this.usuarioService.getUserByID(this.auth.getUserID()).subscribe({
 				next: (res: any) => {
 					this.userInfo = res;
+					this.getPublicacion(this.id_publicacion);
 				}
 			})
 		}
-
-		route.paramMap.subscribe(params => {
-			this.id_publicacion = params.get('id_publicacion');
-			if (!this.id_publicacion) showErrorService.show('Error!', 'No pudimos encontrar la información de la colecta que seleccionaste, por favor volvé a intentarlo más tarde.')
-			else this.getPublicacion(this.id_publicacion)
-		})
 	}
 
 	getPublicacion(id: number) {
