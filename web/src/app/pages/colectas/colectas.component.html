@@ -1,55 +1,69 @@
 <app-header [title]="isMyColectas ? 'Mis Colectas' : 'Colectas'"></app-header>
 
 <div id="main-donaciones" class="app-main-div">
-	<form [formGroup]="formFiltros" id="form-filtros" *ngIf="!isMyColectas"> 
-		<div class="row">
-			<mat-form-field class="example-full-width" appearance="outline">
-				<mat-label>Fundación</mat-label>
-				<input type="text" matInput formControlName="fundacion" [matAutocomplete]="auto" style="border: 1px solid red">
-				<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-				<mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-					{{option.nombre}}
-				</mat-option>
-				</mat-autocomplete>
-			</mat-form-field>
+	<mat-accordion *ngIf="!isMyColectas">
+		<mat-expansion-panel style="border-radius: 15px;">
+			<mat-expansion-panel-header>
+				<mat-panel-title>
+					Búsqueda avanzada
+				</mat-panel-title>
+				<mat-panel-description>
+					<div style="display: flex; justify-content: flex-end; width: 100%; align-items: center;">
+						<span>Filtrá las colectas!</span>
+					</div>
+				</mat-panel-description>
+			</mat-expansion-panel-header>
+			<form [formGroup]="formFiltros" id="form-filtros">
+				<mat-form-field class="example-full-width" appearance="outline">
+					<mat-label>Fundación</mat-label>
+					<input type="text" matInput formControlName="fundacion" [matAutocomplete]="auto"
+						style="border: 1px solid red">
+					<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+						<mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+							{{option.nombre}}
+						</mat-option>
+					</mat-autocomplete>
+				</mat-form-field>
 
-			<mat-form-field appearance="outline">
-				<mat-label>Tipo del Producto</mat-label>
-				<mat-select formControlName="tipoProducto" panelClass="example-panel">
-					<mat-option *ngFor="let tipo of tipos_productos" [value]="tipo.nombre">
-						{{tipo.descripcion}}
-					</mat-option>
-				</mat-select>
-				<!-- <input matInput formControlName="tipoProducto"> -->
-			</mat-form-field>
-			<div style="text-align: center;">
-				<button mat-fab extended color="primary" (click)="filtrarColectas()">FILTRAR</button>
-				<button mat-fab extended (click)="limpiarFiltros()" style="background-color: white;">LIMPIAR</button>
-			</div>
-		</div>
-		<div class="row localidad-row">
-			<mat-form-field class="example-chip-list" appearance="outline">
-				<mat-label>Localidades</mat-label>
-				<mat-chip-grid #chipGrid aria-label="Localidad">
-				  <mat-chip-row *ngFor="let localidad of localidades" (removed)="remove(localidad)">
-					{{localidad}}
-					<button matChipRemove [attr.aria-label]="'eliminar ' + localidad">
-					  <mat-icon>cancel</mat-icon>
-					</button>
-				  </mat-chip-row>
-				  
-				  <input placeholder="Localidad..." #localidadInput formControlName="localidad"
-				  [matChipInputFor]="chipGrid" [matAutocomplete]="autoLocalidad" matInput
-				  (matChipInputTokenEnd)="add($event)"/>
-				</mat-chip-grid>
-				<mat-autocomplete #autoLocalidad="matAutocomplete" (optionSelected)="selected($event)">
-				  <mat-option *ngFor="let localidad of filteredLocalidades | async" [value]="localidad">
-					{{localidad}}
-				  </mat-option>
-				</mat-autocomplete>
-			  </mat-form-field>
-		</div>
-		</form>
+				<mat-form-field appearance="outline">
+					<mat-label>Tipo del Producto</mat-label>
+					<mat-select formControlName="tipoProducto" panelClass="example-panel">
+						<mat-option *ngFor="let tipo of tipos_productos" [value]="tipo.nombre">
+							{{tipo.descripcion}}
+						</mat-option>
+					</mat-select>
+					<!-- <input matInput formControlName="tipoProducto"> -->
+				</mat-form-field>
+
+				<mat-form-field class="example-chip-list" appearance="outline">
+					<mat-label>Localidades</mat-label>
+					<mat-chip-grid #chipGrid aria-label="Localidad">
+						<mat-chip-row *ngFor="let localidad of localidades" (removed)="remove(localidad)">
+							{{localidad}}
+							<button matChipRemove [attr.aria-label]="'eliminar ' + localidad">
+								<mat-icon>cancel</mat-icon>
+							</button>
+						</mat-chip-row>
+
+						<input placeholder="Localidad..." #localidadInput formControlName="localidad"
+							[matChipInputFor]="chipGrid" [matAutocomplete]="autoLocalidad" matInput
+							(matChipInputTokenEnd)="add($event)" />
+					</mat-chip-grid>
+					<mat-autocomplete #autoLocalidad="matAutocomplete" (optionSelected)="selected($event)">
+						<mat-option *ngFor="let localidad of filteredLocalidades | async" [value]="localidad">
+							{{localidad}}
+						</mat-option>
+					</mat-autocomplete>
+				</mat-form-field>
+				<div style="text-align: center;">
+					<button mat-fab extended color="primary" (click)="filtrarColectas()">FILTRAR</button>
+					<button mat-fab extended (click)="limpiarFiltros()"
+						style="background-color: white;">LIMPIAR</button>
+				</div>
+			</form>
+		</mat-expansion-panel>
+	</mat-accordion>
+
 	<app-spinner [loading]="loading"></app-spinner>
 	<div class="row" *ngIf="!loading">
 		<div *ngIf="showColectas.length==0" style="text-align: center;">No hay colectas para mostrar</div>
@@ -57,7 +71,8 @@
 			<div class="card-deck">
 				<div class="card row" *ngFor="let colecta of paginatedColectas" (click)="goToColecta(colecta)">
 					<div class="col-sm-4" style="display: flex; justify-content: center;">
-						<img class="card-img" [src]="colecta.imagen ? colecta.imagen : 'assets/perfiles/perfiles-24.jpg'">
+						<img class="card-img"
+							[src]="colecta.imagen ? colecta.imagen : 'assets/perfiles/perfiles-24.jpg'">
 					</div>
 					<div class="card-body col-sm-6">
 						<h2 class="card-title">{{colecta.titulo}}</h2>
@@ -78,15 +93,15 @@
 					</div>
 				</div>
 				<mat-paginator [pageSizeOptions]="[5, 10, 25]" [pageSize]="pageSize" [showFirstLastButtons]="true"
-				[length]="showColectas.length" #paginator (page)="changePage($event)" style="border-radius: 15px;"
-				*ngIf="showColectas.length > 0">
+					[length]="showColectas.length" #paginator (page)="changePage($event)" style="border-radius: 15px;"
+					*ngIf="showColectas.length > 0">
 				</mat-paginator>
 			</div>
 		</div>
 	</div>
 	<div class="floating-button-container" *ngIf="!userData.isSwapper">
-		<button mat-fab color="primary" aria-label="Agregar Colecta" (click)="addColecta()"
-		matTooltip="Agregar Colecta" matTooltipPosition="before">
+		<button mat-fab color="primary" aria-label="Agregar Colecta" (click)="addColecta()" matTooltip="Agregar Colecta"
+			matTooltipPosition="before">
 			<mat-icon>add</mat-icon>
 		</button>
 	</div>

@@ -69,7 +69,7 @@ export class ColectasComponent implements OnInit {
 		this.userData = { isSwapper: auth.isUserSwapper() }
 
 		this.filteredLocalidades = this.formFiltros.controls['localidad'].valueChanges.pipe(
-			startWith('null'),
+			startWith(''),
 			map((localidad: string | null) => (localidad ? this._filterLocalidad(localidad) : this.allLocalidades.slice())),
 		);
 	}
@@ -204,6 +204,7 @@ export class ColectasComponent implements OnInit {
 		this.paginatedColectas = this.showColectas.slice(startIndex, endIndex);
 	}
 
+	/* FUNCIONES PARA FILTRO DE LOCALIDADES */
 	add(event: MatChipInputEvent): void {
 		const value = (event.value || '').trim();
 		if (value && this.allLocalidades.some(item => item.toUpperCase() == value.toUpperCase())) {
