@@ -1,22 +1,25 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FundacionModel } from 'src/app/models/fundacion.model';
 import { ColectaModel } from 'src/app/models/colecta.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import { FundacionesService } from 'src/app/services/fundaciones.service';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { ProductosService } from 'src/app/services/productos.service';
 import Swal from 'sweetalert2';
 import { ShowErrorService } from 'src/app/services/show-error.service';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatChipInputEvent } from '@angular/material/chips';
 
 @Component({
 	selector: 'app-colectas',
 	templateUrl: './colectas.component.html',
-	styleUrls: ['./colectas.component.scss']
+	styleUrls: ['./colectas.component.scss'],
+	encapsulation: ViewEncapsulation.None
 })
 export class ColectasComponent implements OnInit {
 
@@ -37,6 +40,12 @@ export class ColectasComponent implements OnInit {
 	pageSize = 10;
 	@ViewChild(MatPaginator) paginator!: MatPaginator;
 
+	filteredLocalidades: Observable<string[]>;
+	localidades: string[] = [];
+	allLocalidades: string[] = [];
+
+	@ViewChild('localidadInput') localidadInput!: ElementRef<HTMLInputElement>;
+
 	constructor(private router: Router, private auth: AuthService,
 		private donacionesService: DonacionesService, private fundacionesService: FundacionesService,
 		private fb: FormBuilder, private productosService: ProductosService,
@@ -46,7 +55,7 @@ export class ColectasComponent implements OnInit {
 
 		this.formFiltros = fb.group({
 			fundacion: [''],
-			codigoPostal: [''],
+			localidad: [''],
 			tipoProducto: ['']
 		})
 
@@ -58,11 +67,17 @@ export class ColectasComponent implements OnInit {
 			}),
 		);
 		this.userData = { isSwapper: auth.isUserSwapper() }
+
+		this.filteredLocalidades = this.formFiltros.controls['localidad'].valueChanges.pipe(
+			startWith('null'),
+			map((localidad: string | null) => (localidad ? this._filterLocalidad(localidad) : this.allLocalidades.slice())),
+		);
 	}
 
 	ngOnInit() {
 		this.getFundaciones();
 		this.getTiposProductos();
+		this.getLocalidades();
 
 		this.filtrarColectas();
 	}
@@ -89,12 +104,14 @@ export class ColectasComponent implements OnInit {
 		} else {
 			this.filtros = {};
 			const idFundacion = this.formFiltros.controls['fundacion'].value ? this.formFiltros.controls['fundacion'].value.idFundacion : undefined;
-			const codigoPostal = this.formFiltros.controls['codigoPostal'].value;
 			const tipoProducto = this.formFiltros.controls['tipoProducto'].value;
 
 			if (idFundacion) this.filtros['idFundacion'] = idFundacion;
-			if (codigoPostal) this.filtros['codigoPostal'] = codigoPostal;
+			if (this.localidades.length > 0) this.filtros['localidades'] = this.localidades;
 			if (tipoProducto) this.filtros['tipoProducto'] = tipoProducto;
+
+			console.log('filtros', this.filtros, this.localidades);
+			
 
 			this.donacionesService.getAllColectas(this.filtros).subscribe({
 				next: (res: any) => {
@@ -153,8 +170,18 @@ export class ColectasComponent implements OnInit {
 		});
 	}
 
+	getLocalidades() {
+		const apiUrl = 'https://apis.datos.gob.ar/georef/api/localidades?orden=id&provincia=02&max=50&campos=nombre'
+		fetch(apiUrl).then(response => response.json()).then(data => {
+			for (const localidad of data.localidades) {
+				this.allLocalidades.push(localidad.nombre)
+			}
+		}).catch(error => console.error(error));
+	}
+
 	limpiarFiltros() {
-		this.formFiltros.reset()
+		this.formFiltros.reset();
+		this.localidades = [];
 		this.filtrarColectas()
 	}
 
@@ -176,4 +203,30 @@ export class ColectasComponent implements OnInit {
 		const endIndex = startIndex + event.pageSize;
 		this.paginatedColectas = this.showColectas.slice(startIndex, endIndex);
 	}
+
+	add(event: MatChipInputEvent): void {
+		const value = (event.value || '').trim();
+		if (value && this.allLocalidades.some(item => item.toUpperCase() == value.toUpperCase())) {
+			this.localidades.push(value);
+		}
+		event.chipInput!.clear();
+		this.formFiltros.controls['localidad'].setValue(null);
+	}
+
+	remove(localidad: string): void {
+		const index = this.localidades.indexOf(localidad);
+		if (index >= 0) this.localidades.splice(index, 1);
+	}
+
+	selected(event: MatAutocompleteSelectedEvent): void {
+		this.localidades.push(event.option.viewValue);
+		this.localidadInput.nativeElement.value = '';
+		this.formFiltros.controls['localidad'].setValue(null);
+	}
+
+	private _filterLocalidad(value: string): string[] {
+		const filterValue = value.toLowerCase();
+		return this.allLocalidades.filter(localidad => localidad.toLowerCase().includes(filterValue));
+	}
 }
+

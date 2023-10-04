@@ -27,7 +27,7 @@
 				<div class="div-fecha-zona">
 					<div>{{publicacion.fechaPublicacion | date: 'dd/MM/yyyy'}}</div>
 					<div *ngIf="publicacion.particularDTO.direcciones.length > 0">
-						{{publicacion.particularDTO.direcciones[0].codigoPostal}}</div>
+						{{publicacion.particularDTO.direcciones[0].localidad}}</div>
 				</div>
 			</div>
 		</mat-card-header>

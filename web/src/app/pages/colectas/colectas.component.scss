@@ -1,9 +1,9 @@
 #main-donaciones {
 	padding: 2%;
 
-	#form-filtros {
+	#form-filtros .row {
 		display: grid;
-		grid-template-columns: 1fr 1fr 1fr 1fr;
+		grid-template-columns: 1fr 1fr 1fr;
 		justify-items: center;
 		align-items: baseline;
 		align-items: center;
@@ -18,7 +18,9 @@
 			//max-width: 40%;
 		}
 
-		
+		&.localidad-row {
+			grid-template-columns: 2fr 1fr !important;
+		}
 	}
 
 	.card {
@@ -71,13 +73,18 @@
 }
 
 @media (min-width: 577px) and (max-width: 768px) {
-	#form-filtros {
+	#form-filtros .row{
 		grid-template-columns: 1fr 1fr !important;
 	}
 }
 
 @media (min-width: 0px) and (max-width: 576px) {
-	#form-filtros {
+	#form-filtros .row{
 		grid-template-columns: 1fr !important;
 	}
 }
+
+/* .scrollable-input {
+	max-height: 100px; /* Adjust the maximum height as needed *
+	overflow-y: auto;
+  } */

@@ -1,7 +1,7 @@
 
 export interface DireccionModel {
-	codigoPostal: string, // LOCALIDAD
-	direccion: string, // CALLE
+	localidad: string, // LOCALIDAD
+	calle: string, // CALLE
 	altura: number,
 	piso: number,
 	departamento: string

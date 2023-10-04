@@ -13,7 +13,7 @@
 						<mat-label>Producto</mat-label>
 						<mat-select formControlName="producto">
 							<mat-option *ngFor="let prod of colecta.productos" [value]="prod.idProducto">
-								{{prod.descripcion}}
+								{{prod.descripcion}} {{prod.cantidadSolicitada ? '(Faltan '+(prod.cantidadSolicitada-prod.cantidadRecibida)+')' : ''}}
 							</mat-option>
 						</mat-select>
 						<mat-error *ngIf="donacionForm.get('producto')!.hasError('required')">

@@ -21,14 +21,14 @@
 			<p><mat-icon>phone</mat-icon>{{userToShow.telefono}}</p>
 			<a *ngIf="(!userData.isSwapper || myProfile) && userToShow.direccion" class="location clickable" (click)="showMap(userToShow.direccion)">
 				<mat-icon>place</mat-icon>
-				{{!userData.isSwapper || myProfile ? userToShow.direccion.direccion + ' ' + userToShow.direccion.altura + ' ('+ userToShow.direccion.codigoPostal + ')'
-					: userToShow.direccion.codigoPostal
+				{{!userData.isSwapper || myProfile ? userToShow.direccion.calle + ' ' + userToShow.direccion.altura + ' ('+ userToShow.direccion.localidad + ')'
+					: userToShow.direccion.localidad
 				}}
 			</a>
 			<p *ngIf="userData.isSwapper && !myProfile && userToShow.direccion" class="location">
 				<mat-icon>place</mat-icon>
-				{{userData.isSwapper ? userToShow.direccion.codigoPostal :
-					userToShow.direccion.direccion + ' ' + userToShow.direccion.altura + ' ('+ userToShow.direccion.codigoPostal + ')'
+				{{userData.isSwapper ? userToShow.direccion.localidad :
+					userToShow.direccion.calle + ' ' + userToShow.direccion.altura + ' ('+ userToShow.direccion.localidad + ')'
 				}}
 			</p>
 			<div class="div-edit-info" *ngIf="myProfile">

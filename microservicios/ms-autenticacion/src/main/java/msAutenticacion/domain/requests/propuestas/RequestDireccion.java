@@ -13,10 +13,10 @@ public class RequestDireccion {
     private String altura;
 
     @NotNull
-    private String codigoPostal;
+    private String localidad;
 
     @NotNull
-    private String direccion;
+    private String calle;
 
     private String departamento;
 
