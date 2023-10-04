@@ -1,7 +1,10 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatChipInputEvent } from '@angular/material/chips';
 import { MatPaginator } from '@angular/material/paginator';
 import { Router } from '@angular/router';
+import { Observable, map, startWith } from 'rxjs';
 import { PublicacionModel } from 'src/app/models/publicacion.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { ComprasService } from 'src/app/services/compras.service';
@@ -30,20 +33,32 @@ export class PublicacionesComponent {
 	@ViewChild(MatPaginator) paginator!: MatPaginator;
 	pageSize = 5;
 
+	filteredLocalidades: Observable<string[]>;
+	localidades: string[] = [];
+	allLocalidades: string[] = [];
+
+	@ViewChild('localidadInput') localidadInput!: ElementRef<HTMLInputElement>;
+
 	constructor(private router: Router, private auth: AuthService, private fb: FormBuilder,
 		private productosService: ProductosService, private showErrorService: ShowErrorService,
 		private truequesService: TruequesService, private comprasService: ComprasService){
 
 		this.formFiltros = fb.group({
 			fundacion: [''],
-			codigoPostal: [''],
+			localidad: [''],
 			tipoProducto: ['']
 		})
 
 		if (router.url == '/mis-publicaciones') this.origin = 'myPublicaciones';
 		if (router.url == '/mis-compras') this.origin = 'myCompras';
 
+		this.filteredLocalidades = this.formFiltros.controls['localidad'].valueChanges.pipe(
+			startWith(''),
+			map((localidad: string | null) => (localidad ? this._filterLocalidad(localidad) : this.allLocalidades.slice())),
+		);
+
 		this.getTiposProductos();
+		this.getLocalidades();
 		this.filtrarPublicaciones()
 	}
 
@@ -82,10 +97,10 @@ export class PublicacionesComponent {
 	filtrarPublicaciones() {
 		if(this.origin == 'all'){
 			this.filtros = {};
-			const codigoPostal = this.formFiltros.controls['codigoPostal'].value;
+			//const localidad = this.formFiltros.controls['localidad'].value;
 			const tipoProducto = this.formFiltros.controls['tipoProducto'].value;
 
-			if (codigoPostal) this.filtros['codigoPostal'] = codigoPostal;
+			if (this.localidades.length > 0) this.filtros['localidades'] = this.localidades;
 			if (tipoProducto) this.filtros['tipoProducto'] = tipoProducto;
 
 			this.truequesService.getPublicaciones(this.filtros).subscribe({
@@ -131,6 +146,41 @@ export class PublicacionesComponent {
 		const startIndex = event.pageIndex * event.pageSize;
 		const endIndex = startIndex + event.pageSize;
 		this.paginatedPublicaciones = this.publicacionesToShow.slice(startIndex, endIndex);
+	}
+
+	/* FUNCIONES PARA FILTRO DE LOCALIDADES */
+	getLocalidades() {
+		const apiUrl = 'https://apis.datos.gob.ar/georef/api/localidades?orden=id&provincia=02&max=50&campos=nombre'
+		fetch(apiUrl).then(response => response.json()).then(data => {
+			for (const localidad of data.localidades) {
+				this.allLocalidades.push(localidad.nombre)
+			}
+		}).catch(error => console.error(error));
+	}
+
+	add(event: MatChipInputEvent): void {
+		const value = (event.value || '').trim();
+		if (value && this.allLocalidades.some(item => item.toUpperCase() == value.toUpperCase())) {
+			this.localidades.push(value);
+		}
+		event.chipInput!.clear();
+		this.formFiltros.controls['localidad'].setValue(null);
+	}
+
+	remove(localidad: string): void {
+		const index = this.localidades.indexOf(localidad);
+		if (index >= 0) this.localidades.splice(index, 1);
+	}
+
+	selected(event: MatAutocompleteSelectedEvent): void {
+		this.localidades.push(event.option.viewValue);
+		this.localidadInput.nativeElement.value = '';
+		this.formFiltros.controls['localidad'].setValue(null);
+	}
+
+	private _filterLocalidad(value: string): string[] {
+		const filterValue = value.toLowerCase();
+		return this.allLocalidades.filter(localidad => localidad.toLowerCase().includes(filterValue));
 	}
 
 }

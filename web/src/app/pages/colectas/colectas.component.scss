@@ -1,16 +1,23 @@
 #main-donaciones {
 	padding: 2%;
 
-	#form-filtros .row {
-		display: grid;
+	#form-filtros {
+		/* display: grid;
 		grid-template-columns: 1fr 1fr 1fr;
 		justify-items: center;
 		align-items: baseline;
-		align-items: center;
+		align-items: center; */
+		display: flex;
+		justify-content: space-around;
+		flex-wrap: wrap;
 		
 		mat-form-field {
 			max-width: 100%;
 			padding: 5px;
+
+			&.example-chip-list {
+				width: 55vh;
+			}
 		}
 
 		button {
@@ -72,7 +79,7 @@
 	}
 }
 
-@media (min-width: 577px) and (max-width: 768px) {
+/* @media (min-width: 577px) and (max-width: 768px) {
 	#form-filtros .row{
 		grid-template-columns: 1fr 1fr !important;
 	}
@@ -82,7 +89,7 @@
 	#form-filtros .row{
 		grid-template-columns: 1fr !important;
 	}
-}
+} */
 
 /* .scrollable-input {
 	max-height: 100px; /* Adjust the maximum height as needed *
