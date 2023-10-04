@@ -119,11 +119,14 @@ public class PublicacionController {
         Root<Publicacion> from = query.from(Publicacion.class);
         Predicate predicate = cb.conjunction();
 
-        if (request.getCodigoPostal() != null) {
+        if (request.getLocalidades() != null) {
             Join<Publicacion, Particular> particularJoin = from.join("particular");
             Join<Particular, Usuario> usuarioJoin = particularJoin.join("usuario");
             Join<Usuario, Direccion> direccionJoin = usuarioJoin.join("direcciones");
-            predicate = cb.and(predicate, cb.equal(direccionJoin.get("codigoPostal"), request.getCodigoPostal()));
+
+            Expression<String> localidadExpression = direccionJoin.get("localidad");
+
+            predicate = cb.and(predicate, localidadExpression.in(request.getLocalidades()));
         }
 
         if (request.getTipoProducto() != null) {

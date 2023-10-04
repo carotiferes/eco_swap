@@ -1,6 +1,6 @@
 package msTransacciones.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -20,7 +20,7 @@ public class Direccion {
     private Usuario usuario;
 
     @NotNull
-    private String direccion;
+    private String calle;
     @NotNull
     private String altura;
     @Column(nullable = true)
@@ -29,14 +29,14 @@ public class Direccion {
     @Column(nullable = true)
     private String dpto;
     @NotNull
-    private String codigoPostal;
+    private String localidad;
 
     public DireccionDTO toDTO(){
         DireccionDTO direccionDTO = new DireccionDTO();
-        direccionDTO.setDireccion(direccion);
+        direccionDTO.setCalle(calle);
         direccionDTO.setPiso(piso);
         direccionDTO.setAltura(altura);
-        direccionDTO.setCodigoPostal(codigoPostal);
+        direccionDTO.setLocalidad(localidad);
         return direccionDTO;
     }
 }

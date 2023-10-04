@@ -5,9 +5,9 @@ import lombok.Data;
 
 @Data
 public class DireccionDTO {
-    private String direccion;
+    private String calle;
     private String altura;
     private String piso;
     private String dpto;
-    private String codigoPostal;
+    private String localidad;
 }

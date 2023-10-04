@@ -8,9 +8,11 @@ import lombok.Data;
 import msAutenticacion.domain.requests.propuestas.RequestDireccion;
 import msAutenticacion.domain.requests.propuestas.RequestSignUpFundacion;
 import msAutenticacion.domain.requests.propuestas.RequestSignUpSwapper;
+import org.springframework.validation.annotation.Validated;
 
 @Data
 @Builder
+@Validated
 public class RequestSignUp {
 
     @NotNull(message = "username Debe existir")
@@ -21,8 +23,8 @@ public class RequestSignUp {
     private String email;
 
     @NotNull(message = "password Debe existir")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]){4,12}$",
-            message = "password must be min 4 and max 12 length containing atleast 1 uppercase, 1 lowercase, 1 special character and 1 digit ")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{4,30}$",
+            message = "La contraseña debe tener al menos 4 caracteres y como máximo 30 conteniendo una mayúscula, una minúscula, un caracter especial y al menos un digito.")
     private String password;
 
     @NotNull(message = "telefono Debe existir")
