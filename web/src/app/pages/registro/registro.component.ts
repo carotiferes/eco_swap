@@ -131,7 +131,10 @@ export class RegistroComponent {
 							cuit: user.fundacionDTO.cuil
 						})
 					}
-					this.setAddress(user.particularDTO ? user.particularDTO.direcciones[0] : user.fundacionDTO.direcciones[0])
+					//console.log('USERRRR', user.particularDTO.direcciones);
+
+					const direccion = user.particularDTO ? user.particularDTO.direcciones[0] : user.fundacionDTO.direcciones[0];
+					if(direccion.localidad ) this.setAddress(direccion)
 				},
 				error: (error) => { console.log('error', error); }
 			})
@@ -139,22 +142,24 @@ export class RegistroComponent {
 	}
 
 	setAddress(direccion: any) {
-		const apiUrl = 'https://apis.datos.gob.ar/georef/api/localidades?orden=id&provincia=02&exacto=true&nombre=' + direccion.codigoPostal
+		const apiUrl = 'https://apis.datos.gob.ar/georef/api/localidades?orden=id&provincia=02&exacto=true&nombre=' + direccion.localidad
 		fetch(apiUrl).then(response => response.json()).then(data => {
-			if (data.cantidad == 1) this.direccionForm.controls['localidad'].setValue(data.localidades[0]);
-			this.localidades = data.localidades;
-			const locInput = this.direccionForm.controls['localidad'].value.departamento.id;
-			const apiUrl = 'https://apis.datos.gob.ar/georef/api/calles?orden=id&provincia=02&exacto=true&departamento=' + locInput + '&nombre=' + direccion.direccion
-			fetch(apiUrl).then(response => response.json()).then(data => {
-				if (data.cantidad == 1) this.direccionForm.controls['calle'].setValue(data.calles[0]);
-				this.calles = data.calles;
-				this.direccionForm.patchValue({
-					altura: direccion.altura,
-					piso: direccion.piso,
-					departamento: direccion.departamento,
-				})
-				this.direccionForm.enable();
-			}).catch(error => console.error(error));
+			if (data.cantidad == 1) {
+				this.direccionForm.controls['localidad'].setValue(data.localidades[0]);
+				this.localidades = data.localidades;
+				const locInput = this.direccionForm.controls['localidad'].value.departamento.id;
+				const apiUrl = 'https://apis.datos.gob.ar/georef/api/calles?orden=id&provincia=02&exacto=true&departamento=' + locInput + '&nombre=' + direccion.calle
+				fetch(apiUrl).then(response => response.json()).then(data => {
+					if (data.cantidad == 1) this.direccionForm.controls['calle'].setValue(data.calles[0]);
+					this.calles = data.calles;
+					this.direccionForm.patchValue({
+						altura: direccion.altura,
+						piso: direccion.piso,
+						departamento: direccion.departamento,
+					})
+					this.direccionForm.enable();
+				}).catch(error => console.error(error));
+			}
 		}).catch(error => console.error(error));
 	}
 
@@ -218,8 +223,8 @@ export class RegistroComponent {
 						telefono: this.mainForm.controls['telefono'].value,
 						confirmPassword: this.mainForm.controls['confirmPassword'].value,
 						direccion: {
-							codigoPostal: this.direccionForm.controls['localidad'].value.nombre,
-							direccion: this.direccionForm.controls['calle'].value.nombre,
+							localidad: this.direccionForm.controls['localidad'].value.nombre,
+							calle: this.direccionForm.controls['calle'].value.nombre,
 							altura: this.direccionForm.controls['altura'].value,
 							piso: this.direccionForm.controls['piso'].value,
 							departamento: this.direccionForm.controls['departamento'].value,

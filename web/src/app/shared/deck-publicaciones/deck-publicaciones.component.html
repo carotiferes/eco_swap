@@ -26,7 +26,7 @@
 			<img class="img-fundacion" src="assets/perfiles/perfiles-17.jpg">
 			<h4>{{publicacion.particularDTO.nombre + ' ' + publicacion.particularDTO.apellido}}</h4>
 			<h6>{{publicacion.fechaPublicacion | date: 'dd/MM/yyyy' }}</h6>
-			<h6 *ngIf="origin=='publicaciones' && publicacion.particularDTO.direcciones.length > 0">{{ publicacion.particularDTO.direcciones[0].codigoPostal }}</h6>
+			<h6 *ngIf="origin=='publicaciones' && publicacion.particularDTO.direcciones.length > 0">{{ publicacion.particularDTO.direcciones[0].localidad }}</h6>
 		</div>
 		<div class="col-3 buttons" *ngIf="origin=='propuestas'">
 			<button *ngFor="let button of buttons" mat-fab extended [color]="button.color"

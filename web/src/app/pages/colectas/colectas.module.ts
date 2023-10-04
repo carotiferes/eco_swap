@@ -6,7 +6,7 @@ import { MaterialModule } from 'src/app/shared/material/material.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HeaderModule } from 'src/app/layout/header/header.module';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [ColectasComponent],
@@ -17,7 +17,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 	NgbModule,
 	HeaderModule,
 	SharedModule,
-	MatPaginatorModule
+	FormsModule,
+	ReactiveFormsModule,
   ],
   exports: [ColectasComponent]
 })

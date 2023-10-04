@@ -148,7 +148,7 @@ export class ColectaComponent {
 	showDireccion(fundacion: any){
 		console.log(fundacion);
 		let stringDir: string = fundacion.direcciones[0].direccion + fundacion.direcciones[0].altura || '';
-		const localidad = fundacion.direcciones[0].codigoPostal || '';
+		const localidad = fundacion.direcciones[0].localidad || '';
 
 		const apiUrl = `https://apis.datos.gob.ar/georef/api/direcciones?provincia=02&localidad=${localidad}
 		&direccion=${encodeURIComponent(stringDir)}`

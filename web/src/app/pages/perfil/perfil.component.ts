@@ -72,8 +72,8 @@ export class PerfilComponent {
 		this.userData.isSwapper = false;
 		console.log(this.user);
 		
-		this.user.fundacionDTO.direcciones[0].codigoPostal = this.user.fundacionDTO.direcciones[0].codigoPostal.toLowerCase();
-		this.user.fundacionDTO.direcciones[0].direccion = this.user.fundacionDTO.direcciones[0].direccion.toLowerCase();
+		this.user.fundacionDTO.direcciones[0].localidad = this.user.fundacionDTO.direcciones[0].localidad.toLowerCase();
+		this.user.fundacionDTO.direcciones[0].calle = this.user.fundacionDTO.direcciones[0].calle.toLowerCase();
 		this.userToShow = {
 			nombre: this.user.fundacionDTO.nombre,
 			email: this.user.email,
@@ -95,8 +95,8 @@ export class PerfilComponent {
 		this.userData.isSwapper = true;
 		this.particularService.getParticular(this.user.particularDTO.idParticular).subscribe({
 			next: (particular: any) => {
-				particular.direcciones[0].codigoPostal = particular.direcciones[0].codigoPostal.toLowerCase();
-				particular.direcciones[0].direccion = particular.direcciones[0].direccion.toLowerCase();
+				particular.direcciones[0].localidad = particular.direcciones[0].localidad.toLowerCase();
+				particular.direcciones[0].calle = particular.direcciones[0].calle.toLowerCase();
 				this.userToShow = {
 					nombre: particular.nombre + ' ' + particular.apellido,
 					email: particular.usuarioDTO.email,
@@ -124,8 +124,8 @@ export class PerfilComponent {
 
 	showMap(direccion: DireccionModel) {
 		console.log(direccion);
-		let stringDir: string = direccion.direccion + direccion.altura || '';
-		const localidad = (direccion.codigoPostal || '').replace(' ', '');
+		let stringDir: string = direccion.calle + direccion.altura || '';
+		const localidad = (direccion.localidad || '').replace(' ', '');
 		console.log(stringDir, localidad);
 
 

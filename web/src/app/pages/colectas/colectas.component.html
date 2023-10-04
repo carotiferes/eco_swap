@@ -1,8 +1,8 @@
 <app-header [title]="isMyColectas ? 'Mis Colectas' : 'Colectas'"></app-header>
 
 <div id="main-donaciones" class="app-main-div">
-	<div class="row">
-		<form [formGroup]="formFiltros" id="form-filtros" *ngIf="!isMyColectas"> 
+	<form [formGroup]="formFiltros" id="form-filtros" *ngIf="!isMyColectas"> 
+		<div class="row">
 			<mat-form-field class="example-full-width" appearance="outline">
 				<mat-label>Fundación</mat-label>
 				<input type="text" matInput formControlName="fundacion" [matAutocomplete]="auto" style="border: 1px solid red">
@@ -12,10 +12,7 @@
 				</mat-option>
 				</mat-autocomplete>
 			</mat-form-field>
-			<mat-form-field appearance="outline">
-				<mat-label>Código Postal</mat-label>
-				<input matInput formControlName="codigoPostal" type="number">
-			</mat-form-field>
+
 			<mat-form-field appearance="outline">
 				<mat-label>Tipo del Producto</mat-label>
 				<mat-select formControlName="tipoProducto" panelClass="example-panel">
@@ -29,8 +26,30 @@
 				<button mat-fab extended color="primary" (click)="filtrarColectas()">FILTRAR</button>
 				<button mat-fab extended (click)="limpiarFiltros()" style="background-color: white;">LIMPIAR</button>
 			</div>
+		</div>
+		<div class="row localidad-row">
+			<mat-form-field class="example-chip-list" appearance="outline">
+				<mat-label>Localidades</mat-label>
+				<mat-chip-grid #chipGrid aria-label="Localidad">
+				  <mat-chip-row *ngFor="let localidad of localidades" (removed)="remove(localidad)">
+					{{localidad}}
+					<button matChipRemove [attr.aria-label]="'eliminar ' + localidad">
+					  <mat-icon>cancel</mat-icon>
+					</button>
+				  </mat-chip-row>
+				  
+				  <input placeholder="Localidad..." #localidadInput formControlName="localidad"
+				  [matChipInputFor]="chipGrid" [matAutocomplete]="autoLocalidad" matInput
+				  (matChipInputTokenEnd)="add($event)"/>
+				</mat-chip-grid>
+				<mat-autocomplete #autoLocalidad="matAutocomplete" (optionSelected)="selected($event)">
+				  <mat-option *ngFor="let localidad of filteredLocalidades | async" [value]="localidad">
+					{{localidad}}
+				  </mat-option>
+				</mat-autocomplete>
+			  </mat-form-field>
+		</div>
 		</form>
-	</div>
 	<app-spinner [loading]="loading"></app-spinner>
 	<div class="row" *ngIf="!loading">
 		<div *ngIf="showColectas.length==0" style="text-align: center;">No hay colectas para mostrar</div>
