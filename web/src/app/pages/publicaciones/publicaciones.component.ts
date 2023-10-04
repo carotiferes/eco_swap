@@ -139,6 +139,7 @@ export class PublicacionesComponent {
 
 	limpiarFiltros() {
 		this.formFiltros.reset()
+		this.localidades = [];
 		this.filtrarPublicaciones()
 	}
 
