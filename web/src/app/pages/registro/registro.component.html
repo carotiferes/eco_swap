@@ -1,6 +1,6 @@
 <app-header url="registro"></app-header>
 
-<div id="main-container" class="app-main-div">
+<div id="main-container" class="app-main-div dense-2">
 	<div *ngIf="loading" style="height: 65vh; display: flex; justify-content: center;">
 		<mat-spinner diameter="20"></mat-spinner>
 	</div>
@@ -22,7 +22,7 @@
 		<mat-card-content>
 			<form [formGroup]="mainForm" class="form">
 				<div class="form-input">
-					<mat-form-field>
+					<mat-form-field appearance="outline">
 						<mat-label>Email</mat-label>
 						<input matInput formControlName="email" type="email">
 						<mat-error *ngIf="mainForm.get('email')!.hasError('required')">
@@ -35,7 +35,7 @@
 				</div>
 				<div class="form-input"
 					[ngClass]="mainForm.get('telefono')!.hasError('formatoInvalido') ? 'form-input-medium-error':''">
-					<mat-form-field *ngIf="origin != 'resetPassword'">
+					<mat-form-field *ngIf="origin != 'resetPassword'" appearance="outline">
 						<mat-label>Teléfono</mat-label>
 						<input matInput formControlName="telefono" [ngModel]="this.mainForm.get('telefono')!.value"
 							(keyup)="formatearTelefono()">
@@ -50,7 +50,7 @@
 				</div>
 				<div class="form-input"
 					[ngClass]="mainForm.get('password')!.hasError('pattern') ? 'form-input-long-error':''">
-					<mat-form-field>
+					<mat-form-field appearance="outline">
 						<mat-label>Contraseña</mat-label>
 						<input matInput formControlName="password" [type]="passwordType" (change)="refreshValidity()">
 						<mat-icon matSuffix (click)="togglePassword()" class="eye">{{passwordIcon}}</mat-icon>
@@ -68,7 +68,7 @@
 					</mat-form-field>
 				</div>
 				<div class="form-input">
-					<mat-form-field>
+					<mat-form-field appearance="outline">
 						<mat-label>Confirm Password</mat-label>
 						<input matInput formControlName="confirmPassword" [type]="passwordType"
 							(focus)="refreshValidity()">
@@ -84,7 +84,7 @@
 			</form>
 			<form [formGroup]="particularForm" *ngIf="isSwapper && origin != 'resetPassword'" class="form">
 				<div class="form-input capitalize-input">
-					<mat-form-field>
+					<mat-form-field appearance="outline">
 						<mat-label>Nombre</mat-label>
 						<input matInput formControlName="nombre">
 						<mat-error *ngIf="particularForm.get('nombre')!.hasError('required')">
@@ -94,7 +94,7 @@
 
 				</div>
 				<div class="form-input capitalize-input">
-					<mat-form-field>
+					<mat-form-field appearance="outline">
 						<mat-label>Apellido</mat-label>
 						<input matInput formControlName="apellido">
 						<mat-error *ngIf="particularForm.get('apellido')!.hasError('required')">
@@ -103,7 +103,7 @@
 					</mat-form-field>
 				</div>
 				<div class="form-input">
-					<mat-form-field>
+					<mat-form-field appearance="outline">
 						<mat-label>Tipo Documento</mat-label>
 						<!-- <input matInput formControlName="tipoDocumento"> -->
 						<mat-select formControlName="tipoDocumento" name="tipoDocumento"
@@ -118,7 +118,7 @@
 					</mat-form-field>
 				</div>
 				<div class="form-input">
-					<mat-form-field>
+					<mat-form-field appearance="outline">
 						<mat-label>Número de Documento</mat-label>
 						<input matInput formControlName="nroDocumento" type="number">
 						<mat-error *ngIf="particularForm.get('nroDocumento')!.hasError('required')">
@@ -144,7 +144,7 @@
 			</form>
 			<form [formGroup]="fundacionForm" *ngIf="!isSwapper && origin != 'resetPassword'" class="form">
 				<div class="form-input capitalize-input">
-					<mat-form-field>
+					<mat-form-field appearance="outline">
 						<mat-label>Nombre / Razón Social</mat-label>
 						<input matInput formControlName="nombre">
 						<mat-error *ngIf="fundacionForm.get('nombre')!.hasError('required')">
@@ -153,7 +153,7 @@
 					</mat-form-field>
 				</div>
 				<div class="form-input">
-					<mat-form-field>
+					<mat-form-field appearance="outline">
 						<mat-label>CUIT</mat-label><!-- type="number" -->
 						<input matInput formControlName="cuit" (keyup)="formatearCUIT()">
 						<mat-hint>Formato: 20-12345678-9</mat-hint>
@@ -169,7 +169,7 @@
 			<div style="margin: 20px 5% 0px; font-weight: bold;">Dirección</div>
 			<form [formGroup]="direccionForm" *ngIf="origin != 'resetPassword'" class="form">
 				<div class="form-input capitalize-input">
-					<mat-form-field class="example-full-width">
+					<mat-form-field class="example-full-width" appearance="outline">
 						<mat-label>Localidad</mat-label>
 						<input type="text" (input)="getLocalidades()" matInput formControlName="localidad"
 							[matAutocomplete]="autoLoc">
@@ -188,7 +188,7 @@
 					</mat-form-field>
 				</div>
 				<div class="form-input capitalize-input">
-					<mat-form-field class="example-full-width">
+					<mat-form-field class="example-full-width" appearance="outline">
 						<mat-label>Calle</mat-label>
 						<input type="text" (input)="getCalles()" matInput formControlName="calle"
 							[matAutocomplete]="autoCalle">
@@ -207,7 +207,7 @@
 					</mat-form-field>
 				</div>
 				<div class="form-input">
-					<mat-form-field>
+					<mat-form-field appearance="outline">
 						<mat-label>Altura</mat-label>
 						<input matInput formControlName="altura" type="number">
 						<mat-error *ngIf="direccionForm.get('altura')!.hasError('required')">
@@ -216,13 +216,13 @@
 					</mat-form-field>
 				</div>
 				<div class="form-input">
-					<mat-form-field>
+					<mat-form-field appearance="outline">
 						<mat-label>Piso</mat-label>
 						<input matInput formControlName="piso" type="number">
 					</mat-form-field>
 				</div>
 				<div class="form-input capitalize-input">
-					<mat-form-field>
+					<mat-form-field appearance="outline">
 						<mat-label>Departamento</mat-label>
 						<input matInput formControlName="departamento">
 					</mat-form-field>
