@@ -1,28 +1,41 @@
 #main-donaciones {
 	padding: 2%;
+	display: grid;
+	grid-template-columns: 1fr 5fr;
+	gap: 20px;
+
+	.accordion {
+		padding: 10px 0;
+
+		.accordion-item {
+			border-radius: 10px;
+			box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+
+			.accordion-header {
+				margin: 0;
+
+				.accordion-header-button {
+					height: 40px;
+					font-size: 14px;
+					padding: 10px;
+				}
+			}
+		}
+	}
 
 	#form-filtros {
-		/* display: grid;
-		grid-template-columns: 1fr 1fr 1fr;
-		justify-items: center;
-		align-items: baseline;
-		align-items: center; */
 		display: flex;
-		justify-content: space-around;
-		flex-wrap: wrap;
+		flex-direction: column;
 		
 		mat-form-field {
 			max-width: 100%;
 			padding: 5px;
-
-			&.example-chip-list {
-				width: 55vh;
-			}
 		}
 
 		button {
-			margin: 2px;
-			//max-width: 40%;
+			margin: 0 5px;
+			height: 36px;
+			font-size: 12px;
 		}
 
 		&.localidad-row {
@@ -33,19 +46,39 @@
 	.card {
 		margin: 5px;
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
 		align-items: center;
+		height: 450px;
+
+		* { text-align: center; }
 
 		&:hover {
 			cursor: pointer;
 		}
 
-		.card-img {
-			//max-width: 100%;
-			max-height: 160px;
-			margin: 20px;
-			width: auto;
-			max-width: 100%;
+		.img-div {
+			display: flex;
+			justify-content: center;
+			padding: 20px;
+			align-items: center;
+			height: 200px;
+
+			.card-img {
+				max-height: 160px;
+				margin: 20px;
+				width: auto;
+				max-width: 100%;
+			}
+		}
+
+		
+		.card-body {
+			display: flex;
+    		align-items: center;
+
+			.card-title {
+				margin: 0;
+			}
 		}
 
 		.productos {
@@ -61,12 +94,19 @@
 
 		.card-fundacion {
 			text-align: center;
+			padding: 0 10px 20px;
 			/* display: flex;
 			flex-direction: column;
 			align-items: center; */
 
 			.img-fundacion {
-				width: 30px;
+				width: 40px;
+			}
+
+			.mat-icon {
+				width: 14px;
+				height: 14px;
+				font-size: 14px;
 			}
 		}
 	}
@@ -78,7 +118,11 @@
 		z-index: 999;
 	}
 }
-
+@media (min-width: 0px) and (max-width: 768px) {
+	#main-donaciones {
+		grid-template-columns: 1fr !important;
+	}
+}
 /* @media (min-width: 577px) and (max-width: 768px) {
 	#form-filtros .row{
 		grid-template-columns: 1fr 1fr !important;

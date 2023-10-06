@@ -66,14 +66,14 @@ $eco-swap-theme: mat.define-light-theme((
    accent: $eco-swap-accent
  ),
  typography: mat.define-typography-config(),
- density: 0,
+ density: -3,
 ));
 
 @include mat.all-component-themes($eco-swap-theme);
 
 :root {
-	--primary-color: #86db59;
-	--secondary-color: #ae59db;
+	--primary-color: #87db59;
+	--secondary-color: #c58ae5;
 	--warn-color: #b11f2e;
 
 	--white: #fff;
@@ -85,9 +85,19 @@ $eco-swap-theme: mat.define-light-theme((
 	--error: #dc3545;
 
 	--custom-font: "Source Sans Pro";
+
+	--donaciones: var(--secondary-color);
+	--trueques: var(--primary-color);
+	--compras: #5a886c;
+
+	--success: #5fc32f;
+	--warn: var(--warn-color);
+	--info: #ccb014;
 }
 
-
+mat-form-field {
+	*{font-size: 12px !important;}
+}
 
 /* html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; } */
@@ -95,7 +105,7 @@ html, body {
     height: 100%;
     box-sizing: border-box;
     margin: 0;
-	background-color: #effae8;
+	//background-color: #f1e3f8;
 }
 
 .example-panel {
@@ -136,3 +146,12 @@ html, body {
 		overflow-x: hidden;
 	}
 } */
+.donaciones {
+	background-color: #f1e3f8;
+}
+.trueques {
+	background-color: #effae8;
+}
+.default {
+	background-color: #ebebeb;
+}

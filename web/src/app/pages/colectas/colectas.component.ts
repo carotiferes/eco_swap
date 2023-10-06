@@ -37,7 +37,7 @@ export class ColectasComponent implements OnInit {
 	filteredOptions: Observable<any[]>;
 	filtros: any = {};
 
-	pageSize = 10;
+	pageSize = 6;
 	@ViewChild(MatPaginator) paginator!: MatPaginator;
 
 	filteredLocalidades: Observable<string[]>;

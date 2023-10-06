@@ -39,11 +39,11 @@
 	}
 
 	.aprobada {
-		color: var(--primary-color);
+		color: var(--success);
 		font-weight: 500;
 	}
 	.rechazada {
-		color: var(--warn-color);
+		color: var(--warn);
 	}
 }
 

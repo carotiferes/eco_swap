@@ -79,7 +79,7 @@
 					color: var(--secondary-color);
 				}
 				.received {
-					color: var(--primary-color);
+					color: var(--success);
 				}
 			}
 		}
@@ -118,7 +118,7 @@
 		}
 
 		.aprobada {
-			color: var(--primary-color);
+			color: var(--success);
 			font-weight: 500;
 		}
 		.rechazada {

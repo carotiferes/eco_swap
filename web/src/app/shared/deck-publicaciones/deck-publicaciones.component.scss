@@ -1,6 +1,115 @@
 .card {
 	margin: 5px;
 	display: flex;
+	flex-direction: column;
+	align-items: center;
+	height: 450px;
+
+	* { text-align: center; }
+
+	&:hover {
+		cursor: pointer;
+	}
+
+	&.selected-card {
+		background-color: #bceba1;
+	}
+
+	.img-div {
+		display: flex;
+		justify-content: center;
+		padding: 20px;
+		align-items: center;
+		height: 200px;
+
+		.card-img {
+			max-height: 160px;
+			margin: 20px;
+			width: auto;
+			max-width: 100%;
+
+			&.big {
+				max-height: 160px;
+			}
+	
+			&.small {
+				max-height: 110px;
+			}
+		}
+	}
+
+	.productos {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+
+		.producto {
+			margin: 5px 10px;
+			min-width: 100px;
+		}
+	}
+
+	.estado-publicacion {
+		margin-top: 5px;
+	}
+
+	
+	.card-body {
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+
+		.card-title {
+			margin: 0;
+		}
+	}
+
+	.productos {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+
+		.producto {
+			margin: 5px 10px;
+			min-width: 100px;
+		}
+	}
+
+	.card-fundacion {
+		text-align: center;
+		padding: 0 10px 20px;
+		/* display: flex;
+		flex-direction: column;
+		align-items: center; */
+
+		.img-fundacion {
+			width: 40px;
+		}
+
+		.mat-icon {
+			width: 14px;
+			height: 14px;
+			font-size: 14px;
+		}
+	}
+
+	.buttons {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		margin: 10px auto;
+		
+		button {
+			text-transform: uppercase;
+			width: 100%;
+		}
+
+	}
+}
+
+/* .card {
+	margin: 5px;
+	display: flex;
 	flex-direction: row;
 	align-items: center;
 
@@ -45,7 +154,7 @@
 		text-align: center;
 		/* display: flex;
 		flex-direction: column;
-		align-items: center; */
+		align-items: center; *
 
 		.img-fundacion {
 			width: 30px;
@@ -63,16 +172,16 @@
 			width: 100%;
 		}
 
-		.result-icon {
-			font-size: 40px;
+	}
+} */
+.result-icon {
+	font-size: 40px;
 
-			&.green {
-				color: var(--primary-color);
-			}
-			&.red {
-				color: var(--warn-color);
-			}
-		}
+	&.green {
+		color: var(--success);
+	}
+	&.red {
+		color: var(--warn);
 	}
 }
 
