@@ -87,7 +87,10 @@ $eco-swap-theme: mat.define-light-theme((
 	--custom-font: "Source Sans Pro";
 
 	--donaciones: var(--secondary-color);
+
 	--trueques: var(--primary-color);
+	--trueques-dark: #2e9a19;
+
 	--compras: #5a886c;
 
 	--success: #5fc32f;
@@ -97,6 +100,16 @@ $eco-swap-theme: mat.define-light-theme((
 
 mat-form-field {
 	*{font-size: 12px !important;}
+}
+
+.dense-2 {
+	@include mat.all-component-densities(-2);
+	mat-form-field {
+		*{font-size: 16px !important;}
+	}
+	mat-hint {
+		font-size: 12px !important;
+	}
 }
 
 /* html, body { height: 100%; }
