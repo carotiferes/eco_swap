@@ -1,8 +1,12 @@
 package msUsers.controllers;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.S3Object;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,38 +22,43 @@ import org.springframework.web.bind.annotation.RestController;
 public class ImageController {
     @Value("${path.filesystem}")
     private String pathFilesystem;
+
+    @Value("${aws.s3.bucketName}")
+    private String bucketName;
+
+    @Value("${aws.s3.folderNameImages}")
+    private String folderNameImages;
+
+    @Autowired
+    private AmazonS3 amazonS3Client;
+
     @GetMapping(path = "/getImage/{img}")
     public ResponseEntity<Resource> getImage(@PathVariable("img") String img) {
-        String dir = System.getProperty("user.dir") + pathFilesystem;
-        Resource imagenResource = new FileSystemResource(dir + img);
+        log.info(">> Se busca en S3 la imagen: {}", img);
+        try {
+            S3Object s3Object = amazonS3Client.getObject(bucketName, folderNameImages + img);
 
-        if (imagenResource.exists()) {
-            String extension = obtenerExtension(img);
-            MediaType mediaType = MediaType.parseMediaType(MimeTypeUtils.APPLICATION_OCTET_STREAM_VALUE);
+            // Verificar que el objeto exista en S3
+            if (s3Object != null) {
+                MediaType mediaType = MediaType.parseMediaType(s3Object.getObjectMetadata().getContentType());
+                InputStreamResource inputStreamResource = new InputStreamResource(s3Object.getObjectContent());
 
-            // Establecer el tipo de contenido según la extensión de archivo
-            if (extension.equalsIgnoreCase("jpg") || extension.equalsIgnoreCase("jpeg")) {
-                mediaType = MediaType.IMAGE_JPEG;
-            } else if (extension.equalsIgnoreCase("png")) {
-                mediaType = MediaType.IMAGE_PNG;
-            } else if (extension.equalsIgnoreCase("bmp")) {
-                mediaType = MediaType.parseMediaType("image/bmp");
-            };
-            //log.info(">> Se retorna la imagen: {}", img); -- Descomentar para debug
-            return ResponseEntity.ok().contentType(mediaType).body(imagenResource);
+                // Log para fines de depuración
+                log.info(">> Se retorna la imagen: {}", img);
 
-        } else {
-            // En caso de que la imagen no exista
-            log.warn(">> No se encontro la imagen: {}", img);
-            return ResponseEntity.notFound().build();
+                return ResponseEntity.ok()
+                        .contentType(mediaType)
+                        .contentLength(s3Object.getObjectMetadata().getContentLength())
+                        .body(inputStreamResource);
+            } else {
+                // En caso de que la imagen no exista en S3
+                log.warn("<< No se encontró la imagen en S3: {}", img);
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            // En caso de error al obtener la imagen desde S3
+            log.error("<< Error al obtener la imagen desde S3: {}", e.getLocalizedMessage());
+            return ResponseEntity.status(500).build();
         }
-    }
-
-    private String obtenerExtension(String nombreArchivo) {
-        int indicePunto = nombreArchivo.lastIndexOf(".");
-        if (indicePunto != -1) {
-            return nombreArchivo.substring(indicePunto + 1);
-        }
-        return "";
     }
 }

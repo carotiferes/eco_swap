@@ -1,17 +1,17 @@
 package msUsers.services;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -26,7 +26,16 @@ public class ImageService {
     @Value("${default.extension}")
     private String defaultExtension;
 
-    private List<String> imagesToSave = new ArrayList<>();
+    @Value("${aws.s3.bucketName}")
+    private String bucketName;
+    @Value("${aws.s3.folderNameImages}")
+    private String folderNameImages;
+
+
+    @Autowired
+    private AmazonS3 amazonS3Client;
+
+    private final List<String> imagesToSave = new ArrayList<>();
 
     @Transactional
     public void queueImageForSaving(String imgBase64) {
@@ -42,7 +51,7 @@ public class ImageService {
         imagesToSave.clear();
     }
     @Transactional
-    public String saveImage(String imgBase64){
+    public String saveImage(String imgBase64) {
 
         String extensionImg = "";
         String[] parts = imgBase64.split(",");
@@ -50,37 +59,36 @@ public class ImageService {
         if (len > 1) {
             imgBase64 = parts[1];
             extensionImg = parts[0].split("/|;")[1];
-        }
-        else{
+        } else {
             extensionImg = defaultExtension;
         }
 
         byte[] imgBytes = Base64.getDecoder().decode(imgBase64);
         String imageName = UUID.randomUUID().toString() + "." + extensionImg;
-        String directorioActual = System.getProperty("user.dir");
-        String storagePath = directorioActual + pathFilesystem + imageName;
 
-        // Solo se ejecuta cuando commitee correctamente.
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-            @Override
-            public void afterCommit() {
-                File directory = new File(directorioActual + pathFilesystem);
-                if (!directory.exists()) {
-                    if (directory.mkdirs()) {
-                        log.info(">> Directorio de almacenamiento creado correctamente.");
-                    }
+        try
+        {
+            InputStream inputStream = new ByteArrayInputStream(imgBytes);
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(imgBytes.length);
+            metadata.setContentType("image/jpeg"); // Cambia esto según el tipo de imagen
+
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, folderNameImages + imageName, inputStream, metadata);
+
+            // Solo se ejecuta cuando se confirma correctamente la transacción.
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    amazonS3Client.putObject(putObjectRequest);
+                    log.info("<< Imagen {} guardada correctamente en Amazon S3", imageName);
                 }
+            });
 
-                try (OutputStream outputStream = new FileOutputStream(storagePath)) {
-                    outputStream.write(imgBytes);
-                    log.info("<< Imagen {} guardada correctamente", imageName);
-                } catch (IOException e) {
-                    log.error("<< Error al guardar la imagen: {}", e.getMessage());
-                }
-            }
-        });
-
-        return imageName;
+            return imageName;
+        }
+        catch (Exception e){
+            log.error("<< Error al guardar la imagen en Amazon S3: {}", e.getMessage());
+            return null;
+        }
     }
-
 }
