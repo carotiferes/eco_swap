@@ -5,6 +5,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { MatPaginator } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { Observable, map, startWith } from 'rxjs';
+import { CardModel } from 'src/app/models/card.model';
 import { PublicacionModel } from 'src/app/models/publicacion.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { ComprasService } from 'src/app/services/compras.service';
@@ -27,15 +28,13 @@ export class PublicacionesComponent {
 	loading: boolean = false;
 
 	publicacionesToShow: PublicacionModel[] = [];
-	paginatedPublicaciones: PublicacionModel[] = [];
 	filtros: any;
-
-	@ViewChild(MatPaginator) paginator!: MatPaginator;
-	pageSize = 5;
 
 	filteredLocalidades: Observable<string[]>;
 	localidades: string[] = [];
 	allLocalidades: string[] = [];
+
+	publicacionesCardList: CardModel[] = []
 
 	@ViewChild('localidadInput') localidadInput!: ElementRef<HTMLInputElement>;
 
@@ -82,15 +81,8 @@ export class PublicacionesComponent {
 
 	getTiposProductos() {
 		this.productosService.getTiposProductos().subscribe({
-			next: (v: any) => {
-				//console.log('productos', v);
-				this.tipos_productos = v;
-			},
-			error: (e) => {
-				console.error('error', e);
-				//this.showErrorService.show('Error!', 'Ha ocurrido un error al traer los tipos de producto')
-			},
-			//complete: () => console.info('complete')
+			next: (v: any) => this.tipos_productos = v,
+			error: (e) => console.error('error', e)
 		});
 	}
 
@@ -110,7 +102,7 @@ export class PublicacionesComponent {
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
-					this.paginatedPublicaciones = this.publicacionesToShow.slice(0, this.pageSize);
+					this.generateCardList()
 				}
 			})
 		} else if(this.origin == 'myPublicaciones'){
@@ -121,7 +113,7 @@ export class PublicacionesComponent {
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
-					this.paginatedPublicaciones = this.publicacionesToShow.slice(0, this.pageSize);
+					this.generateCardList()
 				}
 			})
 		} else { // myCompras
@@ -132,7 +124,29 @@ export class PublicacionesComponent {
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
+					this.generateCardList()
 				}
+			})
+		}
+	}
+
+	generateCardList() {
+		for (const publicacion of this.publicacionesToShow) {
+			this.publicacionesCardList.push({
+				id: publicacion.idPublicacion,
+				imagen: publicacion.parsedImagenes? publicacion.parsedImagenes[0] : 'no_image',
+				titulo: publicacion.titulo,
+				valorPrincipal: `$${publicacion.valorTruequeMin} - $${publicacion.valorTruequeMax}`,
+				valorSecundario: publicacion.precioVenta ? `$${publicacion.precioVenta}` : undefined,
+				fecha: (new Date(publicacion.fechaPublicacion)).toLocaleDateString(),
+				usuario: {
+					imagen: 'assets/perfiles/perfiles-17.jpg',//publicacion.particularDTO.
+					nombre: publicacion.particularDTO.nombre + ' ' + publicacion.particularDTO.apellido,
+					puntaje: publicacion.particularDTO.puntaje,
+					localidad: publicacion.particularDTO.direcciones[0].localidad
+				},
+				action: 'access',
+				buttons: []
 			})
 		}
 	}
@@ -141,12 +155,6 @@ export class PublicacionesComponent {
 		this.formFiltros.reset()
 		this.localidades = [];
 		this.filtrarPublicaciones()
-	}
-
-	changePage(event: any) {
-		const startIndex = event.pageIndex * event.pageSize;
-		const endIndex = startIndex + event.pageSize;
-		this.paginatedPublicaciones = this.publicacionesToShow.slice(startIndex, endIndex);
 	}
 
 	/* FUNCIONES PARA FILTRO DE LOCALIDADES */

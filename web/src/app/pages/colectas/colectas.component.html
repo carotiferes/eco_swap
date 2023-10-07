@@ -67,8 +67,14 @@
 
 	<div class="row" *ngIf="!loading">
 		<app-spinner [loading]="loading"></app-spinner>
+		<div *ngIf="colectasCardList.length==0" style="text-align: center;">No hay colectas para mostrar</div>
+		<app-deck *ngIf="colectasCardList.length > 0" [cardList]="colectasCardList" app="colectas"></app-deck>
+	</div>
+
+	<!-- <div class="row" *ngIf="!loading">
+		<app-spinner [loading]="loading"></app-spinner>
 		<div *ngIf="showColectas.length==0" style="text-align: center;">No hay colectas para mostrar</div>
-		<div><!-- class="col-lg-6" -->
+		<div><!- class="col-lg-6" --
 			<div class="card-deck row">
 				<div *ngFor="let colecta of paginatedColectas" class="col-xs-12 col-sm-6 col-lg-4">
 					<div class="card" (click)="goToColecta(colecta)">
@@ -97,7 +103,7 @@
 				</mat-paginator>
 			</div>
 		</div>
-	</div>
+	</div> -->
 	<div class="floating-button-container" *ngIf="!userData.isSwapper">
 		<button mat-fab color="accent" aria-label="Agregar Colecta" (click)="addColecta()" matTooltip="Agregar Colecta"
 			matTooltipPosition="before">

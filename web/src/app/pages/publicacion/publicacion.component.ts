@@ -47,7 +47,7 @@ export class PublicacionComponent implements AfterViewInit {
 					this.getPublicacion(this.id_publicacion);
 				}
 			})
-		}
+		} else this.getPublicacion(this.id_publicacion);
 	}
 
 	getPublicacion(id: number) {

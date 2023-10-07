@@ -8,6 +8,6 @@ export interface FundacionModel {
 	cuil: string,
 	usuarioDTO: UsuarioModel,
 	colectas: ColectaModel[],
-	puntaje?: number,
+	puntaje: number,
 	direcciones: DireccionModel[]
 }

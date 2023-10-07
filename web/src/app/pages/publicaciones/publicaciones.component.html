@@ -2,70 +2,66 @@
 	[title]="origin == 'all' ? 'Publicaciones' : (origin == 'myPublicaciones' ? 'Mis Publicaciones' : 'Mis Compras')"></app-header>
 
 <div id="main-publicaciones" class="app-main-div">
-	<div ngbAccordion *ngIf="origin == 'all'" #accordion="ngbAccordion">
-		<div ngbAccordionItem="first" #first="ngbAccordionItem" [collapsed]="false">
-			<h2 ngbAccordionHeader>
-				<button ngbAccordionButton class="bg-transparent accordion-header-button">
-					<mat-icon>tune</mat-icon> <span style="margin-left: 10px;">Filtros</span>
-				</button>
-			</h2>
-			<div ngbAccordionCollapse>
-				<div ngbAccordionBody>
-					<ng-template>
-						<form [formGroup]="formFiltros" id="form-filtros">
-							<mat-form-field class="example-chip-list" appearance="outline">
-								<mat-label>Localidades</mat-label>
-								<mat-chip-grid #chipGrid aria-label="Localidad">
-									<mat-chip-row *ngFor="let localidad of localidades" (removed)="remove(localidad)">
-										{{localidad}}
-										<button matChipRemove [attr.aria-label]="'eliminar ' + localidad">
-											<mat-icon>cancel</mat-icon>
-										</button>
-									</mat-chip-row>
+	<div>
 
-									<input placeholder="Localidad..." #localidadInput formControlName="localidad"
-										[matChipInputFor]="chipGrid" [matAutocomplete]="autoLocalidad" matInput
-										(matChipInputTokenEnd)="add($event)" />
-								</mat-chip-grid>
-								<mat-autocomplete #autoLocalidad="matAutocomplete" (optionSelected)="selected($event)">
-									<mat-option *ngFor="let localidad of filteredLocalidades | async"
-										[value]="localidad">
-										{{localidad}}
-									</mat-option>
-								</mat-autocomplete>
-							</mat-form-field>
-							<mat-form-field appearance="outline">
-								<mat-label>Tipo del Producto</mat-label>
-								<mat-select formControlName="tipoProducto" panelClass="example-panel">
-									<mat-option *ngFor="let tipo of tipos_productos" [value]="tipo.nombre">
-										{{tipo.descripcion}}
-									</mat-option>
-								</mat-select>
-								<!-- <input matInput formControlName="tipoProducto"> -->
-							</mat-form-field>
-							<div style="text-align: center;">
-								<button mat-fab extended color="primary"
-									(click)="filtrarPublicaciones()">FILTRAR</button>
-								<button mat-fab extended (click)="limpiarFiltros()"
-									style="background-color: white;">LIMPIAR</button>
-							</div>
-						</form>
-					</ng-template>
+		<div ngbAccordion *ngIf="origin == 'all'" #accordion="ngbAccordion">
+			<div ngbAccordionItem="first" #first="ngbAccordionItem" [collapsed]="false">
+				<h2 ngbAccordionHeader>
+					<button ngbAccordionButton class="bg-transparent accordion-header-button">
+						<mat-icon>tune</mat-icon> <span style="margin-left: 10px;">Filtros</span>
+					</button>
+				</h2>
+				<div ngbAccordionCollapse>
+					<div ngbAccordionBody>
+						<ng-template>
+							<form [formGroup]="formFiltros" id="form-filtros">
+								<mat-form-field class="example-chip-list" appearance="outline">
+									<mat-label>Localidades</mat-label>
+									<mat-chip-grid #chipGrid aria-label="Localidad">
+										<mat-chip-row *ngFor="let localidad of localidades" (removed)="remove(localidad)">
+											{{localidad}}
+											<button matChipRemove [attr.aria-label]="'eliminar ' + localidad">
+												<mat-icon>cancel</mat-icon>
+											</button>
+										</mat-chip-row>
+	
+										<input placeholder="Localidad..." #localidadInput formControlName="localidad"
+											[matChipInputFor]="chipGrid" [matAutocomplete]="autoLocalidad" matInput
+											(matChipInputTokenEnd)="add($event)" />
+									</mat-chip-grid>
+									<mat-autocomplete #autoLocalidad="matAutocomplete" (optionSelected)="selected($event)">
+										<mat-option *ngFor="let localidad of filteredLocalidades | async"
+											[value]="localidad">
+											{{localidad}}
+										</mat-option>
+									</mat-autocomplete>
+								</mat-form-field>
+								<mat-form-field appearance="outline">
+									<mat-label>Tipo del Producto</mat-label>
+									<mat-select formControlName="tipoProducto" panelClass="example-panel">
+										<mat-option *ngFor="let tipo of tipos_productos" [value]="tipo.nombre">
+											{{tipo.descripcion}}
+										</mat-option>
+									</mat-select>
+									<!-- <input matInput formControlName="tipoProducto"> -->
+								</mat-form-field>
+								<div style="text-align: center;">
+									<button mat-fab extended color="primary"
+										(click)="filtrarPublicaciones()">FILTRAR</button>
+									<button mat-fab extended (click)="limpiarFiltros()"
+										style="background-color: white;">LIMPIAR</button>
+								</div>
+							</form>
+						</ng-template>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div class="row" *ngIf="!loading">
 		<app-spinner [loading]="loading"></app-spinner>
-		<div *ngIf="publicacionesToShow.length==0" style="text-align: center;">No hay publicaciones para mostrar</div>
-		<div><!-- class="col-lg-6" -->
-			<app-deck-publicaciones [publicacionesToShow]="paginatedPublicaciones"
-				[origin]="this.origin == 'myPublicaciones' ? 'mis-publicaciones' : 'publicaciones'"></app-deck-publicaciones>
-			<mat-paginator [pageSizeOptions]="[5, 10, 25]" [pageSize]="pageSize" [showFirstLastButtons]="true"
-				[length]="publicacionesToShow.length" #paginator (page)="changePage($event)"
-				style="border-radius: 15px;" *ngIf="publicacionesToShow.length > 0">
-			</mat-paginator>
-		</div>
+		<div *ngIf="publicacionesCardList.length==0" style="text-align: center;">No hay publicaciones para mostrar</div>
+		<app-deck *ngIf="publicacionesCardList.length > 0" [cardList]="publicacionesCardList" app="publicaciones"></app-deck>
 	</div>
 	<div class="floating-button-container">
 		<button mat-fab color="primary" aria-label="Agregar Publicación" (click)="addPublicacion()"
@@ -74,11 +70,3 @@
 		</button>
 	</div>
 </div>
-
-<!-- <div style="display: flex;
-justify-content: center;
-flex-direction: column;
-align-items: center;">
-	<img src="assets/logo_green.png" style="max-width: 300px;">
-	<h3>¡Muy pronto podrás acceder a esta página!</h3>
-</div> -->

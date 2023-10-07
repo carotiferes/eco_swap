@@ -51,6 +51,12 @@
 	}
 }
 
+@media (min-width: 0px) and (max-width: 768px) {
+	#main-publicaciones {
+		grid-template-columns: 1fr !important;
+	}
+}
+
 /* @media (min-width: 577px) and (max-width: 768px) {
 	#form-filtros {
 		grid-template-columns: 1fr 1fr !important;

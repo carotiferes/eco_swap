@@ -27,7 +27,8 @@ export class AppComponent {
   getCurrentPage(url: string) {
 	console.log(url.split('/'));
 	url = url.split('/')[1];
-	const donacionesURLs = ['colectas', 'colecta', 'mis-colectas', 'form-colecta', 'form-donacion', 'donacion']
+	const donacionesURLs = ['colectas', 'colecta', 'mis-colectas', 'form-colecta', 'form-donacion', 
+		'donacion', 'mis-donaciones']
 	const truequesURLs = ['publicaciones', 'form-publicacion', 'mis-publicaciones', 
 		'form-colecta', 'form-donacion', 'publicacion',]
     // Logic to determine the current page based on the URL
