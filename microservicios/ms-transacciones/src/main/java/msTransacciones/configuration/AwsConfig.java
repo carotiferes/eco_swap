@@ -1,4 +1,4 @@
-package msUsers.configuration;
+package msTransacciones.configuration;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Slf4j
 @Configuration
-public class AwsConfig{
+public class AwsConfig {
 
     @Value("${aws.accessKeyId}")
     private String awsAccessKey;

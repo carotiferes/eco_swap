@@ -31,7 +31,6 @@ public class ImageService {
     @Value("${aws.s3.folderNameImages}")
     private String folderNameImages;
 
-
     @Autowired
     private AmazonS3 amazonS3Client;
 

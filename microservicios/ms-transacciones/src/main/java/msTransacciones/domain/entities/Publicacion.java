@@ -10,7 +10,6 @@ import msTransacciones.domain.responses.DTOs.PublicacionDTO;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -44,6 +43,9 @@ public class Publicacion {
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<CaracteristicaProducto> caracteristicaProducto;
+
+    @OneToMany(mappedBy = "publicacion")
+    private List<Compra> compras;
 
     @Enumerated(EnumType.STRING)
     private TipoProducto tipoProducto;

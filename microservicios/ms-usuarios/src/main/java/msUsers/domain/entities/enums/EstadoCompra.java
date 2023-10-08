@@ -1,7 +1,7 @@
 package msUsers.domain.entities.enums;
 
-public enum EstadoPublicacion {
-    ABIERTA, CERRADA, EN_CAMINO, RECIBIDA;
+public enum EstadoCompra {
+    PENDIENTE, APROBADA, RECHAZADA;
 
     private String descripcion;
 }

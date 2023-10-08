@@ -63,7 +63,7 @@ public class PublicacionController {
 
         Publicacion publicacion = new Publicacion();
         publicacion.setTitulo(requestPublicacion.getTitulo());
-        publicacion.setEstadoPublicacion(EstadoPublicacion.PENDIENTE);
+        publicacion.setEstadoPublicacion(EstadoPublicacion.ABIERTA);
         publicacion.setParticular(particular);
         publicacion.setValorTruequeMax(requestPublicacion.getValorTruequeMax());
         publicacion.setValorTruequeMin(requestPublicacion.getValorTruequeMin());
