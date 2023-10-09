@@ -19,16 +19,7 @@ export interface CardModel {
 		color: string;
 		status: string;
 	}[];
-	action: 'select' | 'access';
-	/* selectable: boolean;
-	accessOnClick:  */
-	/* id: number,
-	titulo: string,
-	descripcion: string,
-	usuario: ParticularModel | FundacionModel,
-	imagenes: string, // parsedImagenes
-	fecha: string, // parsedFecha
-	itemsDatos: any[],
-	productos: ProductoModel[],
-	donaciones: DonacionModel[] */
+	action: 'select' | 'access' | 'detail';
+	disabled?: boolean;
+	idAuxiliar?: number;
 }

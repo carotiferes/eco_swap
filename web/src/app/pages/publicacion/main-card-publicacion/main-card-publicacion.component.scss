@@ -1,0 +1,87 @@
+.example-header-image {
+	background-image: url('../../../../assets/perfiles/perfiles-17.jpg');
+	background-size: cover;
+	margin: 0 10px 0 0;
+	width: 60px;
+	height: 60px;
+}
+
+mat-card {
+	mat-card-header, mat-card-content, mat-card-actions {
+		margin: 10px;
+	}
+
+	mat-card-actions {
+		display: flex;
+		gap: 10px;
+	}
+}
+
+.div-header {
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+	align-items: flex-end;
+
+	.header-info {
+		display: flex;
+		align-items: center;
+
+		a {
+			text-decoration: none;
+		}
+
+	}
+	.div-fecha-zona {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-end;
+	}
+}
+
+.card-content {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 1rem;
+
+	.imagenes {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		
+		img {
+			height: 100px;
+			margin: 5px;
+			border-radius: 5px;
+			box-shadow: 2px 2px 5px var(--dark-grey);
+
+			&:hover {
+				cursor: pointer;
+			}
+		}
+	}
+
+	.descripcion {
+		font-weight: 500;
+		font-size: 16px;
+		margin-bottom: 15px;
+	}
+
+	.trueque, .venta {
+		font-size: 16px;
+	}
+
+	.caracteristicas {
+		margin-top: 20px;
+	}
+}
+
+.card-button {
+	align-self: center;
+
+	/* .buttons {
+		display: flex;
+	} */
+} 

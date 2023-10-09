@@ -113,7 +113,7 @@ export class PublicacionesComponent {
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
-					this.generateCardList()
+					this.generateCardList(true)
 				}
 			})
 		} else { // myCompras
@@ -130,7 +130,7 @@ export class PublicacionesComponent {
 		}
 	}
 
-	generateCardList() {
+	generateCardList(my: boolean = false) {
 		for (const publicacion of this.publicacionesToShow) {
 			this.publicacionesCardList.push({
 				id: publicacion.idPublicacion,
@@ -146,7 +146,8 @@ export class PublicacionesComponent {
 					localidad: publicacion.particularDTO.direcciones[0].localidad
 				},
 				action: 'access',
-				buttons: []
+				buttons: [],
+				estado: my? publicacion.estadoPublicacion : undefined
 			})
 		}
 	}

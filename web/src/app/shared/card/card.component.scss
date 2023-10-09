@@ -134,14 +134,14 @@
 
 	.buttons {
 		display: flex;
-		flex-direction: column;
+		//flex-direction: column;
 		gap: 10px;
 		margin: 10px auto;
 		
-		button {
+		/* button {
 			text-transform: uppercase;
 			width: 100%;
-		}
+		} */
 
 	}
 }

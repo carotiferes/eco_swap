@@ -1,8 +1,9 @@
 <div class="card-deck row" *ngIf="cardList.length > 0">
-	<div *ngFor="let card of paginatedCardList" class="col-xs-12 col-sm-6 col-md-12 col-lg-6 col-xl-4">
-		<app-card [cardData]="card" [app]="app"></app-card>
+	<div *ngFor="let card of paginatedCardList"
+	[class]="fullScreenWidth ? 'col-xs-12 col-sm-6 col-md-4' : 'col-xs-12 col-sm-6 col-md-12 col-lg-6 col-xl-4'">
+		<app-card [cardData]="card" [app]="app" (statusChanged)="cardStatusChanged($event)"></app-card>
 	</div>
-	<mat-paginator [pageSizeOptions]="[4, 12, 24]" [pageSize]="pageSize" [showFirstLastButtons]="true"
+	<mat-paginator [pageSizeOptions]="fullScreenWidth ? [3, 12, 24] : [4, 12, 24]" [pageSize]="pageSize" [showFirstLastButtons]="true"
 		[length]="cardList.length" #paginator (page)="changePage($event)"
 		style="border-radius: 15px;" *ngIf="cardList.length > 0">
 	</mat-paginator>

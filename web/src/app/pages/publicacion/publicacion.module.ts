@@ -8,9 +8,10 @@ import { HeaderModule } from 'src/app/layout/header/header.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MatCardModule } from '@angular/material/card';
 import { TrocarModalComponent } from './trocar-modal/trocar-modal.component';
+import { MainCardPublicacionComponent } from './main-card-publicacion/main-card-publicacion.component';
 
 @NgModule({
-  declarations: [PublicacionComponent, TrocarModalComponent],
+  declarations: [PublicacionComponent, TrocarModalComponent, MainCardPublicacionComponent],
   imports: [
     CommonModule,
 	PublicacionRoutingModule,
@@ -20,6 +21,6 @@ import { TrocarModalComponent } from './trocar-modal/trocar-modal.component';
 	SharedModule,
 	MatCardModule
   ],
-  exports: [PublicacionComponent]
+  exports: [PublicacionComponent, MainCardPublicacionComponent]
 })
 export class PublicacionModule { }
