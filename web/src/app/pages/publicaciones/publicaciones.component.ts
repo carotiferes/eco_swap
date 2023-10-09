@@ -102,8 +102,7 @@ export class PublicacionesComponent {
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
-					this.generateCardList()
-				}
+				}, complete: () => this.generateCardList()
 			})
 		} else if(this.origin == 'myPublicaciones'){
 			this.truequesService.getMisPublicaciones().subscribe({
@@ -113,8 +112,7 @@ export class PublicacionesComponent {
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
-					this.generateCardList(true)
-				}
+				}, complete: () => this.generateCardList()
 			})
 		} else { // myCompras
 			this.comprasService.getMyCompras().subscribe({
@@ -124,13 +122,13 @@ export class PublicacionesComponent {
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
-					this.generateCardList()
-				}
+				}, complete: () => this.generateCardList()
 			})
 		}
 	}
 
 	generateCardList(my: boolean = false) {
+		this.publicacionesCardList.splice(0)
 		for (const publicacion of this.publicacionesToShow) {
 			this.publicacionesCardList.push({
 				id: publicacion.idPublicacion,
@@ -147,7 +145,7 @@ export class PublicacionesComponent {
 				},
 				action: 'access',
 				buttons: [],
-				estado: my? publicacion.estadoPublicacion : undefined
+				//estado: my? publicacion.estadoPublicacion : undefined
 			})
 		}
 	}

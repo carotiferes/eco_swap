@@ -106,9 +106,11 @@ export class PublicacionComponent implements AfterViewInit {
 							this.publicacionesToShow.map(item => {
 								item.parsedImagenes = item.imagenes.split('|')
 							})
-							this.parsePublicaciones();
+						}, error: () => {this.loading = false},
+						complete: () => {
+							this.parsePublicaciones()
 							this.loading = false;
-						}, error: () => {this.loading = false}
+						}
 					})
 					
 				} else if (this.userType == 'publicacionOrigen' && this.userData.isLoggedIn) {
@@ -185,6 +187,9 @@ export class PublicacionComponent implements AfterViewInit {
 	}
 
 	parsePublicaciones() {
+		this.truequesActivos.splice(0);
+		this.historialTrueques.splice(0);
+		this.truequeAceptado.splice(0);
 		for (const publicacion of this.publicacionesToShow) {
 			const item: CardModel = {
 				id: publicacion.idPublicacion,

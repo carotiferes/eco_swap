@@ -1,11 +1,16 @@
-<div class="card" (click)="clicked(cardData)" *ngIf="cardData" [ngClass]="app == 'publicaciones' && cardData.buttons.length == 0 ? 'small' : 'big'">
-	<mat-chip class="chip-localidad" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'"><span>{{ cardData.usuario.localidad }}</span></mat-chip>
+<div class="card" (click)="clicked(cardData)" *ngIf="cardData"
+	[ngClass]="app == 'publicaciones' && cardData.buttons.length == 0 ? 'small' : 'big'">
+	<mat-chip class="chip-localidad" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'">
+		<span>
+			{{cardData.usuario.localidad}}
+		</span>
+	</mat-chip>
 	<div style="position: absolute; top: 10px; left: 10px;">
 		<span *ngIf="cardData.estado" class="material-icons-outlined result-icon"
-		[ngClass]="cardData.estado == 'APROBADO' ? 'green' : cardData.estado != 'PENDIENTE' ? 'red' : ''"
-		[matTooltip]="'Trueque '+ cardData.estado">{{
-			cardData.estado == 'APROBADO' ? 'verified' : cardData.estado != 'PENDIENTE' ? 'dangerous' : 'pending'
-		}}</span>
+			[ngClass]="colorMap[cardData.estado] || 'red'"
+			[matTooltip]="app == 'donaciones' ? 'Donación '+ cardData.estado : 'Trueque '+ cardData.estado">
+			{{ iconMap[cardData.estado] || 'dangerous' }}
+		</span>
 	</div>
 	<div class="img-div" style="display: flex; justify-content: center;">
 		<img class="card-img" [src]="getImagen(cardData.imagen)">
@@ -25,17 +30,17 @@
 				Estado: {{cardData.estado}}
 			</div> -->
 		</div>
-		
+
 		<!-- <div class="estado-cardData" *ngIf="origin=='mis-publicaciones'">
 			Estado de la publicación: {{cardData.estadoPublicacion}}
 		</div> -->
 	</div>
 
 	<div class="buttons" *ngIf="cardData.buttons.length > 0">
-		<button *ngFor="let button of cardData.buttons" mat-mini-fab [color]="button.color" [disabled]="button.status != 'RECIBIDO' ? 
-				cardData.estado != 'PENDIENTE' : cardData.estado != 'ACEPTADO'"
-				[matTooltip]="button.name" matTooltipPosition="above"
-				(click)="changeStatus(cardData, button.status); $event.stopPropagation()">
+		<button *ngFor="let button of cardData.buttons" mat-mini-fab [color]="button.color"
+			[disabled]="(button.status != 'RECIBIDO' && button.status != 'RECIBIDA') ? cardData.estado != 'PENDIENTE' : (cardData.estado != 'APROBADO' && cardData.estado != 'APROBADA')"
+			[matTooltip]="button.name" matTooltipPosition="above"
+			(click)="changeStatus(cardData, button.status); $event.stopPropagation()">
 			<mat-icon>{{button.icon}}</mat-icon>
 			<!-- {{button.name}} -->
 		</button> <!-- (click)="changeEstadoPublicacion(cardData, button.status); $event.stopPropagation()" -->
@@ -47,16 +52,19 @@
 			{{cardData.usuario.nombre}}
 			<div style="margin: 0 10px;display: flex;align-items: center;justify-content: center;">
 				<mat-icon *ngFor="let i of [].constructor(cardData.usuario.puntaje || 0)"
-					color="primary">star</mat-icon>
-				<mat-icon *ngFor="let i of [].constructor(5-(cardData.usuario.puntaje || 0))"
-					class="empty-star">star</mat-icon>
+					[ngClass]="app == 'publicaciones' ? 'font-verde' : 'font-lila'">star</mat-icon>
+				<span class="material-icons-outlined"
+					*ngFor="let i of [].constructor(5-(cardData.usuario.puntaje || 0))"
+					[ngClass]="app == 'publicaciones' ? 'font-verde' : 'font-lila'">
+					grade
+				</span>
 			</div>
 		</h4>
 		<div>
 
-			<h6>{{cardData.fecha }}</h6><!-- | date: 'dd/MM/yyyy' --> 
+			<h6>{{cardData.fecha }}</h6><!-- | date: 'dd/MM/yyyy' -->
 			<!-- <h6>{{cardData.usuario.localidad }}</h6> -->
 		</div>
 	</div>
-	
+
 </div>

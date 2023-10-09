@@ -125,10 +125,10 @@
 			border-radius: 50%;
 		}
 
-		.mat-icon {
-			width: 14px;
-			height: 14px;
-			font-size: 14px;
+		.mat-icon, span {
+			width: 16px;
+			height: 16px;
+			font-size: 16px;
 		}
 	}
 
@@ -154,6 +154,9 @@
 	}
 	&.red {
 		color: var(--warn);
+	}
+	&.purple {
+		color: var(--secondary-color);
 	}
 }
 

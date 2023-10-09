@@ -24,9 +24,9 @@ import { CardModel } from 'src/app/models/card.model';
 })
 export class ColectasComponent implements OnInit {
 
-	colectas: ColectaModel[] = [];
+	//colectas: ColectaModel[] = [];
 	isMyColectas: boolean = false;
-	showColectas: ColectaModel[] = [];
+	colectasToShow: ColectaModel[] = [];
 	userData: any;
 
 	loading: boolean = true;
@@ -86,16 +86,15 @@ export class ColectasComponent implements OnInit {
 		if (this.isMyColectas) {
 			this.donacionesService.getMisColectas().subscribe({
 				next: (res: any) => {
-					this.colectas = res;
-					/* this.showColectas.map(item => {
-						item.imagen = this.donacionesService.getImagen(item.imagen)
-					}) */
-					this.generateCardList();
-					this.loading = false;
+					this.colectasToShow = res;
+					console.log(this.colectasToShow);
 				},
 				error: (error) => {
 					console.log('error mis colectas', error);
 					//this.showErrorService.show('Ocurrió un error!', 'Ocurrió un error al traer las colectas de la fundación. Por favor volvé a intentarlo más tarde.')
+					this.loading = false;
+				}, complete: () => {
+					this.generateCardList();
 					this.loading = false;
 				}
 			})
@@ -108,23 +107,15 @@ export class ColectasComponent implements OnInit {
 			if (this.localidades.length > 0) this.filtros['localidades'] = this.localidades;
 			if (tipoProducto) this.filtros['tipoProducto'] = tipoProducto;
 
-			console.log('filtros', this.filtros, this.localidades);
-			
-
 			this.donacionesService.getAllColectas(this.filtros).subscribe({
 				next: (res: any) => {
-					this.colectas = res;
-					this.showColectas = this.colectas;
-					/* this.showColectas.map(item => {
-						item.imagen = this.donacionesService.getImagen(item.imagen)
-					}) */
-					this.generateCardList();
-
-					this.loading = false;
+					this.colectasToShow = res;
 				},
 				error: (error) => {
 					console.log('error all colectas', error);
-					//this.showErrorService.show('Ocurrió un error!', 'Ocurrió un error al traer las colectas. Por favor volvé a intentarlo más tarde.')
+					this.loading = false;
+				}, complete: () => {
+					this.generateCardList()
 					this.loading = false;
 				}
 			})
@@ -132,9 +123,9 @@ export class ColectasComponent implements OnInit {
 	}
 
 	generateCardList() {
-		console.log(this.showColectas);
-		
-		for (const colecta of this.showColectas) {
+		console.log(this.colectasToShow);
+		this.colectasCardList.splice(0)
+		for (const colecta of this.colectasToShow) {
 			let stringProductos = '';
 			for (const [i, producto] of colecta.productos.entries()) {
 				if(i==0) stringProductos = producto.descripcion
