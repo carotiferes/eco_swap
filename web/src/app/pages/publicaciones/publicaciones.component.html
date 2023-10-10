@@ -2,7 +2,7 @@
 	[title]="origin == 'all' ? 'Publicaciones' : (origin == 'myPublicaciones' ? 'Mis Publicaciones' : 'Mis Compras')"></app-header>
 
 <div id="main-publicaciones" class="app-main-div">
-	<div>
+	<div class="dense-3">
 
 		<div ngbAccordion *ngIf="origin == 'all'" #accordion="ngbAccordion">
 			<div ngbAccordionItem="first" #first="ngbAccordionItem" [collapsed]="false">

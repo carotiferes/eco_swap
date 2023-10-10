@@ -8,7 +8,7 @@
 	<div class="top-div" *ngIf="userToShow">
 		<div class="top-img" (click)="selectImage()" [ngClass]="myProfile ? 'editable-img' : ''">
 			<img [src]="userData.isSwapper ? 'assets/perfiles/perfiles-17.jpg' : 'assets/perfiles/perfiles-24.jpg'" alt="">
-			<mat-icon class="edit-icon">edit</mat-icon>
+			<mat-icon class="edit-icon" *ngIf="myProfile">edit</mat-icon>
 		</div>
 		<mat-card class="top-text">
 				<h2>{{userToShow.nombre}}</h2>
@@ -32,10 +32,10 @@
 				}}
 			</p>
 			<div class="div-edit-info" *ngIf="myProfile">
-				<button mat-fab extended color="accent" (click)="edit()">EDITAR INFORMACIÓN</button>
+				<button mat-fab extended (click)="edit()">EDITAR INFORMACIÓN</button>
 			</div>
 			<div class="div-cambiar-pass" *ngIf="myProfile">
-				<button mat-fab extended color="primary">CAMBIAR CONTRASEÑA</button>
+				<button mat-fab extended >CAMBIAR CONTRASEÑA</button>
 			</div>
 		</mat-card>
 		<mat-card class="right">
@@ -44,12 +44,16 @@
 					<h3>Puntaje:</h3>
 					<div>
 						<mat-icon *ngFor="let i of [].constructor(userToShow.puntaje || 0)" color="primary">star</mat-icon>
-						<mat-icon *ngFor="let i of [].constructor(5-(userToShow.puntaje || 0))" class="empty-star">star</mat-icon>
+						<!-- <mat-icon *ngFor="let i of [].constructor(5-(userToShow.puntaje || 0))" class="empty-star">star</mat-icon> -->
+						<span class="material-icons-outlined"
+							*ngFor="let i of [].constructor(5-(userToShow.puntaje || 0))">
+							grade
+						</span>
 					</div>
 					<div>({{userToShow.opiniones?.length || 0}} {{userToShow.opiniones?.length == 1 ? 'opinión' : 'opiniones'}})</div>
 				</div>
 				<div class="div-opinar" *ngIf="!myProfile">
-					<button mat-fab extended color="primary">OPINAR</button>
+					<button mat-fab extended>OPINAR</button>
 				</div>
 			</div>
 			<div class="opiniones">

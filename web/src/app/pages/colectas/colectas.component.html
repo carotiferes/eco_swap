@@ -1,7 +1,7 @@
 <app-header [title]="isMyColectas ? 'Mis Colectas' : 'Colectas'"></app-header>
 
 <div id="main-donaciones" class="app-main-div">
-	<div>
+	<div class="dense-3">
 		<div ngbAccordion *ngIf="!isMyColectas" #accordion="ngbAccordion">
 			<div ngbAccordionItem="first" #first="ngbAccordionItem" [collapsed]="false">
 				<h2 ngbAccordionHeader>

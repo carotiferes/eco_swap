@@ -37,7 +37,7 @@
 				</div>
 				<section formArrayName="productos" class="form-col">
 					<div>
-						<label>Productos</label>
+						<label class="big-label">Productos</label>
 					</div>
 					<div>
 						<div *ngFor="let producto of getProductosArray.controls; let i=index" class="producto"
@@ -73,7 +73,7 @@
 								<mat-icon>delete</mat-icon>
 							</button>
 						</div>
-						<button type="button" (click)="agregarProducto()" mat-fab extended>
+						<button type="button" (click)="agregarProducto()" mat-fab extended color="light">
 							<mat-icon>add</mat-icon>
 							<label>Agregar Producto</label>
 						</button>
@@ -85,10 +85,14 @@
 
 				<div></div>
 
-				<div class="form-col">
-					<label for="file">Imagen de la Colecta</label>
-					<input formControlName="file" id="file" type="file" class="form-control"
-						(change)="onFileChange($event)">
+				<div class="form-col imagen">
+					<label for="file" class="big-label">Imagen de la Colecta</label>
+					<button type="button" mat-fab extended color="light" (click)="file.click()">
+						<mat-icon>add</mat-icon>
+						Agregar Imagen
+					</button>
+					<input formControlName="file" id="file" type="file" class="form-control hidden"
+						(change)="onFileChange($event)" #file>
 					<mat-error *ngIf="colectaForm.get('file')!.hasError('required') && showErrors">
 						La colecta debe tener al menos 1 imagen
 					</mat-error>
@@ -109,7 +113,7 @@
 			</form>
 		</mat-card-content>
 		<mat-card-actions class="buttons">
-			<button mat-fab extended color="primary" [disabled]="loadingSave"
+			<button mat-fab extended color="accent" [disabled]="loadingSave"
 				(click)="crearColecta();colectaForm.markAllAsTouched(); colectaForm.valid">
 				CREAR COLECTA
 			</button>

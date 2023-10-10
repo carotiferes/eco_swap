@@ -18,6 +18,10 @@ export class FormPublicacionComponent {
 	showErrors: boolean = false;
 	loadingSave: boolean = false;
 
+	focusMin: boolean = false;
+	focusMax: boolean = false;
+	focusVenta: boolean = false;
+
 	constructor(private fb: FormBuilder, private truequeService: TruequesService, private router: Router){
 		this.publicacionForm = fb.group({
 			titulo: ['', Validators.required],
