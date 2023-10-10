@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { ColectasComponent } from './colectas.component';
 import { ColectasRoutingModule } from './colectas-routing.module';
 import { MaterialModule } from 'src/app/shared/material/material.module';
@@ -20,6 +20,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 	FormsModule,
 	ReactiveFormsModule,
   ],
-  exports: [ColectasComponent]
+  exports: [ColectasComponent],
+  providers: [DatePipe]
 })
 export class ColectasModule { }

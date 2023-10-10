@@ -136,7 +136,7 @@ export class PublicacionesComponent {
 				titulo: publicacion.titulo,
 				valorPrincipal: `$${publicacion.valorTruequeMin} - $${publicacion.valorTruequeMax}`,
 				valorSecundario: publicacion.precioVenta ? `$${publicacion.precioVenta}` : undefined,
-				fecha: (new Date(publicacion.fechaPublicacion)).toLocaleDateString(),
+				fecha: publicacion.fechaPublicacion,
 				usuario: {
 					imagen: 'assets/perfiles/perfiles-17.jpg',//publicacion.particularDTO.
 					nombre: publicacion.particularDTO.nombre + ' ' + publicacion.particularDTO.apellido,

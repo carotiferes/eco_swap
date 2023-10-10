@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -18,7 +19,7 @@ export class MainCardColectaComponent {
 	@Input() userData?: any;
 
 	constructor(private auth: AuthService, private router: Router, private dialog: MatDialog,
-		private donacionesService: DonacionesService) {}
+		private donacionesService: DonacionesService, private datePipe: DatePipe) {}
 
 	donar() {
 		if(this.auth.isUserLoggedIn){
@@ -48,8 +49,7 @@ export class MainCardColectaComponent {
 		let stringDir: string = fundacion.direcciones[0].direccion + fundacion.direcciones[0].altura || '';
 		const localidad = fundacion.direcciones[0].localidad || '';
 
-		const apiUrl = `https://apis.datos.gob.ar/georef/api/direcciones?provincia=02&localidad=${localidad}
-		&direccion=${encodeURIComponent(stringDir)}`
+		const apiUrl = `https://apis.datos.gob.ar/georef/api/direcciones?provincia=02&localidad=${encodeURIComponent(localidad)}&direccion=${encodeURIComponent(stringDir)}`
 		fetch(apiUrl).then(response => response.json()).then(data => {
 			if(data.cantidad > 0) {
 				const lat = data.direcciones[0].ubicacion.lat;
@@ -94,9 +94,9 @@ export class MainCardColectaComponent {
 	parseVigencia() {
 		if(this.colecta) {
 			if(this.colecta.fechaInicio && this.colecta.fechaFin) {
-				return 'Desde el ' + (new Date(this.colecta.fechaInicio)).toLocaleDateString() + ' hasta el ' + (new Date(this.colecta.fechaFin)).toLocaleDateString()
+				return 'Desde el ' + this.datePipe.transform(this.colecta.fechaInicio, 'dd/MM/yyyy') + ' hasta el ' + this.datePipe.transform(this.colecta.fechaFin, 'dd/MM/yyyy')
 			} else if (this.colecta.fechaInicio) {
-				return 'A partir del ' + (new Date(this.colecta.fechaInicio)).toLocaleDateString();
+				return 'A partir del ' + this.datePipe.transform(this.colecta.fechaInicio, 'dd/MM/yyyy')
 			} else return '';
 		} else return '';
 	}

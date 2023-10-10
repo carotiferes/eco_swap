@@ -16,7 +16,11 @@
 					</mat-card-subtitle>
 				</div>
 			</div>
-			<div style="text-align: center;">{{parseVigencia()}}</div>
+			<div style="text-align: center;">{{parseVigencia()}}
+				<!-- {{
+				this.colecta.fechaInicio && this.colecta.fechaFin ? 'Desde el '(this.colecta.fechaInicio | date: 'dd/MM/yyyy') :
+				this.colecta.fechaInicio ? () : ''
+			}} --></div>
 		</div>
 	</mat-card-header>
 	<mat-card-content class="card-content">

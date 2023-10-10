@@ -34,6 +34,8 @@ export class PublicacionComponent implements AfterViewInit {
 	historialTrueques: CardModel[] = [];
 	truequesActivos: CardModel[] = [];
 
+	init: number = 0;
+
 	constructor(private truequeService: TruequesService, private route: ActivatedRoute,
 		private showErrorService: ShowErrorService, private auth: AuthService,
 		private router: Router, private usuarioService: UsuarioService, public dialog: MatDialog) {
@@ -45,7 +47,9 @@ export class PublicacionComponent implements AfterViewInit {
 			this.truequeAceptado = [];
 			this.historialTrueques = [];
 			this.truequesActivos = [];
-			this.ngAfterViewInit()
+			
+			if(this.init != 0) this.ngAfterViewInit();
+			this.init++;
 		})
 	}
 
@@ -80,19 +84,19 @@ export class PublicacionComponent implements AfterViewInit {
 	getTrueques() {
 		this.loading = true;
 		this.truequeService.getTruequesFromPublicacion(this.publicacion.idPublicacion).subscribe({
-			next: async (trueques: any) => {
+			next: (trueques: any) => {
 				//console.log('TRUEQUES', trueques);
 				// Todos los trueques en los que esta publicacion es ORIGEN
-				this.trueques = await trueques;
-				this.publicacionesToShow = [];
-
+				this.trueques = trueques;
+				
 				if(this.userType != 'publicacionOrigen' && this.userData.isLoggedIn) {
 					this.truequeService.getMisPublicaciones().subscribe({
-						next: async (res: any) => {
-							//console.log('PUBLICACIONES DEL USER',await res);
+						next: (res: any) => {
+							//console.log('PUBLICACIONES DEL USER', res);
 							// Publicaciones del usuario loggeado
-							const userPublicaciones = await res;
-							for (const trueque of trueques) {
+							this.publicacionesToShow = [];
+							const userPublicaciones = res;
+							for (const trueque of this.trueques) {
 								const commonItem = userPublicaciones.find((publicacion: PublicacionModel) =>
 									trueque.publicacionDTOpropuesta.idPublicacion == publicacion.idPublicacion)
 								if(commonItem){
@@ -176,7 +180,7 @@ export class PublicacionComponent implements AfterViewInit {
 
 	getButtonsForCards() {
 		if(this.userType == 'publicacionPropuesta') {
-			return [{name: 'cancelar', icon: 'close', color: 'warn', status: 'CANCELADO'}];
+			return [{name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADO'}];
 		} else if (this.userType == 'publicacionOrigen'){
 			return [
 				{name: 'ACEPTAR', icon: 'check', color: 'primary', status: 'APROBADO'},
@@ -196,7 +200,7 @@ export class PublicacionComponent implements AfterViewInit {
 				imagen: publicacion.parsedImagenes? publicacion.parsedImagenes[0] : 'no_image',
 				titulo: publicacion.titulo,
 				valorPrincipal: `$${publicacion.valorTruequeMin} - $${publicacion.valorTruequeMax}`,
-				fecha: (new Date(publicacion.fechaPublicacion)).toLocaleDateString(),
+				fecha: publicacion.fechaPublicacion,
 				usuario: {
 					imagen: 'assets/perfiles/perfiles-17.jpg',//publicacion.particularDTO.
 					nombre: publicacion.particularDTO.nombre + ' ' + publicacion.particularDTO.apellido,
@@ -208,18 +212,19 @@ export class PublicacionComponent implements AfterViewInit {
 				estado: publicacion.estadoTrueque,
 				idAuxiliar: this.trueques.find(item => item.publicacionDTOpropuesta.idPublicacion == publicacion.idPublicacion)?.idTrueque
 			}
-			if(!!publicacion.estadoTrueque && publicacion.estadoTrueque == 'PENDIENTE' && publicacion.estadoPublicacion == 'PENDIENTE') {
+
+			if(publicacion.estadoTrueque == 'APROBADO') {
+				// ACEPTADO
+				this.truequeAceptado.push(item)
+			} else if(publicacion.estadoTrueque == 'PENDIENTE' && publicacion.estadoPublicacion == 'ABIERTA') {
 				// ACTIVOS
 				item.valorSecundario = publicacion.precioVenta ? `$${publicacion.precioVenta}` : undefined
 				item.buttons = this.getButtonsForCards();
 				this.truequesActivos.push(item)
-			} else if(!!publicacion.estadoTrueque && (publicacion.estadoTrueque != 'PENDIENTE' && publicacion.estadoTrueque != 'APROBADO') || publicacion.estadoPublicacion != 'PENDIENTE') {
+			} else /* if(publicacion.estadoTrueque != 'PENDIENTE' || publicacion.estadoPublicacion != 'ABIERTA') */ {
 				// HISTORIAL
 				item.disabled = true;
 				this.historialTrueques.push(item)
-			} else if(!!publicacion.estadoTrueque && publicacion.estadoTrueque == 'APROBADO') {
-				// ACEPTADO
-				this.truequeAceptado.push(item)
 			}
 		}
 	}
