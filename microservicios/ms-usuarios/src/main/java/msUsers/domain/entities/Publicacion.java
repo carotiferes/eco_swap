@@ -2,7 +2,6 @@ package msUsers.domain.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
 import lombok.Data;
 import msUsers.domain.entities.enums.EstadoPublicacion;
 import msUsers.domain.entities.enums.TipoProducto;
@@ -11,7 +10,6 @@ import msUsers.domain.responses.DTOs.PublicacionDTO;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -45,6 +43,9 @@ public class Publicacion {
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<CaracteristicaProducto> caracteristicaProducto;
+
+    @OneToMany(mappedBy = "publicacion")
+    private List<Compra> compras;
 
     @Enumerated(EnumType.STRING)
     private TipoProducto tipoProducto;

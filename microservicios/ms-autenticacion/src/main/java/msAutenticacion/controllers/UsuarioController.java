@@ -68,7 +68,7 @@ public class UsuarioController {
     @PostMapping(path = "/usuario/signup", consumes = JSON, produces = JSON)
     @Transactional
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Long> postSignUp(@RequestBody RequestSignUp body){
+    public ResponseEntity<Long> postSignUp(@RequestBody @Valid RequestSignUp body){
         log.info("postSignUp: creando nuevo usuario: " + body.getEmail());
         Usuario usuarioCreado = usuarioService.crearUsuario(body);
         log.info("postSignUp: Usuario creado con ID: "+ usuarioCreado.getIdUsuario());
