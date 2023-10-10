@@ -41,8 +41,9 @@ export class LoginComponent {
 			Swal.fire({ title: 'Campos incompletos!', text: 'Por favor completá todos los campos antes de continuar.', icon: 'error' })
 		} else {
 			this.loadingSave = true;
-			this.auth.login(this.username, this.password);
-			this.loadingSave = false;
+			this.auth.login(this.username, this.password).then(res => {
+				this.loadingSave = false;
+			}).catch(()=>this.loadingSave = false)
 		}
 	}
 

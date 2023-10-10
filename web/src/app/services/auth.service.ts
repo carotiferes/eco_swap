@@ -24,64 +24,57 @@ export class AuthService {
 	}
 
 	login(username: string, password?: string) {
-		this.backendService.patch(URL_NAME, 'ms-autenticacion/api/v1/usuario/login', {username, password}).subscribe({
-			next: (v: any) => {
-				console.log('response:', v);
-				// TODO: GET USER INFO TO SAVE IN LOCAL STORAGE (AT LEAST IS_SWAPPER)
-				const userData: any = jwtDecode(v.token)
-				console.log('data', userData);
-				if(userData.usuarioValidado) {
-					this.setValidatedUser(v.token, userData)
-				} else {
-					Swal.fire({
-						title: '¡Validá tu cuenta!',
-						text: 'Ingresá el código que recibiste por mail para validar tu cuenta.',
-						confirmButtonText: 'CONFIRMAR',
-						showDenyButton: true,
-						denyButtonText: 'Volver a enviar el mail',
-						icon: 'info',
-						//allowOutsideClick: false,
-						input: 'text',
-						reverseButtons: true,
-						preDeny: () => {
-							this.sendEmailAgain(userData.id).subscribe({
-								next: (res) => {
-									console.log(res);
-									this.snackbar.open('Se envió el nuevo mail!', '', {
-										horizontalPosition: 'center',
-										verticalPosition: 'top',
-										duration: 3000
-									})
-								}
-							})
-							return false;
-						}
-					}).then(({isConfirmed, value, isDenied}) => {
-						if(isConfirmed) {
-							this.usuarioService.confirmarCuenta(userData.id, value).subscribe({
-								next: (res) => {
-									console.log(res);
-									//this.router.navigate(['/'])
-									Swal.fire('Excelente!', 'Tu cuenta fue verificada, ya podes usar Ecoswap!', 'success')
-									this.setValidatedUser(v.token, userData)
-								},
-								error: (error) => {
-									console.log(error);
-									/* if(error.message.descripcion == "El código es incorrecto") {
-										Swal.fire('Código incorrecto!', 'El código ingresado es incorrecto. Iniciá sesión y volvé a intentarlo.', 'error')
-										this.router.navigate(['/login'])
-									} */
-								}
-							})
-						}
-					})
-				}
-			},
-			error: (e) => {
-				console.error('error:', e);
-				Swal.fire('¡Error!', e.message.descripcion/* 'Ocurrió un error. Por favor revisá los campos e intentá nuevamente.' */, 'error')
-			},
-			complete: () => console.info('login complete') 
+		return new Promise<void>((resolve, reject) => {
+			this.backendService.patch(URL_NAME, 'ms-autenticacion/api/v1/usuario/login', {username, password}).subscribe({
+				next: (v: any) => {
+					const userData: any = jwtDecode(v.token)
+					if(userData.usuarioValidado) {
+						this.setValidatedUser(v.token, userData)
+					} else {
+						Swal.fire({
+							title: '¡Validá tu cuenta!',
+							text: 'Ingresá el código que recibiste por mail para validar tu cuenta.',
+							confirmButtonText: 'CONFIRMAR',
+							showDenyButton: true,
+							denyButtonText: 'Volver a enviar el mail',
+							icon: 'info',
+							input: 'text',
+							reverseButtons: true,
+							preDeny: () => {
+								this.sendEmailAgain(userData.id).subscribe({
+									next: (res) => {
+										this.snackbar.open('Se envió el nuevo mail!', '', {
+											horizontalPosition: 'center',
+											verticalPosition: 'top',
+											duration: 3000
+										})
+									}
+								})
+								return false;
+							}
+						}).then(({isConfirmed, value, isDenied}) => {
+							if(isConfirmed) {
+								this.usuarioService.confirmarCuenta(userData.id, value).subscribe({
+									next: (res) => {
+										Swal.fire('Excelente!', 'Tu cuenta fue verificada, ya podes usar Ecoswap!', 'success')
+										this.setValidatedUser(v.token, userData)
+									},
+									error: (error) => console.log(error)
+								})
+							}
+						})
+					}
+				},
+				error: (e) => {
+					console.error('error:', e);
+					Swal.fire('¡Error!', e.message.descripcion/* 'Ocurrió un error. Por favor revisá los campos e intentá nuevamente.' */, 'error')
+					reject(e)
+				},
+				complete: () => {
+					console.info('login complete')
+					resolve()
+				} 
+			})
 		})
 	}
 

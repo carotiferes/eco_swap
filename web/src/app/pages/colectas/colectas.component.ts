@@ -14,6 +14,7 @@ import { ShowErrorService } from 'src/app/services/show-error.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
+import { CardModel } from 'src/app/models/card.model';
 
 @Component({
 	selector: 'app-colectas',
@@ -23,10 +24,9 @@ import { MatChipInputEvent } from '@angular/material/chips';
 })
 export class ColectasComponent implements OnInit {
 
-	colectas: ColectaModel[] = [];
+	//colectas: ColectaModel[] = [];
 	isMyColectas: boolean = false;
-	showColectas: ColectaModel[] = [];
-	paginatedColectas: ColectaModel[] = [];
+	colectasToShow: ColectaModel[] = [];
 	userData: any;
 
 	loading: boolean = true;
@@ -37,8 +37,7 @@ export class ColectasComponent implements OnInit {
 	filteredOptions: Observable<any[]>;
 	filtros: any = {};
 
-	pageSize = 6;
-	@ViewChild(MatPaginator) paginator!: MatPaginator;
+	colectasCardList: CardModel[] = [];
 
 	filteredLocalidades: Observable<string[]>;
 	localidades: string[] = [];
@@ -87,17 +86,15 @@ export class ColectasComponent implements OnInit {
 		if (this.isMyColectas) {
 			this.donacionesService.getMisColectas().subscribe({
 				next: (res: any) => {
-					this.colectas = res;
-					this.showColectas = this.colectas.slice(0, this.pageSize);
-					this.showColectas.map(item => {
-						item.imagen = this.donacionesService.getImagen(item.imagen)
-					})
-					this.paginatedColectas = this.showColectas.slice(0, this.pageSize);
-					this.loading = false;
+					this.colectasToShow = res;
+					console.log(this.colectasToShow);
 				},
 				error: (error) => {
 					console.log('error mis colectas', error);
 					//this.showErrorService.show('Ocurrió un error!', 'Ocurrió un error al traer las colectas de la fundación. Por favor volvé a intentarlo más tarde.')
+					this.loading = false;
+				}, complete: () => {
+					this.generateCardList();
 					this.loading = false;
 				}
 			})
@@ -110,26 +107,54 @@ export class ColectasComponent implements OnInit {
 			if (this.localidades.length > 0) this.filtros['localidades'] = this.localidades;
 			if (tipoProducto) this.filtros['tipoProducto'] = tipoProducto;
 
-			console.log('filtros', this.filtros, this.localidades);
-			
-
 			this.donacionesService.getAllColectas(this.filtros).subscribe({
 				next: (res: any) => {
-					this.colectas = res;
-					this.showColectas = this.colectas;
-					this.showColectas.map(item => {
-						item.imagen = this.donacionesService.getImagen(item.imagen)
-					})
-					this.paginatedColectas = this.showColectas.slice(0, this.pageSize);
-					this.loading = false;
+					this.colectasToShow = res;
 				},
 				error: (error) => {
 					console.log('error all colectas', error);
-					//this.showErrorService.show('Ocurrió un error!', 'Ocurrió un error al traer las colectas. Por favor volvé a intentarlo más tarde.')
+					this.loading = false;
+				}, complete: () => {
+					this.generateCardList()
 					this.loading = false;
 				}
 			})
 		}
+	}
+
+	generateCardList() {
+		console.log(this.colectasToShow);
+		this.colectasCardList.splice(0)
+		for (const colecta of this.colectasToShow) {
+			let stringProductos = '';
+			for (const [i, producto] of colecta.productos.entries()) {
+				if(i==0) stringProductos = producto.descripcion
+				else stringProductos += ' - '+producto.descripcion
+			}
+			this.colectasCardList.push({
+				id: colecta.idColecta,
+				imagen: colecta.imagen,
+				titulo: colecta.titulo,
+				valorPrincipal: stringProductos,
+				fecha: this.parseVigencia(colecta),
+				usuario: {
+					imagen: 'assets/perfiles/perfiles-24.jpg',//publicacion.particularDTO.
+					nombre: colecta.fundacionDTO.nombre,
+					puntaje: colecta.fundacionDTO.puntaje,
+					localidad: colecta.fundacionDTO.direcciones[0].localidad
+				},
+				action: 'access',
+				buttons: []
+			})
+		}
+	}
+
+	parseVigencia(colecta: ColectaModel) {
+		if(colecta.fechaInicio && colecta.fechaFin) {
+			return 'Desde el ' + (new Date(colecta.fechaInicio)).toLocaleDateString() + ' hasta el ' + (new Date(colecta.fechaFin)).toLocaleDateString()
+		} else if (colecta.fechaInicio) {
+			return 'A partir del ' + (new Date(colecta.fechaInicio)).toLocaleDateString();
+		} else return '';
 	}
 
 	addColecta() {
@@ -196,12 +221,6 @@ export class ColectasComponent implements OnInit {
 
 	goToColecta(colecta: ColectaModel) {
 		this.router.navigateByUrl('colecta/' + colecta.idColecta)
-	}
-
-	changePage(event: any) {
-		const startIndex = event.pageIndex * event.pageSize;
-		const endIndex = startIndex + event.pageSize;
-		this.paginatedColectas = this.showColectas.slice(startIndex, endIndex);
 	}
 
 	/* FUNCIONES PARA FILTRO DE LOCALIDADES */

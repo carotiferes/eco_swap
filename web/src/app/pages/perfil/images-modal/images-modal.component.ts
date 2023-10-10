@@ -11,6 +11,8 @@ export class ImagesModalComponent implements OnInit{
 	images: {id: number, name: string}[] = [];
 	selectedImage?: number;
 
+	loading: boolean = true;
+
 	constructor(public dialogRef: MatDialogRef<ImagesModalComponent>){}
 	
 	ngOnInit(): void {
@@ -20,6 +22,7 @@ export class ImagesModalComponent implements OnInit{
 				name:`assets/perfiles/perfiles-${index}.jpg`
 			})
 		}
+		this.loading = false;
 	}
 
 	selectImage(id: number) {

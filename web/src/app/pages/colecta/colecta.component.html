@@ -2,73 +2,33 @@
 
 <div id="main-colecta" class="app-main-div">
 	<app-spinner [loading]="loading"></app-spinner>
-	<mat-card *ngIf="!loading && colecta && colecta.fundacionDTO"> <!-- && colecta.fundacionDTO.usuario -->
-		<mat-card-header style="border-bottom: solid 1px var(--light-grey); padding-bottom: 10px;">
-			<div class="div-header">
-				<div class="header-info">
-					<div mat-card-avatar class="example-header-image"></div>
-					<div>
-						<mat-card-title style="display: flex; align-items: center;">
-							<a [href]="'/perfil/'+colecta.fundacionDTO.usuarioDTO.idUsuario">{{colecta.fundacionDTO.nombre}}</a>
-							<mat-icon class="address" (click)="showDireccion(colecta.fundacionDTO)" *ngIf="colecta.fundacionDTO && colecta.fundacionDTO.direcciones.length > 0">place</mat-icon>
-							<mat-icon class="address" (click)="showContactInfo(colecta.fundacionDTO)" *ngIf="colecta.fundacionDTO">info</mat-icon>
-						</mat-card-title>
-						<mat-card-subtitle>
-							<mat-icon *ngFor="let i of [].constructor(colecta.fundacionDTO.puntaje || 0)" color="primary">star</mat-icon>
-							<mat-icon *ngFor="let i of [].constructor(5-(colecta.fundacionDTO.puntaje || 0))"
-								class="empty-star">star</mat-icon>
-						</mat-card-subtitle>
-					</div>
-				</div>
-				<div style="text-align: center;">{{parseVigencia()}}</div>
-			</div>
-		</mat-card-header>
-		<mat-card-content class="card-content">
-			<img mat-card-image [src]="colecta.imagen ? colecta.imagen : 'assets/perfiles/perfiles-24.jpg'" class="colecta-img"
-				(click)="zoomImage(colecta.imagen ? colecta.imagen.split('/').at(-1) : 'assets/perfiles/perfiles-24.jpg')">
-			<div>
-				<h2 class="card-title">{{colecta.titulo}}</h2>
-				<div class="descripcion">
-					{{colecta.descripcion}}
-				</div>
-				<div class="productos">
-					<h4 style="margin-bottom: 0;"><u>Productos</u>:</h4>
-					<div class="icons">
-						<div></div>
-						<span class="material-icons-outlined scheduled" matTooltip="Productos en camino">schedule_send</span>
-						<span class="material-icons-outlined received" matTooltip="Productos recibidos">real_estate_agent</span>
-					</div>
-					<div *ngFor="let producto of colecta.productos" class="producto">
-						<!-- {{producto.descripcion}}: {{producto.cantidadRecibida}} -->
-						<div>{{producto.descripcion}}</div>
-						<div>-</div>
-						<div>{{producto.cantidadRecibida}}</div>
-					</div>
-				</div>
-			</div>
-		</mat-card-content>
-		<mat-card-actions class="card-button">
-			<button mat-fab extended color="primary" (click)="donar()" *ngIf="!(userData.isLoggedIn && !userData.isSwapper)">QUIERO DONAR</button>
-		</mat-card-actions>
-	</mat-card>
+	
+	<div *ngIf="colecta && !loading">
+		<app-main-card-colecta [colecta]="colecta" [userData]="userData"></app-main-card-colecta>
+	</div>
 
-	<div *ngIf="showDonaciones && !loading">
+	<div *ngIf="!loading">
 		<h3 style="margin: 20px 0 0 5px; font-weight: bold;">
-			{{this.userData.isSwapper ? 'Mi donación' : 'Donaciones'}}
+			{{this.userData.isSwapper ? 'Mi donación' : 'Donaciones Pendientes'}}
 		</h3>
-		<div *ngIf="donacionesToShow.length == 0 && !loading" style="text-align: center;">Esta colecta no tiene donaciones
-			aún!</div>
-		<app-card-donacion *ngFor="let donacion of donacionesToShow" [donacion]="donacion"
-			[usuarioHeader]="donacion.particularDTO" [buttons]="this.userData.isSwapper ? 
-			[{name: 'cancelar', icon: 'close', color: 'warn', status: 'CANCELADA', disabled: donacion.estadoDonacion != 'PENDIENTE'}]
-			: [
-				{name: 'aceptar', icon: 'check', color: 'primary', status: 'APROBADA', disabled: donacion.estadoDonacion != 'PENDIENTE'},
-				{name: 'rechazar', icon: 'close', color: 'warn', status: 'RECHAZADA', disabled: donacion.estadoDonacion != 'PENDIENTE'},
-				{name: 'recibida', icon: 'done_all', color: 'primary', status: 'RECIBIDA', disabled: donacion.estadoDonacion != 'APROBADA'},
-			]"></app-card-donacion>
-		<mat-paginator [pageSizeOptions]="[5, 10, 25]" [pageSize]="pageSize" [showFirstLastButtons]="true"
-		[length]="donacionesToShow.length" #paginator (page)="changePage($event)" style="border-radius: 15px;"
-		*ngIf="donacionesToShow.length > 0">
-		</mat-paginator>
+		<div *ngIf="donacionesAbiertas.length == 0 && !loading" style="text-align: center;">
+			Esta colecta no tiene nuevas donaciones aún!
+		</div>
+		<div *ngIf="donacionesAbiertas.length > 0">
+			<app-deck [cardList]="donacionesAbiertas" app="donaciones" [fullScreenWidth]="true"
+			(statusChanged)="getDonaciones()"></app-deck>
+		</div>
+	</div>
+
+	<div *ngIf="!loading">
+		<h3 style="margin: 20px 0 0 5px; font-weight: bold;">
+			Donaciones Cerradas
+		</h3>
+		<div *ngIf="donacionesToShow.length == 0 && !loading" style="text-align: center;">
+			Esta colecta no tiene donaciones cerradas aún!
+		</div>
+		<div *ngIf="donacionesCerradas.length > 0">
+			<app-deck [cardList]="donacionesCerradas" app="donaciones" [fullScreenWidth]="true"></app-deck>
+		</div>
 	</div>
 </div>

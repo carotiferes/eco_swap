@@ -1,5 +1,5 @@
 <div class="card-deck row">
-	<div *ngFor="let publicacion of publicacionesToShow" class="col-xs-12 col-sm-6 col-lg-4">
+	<div *ngFor="let publicacion of publicacionesToShow" class="col-xs-12 col-sm-6 col-xl-4">
 		<div class="card" (click)="clicked(publicacion)"
 		[ngClass]="origin=='intercambio' && publicacion.idPublicacion == cardSelected ? 'selected-card' : ''">
 			<div class="img-div" style="display: flex; justify-content: center;">
@@ -8,13 +8,13 @@
 				[ngClass]="origin=='publicaciones' || origin=='mis-publicaciones' ? 'big':'small'"> <!-- *ngFor="let img of publicacion.parsedImagenes" -->
 			</div>
 			<div class="card-body">
-				<h2 class="card-title">{{publicacion.titulo}}</h2>
+				<h3 class="card-title">{{publicacion.titulo}}</h3>
 				<h3 *ngIf="origin=='propuestas'">{{publicacion.particularDTO.nombre}} {{publicacion.particularDTO.apellido}}</h3>
 				<div class="trueque">
-					Valor de trueque: ${{publicacion.valorTruequeMin}} - ${{publicacion.valorTruequeMax}} 
+					<h2 style="font-weight: bold;">${{publicacion.valorTruequeMin}} - ${{publicacion.valorTruequeMax}} </h2>
 				</div>
 				<div class="venta" *ngIf="publicacion.tipoPublicacion == 'VENTA'">
-					Precio de venta: ${{publicacion.precioVenta}}
+					O compralo por: ${{publicacion.precioVenta}}
 				</div>
 				<div class="estado" *ngIf="origin=='propuestas'">
 					Estado del trueque: {{publicacion.estadoTrueque}}
@@ -25,8 +25,16 @@
 			</div>
 			<div class="card-fundacion" *ngIf="origin=='publicaciones' || origin=='mis-publicaciones'">
 				<img class="img-fundacion" src="assets/perfiles/perfiles-17.jpg">
-				<h4>{{publicacion.particularDTO.nombre + ' ' + publicacion.particularDTO.apellido}}</h4>
-				<h6>{{publicacion.fechaPublicacion | date: 'dd/MM/yyyy' }}</h6>
+				<h4>
+					{{publicacion.particularDTO.nombre + ' ' + publicacion.particularDTO.apellido}}
+					<div style="margin: 0 10px;display: flex;align-items: center;justify-content: center;">
+						<mat-icon *ngFor="let i of [].constructor(publicacion.particularDTO.puntaje || 0)"
+							color="primary">star</mat-icon>
+						<mat-icon *ngFor="let i of [].constructor(5-(publicacion.particularDTO.puntaje || 0))"
+							class="empty-star">star</mat-icon>
+					</div>
+				</h4>
+				<h6 *ngIf="origin!='publicaciones'">{{publicacion.fechaPublicacion | date: 'dd/MM/yyyy' }}</h6>
 				<h6 *ngIf="origin=='publicaciones' && publicacion.particularDTO.direcciones.length > 0">{{ publicacion.particularDTO.direcciones[0].localidad }}</h6>
 			</div>
 			<div class="buttons" *ngIf="origin=='propuestas'">

@@ -6,23 +6,31 @@ import { MaterialModule } from './material/material.module';
 import { CardDonacionComponent } from './card-donacion/card-donacion.component';
 import { CommonModule } from '@angular/common';
 import { DeckPublicacionesComponent } from './deck-publicaciones/deck-publicaciones.component';
+import { CardComponent } from './card/card.component';
+import { DeckComponent } from './deck/deck.component';
+import { NgbRatingModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
 	declarations: [
 		MapComponent,
 		SpinnerComponent,
 		CardDonacionComponent,
-  		DeckPublicacionesComponent
+  		DeckPublicacionesComponent,
+	    CardComponent,
+	    DeckComponent
 	],
 	imports: [
 		MaterialModule,
-		CommonModule
+		CommonModule,
+		NgbRatingModule
 	],
 	exports: [
 		MapComponent,
 		SpinnerComponent,
 		CardDonacionComponent,
-		DeckPublicacionesComponent
+		DeckPublicacionesComponent,
+		CardComponent,
+    	DeckComponent
 	]
 })
 export class SharedModule { }

@@ -66,7 +66,7 @@ $eco-swap-theme: mat.define-light-theme((
    accent: $eco-swap-accent
  ),
  typography: mat.define-typography-config(),
- density: -3,
+ density: -1,
 ));
 
 @include mat.all-component-themes($eco-swap-theme);
@@ -87,11 +87,13 @@ $eco-swap-theme: mat.define-light-theme((
 	--custom-font: "Source Sans Pro";
 
 	--donaciones: var(--secondary-color);
+	--donaciones-dark: #8800c6;
 
 	--trueques: var(--primary-color);
 	--trueques-dark: #2e9a19;
 
-	--compras: #5a886c;
+	--opiniones: #42861D;
+	--perfil: #CE9BE9;
 
 	--success: #5fc32f;
 	--warn: var(--warn-color);
@@ -99,13 +101,22 @@ $eco-swap-theme: mat.define-light-theme((
 }
 
 mat-form-field {
-	*{font-size: 12px !important;}
+	*{font-size: 14px !important;}
 }
 
 .dense-2 {
 	@include mat.all-component-densities(-2);
 	mat-form-field {
 		*{font-size: 16px !important;}
+	}
+	mat-hint {
+		font-size: 12px !important;
+	}
+}
+.dense-3 {
+	@include mat.all-component-densities(-3);
+	mat-form-field {
+		*{font-size: 14px !important;}
 	}
 	mat-hint {
 		font-size: 12px !important;

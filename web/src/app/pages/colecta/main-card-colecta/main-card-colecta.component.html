@@ -1,0 +1,51 @@
+<mat-card *ngIf="colecta && colecta.fundacionDTO"> <!-- && colecta.fundacionDTO.usuario -->
+	<mat-card-header style="border-bottom: solid 1px var(--light-grey); padding-bottom: 10px;">
+		<div class="div-header">
+			<div class="header-info">
+				<div mat-card-avatar class="example-header-image"></div>
+				<div>
+					<mat-card-title style="display: flex; align-items: center;">
+						<a [href]="'/perfil/'+colecta.fundacionDTO.usuarioDTO.idUsuario">{{colecta.fundacionDTO.nombre}}</a>
+						<mat-icon class="address" (click)="showDireccion(colecta.fundacionDTO)" *ngIf="colecta.fundacionDTO && colecta.fundacionDTO.direcciones.length > 0">place</mat-icon>
+						<mat-icon class="address" (click)="showContactInfo(colecta.fundacionDTO)" *ngIf="colecta.fundacionDTO">info</mat-icon>
+					</mat-card-title>
+					<mat-card-subtitle>
+						<mat-icon *ngFor="let i of [].constructor(colecta.fundacionDTO.puntaje || 0)" color="accent">star</mat-icon>
+						<mat-icon *ngFor="let i of [].constructor(5-(colecta.fundacionDTO.puntaje || 0))"
+							class="empty-star">star</mat-icon>
+					</mat-card-subtitle>
+				</div>
+			</div>
+			<div style="text-align: center;">{{parseVigencia()}}</div>
+		</div>
+	</mat-card-header>
+	<mat-card-content class="card-content">
+		<img mat-card-image [src]="colecta.imagen ? getImage(colecta.imagen) : 'assets/perfiles/perfiles-24.jpg'" class="colecta-img"
+			(click)="zoomImage(colecta.imagen ? colecta.imagen.split('/').at(-1) : 'assets/perfiles/perfiles-24.jpg')">
+		<div>
+			<h2 class="card-title">{{colecta.titulo}}</h2>
+			<div class="descripcion">
+				{{colecta.descripcion}}
+			</div>
+			<div class="productos">
+				<h4 style="margin-bottom: 0;"><u>Productos</u>:</h4>
+				<div class="icons">
+					<div></div>
+					<span class="material-icons-outlined scheduled" matTooltip="Productos en camino">schedule_send</span>
+					<span class="material-icons-outlined received" matTooltip="Productos recibidos">real_estate_agent</span>
+					<span class="material-icons-outlined requested" matTooltip="Productos solicitados">add_home</span>
+				</div>
+				<div *ngFor="let producto of colecta.productos" class="producto">
+					<!-- {{producto.descripcion}}: {{producto.cantidadRecibida}} -->
+					<div>{{producto.descripcion}}</div>
+					<div>-</div>
+					<div>{{producto.cantidadRecibida}}</div>
+					<div>{{producto.cantidadSolicitada}}</div>
+				</div>
+			</div>
+		</div>
+	</mat-card-content>
+	<mat-card-actions class="card-button">
+		<button mat-fab extended color="accent" (click)="donar()" *ngIf="!(userData.isLoggedIn && !userData.isSwapper)">QUIERO DONAR</button>
+	</mat-card-actions>
+</mat-card>

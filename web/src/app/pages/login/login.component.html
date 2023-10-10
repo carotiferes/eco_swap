@@ -9,7 +9,7 @@
 		<button id="submitLogin" type="submit" [disabled]="loadingSave"
 		 [ngClass]="loadingSave ? 'disabled' : 'enabled'">
 			<span class="button-text">LOGIN</span>
-			<mat-spinner *ngIf="loadingSave" diameter="20"></mat-spinner>
+			<mat-spinner *ngIf="loadingSave" diameter="20" class="spinner"></mat-spinner>
 		  </button>
 		<a id="create" (click)="createAccount()">Crear cuenta</a>
 		<a id="invitado" (click)="goToHome()">Entrar como invitado</a>

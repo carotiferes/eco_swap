@@ -1,0 +1,60 @@
+<mat-card *ngIf="publicacion" class="main-card">
+	<mat-card-header style="border-bottom: solid 1px var(--light-grey); padding-bottom: 10px;">
+		<div class="div-header">
+			<div class="header-info">
+				<div mat-card-avatar class="example-header-image"></div>
+				<div>
+					<mat-card-title style="display: flex; align-items: center;">
+						<a [href]="'/perfil/'+publicacion.particularDTO.usuarioDTO.idUsuario" *ngIf="userData.isLoggedIn">
+							{{publicacion.particularDTO.nombre}} {{publicacion.particularDTO.apellido}}
+						</a>
+						<span *ngIf="!userData.isLoggedIn">{{publicacion.particularDTO.nombre}} {{publicacion.particularDTO.apellido}}</span>
+						<!-- <mat-icon class="address" (click)="showDireccion(publicacion.fundacion.usuario)">place</mat-icon> -->
+					</mat-card-title>
+					<mat-card-subtitle>
+						<mat-icon *ngFor="let i of [].constructor(publicacion.particularDTO.puntaje || 0)"
+							color="primary">star</mat-icon>
+						<mat-icon *ngFor="let i of [].constructor(5-(publicacion.particularDTO.puntaje || 0))"
+							class="empty-star">star</mat-icon>
+					</mat-card-subtitle>
+				</div>
+			</div>
+			<div class="div-fecha-zona">
+				<div>{{publicacion.fechaPublicacion | date: 'dd/MM/yyyy'}}</div>
+				<div *ngIf="publicacion.particularDTO.direcciones.length > 0">
+					{{publicacion.particularDTO.direcciones[0].localidad}}</div>
+			</div>
+		</div>
+	</mat-card-header>
+	<mat-card-content class="card-content">
+		<div class="imagenes">
+			<img [src]="getImage(img)" *ngFor="let img of publicacion.parsedImagenes" (click)="zoomImage(img)" />
+		</div>
+		<div>
+			<h2 class="card-title">{{publicacion.titulo}}</h2>
+			<div class="descripcion">
+				{{publicacion.descripcion}}
+			</div>
+			<div class="trueque">
+				Valor de trueque: ${{publicacion.valorTruequeMin}} - ${{publicacion.valorTruequeMax}}
+			</div>
+			<div class="venta" *ngIf="publicacion.tipoPublicacion == 'VENTA_Y_TRUEQUE'">
+				Precio de venta: ${{publicacion.precioVenta}}
+			</div>
+			<div class="caracteristicas" *ngIf="publicacion.caracteristicaProducto.length > 0">
+				<b>Características:</b>
+				<div *ngFor="let caract of publicacion.caracteristicaProducto" class="producto">
+					{{caract.caracteristica}}
+				</div>
+			</div>
+		</div>
+	</mat-card-content>
+	<mat-card-actions class="card-button" *ngIf="this.userType != 'publicacionOrigen'">
+		<button mat-fab extended color="primary" (click)="intercambiar()">QUIERO INTERCAMBIAR</button>
+		<button mat-fab extended style="background-color: #3fb6e9;" (click)="comprar()"
+			*ngIf="publicacion.tipoPublicacion == 'VENTA_Y_TRUEQUE'">
+			<img src="assets/redes/mercadopago.png" style="width: 40px;">
+			QUIERO COMPRAR
+		</button>
+	</mat-card-actions>
+</mat-card>
