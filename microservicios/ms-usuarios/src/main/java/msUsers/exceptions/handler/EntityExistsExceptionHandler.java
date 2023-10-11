@@ -5,6 +5,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.exceptions.responses.EntityExistsExceptionResponse;
 import msUsers.exceptions.responses.EntityNotFoundExceptionResponse;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,6 +15,7 @@ import java.util.Date;
 
 @Slf4j
 @ControllerAdvice
+@Order(3)
 public class EntityExistsExceptionHandler {
     @ExceptionHandler(EntityExistsException.class)
     public ResponseEntity<EntityExistsExceptionResponse> handle(EntityExistsException exception){

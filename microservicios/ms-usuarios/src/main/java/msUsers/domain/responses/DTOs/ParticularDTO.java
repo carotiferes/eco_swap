@@ -18,4 +18,6 @@ public class ParticularDTO {
     private Integer puntaje;
     private List<DireccionDTO> direcciones;
     private UsuarioDTO usuarioDTO;
+    private String publicKey;
+    private String accessToken;
 }

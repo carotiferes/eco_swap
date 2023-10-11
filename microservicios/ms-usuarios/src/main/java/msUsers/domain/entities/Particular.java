@@ -56,6 +56,10 @@ public class Particular {
     @JsonManagedReference
     private List<Donacion> donaciones;
 
+    private String publicKey;
+
+    private String accessToken;
+
     public ParticularDTO toDTO() {
         ParticularDTO particularDTO = new ParticularDTO();
         particularDTO.setUsuarioDTO(usuario.toDTO());
@@ -68,6 +72,8 @@ public class Particular {
         particularDTO.setTipoDocumento(tipoDocumento);
         particularDTO.setPuntaje(usuario.getPuntaje());
         particularDTO.setDirecciones(usuario.getDirecciones().stream().map(Direccion::toDTO).toList());
+        particularDTO.setPublicKey(publicKey);
+        particularDTO.setAccessToken(accessToken);
         return particularDTO;
     }
 
