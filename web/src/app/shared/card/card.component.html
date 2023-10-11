@@ -1,4 +1,4 @@
-<div class="card" (click)="clicked(cardData)" *ngIf="cardData"
+<div class="card" (click)="clicked(cardData)" *ngIf="cardData" [class.selected-card]="isSelected"
 	[ngClass]="app == 'publicaciones' && cardData.buttons.length == 0 ? 'small' : 'big'">
 	<mat-chip class="chip-localidad" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'">
 		<span>
@@ -61,9 +61,8 @@
 			</div>
 		</h4>
 		<div>
-
-			<h6>{{cardData.fecha }}</h6><!-- | date: 'dd/MM/yyyy' -->
-			<!-- <h6>{{cardData.usuario.localidad }}</h6> -->
+			<h6 *ngIf="cardData.fecha">{{cardData.fecha | date: 'dd/MM/yyyy' }}</h6>
+			<h6 *ngIf="cardData.fechaString">{{cardData.fechaString }}</h6>
 		</div>
 	</div>
 

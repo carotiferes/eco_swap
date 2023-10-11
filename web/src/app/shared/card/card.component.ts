@@ -19,6 +19,7 @@ export class CardComponent {
 	@Input() cardData?: CardModel; //ColectaModel | DonacionModel | PublicacionModel;
 
 	@Output() statusChanged = new EventEmitter<any>();
+	@Output() cardSelected = new EventEmitter<any>();
 
 	isSelected: boolean = false;
 
@@ -40,6 +41,7 @@ export class CardComponent {
 		switch (card.action) {
 			case 'select':
 				this.isSelected = true;
+				this.cardSelected.emit(card.id);
 				break;
 			case 'detail':
 				this.showDetail(card)

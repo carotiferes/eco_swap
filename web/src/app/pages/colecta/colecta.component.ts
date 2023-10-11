@@ -130,7 +130,7 @@ export class ColectaComponent {
 				titulo: donacion.descripcion,
 				valorPrincipal: `${donacion.cantidadDonacion} unidades de ${donacion.producto.descripcion}`,
 				valorSecundario: stringCaracteristicas,
-				fecha: (new Date(donacion.fechaDonacion)).toLocaleDateString(),
+				fecha: donacion.fechaDonacion,
 				usuario: {
 					imagen: 'assets/perfiles/perfiles-17.jpg',//publicacion.particularDTO.
 					nombre: donacion.particularDTO.nombre + ' ' + donacion.particularDTO.apellido,

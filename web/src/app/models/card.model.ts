@@ -6,7 +6,8 @@ export interface CardModel {
 	valorPrincipal: string;
 	valorSecundario?: string;
 	estado?: string;
-	fecha: any;
+	fecha?: any;
+	fechaString?: string;
 	usuario: {
 		imagen: string;
 		nombre: string;

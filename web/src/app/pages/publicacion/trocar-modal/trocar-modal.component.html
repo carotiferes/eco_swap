@@ -18,9 +18,9 @@
 	</div>
 	<div class="mis-publicaciones">
 		<h3 style="text-align: center;">Seleccioná una de tus publicaciones para intercambiar!</h3>
-		<div>
-			<app-deck-publicaciones [publicacionesToShow]="misPublicaciones" origin="intercambio"
-			(selectedCard)="selectCard($event)"></app-deck-publicaciones>
+		<div *ngIf="publicacionesCardList.length > 0">
+			<app-deck [cardList]="publicacionesCardList" app="publicaciones"
+			(cardSelected)="selectCard($event)" [pageSize]="3"></app-deck>
 		</div>
 	</div>
 </div>

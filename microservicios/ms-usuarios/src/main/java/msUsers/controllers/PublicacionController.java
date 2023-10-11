@@ -133,6 +133,8 @@ public class PublicacionController {
             predicate = cb.and(predicate, cb.equal(from.get("tipoProducto"), request.getTipoProducto()));
         }
 
+        predicate = cb.and(predicate, cb.notEqual(from.get("estadoPublicacion"),EstadoPublicacion.CERRADA));
+
         query.where(predicate);
 
         List<Publicacion> publicaciones = entityManager.createQuery(query).getResultList();

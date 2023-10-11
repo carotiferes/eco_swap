@@ -166,6 +166,8 @@ public class TruequeController {
                 List<Trueque> truequesRelacionados = entityManager.createQuery(query).getResultList();
                 truequesRelacionados.forEach(t -> t.setEstadoTrueque(EstadoTrueque.ANULADO));
                 truequesRelacionados.forEach(entityManager::merge);
+
+
             }
             else {
                 trueque.setEstadoTrueque(EstadoTrueque.valueOf(request.getNuevoEstado()));
@@ -201,8 +203,8 @@ public class TruequeController {
         if(publicacionOrigen.getParticular().getIdParticular() == publicacionPropuesta.getParticular().getIdParticular())
             throw new TruequeCreationException("No podés crear un trueque con publicaciones del mismo usuario.");
 
-        if (!(publicacionPropuesta.getValorTruequeMin() >= publicacionOrigen.getValorTruequeMin() &&
-                publicacionPropuesta.getValorTruequeMax() <= publicacionOrigen.getValorTruequeMax())) {
+        if (!(publicacionPropuesta.getValorTruequeMin() <= publicacionOrigen.getValorTruequeMax() &&
+                publicacionPropuesta.getValorTruequeMax() >= publicacionOrigen.getValorTruequeMin())) {
             throw new TruequeCreationException("La publicación propuesta no está dentro del intervalo de la publicación origen.");
         }
 

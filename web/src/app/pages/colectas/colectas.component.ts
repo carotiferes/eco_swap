@@ -15,6 +15,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { CardModel } from 'src/app/models/card.model';
+import { DatePipe } from '@angular/common';
 
 @Component({
 	selector: 'app-colectas',
@@ -48,7 +49,7 @@ export class ColectasComponent implements OnInit {
 	constructor(private router: Router, private auth: AuthService,
 		private donacionesService: DonacionesService, private fundacionesService: FundacionesService,
 		private fb: FormBuilder, private productosService: ProductosService,
-		private showErrorService: ShowErrorService) {
+		private showErrorService: ShowErrorService, private datePipe: DatePipe) {
 
 		if (router.url == '/mis-colectas') this.isMyColectas = true;
 
@@ -136,7 +137,7 @@ export class ColectasComponent implements OnInit {
 				imagen: colecta.imagen,
 				titulo: colecta.titulo,
 				valorPrincipal: stringProductos,
-				fecha: this.parseVigencia(colecta),
+				fechaString: this.parseVigencia(colecta),
 				usuario: {
 					imagen: 'assets/perfiles/perfiles-24.jpg',//publicacion.particularDTO.
 					nombre: colecta.fundacionDTO.nombre,
@@ -151,9 +152,9 @@ export class ColectasComponent implements OnInit {
 
 	parseVigencia(colecta: ColectaModel) {
 		if(colecta.fechaInicio && colecta.fechaFin) {
-			return 'Desde el ' + (new Date(colecta.fechaInicio)).toLocaleDateString() + ' hasta el ' + (new Date(colecta.fechaFin)).toLocaleDateString()
+			return 'Desde el ' + this.datePipe.transform(colecta.fechaInicio, 'dd/MM/yyyy') + ' hasta el ' + this.datePipe.transform(colecta.fechaFin, 'dd/MM/yyyy')
 		} else if (colecta.fechaInicio) {
-			return 'A partir del ' + (new Date(colecta.fechaInicio)).toLocaleDateString();
+			return 'A partir del ' + this.datePipe.transform(colecta.fechaInicio, 'dd/MM/yyyy')
 		} else return '';
 	}
 

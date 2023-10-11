@@ -129,7 +129,7 @@ export class PerfilComponent {
 		console.log(stringDir, localidad);
 
 
-		const apiUrl = `https://apis.datos.gob.ar/georef/api/direcciones?provincia=02&localidad=${localidad}&direccion=${encodeURIComponent(stringDir)}`.replace(' ', '');
+		const apiUrl = `https://apis.datos.gob.ar/georef/api/direcciones?provincia=02&localidad=${encodeURIComponent(localidad)}&direccion=${encodeURIComponent(stringDir)}`.replace(' ', '');
 		console.log(apiUrl);
 
 		fetch(apiUrl).then(response => response.json()).then(data => {
