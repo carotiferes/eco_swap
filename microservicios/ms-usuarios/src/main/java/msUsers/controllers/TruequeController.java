@@ -17,6 +17,7 @@ import msUsers.domain.responses.DTOs.PublicacionDTO;
 import msUsers.domain.responses.DTOs.TruequeDTO;
 import msUsers.domain.responses.ResponsePostEntityCreation;
 import msUsers.domain.responses.ResponseUpdateEntity;
+import msUsers.exceptions.TruequeCreationException;
 import msUsers.services.CriteriaBuilderQueries;
 import msUsers.services.TruequeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -190,8 +191,20 @@ public class TruequeController {
         final var publicacionPropuesta = this.publicacionesRepository.findById(request.getIdPublicacionPropuesta()).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrada la publicacion propuesta: " + request.getIdPublicacionPropuesta()));
 
+        // Validaciones
         if(truequeService.existeTruequeConPublicaciones(publicacionOrigen.getIdPublicacion(), publicacionPropuesta.getIdPublicacion()))
             throw new EntityExistsException("Ya existe un trueque entre ambas publicaciones.");
+        if(truequeService.existeTruequeConXPublicacion(publicacionOrigen.getIdPublicacion()))
+            throw new EntityExistsException("La publicación " + publicacionOrigen.getTitulo() + "ya tiene un trueque.");
+        if(truequeService.existeTruequeConXPublicacion(publicacionPropuesta.getIdPublicacion()))
+            throw new EntityExistsException("La publicación " + publicacionPropuesta.getTitulo() + "ya tiene un trueque.");
+        if(publicacionOrigen.getParticular().getIdParticular() == publicacionPropuesta.getParticular().getIdParticular())
+            throw new TruequeCreationException("No podés crear un trueque con publicaciones del mismo usuario.");
+
+        if (!(publicacionPropuesta.getValorTruequeMin() >= publicacionOrigen.getValorTruequeMin() &&
+                publicacionPropuesta.getValorTruequeMax() <= publicacionOrigen.getValorTruequeMax())) {
+            throw new TruequeCreationException("La publicación propuesta no está dentro del intervalo de la publicación origen.");
+        }
 
         Trueque trueque = new Trueque();
         trueque.setEstadoTrueque(EstadoTrueque.PENDIENTE);

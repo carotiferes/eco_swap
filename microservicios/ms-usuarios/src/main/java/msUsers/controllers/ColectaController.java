@@ -26,7 +26,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 
 import java.net.URI;
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -108,6 +108,10 @@ public class ColectaController {
         CriteriaQuery<Colecta> query = cb.createQuery(Colecta.class);
         Root<Colecta> from = query.from(Colecta.class);
         Predicate predicate = cb.conjunction();
+
+        // Vigencia de colectas
+        Predicate datePredicate = cb.and(cb.lessThanOrEqualTo(from.get("fechaInicio"), LocalDate.now()));
+        predicate = cb.and(predicate, datePredicate);
 
         if (request.getIdFundacion() != null) {
             Join<Colecta, Fundacion> join = from.join("fundacion");

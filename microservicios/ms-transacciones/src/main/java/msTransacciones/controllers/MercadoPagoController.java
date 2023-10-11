@@ -73,10 +73,10 @@ public class MercadoPagoController {
         Optional<Particular> optionalParticular = criteriaBuilderQueries.getParticularPorUsuario(user.getIdUsuario());
         Particular particular = optionalParticular.orElseThrow(() -> new EntityNotFoundException("¡El particular no existe!"));
 
-        globalAccessToken = particular.getAccessToken();
-
         final var publicacion = this.publicacionesRepository.findById(idPublicacion).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrado el producto: " + idPublicacion));
+
+        globalAccessToken = publicacion.getParticular().getAccessToken();
 
         log.info(">> Comienza la compra del producto: {}", idPublicacion);
 
@@ -90,7 +90,7 @@ public class MercadoPagoController {
             var entity = this.comprasRepository.save(compra);
 
             // MP
-            MercadoPagoConfig.setAccessToken(particular.getAccessToken());
+            MercadoPagoConfig.setAccessToken(globalAccessToken);
             PreferenceClient client = new PreferenceClient();
             List<PreferenceItemRequest> items = new ArrayList<>();
             PreferenceItemRequest item = PreferenceItemRequest.builder()

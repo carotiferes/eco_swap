@@ -3,6 +3,8 @@ package msUsers.exceptions.handler;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.exceptions.responses.EntityNotFoundExceptionResponse;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,6 +16,7 @@ import java.util.Date;
 
 @Slf4j
 @ControllerAdvice
+@Order(4)
 public class EntityNotFoundExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<EntityNotFoundExceptionResponse> handle(EntityNotFoundException exception){
