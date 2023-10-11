@@ -118,7 +118,9 @@ export class PublicacionesComponent {
 			this.comprasService.getMyCompras().subscribe({
 				next: (data: any) => {
 					console.log(data);
-					this.publicacionesToShow = data;
+					for (const publicacion of data) {
+						this.publicacionesToShow.push(publicacion.publicacionDTO);
+					}
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
@@ -127,7 +129,7 @@ export class PublicacionesComponent {
 		}
 	}
 
-	generateCardList(my: boolean = false) {
+	generateCardList() {
 		this.publicacionesCardList.splice(0)
 		for (const publicacion of this.publicacionesToShow) {
 			this.publicacionesCardList.push({
@@ -145,7 +147,8 @@ export class PublicacionesComponent {
 				},
 				action: 'access',
 				buttons: [],
-				//estado: my? publicacion.estadoPublicacion : undefined
+				estado: this.origin == 'myPublicaciones' ? publicacion.estadoPublicacion : undefined,
+				codigo: 'Publicación'
 			})
 		}
 	}

@@ -8,7 +8,8 @@
 	<div style="position: absolute; top: 10px; left: 10px;">
 		<span *ngIf="cardData.estado" class="material-icons-outlined result-icon"
 			[ngClass]="colorMap[cardData.estado] || 'red'"
-			[matTooltip]="app == 'donaciones' ? 'Donación '+ cardData.estado : 'Trueque '+ cardData.estado">
+			[matTooltip]=" cardData.codigo ? cardData.codigo+' '+cardData.estado :
+			app == 'donaciones' ? 'Donación '+ cardData.estado : 'Trueque '+ cardData.estado">
 			{{ iconMap[cardData.estado] || 'dangerous' }}
 		</span>
 	</div>

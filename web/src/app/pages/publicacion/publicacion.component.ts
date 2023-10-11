@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import { TrocarModalComponent } from './trocar-modal/trocar-modal.component';
 import { TruequeModel } from 'src/app/models/trueque.model';
 import { CardModel } from 'src/app/models/card.model';
+import { ComprasService } from 'src/app/services/compras.service';
 
 @Component({
 	selector: 'app-publicacion',
@@ -38,7 +39,8 @@ export class PublicacionComponent implements AfterViewInit {
 
 	constructor(private truequeService: TruequesService, private route: ActivatedRoute,
 		private showErrorService: ShowErrorService, private auth: AuthService,
-		private router: Router, private usuarioService: UsuarioService, public dialog: MatDialog) {
+		private router: Router, private usuarioService: UsuarioService, public dialog: MatDialog,
+		private comprasService: ComprasService) {
 
 		this.userData = { isSwapper: auth.isUserSwapper(), isLoggedIn: auth.isUserLoggedIn }
 		this.route.paramMap.subscribe(params => {
@@ -73,6 +75,7 @@ export class PublicacionComponent implements AfterViewInit {
 					this.userType = 'publicacionOrigen';
 				}
 				if(this.userData.isLoggedIn) this.getTrueques()
+				else this.loading = false;
 			},
 			error: (error) => {
 				console.log(error);
@@ -163,7 +166,20 @@ export class PublicacionComponent implements AfterViewInit {
 
 	comprar() {
 		if (this.auth.isUserLoggedIn) {
-
+			this.comprasService.comprar(this.publicacion.idPublicacion).subscribe({
+				next: (res: any) => {
+					console.log(res);
+					Swal.fire({
+						title: '¡Ya casi es tuyo!',
+						text: 'Terminá tu compra en Mercado Pago, luego podrás verla en Mis Compras!',
+						icon: 'success',
+						confirmButtonText: 'IR A MIS COMPRAS',
+						allowOutsideClick: false, allowEscapeKey: false
+					}).then(({isConfirmed}) => {
+						if(isConfirmed) window.open(res.initPoint, '_blank')
+					})
+				}
+			})
 		} else {
 			Swal.fire({
 				title: '¡Necesitás una cuenta!',

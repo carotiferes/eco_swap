@@ -23,4 +23,5 @@ export interface CardModel {
 	action: 'select' | 'access' | 'detail';
 	disabled?: boolean;
 	idAuxiliar?: number;
+	codigo?: string;
 }

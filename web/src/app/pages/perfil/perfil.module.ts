@@ -8,9 +8,10 @@ import { HeaderModule } from 'src/app/layout/header/header.module';
 import { PhoneNumberPipe } from 'src/app/pipes/phone-number.pipe';
 import { PipesModule } from 'src/app/pipes/pipes.module';
 import { ImagesModalComponent } from './images-modal/images-modal.component';
+import { CredencialesMpModalComponent } from './credenciales-mp-modal/credenciales-mp-modal.component';
 
 @NgModule({
-  declarations: [PerfilComponent, ImagesModalComponent],
+  declarations: [PerfilComponent, ImagesModalComponent, CredencialesMpModalComponent],
   imports: [
     CommonModule,
 	PerfilRoutingModule,

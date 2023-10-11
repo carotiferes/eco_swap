@@ -1,0 +1,21 @@
+#credenciales-form {
+	display: flex;
+    flex-direction: column;
+    align-items: center;
+
+	mat-form-field {
+		width: 70%;
+	}
+
+}
+.buttons {
+	display: flex;
+	gap: 10px;
+	justify-content: center;
+	align-items: center;
+
+	.confirm {
+		background-color: #3fb6e9;
+		color: white;
+	}
+}

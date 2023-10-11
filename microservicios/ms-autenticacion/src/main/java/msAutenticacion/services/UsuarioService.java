@@ -306,6 +306,8 @@ public class UsuarioService {
             particular.setNombre(requestEditProfile.getParticular().getNombre());
             particular.setApellido(requestEditProfile.getParticular().getApellido());
             particular.setTipoDocumento(TipoDocumento.valueOf(requestEditProfile.getParticular().getTipoDocumento()));
+            particular.setPublicKey(requestEditProfile.getParticular().getPublicKey());
+            particular.setAccessToken(requestEditProfile.getParticular().getAccessToken());
         } else {
             Optional<Fundacion> optionalFundacion = criteriaBuilderQueries.getFundacionPorUsuario(user.getIdUsuario());
             Fundacion fundacion = optionalFundacion.get();
