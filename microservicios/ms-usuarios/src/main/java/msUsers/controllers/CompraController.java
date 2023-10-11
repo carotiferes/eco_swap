@@ -8,6 +8,7 @@ import msUsers.domain.entities.Compra;
 import msUsers.domain.entities.Particular;
 import msUsers.domain.entities.Publicacion;
 import msUsers.domain.entities.Usuario;
+import msUsers.domain.entities.enums.EstadoCompra;
 import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.responses.DTOs.CompraDTO;
 import msUsers.domain.responses.DTOs.PublicacionDTO;
@@ -46,7 +47,10 @@ public class CompraController {
         Predicate predicate = cb.conjunction();
 
         Join<Compra, Particular> join = from.join("particularComprador");
-        predicate = cb.and(predicate, cb.equal(join.get("idParticular"), particular.getIdParticular()));
+        predicate = cb.and(
+                cb.equal(join.get("idParticular"), particular.getIdParticular()),
+                cb.equal(from.get("estadoCompra"), EstadoCompra.APROBADA)
+        );
 
         query.where(predicate);
 
