@@ -27,4 +27,10 @@ public class RequestSignUpSwapper {
 
     @NotNull
     private String tipoDocumento;
+
+    @NotNull
+    private String publicKey;
+
+    @NotNull
+    private String accessToken;
 }
