@@ -48,4 +48,18 @@ export class CredencialesMpModalComponent {
 			}, error: () => this.loadingSave = false
 		})
 	}
+
+	downloadFile(): void {
+		// Replace 'your-file-url' with the actual URL of the file you want to download
+		const fileUrl = 'assets/mercado_pago.pdf';
+	  
+		const link = document.createElement('a');
+		link.href = fileUrl;
+		link.download = 'mercado_pago.pdf'; // Specify the desired filename
+	  
+		console.log(link);
+		
+		// Trigger a click event on the anchor element
+		link.click();
+	  }
 }

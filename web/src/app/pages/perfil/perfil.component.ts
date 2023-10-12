@@ -12,6 +12,7 @@ import { MapComponent } from 'src/app/shared/map/map.component';
 import Swal from 'sweetalert2';
 import { ImagesModalComponent } from './images-modal/images-modal.component';
 import { CredencialesMpModalComponent } from './credenciales-mp-modal/credenciales-mp-modal.component';
+import { ChangePasswordModalComponent } from './change-password-modal/change-password-modal.component';
 
 @Component({
 	selector: 'app-perfil',
@@ -175,11 +176,25 @@ export class PerfilComponent {
 	credencialesMP() {
 		const dialogRef = this.dialog.open(CredencialesMpModalComponent, {
 			maxWidth: '60vw',
-			maxHeight: '50vh',
+			maxHeight: '60vh',
 			height: '100%',
 			width: '100%',
 			panelClass: 'full-screen-modal',
 			data: {user: this.user, publicKey: this.userToShow?.publicKey, accessToken: this.userToShow?.accessToken}
+		});
+		dialogRef.afterClosed().subscribe((result) => {
+			console.log('closed', result);
+			
+		})
+	}
+
+	changePassword() {
+		const dialogRef = this.dialog.open(ChangePasswordModalComponent, {
+			maxWidth: '50vw',
+			maxHeight: '60vh',
+			height: '100%',
+			width: '100%',
+			panelClass: 'full-screen-modal',
 		});
 		dialogRef.afterClosed().subscribe((result) => {
 			console.log('closed', result);

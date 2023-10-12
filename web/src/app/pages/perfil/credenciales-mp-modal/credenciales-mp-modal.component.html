@@ -3,6 +3,9 @@
 	<div style="margin: 20px;">
 		<h2>Configurá tus credenciales de Mercado Pago!</h2>
 	</div>
+	<div>
+		<mat-icon (click)="downloadFile()" matTooltip="Clickeá acá para descargar el tutorial">info</mat-icon>
+	</div>
 </div>
 <div style="display: flex; justify-content: center;">
 	<mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
@@ -21,7 +24,7 @@
 	<div class="buttons">
 		<button mat-fab extended color="light" (click)="dialogRef.close()">CANCELAR</button>
 		<button mat-fab extended class="confirm" [disabled]="loadingSave" (click)="saveCredenciales()">
-			<span>CONFIRMAR</span>
+			<span>GUARDAR</span>
 		</button>
 		<mat-spinner diameter="20" *ngIf="loadingSave"></mat-spinner>
 	</div>
