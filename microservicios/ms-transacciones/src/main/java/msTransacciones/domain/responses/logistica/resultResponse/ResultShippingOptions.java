@@ -12,9 +12,13 @@ public class ResultShippingOptions {
     private String minimum_delivery;
     private String maximum_delivery;
 
-    private BigDecimal price;
+    private Float price;
+    private Float tax_price;
     private String ship_from_type;
-    private String ship_from;
+
+    //OBJECT
+    private ResultShippingInfo ship_from;
+
     private String ship_to_type;
     private String ship_to;
     private ResultShippingContract shipping_contract;

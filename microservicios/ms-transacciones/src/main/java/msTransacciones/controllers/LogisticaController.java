@@ -5,6 +5,8 @@ import com.mercadopago.exceptions.MPException;
 import lombok.extern.slf4j.Slf4j;
 import msTransacciones.domain.logistica.PingPong;
 import msTransacciones.domain.requests.logistica.PostOrderRequest;
+import msTransacciones.domain.responses.ResponseShippingOption;
+import msTransacciones.domain.responses.logistica.resultResponse.ListResultShippingOptions;
 import msTransacciones.domain.responses.logistica.resultResponse.ResultShippingOptions;
 import msTransacciones.services.LogisticaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +29,18 @@ public class LogisticaController {
     private LogisticaService logisticaService;
     private static final String json = "application/json";
 
-    /*
+
 @PostMapping(path = "/orden", consumes = json, produces = json)
 @ResponseStatus(HttpStatus.OK)
 @Transactional
 public ResponseEntity<String> crearOrden(@RequestBody PostOrderRequest postOrderRequest) throws MPException, MPApiException {
     log.info(">> POST ORDER");
     logisticaService.generarOrden(postOrderRequest);
-    return ResponseEntity.ok("");
+    log.info("<< ORDER CREADA");
+    return ResponseEntity.ok("OK");
 }
 
+    /*
 @GetMapping(path = "/orden", consumes = json, produces = json)
 @ResponseStatus(HttpStatus.OK)
 public ResponseEntity<String> obtenerOrdenesSegunUserId(@PathVariable("ordenId") Long ordenId) throws MPException, MPApiException {
@@ -56,18 +60,7 @@ public ResponseEntity<String> actualizarOrden(@PathVariable("ordenId") Long orde
 }
 
 
-@GetMapping(path = "/shipping_options", consumes = json, produces = json)
-@ResponseStatus(HttpStatus.OK)
-public ResponseEntity<ResultShippingOptions> obtenerPrecioDeShipping(
-        @RequestParam("weight") Long weight,
-        @RequestParam("to_zip_code") String zipCode,
-        @RequestParam("types") String types
-) throws MPException, MPApiException {
-    log.info(">> GET Shipping Options");
-    ResultShippingOptions response = logisticaService.getShippingOption(weight, zipCode, types);
-    log.info(("<< Obteniendo ShippingOptions"));
-    return ResponseEntity.ok(response);
-}
+
 
     @GetMapping(path = "/store", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.OK)
@@ -93,6 +86,19 @@ public ResponseEntity<ResultShippingOptions> obtenerPrecioDeShipping(
         return ResponseEntity.ok("");
     }
 */
+    @GetMapping(path = "/shipping_options", consumes = json, produces = json)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<ResultShippingOptions> obtenerPrecioDeShipping(
+            @RequestParam("weight") Long weight,
+            @RequestParam("to_zip_code") String zipCode,
+            @RequestParam("types") String types
+    ) throws MPException, MPApiException {
+        log.info(">> GET Shipping Options");
+        ResultShippingOptions response = logisticaService.getShippingOption(weight, zipCode, types);
+        log.info("<< Obteniendo ShippingOptions con respuesta {}", response.toString());
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping(path = "/ping", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<PingPong> ping() throws MPException, MPApiException {
