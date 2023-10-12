@@ -7,7 +7,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 import msTransacciones.domain.client.shipnow.RequestVariant;
+import msTransacciones.domain.client.shipnow.ResponseOrder;
+import msTransacciones.domain.client.shipnow.ResponseOrderDetails;
+import msTransacciones.domain.client.shipnow.response.ResponseGetListOrders;
 import msTransacciones.domain.client.shipnow.response.ResponseGetListVariant;
+import msTransacciones.domain.client.shipnow.response.ResponseOrders;
 import msTransacciones.domain.client.shipnow.response.ResponseVariant;
 import msTransacciones.domain.logistica.Item;
 import msTransacciones.domain.logistica.Order;
@@ -100,7 +104,7 @@ public class LogisticaService {
 
  */
 
-    public ResponseVariant obtenerItem(String nombreItemReferente) {
+    public ArrayList<ResponseVariant> obtenerItem(String nombreItemReferente) {
         log.info(">> GET NEW ITEM DESDE SHIPNOW BUSCANDO CON EL NOMBRE: {}", nombreItemReferente);
         try {
             //Create connection
@@ -124,7 +128,7 @@ public class LogisticaService {
             }
             log.info("<< RESPONSE ITEMS: {}", response.toString());
             in.close();
-            return new Gson().fromJson(response.toString(), ResponseVariant.class);
+            return new Gson().fromJson(response.toString(), ResponseGetListVariant.class).getResults();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -135,14 +139,14 @@ public class LogisticaService {
         log.info(">> CREATE NEW ITEM PARA SHIPNOW: {}", serviceUrl);
         try {
             //Create connection
-            String gsonVariant = new Gson().toJson(variant);
+
             URL url = new URL(serviceUrl+"/variants");
             HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Authorization", tokenAuth);
             con.setRequestProperty("Accept", "application/json");
             con.setDoOutput(true);
-            String jsonInputString = "{}";
+            String gsonVariant = new Gson().toJson(variant);
             try (DataOutputStream dos = new DataOutputStream(con.getOutputStream())) {
                 dos.writeBytes(gsonVariant);
             }
@@ -171,9 +175,11 @@ public class LogisticaService {
 
         Item obtenerItem = listItems.get(0);
         log.info(">> Buscar ITEM con nombre: {}", obtenerItem.getExternal_reference());
-        ResponseVariant itemBuscado = this.obtenerItem(obtenerItem.getExternal_reference());
-        if(itemBuscado==null){
-            itemBuscado = this.crearItemParaShipnow(RequestVariant.builder()
+        ArrayList<ResponseVariant> itemBuscado = this.obtenerItem(obtenerItem.getExternal_reference());
+        ResponseVariant buscado;
+        if(itemBuscado.isEmpty()) {
+            buscado = this.crearItemParaShipnow(
+                    RequestVariant.builder()
                     .title(obtenerItem.getTitle())
                     .price(obtenerItem.getPrice())
                     .stock(obtenerItem.getQuantity())
@@ -182,10 +188,12 @@ public class LogisticaService {
                     .image_url(obtenerItem.getImage_url())
                     .external_reference(obtenerItem.getExternal_reference())
                     .build());
+        } else {
+            buscado = itemBuscado.get(0);
         }
         log.info("<< Retornar ITEM encontrado: {}", obtenerItem.getExternal_reference());
-        ArrayList<ResponseVariant> list = new ArrayList<ResponseVariant>();
-        list.add( itemBuscado );
+        ArrayList<ResponseVariant> list = new ArrayList<>();
+        list.add( buscado );
         return list;
     }
 
@@ -211,6 +219,127 @@ public class LogisticaService {
                 .build();
     }
 
+    public ArrayList<ResponseOrder>  obtenerOrden(String external_reference) {
+        log.info(">> OBTENER ORDENES DE: {}", external_reference);
+
+        try {
+            //Create connection
+            URL url = new URL(serviceUrl+"/orders?external_reference="+external_reference);
+            HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
+            con.setRequestMethod("GET");
+            con.setRequestProperty("Authorization", tokenAuth);
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+
+            int responseCode = con.getResponseCode();
+            log.info("-- SEND GET ORDENES DE {} TO URL: {}", external_reference, serviceUrl+"/orders?external_reference="+external_reference);
+            log.info("-- RESPONSE CODE: {}", responseCode);
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream())
+            );
+            String inputLine;
+            StringBuilder response = new StringBuilder();
+            while((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+            ResponseGetListOrders obtenidos = new Gson().fromJson(response.toString(), ResponseGetListOrders.class);
+            ArrayList<Order> ordenesADevolver = obtenidos.getResults();
+            return (ArrayList<ResponseOrder>) ordenesADevolver.stream()
+                    .map(this::buildOrder)
+                    .collect(Collectors.toList());
+/*
+            return PingPong.builder()
+                    .cache(String.valueOf(convertedObject.get("cache").getAsString()))
+                    .db(String.valueOf(convertedObject.get("db").getAsString()))
+                    .build();
+ */
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+/*
+            return PingPong.builder()
+                    .cache("fail")
+                    .db("fail")
+                    .build();
+
+
+ */
+        }
+    }
+
+    private ResponseOrder buildOrder(Order order) {
+        return ResponseOrder.builder()
+                .timestamps(order.getTimestamps())
+                .items(order.getItems())
+                .comment(order.getComment())
+                .id(order.getId())
+                .status(order.getStatus()==null?null:order.getStatus().name)
+                .last_updated_date(order.getTimestamps().getUpdated_at())
+                .build();
+    }
+
+    public ResponseOrderDetails obtenerOrdenPorId(String ordenId) {
+        log.info(">> OBTENER ORDENES DE: {}", ordenId);
+
+        try {
+            //Create connection
+            URL url = new URL(serviceUrl+"/orders/"+ordenId);
+            HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
+            con.setRequestMethod("GET");
+            con.setRequestProperty("Authorization", tokenAuth);
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+
+            int responseCode = con.getResponseCode();
+            log.info("-- SEND GET ORDEN X ID DE {} TO URL: {}", ordenId, serviceUrl+"/orders/"+ordenId);
+            log.info("-- RESPONSE CODE: {}", responseCode);
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream())
+            );
+            String inputLine;
+            StringBuilder response = new StringBuilder();
+            while((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+            Order orderEspecifica = new Gson().fromJson(response.toString(), Order.class);
+            log.info("-- RESPONSE BODY: {}", orderEspecifica);
+       //     Order orderEspecifica = obtenidos;
+
+            return ResponseOrderDetails.builder()
+                    .store(orderEspecifica.getStore())
+                    .created_at(orderEspecifica.getCreated_at())
+                    .timestamps(orderEspecifica.getTimestamps())
+                    .items(orderEspecifica.getItems())
+                    .comment(orderEspecifica.getComment())
+                    .shippingOption(orderEspecifica.getShipping_option())
+                    .id(orderEspecifica.getId())
+                    .status(orderEspecifica.getStatus()==null?null:orderEspecifica.getStatus().name)
+                    .ship_to(orderEspecifica.getShip_to())
+                    .ship_from(orderEspecifica.getShip_from())
+                    .last_updated_date(orderEspecifica.getTimestamps().getUpdated_at())
+                    .build();
+/*
+            return PingPong.builder()
+                    .cache(String.valueOf(convertedObject.get("cache").getAsString()))
+                    .db(String.valueOf(convertedObject.get("db").getAsString()))
+                    .build();
+ */
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+/*
+            return PingPong.builder()
+                    .cache("fail")
+                    .db("fail")
+                    .build();
+
+
+ */
+        }
+    }
+
     public void generarOrden(PostOrderRequest postOrderRequest) {
         log.info(">> GENERAR ORDEN");
         //PUEDE PASAR A SER UN LISTADO TRANQUILAMENTE
@@ -228,10 +357,10 @@ public class LogisticaService {
               //  .external_reference_user(postOrderRequest.getExternal_reference_user())
                 .comment(postOrderRequest.getComment())
              //   .store(postOrderRequest.getStore_id())
-                .status(OrderStatusEnum.ON_HOLD)
+                .status(OrderStatusEnum.AWAITING_SHIPMENT)
                 .shipping_option(postOrderRequest.getShipping_option())
                 .build();
-        /*
+/*
         try {
             //Create connection
             URL url = new URL(serviceUrl+"/order");
@@ -240,7 +369,12 @@ public class LogisticaService {
             con.setRequestProperty("Authorization", tokenAuth);
             con.setRequestProperty("Accept", "application/json");
             con.setDoOutput(true);
-            String jsonInputString = "{}";
+
+            String gsonVariant = new Gson().toJson(orderACrear);
+            try (DataOutputStream dos = new DataOutputStream(con.getOutputStream())) {
+                dos.writeBytes(gsonVariant);
+            }
+
             int responseCode = con.getResponseCode();
             log.info("-- SEND GET PING TO URL: {}", serviceUrl);
             log.info("-- RESPONSE CODE: {}", responseCode);
@@ -256,7 +390,7 @@ public class LogisticaService {
             in.close();
 
             JsonObject convertedObject = new Gson().fromJson(response.toString(), JsonObject.class);
-/*
+
             return PingPong.builder()
                     .cache(String.valueOf(convertedObject.get("cache").getAsString()))
                     .db(String.valueOf(convertedObject.get("db").getAsString()))
