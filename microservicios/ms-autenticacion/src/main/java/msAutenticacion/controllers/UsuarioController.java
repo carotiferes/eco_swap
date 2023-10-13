@@ -116,6 +116,7 @@ public class UsuarioController {
     @ResponseStatus(HttpStatus.OK)
     @Transactional
     public ResponseEntity<ResponseUpdateEntity> editProfile(@RequestBody @Valid RequestEditProfile requestEditProfile){
+        log.info("Request: {}", requestEditProfile);
         final Usuario user = UsuarioContext.getUsuario();
         log.info("Editar perfil >> Editando el perfil: {}", user.getEmail());
         ResponseUpdateEntity responseUpdateEntity = usuarioService.editarUsuario(requestEditProfile, user);

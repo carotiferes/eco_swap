@@ -17,4 +17,6 @@ public class ParticularDTO {
     private TipoDocumento tipoDocumento;
     private Integer puntaje;
     private List<DireccionDTO> direcciones;
+    private String publicKey;
+    private String accessToken;
 }

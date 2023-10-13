@@ -23,7 +23,7 @@ public class MPExceptionHandler {
     }
     @ExceptionHandler(MPApiException.class)
     public ResponseEntity<String> handleException(MPApiException exception){
-        log.error("Error con la API de MercadoPago: {}", exception.getMessage());
+        log.error("Error con la API de MercadoPago: {}", exception.getApiResponse().getContent());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Error con la API de MercadoPago: " + exception.getApiResponse().getContent());
     }

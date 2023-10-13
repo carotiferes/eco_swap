@@ -27,11 +27,13 @@ export class CardComponent {
 		'APROBADO': 'verified', 'APROBADA': 'verified',
 		'RECIBIDO': 'add_task', 'RECIBIDA': 'add_task',
 		'PENDIENTE': 'pending',
+		'ABIERTA': 'lock_open', 'CERRADA': 'lock'
 	};
 	colorMap: { [key: string]: string } = {
 		'APROBADO': 'green', 'APROBADA': 'green',
 		'RECIBIDO': 'green', 'RECIBIDA': 'green',
 		'PENDIENTE': 'purple',
+		'ABIERTA': 'green',
 	};
 
 	constructor(private truequesService: TruequesService, private router: Router,

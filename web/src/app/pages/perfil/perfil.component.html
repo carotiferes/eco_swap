@@ -35,7 +35,13 @@
 				<button mat-fab extended (click)="edit()">EDITAR INFORMACIÓN</button>
 			</div>
 			<div class="div-cambiar-pass" *ngIf="myProfile">
-				<button mat-fab extended >CAMBIAR CONTRASEÑA</button>
+				<button mat-fab extended (click)="changePassword()">CAMBIAR CONTRASEÑA</button>
+			</div>
+			<div class="div-cambiar-pass" *ngIf="myProfile && userData.isSwapper">
+				<button mat-fab extended style="background-color: #3fb6e9; color: white;" (click)="credencialesMP()">
+				<img src="assets/redes/mercadopago.png" style="width: 40px;">
+				CREDENCIALES
+		</button>
 			</div>
 		</mat-card>
 		<mat-card class="right">

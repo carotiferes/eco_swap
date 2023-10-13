@@ -34,4 +34,8 @@ export class UsuarioService {
 	confirmarCuenta(idUsuario: number, codigo: string) {
 		return this.backendService.patch(URL_NAME, 'ms-autenticacion/api/v1/usuario/confirmar', {idUsuario, codigo});
 	}
+
+	changePassword(body: any) { /* {nuevaPassword, confirmarPassword} */
+		return this.backendService.patch(URL_NAME, 'ms-autenticacion/api/v1/usuario/password', body);
+	}
 }
