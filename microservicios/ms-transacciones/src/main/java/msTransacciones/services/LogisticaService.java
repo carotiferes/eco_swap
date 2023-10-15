@@ -1,38 +1,38 @@
 package msTransacciones.services;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 import msTransacciones.domain.client.shipnow.RequestVariant;
 import msTransacciones.domain.client.shipnow.ResponseOrder;
 import msTransacciones.domain.client.shipnow.ResponseOrderDetails;
 import msTransacciones.domain.client.shipnow.response.ResponseGetListOrders;
 import msTransacciones.domain.client.shipnow.response.ResponseGetListVariant;
-import msTransacciones.domain.client.shipnow.response.ResponseOrders;
 import msTransacciones.domain.client.shipnow.response.ResponseVariant;
+import msTransacciones.domain.entities.*;
 import msTransacciones.domain.logistica.Item;
 import msTransacciones.domain.logistica.Order;
 import msTransacciones.domain.logistica.PingPong;
-import msTransacciones.domain.logistica.ShipDirection;
 import msTransacciones.domain.logistica.enums.OrderStatusEnum;
+import msTransacciones.domain.model.DirrecionAEnviar;
+import msTransacciones.domain.model.EstadoOrdenEnum;
+import msTransacciones.domain.model.ItemAEnviar;
+import msTransacciones.domain.model.OrderAEnviar;
+import msTransacciones.domain.repositories.*;
 import msTransacciones.domain.requests.logistica.PostOrderRequest;
+import msTransacciones.domain.requests.logistica.PutOrderRequest;
 import msTransacciones.domain.responses.logistica.ResponseShippingOptions;
 import msTransacciones.domain.responses.logistica.resultResponse.ResultShippingOptions;
-import org.apache.coyote.Response;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.CannotCreateTransactionException;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,6 +44,16 @@ public class LogisticaService {
 
     @Value("${logistica.auth}")
     private String tokenAuth;
+
+    private UsuariosRepository usuariosRepository;
+
+    private ParticularesRepository particularesRepository;
+
+    private FundacionesRepository fundacionesRepository;
+
+    private ProductosRepository productosRepository;
+    private OrdenesRepository ordenesRepository;
+
 
     public PingPong pingpong() {
         HttpsURLConnection connection = null;
@@ -104,7 +114,7 @@ public class LogisticaService {
 
  */
 
-    public ArrayList<ResponseVariant> obtenerItem(String nombreItemReferente) {
+    public ArrayList<ResponseVariant> obtenerItem(String nombreItemReferente) throws IOException {
         log.info(">> GET NEW ITEM DESDE SHIPNOW BUSCANDO CON EL NOMBRE: {}", nombreItemReferente);
         try {
             //Create connection
@@ -130,8 +140,9 @@ public class LogisticaService {
             in.close();
             return new Gson().fromJson(response.toString(), ResponseGetListVariant.class).getResults();
         } catch (Exception e) {
+            log.error(">> ERRORES: {}", e.getMessage());
             e.printStackTrace();
-            return null;
+            throw e;
         }
     }
 
@@ -145,15 +156,18 @@ public class LogisticaService {
             con.setRequestMethod("POST");
             con.setRequestProperty("Authorization", tokenAuth);
             con.setRequestProperty("Accept", "application/json");
+            con.setRequestProperty("Content-Type", "application/json");
+
             con.setDoOutput(true);
             String gsonVariant = new Gson().toJson(variant);
             try (DataOutputStream dos = new DataOutputStream(con.getOutputStream())) {
+                log.info("-- REQUEST BODY TO SEND: {}", gsonVariant);
                 dos.writeBytes(gsonVariant);
             }
 
             int responseCode = con.getResponseCode();
-     //       log.info("-- SEND CREATE PING TO URL: {}", serviceUrl);
-     //       log.info("-- RESPONSE CODE: {}", responseCode);
+            log.info("-- SEND CREATE variants TO URL: {}", serviceUrl+"/variants");
+            log.info("-- RESPONSE CODE: {}", responseCode);
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(con.getInputStream())
             );
@@ -167,11 +181,12 @@ public class LogisticaService {
             return new Gson().fromJson(response.toString(), ResponseVariant.class);
         } catch (Exception e) {
             e.printStackTrace();
+            log.info("Mensaje de error: "+e.getLocalizedMessage());
             return null;
         }
     }
 
-    private ArrayList<ResponseVariant> obtenerVariantes(ArrayList<Item> listItems) {
+    private ArrayList<ResponseVariant> obtenerVariantes(ArrayList<Item> listItems) throws IOException {
 
         Item obtenerItem = listItems.get(0);
         log.info(">> Buscar ITEM con nombre: {}", obtenerItem.getExternal_reference());
@@ -274,9 +289,37 @@ public class LogisticaService {
                 .items(order.getItems())
                 .comment(order.getComment())
                 .id(order.getId())
-                .status(order.getStatus()==null?null:order.getStatus().name)
+                .status(order.getStatus())
                 .last_updated_date(order.getTimestamps().getUpdated_at())
                 .build();
+    }
+
+    private Boolean cancelarEnvio(String estadoNuevo, String estadoDeOrden) {
+        if(estadoDeOrden.equals(EstadoOrdenEnum.EN_ESPERA.name()) ||
+                estadoDeOrden.equals(EstadoOrdenEnum.ENVIADO.name()) ||
+                estadoDeOrden.equals(EstadoOrdenEnum.RECIBIDO.name())
+        ) {
+            return estadoNuevo.equals(EstadoOrdenEnum.CANCELADO.name()) ||
+                    estadoNuevo.equals(EstadoOrdenEnum.ENVIADO_A_DEVOLVER.name());
+        }
+        return false;
+    }
+
+    @Transactional
+    public void actualizarEstadoDeOrdenXOrdenId(String ordenId, PutOrderRequest putOrderRequest) {
+        //FALTA EL TEMA DE LOS OPTIONALS
+        log.info(">> Actualizar el estado de OrdenId {} al estado: {}", ordenId, putOrderRequest.getNuevoEstado());
+        OrdenDeEnvio orderAEnviar = ordenesRepository.findById(Long.valueOf(ordenId)).get();
+        log.info(">> Cambio de estado de orden {} desde actual {} al nuevo {}", ordenId, orderAEnviar.getEstado(), putOrderRequest.getNuevoEstado());
+        if(this.cancelarEnvio(putOrderRequest.getNuevoEstado(), orderAEnviar.getEstado())) {
+            //QUITAR LO RECIBIDO DEL PRODUCTO
+            Producto producto = productosRepository.findById(orderAEnviar.getProductoId()).get();
+            producto.setCantidadRecibida(producto.getCantidadRecibida()- orderAEnviar.getCantidad());
+            productosRepository.save(producto);
+        }
+        orderAEnviar.setEstado(putOrderRequest.getNuevoEstado());
+        ordenesRepository.save(orderAEnviar);
+        log.info("<< Actualizacion de orden finalizada");
     }
 
     public ResponseOrderDetails obtenerOrdenPorId(String ordenId) {
@@ -315,7 +358,7 @@ public class LogisticaService {
                     .comment(orderEspecifica.getComment())
                     .shippingOption(orderEspecifica.getShipping_option())
                     .id(orderEspecifica.getId())
-                    .status(orderEspecifica.getStatus()==null?null:orderEspecifica.getStatus().name)
+                    .status(orderEspecifica.getStatus())
                     .ship_to(orderEspecifica.getShip_to())
                     .ship_from(orderEspecifica.getShip_from())
                     .last_updated_date(orderEspecifica.getTimestamps().getUpdated_at())
@@ -340,34 +383,103 @@ public class LogisticaService {
         }
     }
 
-    public void generarOrden(PostOrderRequest postOrderRequest) {
+    @Transactional
+    private OrdenDeEnvio buildOrder(PostOrderRequest postOrderRequest) throws Exception {
+
+        Usuario usuarioOrigen = usuariosRepository.getReferenceById(postOrderRequest.getUserIdOrigen());
+        Usuario usuarioDestino = usuariosRepository.getReferenceById(postOrderRequest.getUserIdDestino());
+
+        String nombreOrigen = this.obtenerNombreUser(usuarioOrigen.getIdUsuario(), usuarioOrigen.isSwapper());
+        String nombreDestino = this.obtenerNombreUser(usuarioDestino.getIdUsuario(), usuarioDestino.isSwapper());
+
+        Direccion direccionOrigen = usuarioOrigen.getDirecciones().get(0);
+        Direccion direccionDestino = usuarioDestino.getDirecciones().get(0);
+
+
+        Producto producto = productosRepository.findById(postOrderRequest.getIdDeItems().get(0)).get();
+        if(postOrderRequest.getCantidad() > (producto.getCantidadSolicitada()-producto.getCantidadRecibida())){
+            log.error("La intención de orden no es correcta");
+            throw new Exception("La cantidad a pedir es mayor que la cantidad solicitada restante");
+        }
+        producto.setCantidadRecibida(producto.getCantidadRecibida()+postOrderRequest.getCantidad());
+
+        productosRepository.save(producto);
+/*
+        OrderAEnviar orderAEnviar = OrderAEnviar.builder()
+                .titulo(postOrderRequest.getTitulo())
+                .direccionAEnviarDestino(DirrecionAEnviar.crear(direccionDestino))
+                .dirrecionAEnviarOrigen(DirrecionAEnviar.crear(direccionOrigen))
+                .nombreUserDestino(nombreDestino)
+                .nombreUserOrigen(nombreOrigen)
+                .listItemAEnviar(List.of(ItemAEnviar.crear(producto, postOrderRequest.getCantidad())))
+                .build();
+ */
+        return OrdenDeEnvio.builder()
+                .idUsuarioDestino(usuarioDestino.getIdUsuario())
+                .idUsuarioOrigen(usuarioOrigen.getIdUsuario())
+                .altura(direccionDestino.getAltura())
+                .codigoPostal(direccionDestino.getCodigoPostal())
+                .piso(direccionDestino.getPiso())
+                .dpto(direccionDestino.getDpto())
+                .nombreCalle(direccionDestino.getDireccion())
+                .nombreUserDestino(nombreDestino)
+                .nombreUserOrigen(nombreOrigen)
+                .precioEnvio(postOrderRequest.getCostoEnvio())
+                .cantidad(postOrderRequest.getCantidad())
+                .estado(EstadoOrdenEnum.EN_ESPERA.name())
+                .build();
+
+    }
+
+    private String obtenerNombreUser(Long userId, Boolean isSwapper) {
+        if(isSwapper) {
+            Particular particular = particularesRepository.getReferenceById(userId);
+            return particular.getNombre() + " " + particular.getApellido();
+        } else {
+            Fundacion fundacion = fundacionesRepository.getReferenceById(userId);
+            return fundacion.getNombre();
+        }
+    }
+
+
+    public OrdenDeEnvio obtenerDetallesDeOrdenXOrdenId(Long ordenId) throws Exception {
+        log.info(">> Obtener Detalles de ORDEN dado a OrdenId: {}", ordenId);
+        OrdenDeEnvio ordenObtenida = ordenesRepository.findById(ordenId).orElseThrow(Exception::new);
+        log.info("<< Orden de envio obtenida: {}", ordenObtenida);
+        return ordenObtenida;
+    }
+
+    public List<OrdenDeEnvio> obtenerDetallesDeOrdenXUsuarioId(Long userId) {
+        log.info(">> Obtener listado de ORDENES de UserId: {}", userId);
+        List<OrdenDeEnvio> ordenObtenida = ordenesRepository.findByIdUsuarioOrigen(userId);
+        log.info("<< Listado de ordenes obtenidas para userId {} con un total de cantidad {}", userId, ordenObtenida.size());
+        return ordenObtenida;
+    }
+
+    @Transactional
+    public OrdenDeEnvio generarOrden(PostOrderRequest postOrderRequest) throws Exception {
         log.info(">> GENERAR ORDEN");
-        //PUEDE PASAR A SER UN LISTADO TRANQUILAMENTE
+        OrdenDeEnvio ordenCreada = ordenesRepository.save(this.buildOrder(postOrderRequest));
+        log.info("<< ORDEN CREADA: {}", ordenCreada);
+        return ordenCreada;
+        /*
+            NO USAREMOS SHIPNOW PARA ESTO, MOCKEAREMOS LAS RESPUESTAS YA QUE NO TIENE SENTIDO USAR ESFUERZO EN ALGO
+            QUE NO USAREMOS
+         */
+        /*
         ArrayList<ResponseVariant> itemBuscado = this.obtenerVariantes(postOrderRequest.getItems());
 
         HttpsURLConnection connection = null;
-        Order orderACrear = Order.builder()
-                .archived(false)
-                //PARA ESTO HABRIA QUE GENERAR UN ID UNICO
-                .external_reference("asf")
-                .ship_to(postOrderRequest.getShip_to())
-                .ship_from(postOrderRequest.getShip_from())
-                .items(this.crearItemAPartirDeResponseVariant(itemBuscado))
-                //ESTO ES EL USUARIO PERO DE SHIPNOW
-              //  .external_reference_user(postOrderRequest.getExternal_reference_user())
-                .comment(postOrderRequest.getComment())
-             //   .store(postOrderRequest.getStore_id())
-                .status(OrderStatusEnum.AWAITING_SHIPMENT)
-                .shipping_option(postOrderRequest.getShipping_option())
-                .build();
-/*
+        Order orderACrear = this.buildOrder(postOrderRequest, itemBuscado);
+
         try {
             //Create connection
-            URL url = new URL(serviceUrl+"/order");
+            URL url = new URL(serviceUrl+"/orders");
             HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Authorization", tokenAuth);
             con.setRequestProperty("Accept", "application/json");
+            con.setRequestProperty("Content-Type", "application/json");
             con.setDoOutput(true);
 
             String gsonVariant = new Gson().toJson(orderACrear);
@@ -376,10 +488,10 @@ public class LogisticaService {
             }
 
             int responseCode = con.getResponseCode();
-            log.info("-- SEND GET PING TO URL: {}", serviceUrl);
+            log.info("-- SEND POST ORDER TO URL: {}", serviceUrl);
             log.info("-- RESPONSE CODE: {}", responseCode);
             BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getInputStream())
+                    new InputStreamReader(con.getErrorStream())
             );
             String inputLine;
             StringBuilder response = new StringBuilder();
@@ -389,26 +501,46 @@ public class LogisticaService {
             log.info("-- RESPONSE BODY: {}", response.toString());
             in.close();
 
-            JsonObject convertedObject = new Gson().fromJson(response.toString(), JsonObject.class);
+            Order orderEspecifica = new Gson().fromJson(response.toString(), Order.class);
+            log.info("-- RESPONSE BODY: {}", orderEspecifica);
+            //     Order orderEspecifica = obtenidos;
 
+            return ResponseOrderDetails.builder()
+                    .store(orderEspecifica.getStore())
+                    .created_at(orderEspecifica.getCreated_at())
+                    .timestamps(orderEspecifica.getTimestamps())
+                    .items(orderEspecifica.getItems())
+                    .comment(orderEspecifica.getComment())
+                    .shippingOption(orderEspecifica.getShipping_option())
+                    .id(orderEspecifica.getId())
+                    .status(orderEspecifica.getStatus())
+                    .ship_to(orderEspecifica.getShip_to())
+                    .ship_from(orderEspecifica.getShip_from())
+                    .last_updated_date(orderEspecifica.getTimestamps().getUpdated_at())
+                    .build();
+/*
             return PingPong.builder()
                     .cache(String.valueOf(convertedObject.get("cache").getAsString()))
                     .db(String.valueOf(convertedObject.get("db").getAsString()))
                     .build();
 
 
+ /
+
         } catch (Exception e) {
             e.printStackTrace();
             /*
+
+
             return PingPong.builder()
                     .cache("fail")
                     .db("fail")
                     .build();
 
-
+             /
+            return null;
         }
-
-         */
+        */
     }
 
     public ResultShippingOptions getShippingOption(Long weight, String zipCode, String types) {

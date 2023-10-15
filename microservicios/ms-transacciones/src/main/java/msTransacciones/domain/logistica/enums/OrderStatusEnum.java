@@ -14,6 +14,9 @@ public enum OrderStatusEnum {
 
     public final String name;
 
+    public String obtenerNombre() {
+        return name;
+    }
     private OrderStatusEnum(String name) {
         this.name = name;
     }

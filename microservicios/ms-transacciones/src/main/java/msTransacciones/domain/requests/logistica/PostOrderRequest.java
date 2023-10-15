@@ -13,11 +13,11 @@ import java.util.ArrayList;
 @Data
 public class PostOrderRequest {
 
-    private String comment;
-    private ShipDirection ship_to;
-    private ShipDirection ship_from;
-    private ShippingOption shipping_option;
-    private String store_id;
-    private OrderStatusEnum status;
-    private ArrayList<Item> items;
+    private String titulo;
+    private Long userIdDestino;
+    private Long userIdOrigen;
+    private Integer cantidad;
+    private ArrayList<Long> idDeItems;
+    private float costoEnvio;
+
 }

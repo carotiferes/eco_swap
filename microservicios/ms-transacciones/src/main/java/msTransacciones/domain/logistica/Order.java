@@ -17,8 +17,8 @@ public class Order {
     private String external_reference;
     private String external_reference_user;
     private String comment;
-    private OrderStatusEnum status;
-    private OrderStatusEnum last_status;
+    private String status;
+    private String last_status;
     private Long main_order_id;
     private Boolean archived;
     private Timestamps timestamps;

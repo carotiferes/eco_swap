@@ -6,8 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import msTransacciones.domain.client.shipnow.ResponseOrder;
 import msTransacciones.domain.client.shipnow.ResponseOrderDetails;
 import msTransacciones.domain.client.shipnow.response.ResponseGetListOrders;
+import msTransacciones.domain.entities.OrdenDeEnvio;
 import msTransacciones.domain.logistica.PingPong;
 import msTransacciones.domain.requests.logistica.PostOrderRequest;
+import msTransacciones.domain.requests.logistica.PutOrderRequest;
 import msTransacciones.domain.responses.logistica.resultResponse.ResultShippingOptions;
 import msTransacciones.services.LogisticaService;
 import org.apache.velocity.app.event.implement.EscapeXmlReference;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
@@ -32,26 +35,26 @@ public class LogisticaController {
     private static final String json = "application/json";
 
 
-@PostMapping(path = "/orden", consumes = json, produces = json)
-@ResponseStatus(HttpStatus.OK)
-@Transactional
-public ResponseEntity<String> crearOrden(@RequestBody PostOrderRequest postOrderRequest) throws MPException, MPApiException {
-    log.info(">> POST ORDER");
-    logisticaService.generarOrden(postOrderRequest);
-    log.info("<< ORDER CREADA");
-    return ResponseEntity.ok("OK");
-}
+    @PostMapping(path = "/orden", consumes = json, produces = json)
+    @ResponseStatus(HttpStatus.OK)
+    @Transactional
+    public ResponseEntity<OrdenDeEnvio> crearOrden(@RequestBody PostOrderRequest postOrderRequest) throws Exception {
+        log.info(">> POST ORDER");
+        OrdenDeEnvio response = logisticaService.generarOrden(postOrderRequest);
+        log.info("<< ORDER CREADA CON ORDER ID {}", response.getIdOrden());
+        return ResponseEntity.ok(response);
+    }
 
 
-@GetMapping(path = "/orden", consumes = json, produces = json)
-@ResponseStatus(HttpStatus.OK)
-public ResponseEntity<ArrayList<ResponseOrder>> obtenerOrdenesSegunUserId(
-        @RequestParam(value = "external_reference", required = true)  String external_reference) throws MPException, MPApiException {
-    log.info(">> GET ORDER PARA EXTERNAL_REFERENCE: {}", external_reference);
-    ArrayList<ResponseOrder> order = logisticaService.obtenerOrden(external_reference);
-    log.info("<< ORDENES OBTENIDAS PARA {} con la cantidad de {} ordenes", external_reference, order.size());
-    return ResponseEntity.ok(order);
-}
+    @GetMapping(path = "/orden", consumes = json, produces = json)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<ArrayList<ResponseOrder>> obtenerOrdenesSegunUserId(
+            @RequestParam(value = "userId", required = true)  String userId) throws MPException, MPApiException {
+        log.info(">> GET ORDER PARA EXTERNAL_REFERENCE: {}", userId);
+        ArrayList<ResponseOrder> order = logisticaService.obtenerOrden(userId);
+        log.info("<< ORDENES OBTENIDAS PARA {} con la cantidad de {} ordenes", userId, order.size());
+        return ResponseEntity.ok(order);
+    }
 
     @GetMapping(path = "/orden/{orderId}", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.OK)
@@ -61,6 +64,17 @@ public ResponseEntity<ArrayList<ResponseOrder>> obtenerOrdenesSegunUserId(
         ResponseOrderDetails order = logisticaService.obtenerOrdenPorId(orderId);
         log.info("<< ORDENES OBTENIDAS PARA {} con detalle {}", orderId, order);
         return ResponseEntity.ok(order);
+    }
+
+    @PutMapping(path = "/orden/{orderId}", consumes = json, produces = json)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<String> actualizarOrdenDeCompra(
+            @PathVariable(value = "orderId", required = true)  String orderId,
+            @RequestBody PutOrderRequest putOrderRequest) throws MPException, MPApiException {
+        log.info(">> PUT ORDER  {} PARA ACTUALIZAR A NUEVO ESTADO: {}", orderId, putOrderRequest.getNuevoEstado());
+        logisticaService.actualizarEstadoDeOrdenXOrdenId(orderId, putOrderRequest);
+        log.info("<< ORDEN {} ACTUALIZADA CON NUEVO ESTATUS PARA {}", orderId, putOrderRequest.getNuevoEstado());
+        return ResponseEntity.ok("OK");
     }
     /*
 @GetMapping(path = "/orden/{ordenId}", consumes = json, produces = json)
