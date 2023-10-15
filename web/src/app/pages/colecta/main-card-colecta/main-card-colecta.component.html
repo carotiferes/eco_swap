@@ -42,14 +42,14 @@
 				<div *ngFor="let producto of colecta.productos" class="producto">
 					<!-- {{producto.descripcion}}: {{producto.cantidadRecibida}} -->
 					<div>{{producto.descripcion}}</div>
-					<div>-</div>
+					<div>0</div>
 					<div>{{producto.cantidadRecibida}}</div>
-					<div>{{producto.cantidadSolicitada}}</div>
+					<div>{{producto.cantidadSolicitada > 0 ? producto.cantidadSolicitada : 'Sin límite'}}</div>
 				</div>
 			</div>
 		</div>
 	</mat-card-content>
-	<mat-card-actions class="card-button">
-		<button mat-fab extended color="accent" (click)="donar()" *ngIf="!(userData.isLoggedIn && !userData.isSwapper)">QUIERO DONAR</button>
+	<mat-card-actions class="card-button" *ngIf="!(userData.isLoggedIn && !userData.isSwapper)">
+		<button mat-fab extended color="accent" (click)="donar()">QUIERO DONAR</button>
 	</mat-card-actions>
 </mat-card>
