@@ -20,23 +20,36 @@ export class TrocarModalComponent {
 	misPublicaciones: PublicacionModel[] = [];
 	cardSelected?: number;
 	publicacionesCardList: CardModel[] = [];
+	cardPublicacionOrigen: CardModel;
 
 	constructor(@Inject(MAT_DIALOG_DATA) public data: any, private truequeService: TruequesService,
 	public dialogRef: MatDialogRef<TrocarModalComponent>){
 		console.log(data);
 		this.publicacionOrigen = data.publicacion;
+		this.cardPublicacionOrigen = {
+			id: this.publicacionOrigen.idPublicacion,
+			imagen: this.publicacionOrigen.parsedImagenes? this.publicacionOrigen.parsedImagenes[0] : 'no_image',
+			titulo: this.publicacionOrigen.titulo,
+			valorPrincipal: `$${this.publicacionOrigen.valorTruequeMin} - $${this.publicacionOrigen.valorTruequeMax}`,
+			fecha: this.publicacionOrigen.fechaPublicacion,
+			usuario: {
+				imagen: 'assets/perfiles/perfiles-17.jpg',//publicacion.particularDTO.
+				nombre: this.publicacionOrigen.particularDTO.nombre + ' ' + this.publicacionOrigen.particularDTO.apellido,
+				puntaje: this.publicacionOrigen.particularDTO.puntaje,
+				localidad: this.publicacionOrigen.particularDTO.direcciones[0].localidad
+			},
+			action: 'detail',
+			buttons: [],
+			estado: this.publicacionOrigen.estadoTrueque,
+		}
 		this.getMisPublicaciones()
 	}
 
 	getMisPublicaciones(){
-		this.truequeService.getMisPublicaciones().subscribe({
+		this.truequeService.getMisPublicacionesForTrueque(this.publicacionOrigen.idPublicacion).subscribe({
 			next: (res: any) => {
 				console.log(res);
 				this.misPublicaciones = res;
-				this.misPublicaciones = this.misPublicaciones.filter(item => {
-					let intervalo = Math.min(item.valorTruequeMax, this.publicacionOrigen.valorTruequeMax) - Math.max(item.valorTruequeMin, this.publicacionOrigen.valorTruequeMin)
-					return intervalo > 0;
-				});
 				this.misPublicaciones.map(item => {
 					item.parsedImagenes = item.imagenes.split('|')
 				})

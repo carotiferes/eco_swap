@@ -46,7 +46,7 @@ export class MainCardColectaComponent {
 	}
 
 	showDireccion(fundacion: any){
-		let stringDir: string = fundacion.direcciones[0].direccion + fundacion.direcciones[0].altura || '';
+		let stringDir: string = fundacion.direcciones[0].calle + fundacion.direcciones[0].altura || '';
 		const localidad = fundacion.direcciones[0].localidad || '';
 
 		const apiUrl = `https://apis.datos.gob.ar/georef/api/direcciones?provincia=02&localidad=${encodeURIComponent(localidad)}&direccion=${encodeURIComponent(stringDir)}`

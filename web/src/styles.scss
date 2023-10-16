@@ -57,7 +57,7 @@ $contrast: (
 	)
 );
 
-$eco-swap-primary: mat.define-palette($eco-swap, 400);
+$eco-swap-primary: mat.define-palette($eco-swap, 500);
 $eco-swap-accent: mat.define-palette($contrast, 200);
 
 $eco-swap-theme: mat.define-light-theme((

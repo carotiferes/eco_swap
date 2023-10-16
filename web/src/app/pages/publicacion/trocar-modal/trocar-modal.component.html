@@ -1,24 +1,12 @@
 
 <div id="main-trocar" *ngIf="!loading">
 
-	<div class="publicacion-origen" *ngIf="publicacionOrigen">
-		Publicación de {{publicacionOrigen.particularDTO.nombre}} {{publicacionOrigen.particularDTO.apellido}}
-		<div class="imagenes">
-			<img [src]="getImage(img)" *ngFor="let img of publicacionOrigen.parsedImagenes" />
-		</div>
-		<div class="descripcion">
-			{{publicacionOrigen.descripcion}}
-		</div>
-		<div class="trueque">
-			Valor de trueque: ${{publicacionOrigen.valorTruequeMin}} - ${{publicacionOrigen.valorTruequeMax}} 
-		</div>
-		<div class="venta" *ngIf="publicacionOrigen.tipoPublicacion == 'VENTA_Y_TRUEQUE'">
-			Precio de venta: ${{publicacionOrigen.precioVenta}}
-		</div>
+	<div class="publicacion-origen" *ngIf="cardPublicacionOrigen">
+		<app-card app="publicaciones" [cardData]="cardPublicacionOrigen"></app-card>
 	</div>
 	<div class="mis-publicaciones">
 		<h3 style="text-align: center;">Seleccioná una de tus publicaciones para intercambiar!</h3>
-		<div *ngIf="publicacionesCardList.length > 0">
+		<div *ngIf="publicacionesCardList.length > 0" style="max-width: 98%;">
 			<app-deck [cardList]="publicacionesCardList" app="publicaciones"
 			(cardSelected)="selectCard($event)" [pageSize]="3"></app-deck>
 		</div>

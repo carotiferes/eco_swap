@@ -8,6 +8,7 @@
 		margin-bottom: 0px;
 		height: 30px;
 		color: var(--dark-grey);
+		cursor: pointer;
 	}
 }
 
@@ -30,5 +31,12 @@
 	.confirm {
 		background-color: #3fb6e9;
 		color: white;
+	}
+}
+
+@media (min-width: 0px) and (max-width: 576px) {
+	.buttons {
+		flex-direction: column-reverse;
+		margin-bottom: 20px;
 	}
 }

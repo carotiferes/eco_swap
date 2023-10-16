@@ -7,6 +7,7 @@ import jakarta.persistence.criteria.*;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.entities.*;
+import msUsers.domain.entities.enums.EstadoPublicacion;
 import msUsers.domain.entities.enums.EstadoTrueque;
 import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.repositories.PublicacionesRepository;
@@ -102,7 +103,7 @@ public class TruequeController {
                 criteriaBuilder.lessThanOrEqualTo(root.get("valorTruequeMin"), publicacion.getValorTruequeMax()),
                 criteriaBuilder.greaterThanOrEqualTo(root.get("valorTruequeMax"), publicacion.getValorTruequeMin()),
                 criteriaBuilder.notEqual(root.get("idPublicacion"),publicacion.getIdPublicacion()),
-                criteriaBuilder.equal(root.get("particular").get("idParticular"), publicacion.getParticular().getIdParticular())
+                criteriaBuilder.notEqual(root.get("estadoPublicacion"), EstadoPublicacion.CERRADA)
         );
 
         query.where(predicate);

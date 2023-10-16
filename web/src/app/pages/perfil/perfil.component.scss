@@ -2,7 +2,6 @@
 	padding: 2%;
 
 	mat-card {
-		padding: 20px;
 		margin: 10px;
 	}
 
@@ -179,5 +178,9 @@
 	.top-div,
 	.bottom-div {
 		grid-template-columns: 1fr !important;
+	}
+
+	mat-card {
+		margin: 10px 0 !important;
 	}
 }
