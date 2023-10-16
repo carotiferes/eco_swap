@@ -13,6 +13,7 @@ import Swal from 'sweetalert2';
 import { ImagesModalComponent } from './images-modal/images-modal.component';
 import { CredencialesMpModalComponent } from './credenciales-mp-modal/credenciales-mp-modal.component';
 import { ChangePasswordModalComponent } from './change-password-modal/change-password-modal.component';
+import { OpinarModalComponent } from './opinar-modal/opinar-modal.component';
 
 @Component({
 	selector: 'app-perfil',
@@ -48,9 +49,14 @@ export class PerfilComponent {
 		const url = router.url;
 		console.log(url);
 		if (url != '/mi-perfil') { // PERFIL DE OTRO USUARIO
-			this.myProfile = false;
 			const id_user = url.split('/')[2]
-			this.getUserInformation(id_user);
+			if(id_user != this.auth.getUserID()) {
+				this.myProfile = false;
+				this.getUserInformation(id_user);
+			} else {
+				this.userData = { isSwapper: auth.isUserSwapper(), id: this.auth.getUserID() }
+				this.getUserInformation(this.userData.id);
+			}
 		} else { // MI PERFIL
 			this.userData = { isSwapper: auth.isUserSwapper(), id: this.auth.getUserID() }
 			this.getUserInformation(this.userData.id);
@@ -195,6 +201,21 @@ export class PerfilComponent {
 			height: '100%',
 			width: '100%',
 			panelClass: 'full-screen-modal',
+		});
+		dialogRef.afterClosed().subscribe((result) => {
+			console.log('closed', result);
+			
+		})
+	}
+
+	opinar() {
+		const dialogRef = this.dialog.open(OpinarModalComponent, {
+			maxWidth: '50vw',
+			maxHeight: '60vh',
+			height: '100%',
+			width: '100%',
+			panelClass: 'full-screen-modal',
+			data: {user: this.userToShow}
 		});
 		dialogRef.afterClosed().subscribe((result) => {
 			console.log('closed', result);

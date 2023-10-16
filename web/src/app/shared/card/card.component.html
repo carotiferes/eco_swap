@@ -52,13 +52,9 @@
 		<h4>
 			{{cardData.usuario.nombre}}
 			<div style="margin: 0 10px;display: flex;align-items: center;justify-content: center;">
-				<mat-icon *ngFor="let i of [].constructor(cardData.usuario.puntaje || 0)"
-					[ngClass]="app == 'publicaciones' ? 'font-verde' : 'font-lila'">star</mat-icon>
-				<span class="material-icons-outlined"
-					*ngFor="let i of [].constructor(5-(cardData.usuario.puntaje || 0))"
-					[ngClass]="app == 'publicaciones' ? 'font-verde' : 'font-lila'">
-					grade
-				</span>
+				<app-rating [puntuacion]="cardData.usuario.puntaje"
+				[color]="app == 'publicaciones' ? 'var(--trueques-dark)' : 'var(--donaciones-dark)'"></app-rating>
+
 			</div>
 		</h4>
 		<div>

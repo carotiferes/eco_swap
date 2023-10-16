@@ -6,7 +6,7 @@
 
 <div id="main-profile" class="app-main-div">
 	<div class="top-div" *ngIf="userToShow">
-		<div class="top-img" (click)="selectImage()" [ngClass]="myProfile ? 'editable-img' : ''">
+		<div class="top-img" (click)="myProfile ? selectImage() : ''" [ngClass]="myProfile ? 'editable-img' : ''">
 			<img [src]="userData.isSwapper ? 'assets/perfiles/perfiles-17.jpg' : 'assets/perfiles/perfiles-24.jpg'">
 			<mat-icon class="edit-icon" *ngIf="myProfile">edit</mat-icon>
 		</div>
@@ -57,20 +57,12 @@
 				<div class="puntaje">
 					<div class="title">
 						<h3>Puntaje:</h3>
-						<div>
-							<mat-icon *ngFor="let i of [].constructor(userToShow.puntaje || 0)"
-								color="primary">star</mat-icon>
-							<!-- <mat-icon *ngFor="let i of [].constructor(5-(userToShow.puntaje || 0))" class="empty-star">star</mat-icon> -->
-							<span class="material-icons-outlined"
-								*ngFor="let i of [].constructor(5-(userToShow.puntaje || 0))">
-								grade
-							</span>
-						</div>
+						<app-rating [puntuacion]="userToShow.puntaje" [remSize]="1.3"></app-rating>
 						<div>({{userToShow.opiniones?.length || 0}} {{userToShow.opiniones?.length == 1 ? 'opinión' :
 							'opiniones'}})</div>
 					</div>
 					<div class="div-opinar" *ngIf="!myProfile">
-						<button mat-fab extended>OPINAR</button>
+						<button mat-fab extended (click)="opinar()">OPINAR</button>
 					</div>
 				</div>
 				<div class="opiniones">
@@ -80,10 +72,7 @@
 							<div class="valoracion">
 								<h4>Valoración:</h4>
 								<div style="margin: 0 10px; display: flex; align-items: center;">
-									<mat-icon *ngFor="let i of [].constructor(opinion.valoracion || 0)"
-										color="primary">star</mat-icon>
-									<mat-icon *ngFor="let i of [].constructor(5-(opinion.valoracion || 0))"
-										class="empty-star">star</mat-icon>
+									<app-rating [puntuacion]="opinion.valoracion"></app-rating>
 								</div>
 								<div>
 									({{opinion.usuarioOpina}} - {{opinion.fechaOpinion | date : 'dd/MM/yyyy'}})

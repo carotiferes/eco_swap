@@ -53,6 +53,7 @@
 					</a></li>
 					<li><a [href]="'/mi-perfil'" ngbDropdownItem class="dropdown-item" *ngIf="isUserLoggedIn && userData && this.profileType == 'fundacion'">
 						<p style="color: #007707; letter-spacing: 1px; font-size: 18px;">{{userData.fundacionDTO.nombre}}</p>
+						<p style="margin: 0; font-size: 12px;">Ir a mi perfil ></p>
 					</a></li>
 					<div *ngIf="isUserLoggedIn" style="border-bottom: 1px solid #9fe27a; margin: 10px;"></div>
 

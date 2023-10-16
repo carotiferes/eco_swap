@@ -1,0 +1,10 @@
+<div class="puntuacion">
+	<ng-template #t let-fill="fill">
+		<i class="bi-star" [style.font-size.rem]="remSize" [style.color]="color">
+			<i *ngIf="fill > 0" class="bi-star-fill filled" [style.width.%]="fill"></i>
+		</i>
+	</ng-template>
+	<ngb-rating [(rate)]="puntuacion" [starTemplate]="t"
+		[readonly]="true" [max]="5">
+	</ngb-rating>
+</div>

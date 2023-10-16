@@ -1,0 +1,35 @@
+#main-opinar {
+	.content {
+		display: flex;
+		flex-direction: column;
+    	align-items: center;
+		gap: 15px;
+
+		.star {
+			font-size: 1.5rem;
+			color: var(--opiniones);
+		}
+	}
+	
+	.buttons {
+		display: flex;
+		gap: 10px;
+		justify-content: center;
+		align-items: center;
+	
+		.confirm {
+			background-color: var(--opiniones);
+			color: white;
+			&:disabled {
+				background-color: var(--dark-grey) !important;
+			}
+		}
+	}
+}
+
+@media (min-width: 0px) and (max-width: 576px) {
+	.buttons {
+		flex-direction: column-reverse;
+		margin-bottom: 20px;
+	}
+}

@@ -7,13 +7,15 @@ import { DeckComponent } from './deck/deck.component';
 import { MapComponent } from './map/map.component';
 import { MaterialModule } from './material/material.module';
 import { SpinnerComponent } from './spinner/spinner.component';
+import { RatingComponent } from './rating/rating.component';
 
 @NgModule({
 	declarations: [
 		MapComponent,
 		SpinnerComponent,
 	    CardComponent,
-	    DeckComponent
+	    DeckComponent,
+     RatingComponent
 	],
 	imports: [
 		MaterialModule,
@@ -24,7 +26,8 @@ import { SpinnerComponent } from './spinner/spinner.component';
 		MapComponent,
 		SpinnerComponent,
 		CardComponent,
-    	DeckComponent
+    	DeckComponent,
+		RatingComponent
 	]
 })
 export class SharedModule { }
