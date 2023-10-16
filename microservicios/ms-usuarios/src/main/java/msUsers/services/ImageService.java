@@ -1,6 +1,7 @@
 package msUsers.services;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -89,5 +90,11 @@ public class ImageService {
             log.error("<< Error al guardar la imagen en Amazon S3: {}", e.getMessage());
             return null;
         }
+    }
+
+    public String getImage(String imgUUID){
+        GeneratePresignedUrlRequest urlRequest = new GeneratePresignedUrlRequest(bucketName, folderNameImages + imgUUID);
+        urlRequest.addRequestParameter("response-content-disposition", "inline");
+        return amazonS3Client.generatePresignedUrl(urlRequest).toString();
     }
 }
