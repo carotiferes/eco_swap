@@ -1,7 +1,27 @@
 <app-header title="Notificaciones"></app-header>
 
 <div id="main-notificaciones" class="app-main-div">
-	<mat-list>
+	<mat-nav-list>
+		<ng-container *ngFor="let item of paginatedNotifications; let even = even; let odd = odd">
+			<mat-list-item [ngClass]="{ 'even-row': even, 'odd-row': odd }" (mouseenter)="hoveredItem = item"
+				(mouseleave)="hoveredItem = null" (click)="access(item)">
+				<div class="item-content">
+					<div>
+						<h4>{{item.name}}</h4>
+						<p>{{item.descrip}}</p>
+					</div>
+					<div>
+						<mat-icon>open_in_new</mat-icon>
+					</div>
+				</div>
+			</mat-list-item>
+		</ng-container>
+	</mat-nav-list>
+	<mat-paginator [pageSizeOptions]="[6, 12, 24]" [pageSize]="pageSize" [showFirstLastButtons]="true"
+		[length]="notifications.length" #paginator (page)="changePage($event)" style="border-radius: 15px;"
+		*ngIf="notifications.length > 0">
+	</mat-paginator>
+	<!-- <mat-list>
 		<mat-list-item>
 		  <span matListItemTitle>Title</span>
 		  <span matListItemLine>Second line</span>
@@ -15,7 +35,7 @@
 		  <span matListItemTitle>Title</span>
 		  Second line
 		</mat-list-item>
-	  </mat-list>
+	  </mat-list> -->
 	<!-- <mat-list class="example-list-wrapping">
 		<mat-list-item lines="3">
 		  <span matListItemTitle>Title</span>

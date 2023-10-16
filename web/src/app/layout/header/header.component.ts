@@ -24,6 +24,8 @@ export class HeaderComponent {
 	isUserLoggedIn: boolean;
 	profileType: 'particular' | 'fundacion';
 
+	notifications: number = 0;
+
 	constructor(private router: Router, private auth: AuthService, private usuarioService: UsuarioService){
 		this.mainTabs = menuData.filter((item: MenuModel) => item.type == 'pages')
 		this.personalTabs = menuData.filter((item: MenuModel) => item.type == 'personal')
@@ -37,6 +39,8 @@ export class HeaderComponent {
 				next: (res: any) => {
 					this.userData = res;
 					//console.log(this.userData);
+
+					// GET NOTIFICATIONS
 				}
 			})
 		}
