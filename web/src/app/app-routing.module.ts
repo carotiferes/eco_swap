@@ -70,6 +70,11 @@ const routes: Routes = [
 		loadChildren: () => import('./pages/registro/registro.module').then(m => m.RegistroModule),
 		canActivate: [AuthGuard]
 	},
+	{
+		path: 'notificaciones',
+		loadChildren: () => import('./pages/notificaciones/notificaciones.module').then(m => m.NotificacionesModule),
+		canActivate: [AuthGuard]
+	},
 	{ path: '**', component: NotFoundComponent },
 ];
 
