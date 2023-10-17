@@ -43,6 +43,7 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3
 	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.562'
 
+	implementation 'com.google.code.gson:gson:2.10.1'
 }
 
 tasks.named('test') {
