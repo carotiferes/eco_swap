@@ -12,7 +12,7 @@ public class UsuarioDTO {
         private String username;
         private String telefono;
         private String email;
-        private Integer puntaje;
+        private float puntaje;
         private boolean isSwapper;
         private Integer intentos;
         private boolean bloqueado;
