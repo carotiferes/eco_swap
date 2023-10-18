@@ -14,6 +14,7 @@ import { ImagesModalComponent } from './images-modal/images-modal.component';
 import { CredencialesMpModalComponent } from './credenciales-mp-modal/credenciales-mp-modal.component';
 import { ChangePasswordModalComponent } from './change-password-modal/change-password-modal.component';
 import { OpinarModalComponent } from './opinar-modal/opinar-modal.component';
+import { OpinionesService } from 'src/app/services/opiniones.service';
 
 @Component({
 	selector: 'app-perfil',
@@ -35,31 +36,29 @@ export class PerfilComponent {
 		telefono: string,
 		puntaje: number,
 		direccion?: DireccionModel,
-		opiniones?: OpinionModel[],
-		paginatedOpiniones?: OpinionModel[],
 		accessToken?: string,
 		publicKey?: string
 	}
 
 	pageSize = 3;
 
+	opiniones: OpinionModel[] = [];
+	paginatedOpiniones: OpinionModel[] = [];
+
 	constructor(private auth: AuthService, private usuarioService: UsuarioService,
 		public router: Router, private particularService: ParticularesService,
-		public dialog: MatDialog) {
+		public dialog: MatDialog, private opinionesService: OpinionesService) {
 		const url = router.url;
 		console.log(url);
-		if (url != '/mi-perfil') { // PERFIL DE OTRO USUARIO
-			const id_user = url.split('/')[2]
-			if(id_user != this.auth.getUserID()) {
-				this.myProfile = false;
-				this.getUserInformation(id_user);
-			} else {
-				this.userData = { isSwapper: auth.isUserSwapper(), id: this.auth.getUserID() }
-				this.getUserInformation(this.userData.id);
-			}
+		const id_user = url.split('/')[2]
+		if (url != '/mi-perfil' && id_user != this.auth.getUserID()) { // PERFIL DE OTRO USUARIO
+			this.myProfile = false;
+			this.getUserInformation(id_user);
+			this.getOpiniones(id_user)
 		} else { // MI PERFIL
 			this.userData = { isSwapper: auth.isUserSwapper(), id: this.auth.getUserID() }
 			this.getUserInformation(this.userData.id);
+			this.getMyOpiniones()
 		}
 	}
 
@@ -89,16 +88,8 @@ export class PerfilComponent {
 			email: this.user.email,
 			telefono: this.user.telefono,
 			puntaje: this.user.puntaje,
-			direccion: this.user.fundacionDTO.direcciones[0],
-			opiniones: [{
-				idOpinion: 1,
-				descripcion: 'Responsable',
-				valoracion: 4,
-				usuarioOpina: 103,
-				fechaOpinion: new Date('2023-03-24')
-			}]
+			direccion: this.user.fundacionDTO.direcciones[0]
 		}
-		this.userToShow?.paginatedOpiniones?.slice(0, this.pageSize);
 	}
 
 	configureSwapper(usuario: UsuarioModel) {
@@ -113,25 +104,39 @@ export class PerfilComponent {
 					telefono: particular.usuarioDTO.telefono,
 					puntaje: particular.usuarioDTO.puntaje,
 					direccion: particular.direcciones[0],
-					opiniones: [{
-						idOpinion: 1,
-						descripcion: 'Responsable',
-						valoracion: 4,
-						usuarioOpina: 103,
-						fechaOpinion: new Date('2023-03-24')
-					}],
 					accessToken: particular.accessToken,
 					publicKey: particular.publicKey
 				}
-				this.userToShow?.paginatedOpiniones?.slice(0, this.pageSize);
 			}
+		})
+	}
+
+	getOpiniones(id_user: string) {
+		this.opinionesService.getOpinionesByUserID(Number(id_user)).subscribe({
+			next: (res: any) => {
+				this.opiniones = res;
+				this.paginatedOpiniones = this.opiniones.slice(0, this.pageSize);
+			},
+			error: (error: any) => console.log(error)
+		})
+	}
+
+	getMyOpiniones() {
+		this.opinionesService.getMyOpiniones().subscribe({
+			next: (res: any) => {
+				console.log(res);
+				
+				this.opiniones = res;
+				this.paginatedOpiniones = this.opiniones.slice(0, this.pageSize);
+			},
+			error: (error: any) => console.log(error)
 		})
 	}
 
 	changePage(event: any) {
 		const startIndex = event.pageIndex * event.pageSize;
 		const endIndex = startIndex + event.pageSize;
-		this.userToShow!.paginatedOpiniones = this.userToShow?.paginatedOpiniones?.slice(startIndex, endIndex);
+		this.paginatedOpiniones = this.opiniones.slice(startIndex, endIndex);
 	}
 
 	showMap(direccion: DireccionModel) {
@@ -215,11 +220,19 @@ export class PerfilComponent {
 			height: '100%',
 			width: '100%',
 			panelClass: 'full-screen-modal',
-			data: {user: this.userToShow}
+			data: {usuario: this.user, user: this.userToShow}
 		});
 		dialogRef.afterClosed().subscribe((result) => {
 			console.log('closed', result);
-			
+			if(result) {
+				const url = this.router.url;
+				const id_user = url.split('/')[2]
+				if (url != '/mi-perfil' && id_user != this.auth.getUserID()) { // PERFIL DE OTRO USUARIO
+					this.getOpiniones(id_user)
+				} else { // MI PERFIL
+					this.getMyOpiniones()
+				}
+			}
 		})
 	}
 }

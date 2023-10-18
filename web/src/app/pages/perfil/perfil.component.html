@@ -58,7 +58,7 @@
 					<div class="title">
 						<h3>Puntaje:</h3>
 						<app-rating [puntuacion]="userToShow.puntaje" [remSize]="1.3"></app-rating>
-						<div>({{userToShow.opiniones?.length || 0}} {{userToShow.opiniones?.length == 1 ? 'opinión' :
+						<div>({{opiniones.length || 0}} {{opiniones.length == 1 ? 'opinión' :
 							'opiniones'}})</div>
 					</div>
 					<div class="div-opinar" *ngIf="!myProfile">
@@ -68,14 +68,14 @@
 				<div class="opiniones">
 					<h3>Opiniones:</h3>
 					<div>
-						<mat-card *ngFor="let opinion of userToShow.opiniones" class="card-opinion">
+						<mat-card *ngFor="let opinion of paginatedOpiniones" class="card-opinion">
 							<div class="valoracion">
 								<h4>Valoración:</h4>
 								<div style="margin: 0 10px; display: flex; align-items: center;">
 									<app-rating [puntuacion]="opinion.valoracion"></app-rating>
 								</div>
 								<div>
-									({{opinion.usuarioOpina}} - {{opinion.fechaOpinion | date : 'dd/MM/yyyy'}})
+									({{opinion.usuarioOpina.username}} - {{opinion.fechaHoraOpinion | date : 'dd/MM/yyyy'}})
 								</div>
 							</div>
 							<!-- <div class="usuario-opinion">
@@ -83,14 +83,14 @@
 							<div>{{opinion.usuarioOpina}}</div>
 						</div> -->
 							<div class="descripcion">
-								<h4>Descripción:</h4>
+								<!-- <h4>Descripción:</h4> -->
 								<div>{{opinion.descripcion}}</div>
 							</div>
 						</mat-card>
 						<mat-paginator [pageSizeOptions]="[5, 10, 25]" [pageSize]="pageSize"
-							[showFirstLastButtons]="true" [length]="userToShow.opiniones.length" #paginator
+							[showFirstLastButtons]="true" [length]="opiniones.length" #paginator
 							(page)="changePage($event)" style="border-radius: 15px;"
-							*ngIf="userToShow.opiniones && userToShow.opiniones.length > 0"></mat-paginator>
+							*ngIf="opiniones.length > 0"></mat-paginator>
 					</div>
 				</div>
 			</mat-card-content>
