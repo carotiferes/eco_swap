@@ -228,8 +228,10 @@ export class PerfilComponent {
 				const url = this.router.url;
 				const id_user = url.split('/')[2]
 				if (url != '/mi-perfil' && id_user != this.auth.getUserID()) { // PERFIL DE OTRO USUARIO
+					const id_user = url.split('/')[2]
+					this.getUserInformation(id_user);		
 					this.getOpiniones(id_user)
-				} else { // MI PERFIL
+				} else { // MI PERFIL --> nunca deberia ser este caso porq no puedo opinar sobre mí mismo
 					this.getMyOpiniones()
 				}
 			}

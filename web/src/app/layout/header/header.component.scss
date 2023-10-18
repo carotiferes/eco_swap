@@ -95,6 +95,13 @@ mat-toolbar-row div {
 			.nav-link {
 				cursor: pointer;
 			}
+
+			.name {
+				color: #007707 !important;
+				letter-spacing: 1px;
+				font-size: 18px;
+				text-wrap: balance;
+			}
 		}
 	}
 }
