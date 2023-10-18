@@ -33,7 +33,7 @@
 						<mat-label>Valor <b>mínimo</b> de trueque</mat-label>
 						<input matInput formControlName="valorMinimo" type="number" [min]="0"
 						[max]="publicacionForm.get('valorMaximo')!.value || null"
-						(focus)="focusMin = true" (focusout)="focusMin = false">
+						(focus)="focusMin = true" (focusout)="!publicacionForm.get('valorMinimo')!.value ? focusMin = false : ''" >
 						<span matTextPrefix *ngIf="focusMin">$&nbsp;</span>
 						<mat-error *ngIf="publicacionForm.get('valorMinimo')!.hasError('required')">
 							Campo obligatorio
@@ -52,7 +52,7 @@
 						<mat-label>Valor <b>máximo</b> de trueque</mat-label>
 						<input matInput formControlName="valorMaximo" type="number"
 						[min]="publicacionForm.get('valorMinimo')!.value || 0"
-						(focus)="focusMax = true" (focusout)="focusMax = false">
+						(focus)="focusMax = true" (focusout)="!publicacionForm.get('valorMaximo')!.value ? focusMax = false : ''">
 						<span matTextPrefix *ngIf="focusMax">$&nbsp;</span>
 						<mat-error *ngIf="publicacionForm.get('valorMaximo')!.hasError('required')">
 							Campo obligatorio
@@ -63,16 +63,16 @@
 					</mat-form-field>
 				</div>
 
-				<div class="form-col">
-					<mat-checkbox formControlName="finalidadVenta" (change)="allowVenta($event)">
+				<div class="form-col" style="flex-direction: row;">
+					<mat-checkbox formControlName="finalidadVenta" (change)="allowVenta($event)" [disabled]="!hasMPCredentials">
 						<label class="venta-label">
 							Acepta Venta
-							<mat-icon class="material-icons-outlined" style="color: var(--grey-text); margin: 5px;"
-								matTooltip="Si chequeás este campo, además de propuestas de intercambio, te pueden llegar propuestas de compra de tu producto.">
-									info
-							</mat-icon>
 						</label>
 					</mat-checkbox>
+					<mat-icon class="material-icons-outlined" style="color: var(--grey-text); margin: 5px;"
+						matTooltip="Si chequeás este campo, además de propuestas de intercambio, te pueden llegar propuestas de compra de tu producto. Para hacerlo, es necesario que configures tus credenciales de Mercado Pago desde tu perfil.">
+							info
+					</mat-icon>
 					<mat-form-field hidden >
 						<!-- <mat-label>Acepta Venta</mat-label> -->
 						<input matInput type="text">
@@ -86,7 +86,7 @@
 					<mat-form-field *ngIf="publicacionForm.get('finalidadVenta')?.value">
 						<mat-label>Precio de Venta</mat-label>
 						<input matInput formControlName="precioVenta" type="text"
-						(focus)="focusVenta = true" (focusout)="focusVenta = false">
+						(focus)="focusVenta = true" (focusout)="!publicacionForm.get('precioVenta')!.value ? focusVenta = false : ''">
 						<span matTextPrefix *ngIf="focusVenta">$&nbsp;</span>
 						<mat-error *ngIf="publicacionForm.get('precioVenta')!.hasError('required')">
 							Campo obligatorio

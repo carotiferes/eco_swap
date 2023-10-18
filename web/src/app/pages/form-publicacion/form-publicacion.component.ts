@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth.service';
 import { TruequesService } from 'src/app/services/trueques.service';
+import { UsuarioService } from 'src/app/services/usuario.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -22,19 +24,28 @@ export class FormPublicacionComponent {
 	focusMax: boolean = false;
 	focusVenta: boolean = false;
 
-	constructor(private fb: FormBuilder, private truequeService: TruequesService, private router: Router){
+	hasMPCredentials: boolean = false;
+
+	constructor(private fb: FormBuilder, private truequeService: TruequesService, private router: Router,
+		private auth: AuthService, private usuarioService: UsuarioService){
 		this.publicacionForm = fb.group({
 			titulo: ['', Validators.required],
 			descripcion: ['', Validators.required],
 			valorMinimo: ['', Validators.required],
 			valorMaximo: ['', Validators.required],
-			finalidadVenta: [false],
+			finalidadVenta: [{value: false, disabled: this.hasMPCredentials == false}],
 			precioVenta: [''],
 			caracteristicas: this.fb.array([]),
 			file: ['', Validators.required],
 			file_source: [''],
 			tipoProducto: [''],
 			idParticular: [''],
+		})
+
+		usuarioService.getUserByID(auth.getUserID()).subscribe({
+			next: (res: any) => {
+				this.hasMPCredentials = !!res && !!res.particularDTO && !!res.particularDTO.accessToken && !!res.particularDTO.publicKey
+			}
 		})
 	}
 

@@ -11,9 +11,9 @@ export class UsuarioService {
 
 	constructor(private backendService: HttpBackEnd) { }
 
-	getCurrentUser() { // TODO: CAMBIAR CUANDO TRAIGA X TKN
+	/* getCurrentUser() { // TODO: CAMBIAR CUANDO TRAIGA X TKN
 		return this.backendService.get(URL_NAME, 'ms-autenticacion/api/v1/usuario/103');
-	}
+	} */
 
 	getUserByID(id: number) {
 		return this.backendService.get(URL_NAME, 'ms-autenticacion/api/v1/usuario/'+id);
