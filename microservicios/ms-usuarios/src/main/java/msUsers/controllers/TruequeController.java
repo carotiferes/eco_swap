@@ -163,6 +163,8 @@ public class TruequeController {
                 );
 
                 query.where(predicate);
+                trueque.getPublicacionOrigen().setEstadoPublicacion(EstadoPublicacion.CERRADA);
+                trueque.getPublicacionPropuesta().setEstadoPublicacion(EstadoPublicacion.CERRADA);
 
                 List<Trueque> truequesRelacionados = entityManager.createQuery(query).getResultList();
                 truequesRelacionados.forEach(t -> t.setEstadoTrueque(EstadoTrueque.ANULADO));
