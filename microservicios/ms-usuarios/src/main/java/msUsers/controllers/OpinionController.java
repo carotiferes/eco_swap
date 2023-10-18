@@ -122,7 +122,12 @@ public class OpinionController {
         var entity = this.opinionesRepository.save(opinion);
 
         // Promediar el puntaje del usuarioOpinado
-        float nuevoPuntaje = (usuarioOpinado.getPuntaje() + requestNuevaOpinion.getValoracion()) / 2;
+        float nuevoPuntaje;
+        if(usuarioOpinado.getPuntaje() == 0)
+            nuevoPuntaje = requestNuevaOpinion.getValoracion();
+        else
+            nuevoPuntaje = (usuarioOpinado.getPuntaje() + requestNuevaOpinion.getValoracion()) / 2;
+
         usuarioOpinado.setPuntaje(Math.min(nuevoPuntaje, 5));
         this.usuariosRepository.save(usuarioOpinado);
 
