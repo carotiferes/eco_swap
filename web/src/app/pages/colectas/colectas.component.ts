@@ -1,21 +1,19 @@
-import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FundacionModel } from 'src/app/models/fundacion.model';
+import { DatePipe } from '@angular/common';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+import { CardModel } from 'src/app/models/card.model';
 import { ColectaModel } from 'src/app/models/colecta.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import { FundacionesService } from 'src/app/services/fundaciones.service';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 import { ProductosService } from 'src/app/services/productos.service';
-import Swal from 'sweetalert2';
 import { ShowErrorService } from 'src/app/services/show-error.service';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatChipInputEvent } from '@angular/material/chips';
-import { CardModel } from 'src/app/models/card.model';
-import { DatePipe } from '@angular/common';
+import Swal from 'sweetalert2';
 
 @Component({
 	selector: 'app-colectas',
@@ -43,8 +41,6 @@ export class ColectasComponent implements OnInit {
 	filteredLocalidades: Observable<string[]>;
 	localidades: string[] = [];
 	allLocalidades: string[] = [];
-
-	@ViewChild('localidadInput') localidadInput!: ElementRef<HTMLInputElement>;
 
 	constructor(private router: Router, private auth: AuthService,
 		private donacionesService: DonacionesService, private fundacionesService: FundacionesService,
@@ -241,8 +237,7 @@ export class ColectasComponent implements OnInit {
 
 	selected(event: MatAutocompleteSelectedEvent): void {
 		this.localidades.push(event.option.viewValue);
-		this.localidadInput.nativeElement.value = '';
-		this.formFiltros.controls['localidad'].setValue(null);
+		this.formFiltros.controls['localidad'].setValue('');
 	}
 
 	private _filterLocalidad(value: string): string[] {

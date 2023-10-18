@@ -18,10 +18,10 @@
 								<mat-form-field class="example-chip-list" appearance="outline">
 									<mat-label>Localidades</mat-label>
 									<mat-chip-grid #chipGrid aria-label="Localidad">
-										<mat-chip-row *ngFor="let localidad of localidades" (removed)="remove(localidad)">
+										<mat-chip-row *ngFor="let localidad of localidades" (removed)="remove(localidad)" [matTooltip]="localidad">
 											{{localidad}}
 											<button matChipRemove [attr.aria-label]="'eliminar ' + localidad">
-												<mat-icon>cancel</mat-icon>
+												<mat-icon style="height: 16px;">cancel</mat-icon>
 											</button>
 										</mat-chip-row>
 	
@@ -29,9 +29,8 @@
 											[matChipInputFor]="chipGrid" [matAutocomplete]="autoLocalidad" matInput
 											(matChipInputTokenEnd)="add($event)" />
 									</mat-chip-grid>
-									<mat-autocomplete #autoLocalidad="matAutocomplete" (optionSelected)="selected($event)">
-										<mat-option *ngFor="let localidad of filteredLocalidades | async"
-											[value]="localidad">
+									<mat-autocomplete #autoLocalidad="matAutocomplete" (optionSelected)="selected($event); localidadInput.value = ''">
+										<mat-option *ngFor="let localidad of filteredLocalidades | async" [value]="localidad">
 											{{localidad}}
 										</mat-option>
 									</mat-autocomplete>

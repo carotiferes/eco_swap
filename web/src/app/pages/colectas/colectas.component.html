@@ -36,10 +36,10 @@
 								<mat-form-field class="chip-list" appearance="outline">
 									<mat-label>Localidades</mat-label>
 									<mat-chip-grid #chipGrid aria-label="Localidad">
-										<mat-chip-row *ngFor="let localidad of localidades" (removed)="remove(localidad)">
+										<mat-chip-row *ngFor="let localidad of localidades" (removed)="remove(localidad)" [matTooltip]="localidad">
 											{{localidad}}
 											<button matChipRemove [attr.aria-label]="'eliminar ' + localidad">
-												<mat-icon>cancel</mat-icon>
+												<mat-icon style="height: 16px;">cancel</mat-icon>
 											</button>
 										</mat-chip-row>
 	
@@ -47,7 +47,7 @@
 											[matChipInputFor]="chipGrid" [matAutocomplete]="autoLocalidad" matInput
 											(matChipInputTokenEnd)="add($event)" />
 									</mat-chip-grid>
-									<mat-autocomplete #autoLocalidad="matAutocomplete" (optionSelected)="selected($event)">
+									<mat-autocomplete #autoLocalidad="matAutocomplete" (optionSelected)="selected($event); localidadInput.value = ''">
 										<mat-option *ngFor="let localidad of filteredLocalidades | async"
 											[value]="localidad">
 											{{localidad}}
@@ -72,40 +72,6 @@
 		<div *ngIf="colectasCardList.length==0" style="text-align: center;">No hay colectas para mostrar</div>
 		<app-deck *ngIf="colectasCardList.length > 0" [cardList]="colectasCardList" app="colectas"></app-deck>
 	</div>
-
-	<!-- <div class="row" *ngIf="!loading">
-		<app-spinner [loading]="loading"></app-spinner>
-		<div *ngIf="showColectas.length==0" style="text-align: center;">No hay colectas para mostrar</div>
-		<div><!- class="col-lg-6" --
-			<div class="card-deck row">
-				<div *ngFor="let colecta of paginatedColectas" class="col-xs-12 col-sm-6 col-lg-4">
-					<div class="card" (click)="goToColecta(colecta)">
-						<div class="img-div">
-							<img class="card-img"
-								[src]="colecta.imagen ? colecta.imagen : 'assets/perfiles/perfiles-24.jpg'">
-						</div>
-						<div class="card-body">
-							<h2 class="card-title">{{colecta.titulo}}</h2>
-						</div>
-						<div class="card-fundacion">
-							<img class="img-fundacion" src="assets/perfiles/perfiles-24.jpg">
-							<h4 style="margin: 0;">{{colecta.fundacionDTO.nombre}}</h4>
-							<div style="margin: 0 10px;display: flex;align-items: center;justify-content: center;">
-								<mat-icon *ngFor="let i of [].constructor(colecta.fundacionDTO.puntaje || 0)"
-									color="primary">star</mat-icon>
-								<mat-icon *ngFor="let i of [].constructor(5-(colecta.fundacionDTO.puntaje || 0))"
-									class="empty-star">star</mat-icon>
-							</div>
-						</div>
-					</div>
-				</div>
-				<mat-paginator [pageSizeOptions]="[3, 6, 12, 24]" [pageSize]="pageSize" [showFirstLastButtons]="true"
-					[length]="showColectas.length" #paginator (page)="changePage($event)" style="border-radius: 15px;"
-					*ngIf="showColectas.length > 0">
-				</mat-paginator>
-			</div>
-		</div>
-	</div> -->
 	<div class="floating-button-container" *ngIf="!userData.isSwapper">
 		<button mat-fab color="accent" aria-label="Agregar Colecta" (click)="addColecta()" matTooltip="Agregar Colecta"
 			matTooltipPosition="before">

@@ -1,8 +1,7 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { MatPaginator } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { Observable, map, startWith } from 'rxjs';
 import { CardModel } from 'src/app/models/card.model';
@@ -35,8 +34,6 @@ export class PublicacionesComponent {
 	allLocalidades: string[] = [];
 
 	publicacionesCardList: CardModel[] = []
-
-	@ViewChild('localidadInput') localidadInput!: ElementRef<HTMLInputElement>;
 
 	constructor(private router: Router, private auth: AuthService, private fb: FormBuilder,
 		private productosService: ProductosService, private showErrorService: ShowErrorService,
@@ -176,6 +173,7 @@ export class PublicacionesComponent {
 		}
 		event.chipInput!.clear();
 		this.formFiltros.controls['localidad'].setValue(null);
+		console.log('add',this.formFiltros.controls['localidad'].value);
 	}
 
 	remove(localidad: string): void {
@@ -185,8 +183,7 @@ export class PublicacionesComponent {
 
 	selected(event: MatAutocompleteSelectedEvent): void {
 		this.localidades.push(event.option.viewValue);
-		this.localidadInput.nativeElement.value = '';
-		this.formFiltros.controls['localidad'].setValue(null);
+		this.formFiltros.controls['localidad'].setValue('');
 	}
 
 	private _filterLocalidad(value: string): string[] {

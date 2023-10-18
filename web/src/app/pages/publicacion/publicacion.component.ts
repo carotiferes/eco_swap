@@ -1,16 +1,16 @@
-import { AfterViewInit, Component, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CardModel } from 'src/app/models/card.model';
 import { PublicacionModel } from 'src/app/models/publicacion.model';
+import { TruequeModel } from 'src/app/models/trueque.model';
 import { AuthService } from 'src/app/services/auth.service';
+import { ComprasService } from 'src/app/services/compras.service';
 import { ShowErrorService } from 'src/app/services/show-error.service';
 import { TruequesService } from 'src/app/services/trueques.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import Swal from 'sweetalert2';
 import { TrocarModalComponent } from './trocar-modal/trocar-modal.component';
-import { TruequeModel } from 'src/app/models/trueque.model';
-import { CardModel } from 'src/app/models/card.model';
-import { ComprasService } from 'src/app/services/compras.service';
 
 @Component({
 	selector: 'app-publicacion',
@@ -86,6 +86,9 @@ export class PublicacionComponent implements AfterViewInit {
 
 	getTrueques() {
 		this.loading = true;
+		this.truequesActivos.splice(0);
+		this.historialTrueques.splice(0);
+		this.truequeAceptado.splice(0);
 		this.truequeService.getTruequesFromPublicacion(this.publicacion.idPublicacion).subscribe({
 			next: (trueques: any) => {
 				//console.log('TRUEQUES', trueques);
@@ -207,9 +210,6 @@ export class PublicacionComponent implements AfterViewInit {
 	}
 
 	parsePublicaciones() {
-		this.truequesActivos.splice(0);
-		this.historialTrueques.splice(0);
-		this.truequeAceptado.splice(0);
 		for (const publicacion of this.publicacionesToShow) {
 			const item: CardModel = {
 				id: publicacion.idPublicacion,
