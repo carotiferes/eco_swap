@@ -101,6 +101,7 @@ public class ColectaController {
     }
 
     @GetMapping(path = "/colectas", produces = json)
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<ColectaDTO>> listColectas(@ModelAttribute RequestFilterColectas request) {
         log.info(">> Se realiza listado de donaciones con los parametros: {}", request);
 
@@ -144,6 +145,7 @@ public class ColectaController {
     }
 
     @GetMapping(path = "/colecta/{id_colecta}", produces = json)
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ColectaDTO> getColecta(@PathVariable("id_colecta") Long id) {
         final var colecta = this.colectasRepository.findById(id).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrado la colecta: " + id));
@@ -152,6 +154,7 @@ public class ColectaController {
     }
 
     @GetMapping(path = "/colecta", produces = json)
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<ColectaDTO>> getColectaPorIdFundacion() {
 
         final Usuario user = UsuarioContext.getUsuario();
@@ -174,6 +177,7 @@ public class ColectaController {
         return ResponseEntity.ok(colectasDTO);
     }
     @GetMapping(path = "/misColectas", produces = json)
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<ColectaDTO>> getMisColectas() {
 
         final Usuario user = UsuarioContext.getUsuario();

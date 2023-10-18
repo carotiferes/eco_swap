@@ -17,7 +17,7 @@ public class Opinion{
     private String descripcion;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_perfil", nullable = false)
+    @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuarioOpina;
 
     @OneToOne(cascade = CascadeType.ALL)

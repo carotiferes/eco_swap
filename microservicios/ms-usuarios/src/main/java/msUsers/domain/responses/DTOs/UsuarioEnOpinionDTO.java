@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class UsuarioDTO {
+public class UsuarioEnOpinionDTO {
 
     private long idUsuario;
     private String username;
@@ -17,5 +17,4 @@ public class UsuarioDTO {
     private Integer intentos;
     private boolean validado;
     private boolean bloqueado;
-    private List<OpinionDTO> opiniones;
 }

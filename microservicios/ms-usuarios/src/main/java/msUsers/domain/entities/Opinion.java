@@ -3,9 +3,13 @@ package msUsers.domain.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 import msUsers.domain.responses.DTOs.OpinionDTO;
 
+import java.time.LocalDateTime;
+
 @Entity
+@Data
 @Table(name = "Opiniones")
 public class Opinion{
     @Id
@@ -17,20 +21,25 @@ public class Opinion{
     @Size(max = 250)
     private String descripcion;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_perfil", nullable = false)
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "id_usuario_opina", nullable = false)
     private Usuario usuarioOpina;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "id_usuario_opinado", nullable = false)
     private Usuario usuarioOpinado;
 
-    // ToDo: ¿Las opiniones tendrán fecha?
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime fechaHoraOpinion;
 
     public OpinionDTO toDTO(){
         OpinionDTO opinionDTO = new OpinionDTO();
         opinionDTO.setIdOpinion(idOpinion);
         opinionDTO.setDescripcion(descripcion);
         opinionDTO.setValoracion(valoracion);
+        opinionDTO.setUsuarioOpina(usuarioOpina.toUsuarioEnOpinionDTO());
+        opinionDTO.setUsuarioOpinado(usuarioOpinado.toUsuarioEnOpinionDTO());
+        opinionDTO.setFechaHoraOpinion(fechaHoraOpinion);
         return opinionDTO;
     }
 }

@@ -57,7 +57,7 @@ public class Usuario {
     private String email;
 
     @Range(min = 0, max = 5)
-    private Integer puntaje;
+    private float puntaje;
 
     @NotNull
     private boolean isSwapper;
