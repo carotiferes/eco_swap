@@ -10,4 +10,5 @@ import java.util.List;
 public interface OrdenesRepository extends JpaRepositoryImplementation<OrdenDeEnvio, Long> {
 
     List<OrdenDeEnvio> findByIdUsuarioOrigen(Long idUsuarioOrigen);
+    List<OrdenDeEnvio> findByIdUsuarioDestino(Long idUsuarioDestino);
 }

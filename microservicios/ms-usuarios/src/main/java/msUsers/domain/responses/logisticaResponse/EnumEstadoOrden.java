@@ -1,8 +1,14 @@
-package msUsers.domain.responses.logisticaResponse.
+package msUsers.domain.responses.logisticaResponse;
 
 public enum EnumEstadoOrden {
-    A_PAGAR("A pagar"),
-    DESPACHO("Despachado"),
-    
 
+    Por_despachar("Por despachar"),
+    Enviado("Enviado"),
+    Entregado("Entregado"),
+    Cancelado("Cancelado");
+
+    private String estado;
+
+    EnumEstadoOrden(String despachado) {
+    }
 }

@@ -12,6 +12,8 @@ public class PostOrderRequest {
     private String titulo;
     private Long userIdDestino;
     private Long userIdOrigen;
+    private Long publicacionOColectaId;
+    private Boolean esPublicacion;
     private Integer cantidad;
     private ArrayList<Long> idDeItems;
     private float costoEnvio;

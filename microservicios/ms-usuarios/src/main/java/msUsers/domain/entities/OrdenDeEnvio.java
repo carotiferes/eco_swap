@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Table(name = "Ordenes")
 @Builder
@@ -38,6 +40,10 @@ public class OrdenDeEnvio {
     @NotNull
     private String dpto;
     @NotNull
+    private String barrio;
+    @NotNull
+    private String ciudad;
+    @NotNull
     private String codigoPostal;
     @NotNull
     private String nombreUserDestino;
@@ -45,11 +51,16 @@ public class OrdenDeEnvio {
     private String nombreUserOrigen;
     @NotNull
     private Integer cantidad;
-
     @NotNull
-    private String estado;
+    private String telefono;
     @NotNull
     private Long productoId;
+    @NotNull
+    private Long publicacionColectaId;
+    @NotNull
+    private Boolean esPublicacion;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<FechaEnvios> listaFechaEnvios;
 
 }
