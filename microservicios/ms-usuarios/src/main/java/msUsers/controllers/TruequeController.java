@@ -103,7 +103,8 @@ public class TruequeController {
                 criteriaBuilder.lessThanOrEqualTo(root.get("valorTruequeMin"), publicacion.getValorTruequeMax()),
                 criteriaBuilder.greaterThanOrEqualTo(root.get("valorTruequeMax"), publicacion.getValorTruequeMin()),
                 criteriaBuilder.notEqual(root.get("idPublicacion"),publicacion.getIdPublicacion()),
-                criteriaBuilder.notEqual(root.get("estadoPublicacion"), EstadoPublicacion.CERRADA)
+                criteriaBuilder.notEqual(root.get("estadoPublicacion"), EstadoPublicacion.CERRADA),
+                criteriaBuilder.equal(root.get("particular").get("idParticular"),particular.getIdParticular())
         );
 
         query.where(predicate);

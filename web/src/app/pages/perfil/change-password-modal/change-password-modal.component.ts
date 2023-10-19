@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import Swal from 'sweetalert2';
@@ -22,7 +23,7 @@ export class ChangePasswordModalComponent {
 	showError: boolean = false;
 
 	constructor(public dialogRef: MatDialogRef<ChangePasswordModalComponent>,
-		@Inject(MAT_DIALOG_DATA) public data: any, private fb: FormBuilder,
+		@Inject(MAT_DIALOG_DATA) public data: any, private fb: FormBuilder, private router: Router,
 		private usuarioService: UsuarioService, private auth: AuthService){
 			console.log(data);
 			this.passwordForm = fb.group({
@@ -51,8 +52,10 @@ export class ChangePasswordModalComponent {
 						console.log(res);
 						Swal.fire('¡Éxito!', 'Se cambió tu contraseña, ahora volvé a iniciar sesión', 'success').then(() => {
 							this.auth.logout()
+							this.router.navigate(['login'])
+							this.dialogRef.close()
 						})
-					}
+					}, error: () => this.loadingSave = false
 				})
 			} else this.dialogRef.close()
 		})

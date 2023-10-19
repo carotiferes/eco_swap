@@ -36,6 +36,7 @@ export class PublicacionComponent implements AfterViewInit {
 	truequesActivos: CardModel[] = [];
 
 	init: number = 0;
+	screenWidth: number;
 
 	constructor(private truequeService: TruequesService, private route: ActivatedRoute,
 		private showErrorService: ShowErrorService, private auth: AuthService,
@@ -53,6 +54,7 @@ export class PublicacionComponent implements AfterViewInit {
 			if(this.init != 0) this.ngAfterViewInit();
 			this.init++;
 		})
+		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 	}
 
 	ngAfterViewInit(): void {
@@ -89,6 +91,7 @@ export class PublicacionComponent implements AfterViewInit {
 		this.truequesActivos.splice(0);
 		this.historialTrueques.splice(0);
 		this.truequeAceptado.splice(0);
+		this.publicacionesToShow.splice(0);
 		this.truequeService.getTruequesFromPublicacion(this.publicacion.idPublicacion).subscribe({
 			next: (trueques: any) => {
 				//console.log('TRUEQUES', trueques);
@@ -100,7 +103,6 @@ export class PublicacionComponent implements AfterViewInit {
 						next: (res: any) => {
 							//console.log('PUBLICACIONES DEL USER', res);
 							// Publicaciones del usuario loggeado
-							this.publicacionesToShow = [];
 							const userPublicaciones = res;
 							for (const trueque of this.trueques) {
 								const commonItem = userPublicaciones.find((publicacion: PublicacionModel) =>
@@ -141,13 +143,30 @@ export class PublicacionComponent implements AfterViewInit {
 
 	intercambiar() {
 		if (this.auth.isUserLoggedIn) {
-			const dialogRef = this.dialog.open(TrocarModalComponent, {
-				data: {
-					publicacion: this.publicacion,
-				},
-				minWidth: 100,
-				maxHeight: '90vh'
-			});
+			let dialogConfig: any;
+			if(this.screenWidth < 576) {
+				dialogConfig = {
+					data: {
+						publicacion: this.publicacion,
+					},
+					width: '70vw',
+					height: '80vh',
+					position: {
+						top: '50vh',
+						left: '50vw'
+					},
+					panelClass:'makeItMiddle'
+				}
+			} else {
+				dialogConfig = {
+					data: {
+						publicacion: this.publicacion,
+					},
+					width: '80vw',
+					height: '85vh',
+				}
+			}
+			const dialogRef = this.dialog.open(TrocarModalComponent, dialogConfig);
 
 			dialogRef.afterClosed().subscribe((result: any) => {
 				console.log('result trocar', result);
@@ -210,6 +229,9 @@ export class PublicacionComponent implements AfterViewInit {
 	}
 
 	parsePublicaciones() {
+		this.truequesActivos.splice(0);
+		this.historialTrueques.splice(0);
+		this.truequeAceptado.splice(0);
 		for (const publicacion of this.publicacionesToShow) {
 			const item: CardModel = {
 				id: publicacion.idPublicacion,

@@ -46,7 +46,7 @@ import java.util.Optional;
 @RestController
 @Slf4j
 @Validated
-@RequestMapping("/ms-transacciones/api")
+@RequestMapping("/ms-users/api")
 public class MercadoPagoController {
 
     @Autowired
@@ -106,7 +106,7 @@ public class MercadoPagoController {
             PreferenceRequest request = PreferenceRequest.builder()
                     .items(items)
                     .externalReference(String.valueOf(entity.getIdCompra()))
-                    .notificationUrl("https://93ee-2803-9800-9036-b2f9-107a-618a-fa45-dc5a.ngrok.io/ms-transacciones/api/webhook") // Esto cambia cada vez que use ngrok
+                    .notificationUrl("https://www.ecoswap.com.ar/ms-users/api/webhook") // Esto cambia cada vez que use ngrok
                     .build();
 
             Preference preference = client.create(request);

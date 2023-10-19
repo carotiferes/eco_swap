@@ -111,7 +111,7 @@ public class ColectaController {
         Predicate predicate = cb.conjunction();
 
         // Vigencia de colectas
-        Predicate datePredicate = cb.and(cb.lessThanOrEqualTo(from.get("fechaInicio"), LocalDate.now()));
+        Predicate datePredicate = cb.and(cb.greaterThanOrEqualTo(from.get("fechaFin"), LocalDate.now()));
         predicate = cb.and(predicate, datePredicate);
 
         if (request.getIdFundacion() != null) {

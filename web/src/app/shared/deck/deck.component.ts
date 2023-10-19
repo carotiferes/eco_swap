@@ -11,6 +11,7 @@ export class DeckComponent {
 	@Input() cardList: CardModel[] = [];
 	@Input() app: 'colectas' | 'donaciones' | 'publicaciones' = 'colectas';
 	@Input() fullScreenWidth: boolean = false;
+	@Input() smallWidth: boolean = false;
 
 	@Output() statusChanged = new EventEmitter<any>();
 	@Output() cardSelected = new EventEmitter<any>();
@@ -19,10 +20,12 @@ export class DeckComponent {
 
 	@ViewChild(MatPaginator) paginator!: MatPaginator;
 	@Input() pageSize = 4;
+	@Input() fixedPageSize?: number;
 
 	ngOnChanges(changes: any): void {
 		//console.log('change', this.cardList);
 		if(this.pageSize == 4) this.pageSize = this.fullScreenWidth ? 3 : 4;
+		if(this.fixedPageSize) this.pageSize = this.fixedPageSize;
 		this.paginatedCardList = this.cardList.slice(0, this.pageSize);
 	}
 
@@ -37,6 +40,7 @@ export class DeckComponent {
 	}
 
 	cardWasSelected(event: any){
+		this.cardList.map(item => { if(item != event) item.isSelected = false })
 		this.cardSelected.emit(event)
 	}
 }

@@ -67,7 +67,7 @@ public class OpinionController {
         Root<Opinion> from = query.from(Opinion.class);
         Predicate predicate = cb.conjunction();
 
-        Join<Opinion, Usuario> join = from.join("usuarioOpina");
+        Join<Opinion, Usuario> join = from.join("usuarioOpinado");
         predicate = cb.and(predicate, cb.equal(join.get("idUsuario"), particular.getIdParticular()));
 
         query.where(predicate);

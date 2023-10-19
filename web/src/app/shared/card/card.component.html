@@ -1,4 +1,4 @@
-<div class="card" (click)="clicked(cardData)" *ngIf="cardData" [class.selected-card]="isSelected"
+<div class="card" (click)="clicked(cardData)" *ngIf="cardData" [class.selected-card]="cardData.isSelected"
 	[ngClass]="app == 'publicaciones' && cardData.buttons.length == 0 ? 'small' : 'big'">
 	<mat-chip class="chip-localidad" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'">
 		<span>

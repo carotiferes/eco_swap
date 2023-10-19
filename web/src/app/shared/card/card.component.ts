@@ -21,8 +21,6 @@ export class CardComponent {
 	@Output() statusChanged = new EventEmitter<any>();
 	@Output() cardSelected = new EventEmitter<any>();
 
-	isSelected: boolean = false;
-
 	iconMap: { [key: string]: string } = {
 		'APROBADO': 'verified', 'APROBADA': 'verified',
 		'RECIBIDO': 'add_task', 'RECIBIDA': 'add_task',
@@ -42,8 +40,8 @@ export class CardComponent {
 	clicked(card: CardModel) {
 		switch (card.action) {
 			case 'select':
-				this.isSelected = true;
 				this.cardSelected.emit(card.id);
+				if(this.cardData) this.cardData.isSelected = true;
 				break;
 			case 'detail':
 				this.showDetail(card)

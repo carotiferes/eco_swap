@@ -85,7 +85,7 @@
 				<div class="form-col">
 					<mat-form-field *ngIf="publicacionForm.get('finalidadVenta')?.value">
 						<mat-label>Precio de Venta</mat-label>
-						<input matInput formControlName="precioVenta" type="text"
+						<input matInput formControlName="precioVenta" type="number"
 						(focus)="focusVenta = true" (focusout)="!publicacionForm.get('precioVenta')!.value ? focusVenta = false : ''">
 						<span matTextPrefix *ngIf="focusVenta">$&nbsp;</span>
 						<mat-error *ngIf="publicacionForm.get('precioVenta')!.hasError('required')">

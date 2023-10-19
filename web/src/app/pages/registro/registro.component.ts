@@ -155,7 +155,7 @@ export class RegistroComponent {
 					this.direccionForm.patchValue({
 						altura: direccion.altura,
 						piso: direccion.piso,
-						departamento: direccion.departamento,
+						departamento: direccion.dpto,
 					})
 					this.direccionForm.enable();
 				}).catch(error => console.error(error));

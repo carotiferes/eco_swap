@@ -24,4 +24,5 @@ export interface CardModel {
 	disabled?: boolean;
 	idAuxiliar?: number;
 	codigo?: string;
+	isSelected?: boolean;
 }

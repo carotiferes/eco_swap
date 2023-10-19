@@ -21,6 +21,7 @@ export class TrocarModalComponent {
 	cardSelected?: number;
 	publicacionesCardList: CardModel[] = [];
 	cardPublicacionOrigen: CardModel;
+	screenWidth: number;
 
 	constructor(@Inject(MAT_DIALOG_DATA) public data: any, private truequeService: TruequesService,
 	public dialogRef: MatDialogRef<TrocarModalComponent>){
@@ -43,6 +44,7 @@ export class TrocarModalComponent {
 			estado: this.publicacionOrigen.estadoTrueque,
 		}
 		this.getMisPublicaciones()
+		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 	}
 
 	getMisPublicaciones(){
