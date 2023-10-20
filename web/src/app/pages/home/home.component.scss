@@ -4,12 +4,90 @@
 	}
 }
 
+
+	.circle-section {
+		display: flex;
+		justify-content: space-around;
+		flex-wrap: wrap;
+		margin: 5% 2%;
+
+
+		.circle {
+			
+			color: #fff;
+			border-radius: 50%;
+			text-align: center;
+			padding: 20px;
+			margin: 10px;
+			transition: transform 0.2s;
+			display: flex;
+			align-items: center;
+    		justify-content: center;
+
+			&:hover {
+				transform: scale(1.1);
+				/* Enlarge the circle on hover */
+			}
+
+			&.c-aux {
+				width: 100px;
+				height: 100px;
+				background-color: var(--primary-color);
+			}
+
+			&.c1 {
+				width: 400px;
+				height: 400px;
+				background-color: var(--trueques-dark);
+				cursor: default;
+			}
+
+			&.c2 {
+				width: 310px;
+				height: 310px;
+				background-color: var(--secondary-color);
+				cursor: pointer;
+			}
+
+			&.c3 {
+				width: 330px;
+				height: 330px;
+				background-color: var(--primary-color);
+				cursor: pointer;
+			}
+		
+			&.c4 {
+				width: 400px;
+				height: 400px;
+				background-color: var(--donaciones-dark);
+				cursor: default;
+			}
+
+			&.c5 {
+				width: 220px;
+				height: 220px;
+				background-color: var(--secondary-color);
+				cursor: default;
+			}
+
+			h3 {
+				font-size: 18px;
+				margin: 0;
+			}
+		
+			p {
+				font-size: 14px;
+			}
+		}
+		
+	}
+
 .info-bar {
 	background-color: #ddbdef;
-    height: 100px;
-    display: flex;
-    justify-content: space-evenly;
-    margin: 20px 0 !important;
+	height: 100px;
+	display: flex;
+	justify-content: space-evenly;
+	margin: 20px 0 !important;
 
 	.info-div {
 		display: flex;
@@ -45,9 +123,11 @@
 				object-fit: cover;
 				margin: 0 auto;
 				border-radius: 15px;
+				transition: transform 0.2s;
 
 				&:hover {
 					cursor: pointer;
+					transform: scale(1.1);
 				}
 			}
 		}
