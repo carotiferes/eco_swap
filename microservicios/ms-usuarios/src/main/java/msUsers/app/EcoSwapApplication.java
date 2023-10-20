@@ -18,7 +18,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableJpaRepositories("msUsers.domain.repositories")
 public class EcoSwapApplication {
 	public static void main(String[] args) {
-
 		SpringApplication.run(EcoSwapApplication.class, args);
 	}
 }
