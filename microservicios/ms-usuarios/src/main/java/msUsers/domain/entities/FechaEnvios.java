@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import msUsers.domain.responses.logisticaResponse.EnumEstadoOrden;
 
 @Entity
 @Table(name = "FechaEnvios")
@@ -16,6 +17,6 @@ public class FechaEnvios {
     private long idOrden;
     @NotNull
     private String fechaEnvio;
-    @NotNull
-    private String estdado;
+    @Enumerated(EnumType.STRING)
+    private EnumEstadoOrden estado;
 }

@@ -16,6 +16,7 @@ import msUsers.domain.requests.logistica.PostOrderRequest;
 import msUsers.domain.requests.logistica.PutOrderRequest;
 import msUsers.domain.responses.ResponseShippingOptions;
 import msUsers.domain.responses.logistica.resultResponse.ResultShippingOptions;
+import msUsers.domain.responses.logisticaResponse.EnumEstadoOrden;
 import msUsers.domain.responses.logisticaResponse.ResponseFechasEnvio;
 import msUsers.domain.responses.logisticaResponse.ResponseOrdenDeEnvio;
 import org.springframework.beans.factory.annotation.Value;
@@ -138,8 +139,8 @@ public class LogisticaService {
 
         List<FechaEnvios> listadoFechasEnvios = orderAEnviar.getListaFechaEnvios();
         FechaEnvios ultimoEstado = listadoFechasEnvios.get(listadoFechasEnvios.isEmpty()?0:listadoFechasEnvios.size()-1);
-        log.info(">> Cambio de estado de orden {} desde actual {} al nuevo {}", ordenId, ultimoEstado.getEstdado(), putOrderRequest.getNuevoEstado());
-        if(this.cancelarEnvio(putOrderRequest.getNuevoEstado(), ultimoEstado.getEstdado())) {
+        log.info(">> Cambio de estado de orden {} desde actual {} al nuevo {}", ordenId, ultimoEstado.getEstado().name(), putOrderRequest.getNuevoEstado());
+        if(this.cancelarEnvio(putOrderRequest.getNuevoEstado(), ultimoEstado.getEstado().name())) {
             //QUITAR LO RECIBIDO DEL PRODUCTO
             Producto producto = productosRepository.findById(orderAEnviar.getProductoId()).get();
             producto.setCantidadRecibida(producto.getCantidadRecibida()- orderAEnviar.getCantidad());
@@ -165,7 +166,7 @@ public class LogisticaService {
 
         FechaEnvios nuevaFechaEnvio = FechaEnvios.builder()
                 .fechaEnvio(formattedDate)
-                .estdado(putOrderRequest.getNuevoEstado())
+                .estado(EnumEstadoOrden.valueOf(putOrderRequest.getNuevoEstado()))
                 .build();
 
         List<FechaEnvios> listadoFechasEnviosNuevo = orderAEnviar.getListaFechaEnvios();
@@ -265,7 +266,7 @@ public class LogisticaService {
                         .stream()
                         .map(x-> ResponseFechasEnvio.builder()
                                 .fecha(x.getFechaEnvio())
-                                .estado(x.getEstdado())
+                                .estado(x.getEstado().name())
                                 .build()
                             )
                             .collect(Collectors.toList()
@@ -443,7 +444,7 @@ public class LogisticaService {
                 .precioEnvio(postOrderRequest.getCostoEnvio())
                 .cantidad(postOrderRequest.getCantidad())
                 .listaFechaEnvios(List.of(FechaEnvios.builder()
-                                .estdado(EstadoOrdenEnum.EN_ESPERA.name())
+                                .estado(EnumEstadoOrden.POR_DESPACHAR)
                                 .fechaEnvio(formattedDate)
                         .build()))
                 .publicacionColectaId(postOrderRequest.getPublicacionOColectaId())
