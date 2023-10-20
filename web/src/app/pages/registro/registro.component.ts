@@ -142,20 +142,20 @@ export class RegistroComponent {
 	}
 
 	setAddress(direccion: any) {
-		const apiUrl = 'https://apis.datos.gob.ar/georef/api/localidades?orden=id&provincia=02&exacto=true&nombre=' + direccion.localidad
+		const apiUrl = 'https://apis.datos.gob.ar/georef/api/localidades?orden=id&provincia=02&exacto=true&nombre=' + encodeURIComponent(direccion.localidad)
 		fetch(apiUrl).then(response => response.json()).then(data => {
 			if (data.cantidad == 1) {
 				this.direccionForm.controls['localidad'].setValue(data.localidades[0]);
 				this.localidades = data.localidades;
 				const locInput = this.direccionForm.controls['localidad'].value.departamento.id;
-				const apiUrl = 'https://apis.datos.gob.ar/georef/api/calles?orden=id&provincia=02&exacto=true&departamento=' + locInput + '&nombre=' + direccion.calle
+				const apiUrl = 'https://apis.datos.gob.ar/georef/api/calles?orden=id&provincia=02&exacto=true&departamento=' + encodeURIComponent(locInput) + '&nombre=' + encodeURIComponent(direccion.calle)
 				fetch(apiUrl).then(response => response.json()).then(data => {
 					if (data.cantidad == 1) this.direccionForm.controls['calle'].setValue(data.calles[0]);
 					this.calles = data.calles;
 					this.direccionForm.patchValue({
 						altura: direccion.altura,
 						piso: direccion.piso,
-						departamento: direccion.departamento,
+						departamento: direccion.dpto,
 					})
 					this.direccionForm.enable();
 				}).catch(error => console.error(error));
@@ -231,7 +231,7 @@ export class RegistroComponent {
 						}
 					};
 
-					const apiUrl = `https://apis.datos.gob.ar/georef/api/direcciones?provincia=02&localidad=${this.direccionForm.controls['localidad'].value.nombre}&direccion=${encodeURIComponent(this.direccionForm.controls['calle'].value.nombre+this.direccionForm.controls['altura'].value)}`.replace(' ', '');
+					const apiUrl = `https://apis.datos.gob.ar/georef/api/direcciones?provincia=02&localidad=${encodeURIComponent(this.direccionForm.controls['localidad'].value.nombre)}&direccion=${encodeURIComponent(this.direccionForm.controls['calle'].value.nombre+this.direccionForm.controls['altura'].value)}`.replace(' ', '');
 					const validAddress = (await fetch(apiUrl).then(response => response.json())).cantidad;
 					if(!validAddress) {
 						console.log('not valid address');
@@ -431,7 +431,7 @@ export class RegistroComponent {
 						//console.log(res);
 						Swal.fire('Excelente!', 'Tu cuenta fue verificada, ya podes usar Ecoswap!', 'success')
 						this.closeSwal = false;
-						this.router.navigate(['/'])
+						this.router.navigate(['/login'])
 					},
 					error: (error) => {
 						console.log(error);
@@ -471,7 +471,7 @@ export class RegistroComponent {
 			this.direccionForm.controls['departamento'].disable()
 		}
 		else if (locValue.length >= 3) {
-			const apiUrl = 'https://apis.datos.gob.ar/georef/api/localidades?orden=id&provincia=02&nombre=' + locValue
+			const apiUrl = 'https://apis.datos.gob.ar/georef/api/localidades?orden=id&provincia=02&nombre=' + encodeURIComponent(locValue)
 			fetch(apiUrl).then(response => response.json()).then(data => {
 				this.localidades = data.localidades
 			}).catch(error => console.error(error));
@@ -488,7 +488,7 @@ export class RegistroComponent {
 			this.direccionForm.controls['departamento'].disable()
 		}
 		if (calleInput.length >= 3) {
-			const apiUrl = 'https://apis.datos.gob.ar/georef/api/calles?orden=id&provincia=02&departamento=' + locInput + '&nombre=' + calleInput
+			const apiUrl = 'https://apis.datos.gob.ar/georef/api/calles?orden=id&provincia=02&departamento=' + encodeURIComponent(locInput) + '&nombre=' + encodeURIComponent(calleInput)
 			fetch(apiUrl).then(response => response.json()).then(data => {
 				this.calles = data.calles
 			}).catch(error => console.error(error));

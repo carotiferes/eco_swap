@@ -21,6 +21,7 @@ import { CustomDateAdapter } from './pipes/date-adapter';
 import { CommonModule } from '@angular/common';
 import { CuitPipe } from './pipes/cuit.pipe';
 import { FooterModule } from './layout/footer/footer.module';
+import { NotificacionesComponent } from './pages/notificaciones/notificaciones.component';
 
 @NgModule({
 	declarations: [

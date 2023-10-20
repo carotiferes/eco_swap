@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "Opiniones")
 @Data
@@ -16,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Opinion{
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long idOpinion;
     @NotNull
     private float valoracion;
@@ -24,12 +26,15 @@ public class Opinion{
     @Size(max = 250)
     private String descripcion;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_perfil", nullable = false)
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "id_usuario_opina", nullable = false)
     private Usuario usuarioOpina;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "id_usuario_opinado", nullable = false)
     private Usuario usuarioOpinado;
 
-    // ToDo: ¿Las opiniones tendrán fecha?
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime fechaHoraOpinion;
+
 }

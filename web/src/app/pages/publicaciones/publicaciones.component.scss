@@ -1,39 +1,68 @@
 #main-publicaciones {
 	padding: 2%;
+	display: grid;
+	grid-template-columns: 1fr 5fr;
+	gap: 20px;
+
+	.accordion {
+		padding: 10px 0;
+
+		.accordion-item {
+			border-radius: 10px;
+			box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+
+			.accordion-header {
+				margin: 0;
+
+				.accordion-header-button {
+					height: 40px;
+					font-size: 14px;
+					padding: 10px;
+				}
+			}
+		}
+	}
 
 	#form-filtros {
-		/* display: grid;
-		grid-template-columns: 2fr 1fr 1.5fr;
-		justify-items: center;
-		align-items: baseline; */
 		display: flex;
-		justify-content: space-around;
-		flex-wrap: wrap;
+		flex-direction: column;
 		
 		mat-form-field {
 			max-width: 100%;
 			padding: 5px;
-
-			&.example-chip-list {
-				width: 55vh;
-			}
 		}
 
 		button {
-			margin: 2px;
-			//max-width: 40%;
+			margin: 0 5px;
+			height: 36px;
+			font-size: 12px;
 		}
 
-		
+		&.localidad-row {
+			grid-template-columns: 2fr 1fr !important;
+		}
 	}
-
-	
 
 	.floating-button-container {
 		position: fixed;
 		right: 25px;
 		bottom: 40px;
 		z-index: 999;
+	}
+}
+:host ::ng-deep .mdc-evolution-chip-set__chips {
+	max-width: 100%;
+}
+
+:host ::ng-deep .mat-mdc-standard-chip .mdc-evolution-chip__cell--primary,
+:host ::ng-deep .mat-mdc-standard-chip .mdc-evolution-chip__action--primary,
+:host ::ng-deep .mat-mdc-standard-chip .mat-mdc-chip-action-label {
+	overflow: hidden;
+}
+
+@media (min-width: 0px) and (max-width: 768px) {
+	#main-publicaciones {
+		grid-template-columns: 1fr !important;
 	}
 }
 

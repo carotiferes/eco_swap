@@ -54,6 +54,10 @@ public class Particular {
     @JsonManagedReference
     private List<Donacion> donaciones;
 
+    private String publicKey;
+
+    private String accessToken;
+
     public ParticularDTO toDTO() {
         ParticularDTO particularDTO = new ParticularDTO();
         particularDTO.setIdParticular(idParticular);

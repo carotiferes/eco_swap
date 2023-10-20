@@ -12,7 +12,7 @@
 
 
 <div class="grid-div">
-	<div class="row-div">
+	<div class="row-div" *ngIf="!userData.isLoggedIn || (userData.isLoggedIn && userData.isSwapper)">
 		<div class="col-div">
 			<img src="assets/home/publicaciones.jpg" (click)="goTo('publicaciones')">
 		</div>

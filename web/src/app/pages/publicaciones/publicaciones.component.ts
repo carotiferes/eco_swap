@@ -1,10 +1,10 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { MatPaginator } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { Observable, map, startWith } from 'rxjs';
+import { CardModel } from 'src/app/models/card.model';
 import { PublicacionModel } from 'src/app/models/publicacion.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { ComprasService } from 'src/app/services/compras.service';
@@ -27,17 +27,13 @@ export class PublicacionesComponent {
 	loading: boolean = false;
 
 	publicacionesToShow: PublicacionModel[] = [];
-	paginatedPublicaciones: PublicacionModel[] = [];
 	filtros: any;
-
-	@ViewChild(MatPaginator) paginator!: MatPaginator;
-	pageSize = 5;
 
 	filteredLocalidades: Observable<string[]>;
 	localidades: string[] = [];
 	allLocalidades: string[] = [];
 
-	@ViewChild('localidadInput') localidadInput!: ElementRef<HTMLInputElement>;
+	publicacionesCardList: CardModel[] = []
 
 	constructor(private router: Router, private auth: AuthService, private fb: FormBuilder,
 		private productosService: ProductosService, private showErrorService: ShowErrorService,
@@ -82,15 +78,8 @@ export class PublicacionesComponent {
 
 	getTiposProductos() {
 		this.productosService.getTiposProductos().subscribe({
-			next: (v: any) => {
-				//console.log('productos', v);
-				this.tipos_productos = v;
-			},
-			error: (e) => {
-				console.error('error', e);
-				//this.showErrorService.show('Error!', 'Ha ocurrido un error al traer los tipos de producto')
-			},
-			//complete: () => console.info('complete')
+			next: (v: any) => this.tipos_productos = v,
+			error: (e) => console.error('error', e)
 		});
 	}
 
@@ -110,8 +99,7 @@ export class PublicacionesComponent {
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
-					this.paginatedPublicaciones = this.publicacionesToShow.slice(0, this.pageSize);
-				}
+				}, complete: () => this.generateCardList()
 			})
 		} else if(this.origin == 'myPublicaciones'){
 			this.truequesService.getMisPublicaciones().subscribe({
@@ -121,32 +109,51 @@ export class PublicacionesComponent {
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
-					this.paginatedPublicaciones = this.publicacionesToShow.slice(0, this.pageSize);
-				}
+				}, complete: () => this.generateCardList()
 			})
 		} else { // myCompras
 			this.comprasService.getMyCompras().subscribe({
 				next: (data: any) => {
 					console.log(data);
-					this.publicacionesToShow = data;
+					for (const publicacion of data) {
+						this.publicacionesToShow.push(publicacion.publicacionDTO);
+					}
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
-				}
+				}, complete: () => this.generateCardList()
+			})
+		}
+	}
+
+	generateCardList() {
+		this.publicacionesCardList.splice(0)
+		for (const publicacion of this.publicacionesToShow) {
+			this.publicacionesCardList.push({
+				id: publicacion.idPublicacion,
+				imagen: publicacion.parsedImagenes? publicacion.parsedImagenes[0] : 'no_image',
+				titulo: publicacion.titulo,
+				valorPrincipal: `$${publicacion.valorTruequeMin} - $${publicacion.valorTruequeMax}`,
+				valorSecundario: publicacion.precioVenta ? `$${publicacion.precioVenta}` : undefined,
+				fecha: publicacion.fechaPublicacion,
+				usuario: {
+					imagen: 'assets/perfiles/perfiles-17.jpg',//publicacion.particularDTO.
+					nombre: publicacion.particularDTO.nombre + ' ' + publicacion.particularDTO.apellido,
+					puntaje: publicacion.particularDTO.puntaje,
+					localidad: publicacion.particularDTO.direcciones[0].localidad
+				},
+				action: 'access',
+				buttons: [],
+				estado: this.origin == 'myPublicaciones' ? publicacion.estadoPublicacion : undefined,
+				codigo: 'Publicación'
 			})
 		}
 	}
 
 	limpiarFiltros() {
 		this.formFiltros.reset()
-		this.localidades = []
+		this.localidades = [];
 		this.filtrarPublicaciones()
-	}
-
-	changePage(event: any) {
-		const startIndex = event.pageIndex * event.pageSize;
-		const endIndex = startIndex + event.pageSize;
-		this.paginatedPublicaciones = this.publicacionesToShow.slice(startIndex, endIndex);
 	}
 
 	/* FUNCIONES PARA FILTRO DE LOCALIDADES */
@@ -166,6 +173,7 @@ export class PublicacionesComponent {
 		}
 		event.chipInput!.clear();
 		this.formFiltros.controls['localidad'].setValue(null);
+		console.log('add',this.formFiltros.controls['localidad'].value);
 	}
 
 	remove(localidad: string): void {
@@ -175,8 +183,7 @@ export class PublicacionesComponent {
 
 	selected(event: MatAutocompleteSelectedEvent): void {
 		this.localidades.push(event.option.viewValue);
-		this.localidadInput.nativeElement.value = '';
-		this.formFiltros.controls['localidad'].setValue(null);
+		this.formFiltros.controls['localidad'].setValue('');
 	}
 
 	private _filterLocalidad(value: string): string[] {

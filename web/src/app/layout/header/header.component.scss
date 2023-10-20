@@ -59,6 +59,7 @@ mat-toolbar-row div {
 			.nav-item {
 				.nav-white {
 					color: var(--white);
+					letter-spacing: 1px;
 				}
 
 				.dropdown {
@@ -93,6 +94,13 @@ mat-toolbar-row div {
 
 			.nav-link {
 				cursor: pointer;
+			}
+
+			.name {
+				color: #007707 !important;
+				letter-spacing: 1px;
+				font-size: 18px;
+				text-wrap: balance;
 			}
 		}
 	}

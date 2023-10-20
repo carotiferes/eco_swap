@@ -59,6 +59,9 @@ public class Particular {
     @OneToMany(mappedBy = "particular",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Donacion> donaciones;
 
+    private String publicKey;
+    private String accessToken;
+
     public ParticularDTO toDTO() {
         ParticularDTO particularDTO = new ParticularDTO();
         particularDTO.setIdParticular(idParticular);
@@ -70,6 +73,8 @@ public class Particular {
         particularDTO.setTipoDocumento(tipoDocumento);
         particularDTO.setPuntaje(usuario.getPuntaje());
         particularDTO.setDirecciones(usuario.getDirecciones().stream().map(Direccion::toDTO).toList());
+        particularDTO.setPublicKey(publicKey);
+        particularDTO.setAccessToken(accessToken);
         return particularDTO;
     }
 }

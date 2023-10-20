@@ -1,0 +1,17 @@
+.puntuacion {
+	i {
+		position: relative;
+		display: inline-block;
+		//font-size: 1.3rem;
+		padding-right: 0.1rem;
+		//color: var(--opiniones);
+	}
+
+	.filled {
+		//color: var(--opiniones);
+		overflow: hidden;
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+}

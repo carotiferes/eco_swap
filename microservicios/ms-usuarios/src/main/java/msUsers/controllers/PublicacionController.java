@@ -63,7 +63,7 @@ public class PublicacionController {
 
         Publicacion publicacion = new Publicacion();
         publicacion.setTitulo(requestPublicacion.getTitulo());
-        publicacion.setEstadoPublicacion(EstadoPublicacion.PENDIENTE);
+        publicacion.setEstadoPublicacion(EstadoPublicacion.ABIERTA);
         publicacion.setParticular(particular);
         publicacion.setValorTruequeMax(requestPublicacion.getValorTruequeMax());
         publicacion.setValorTruequeMin(requestPublicacion.getValorTruequeMin());
@@ -132,6 +132,8 @@ public class PublicacionController {
         if (request.getTipoProducto() != null) {
             predicate = cb.and(predicate, cb.equal(from.get("tipoProducto"), request.getTipoProducto()));
         }
+
+        predicate = cb.and(predicate, cb.notEqual(from.get("estadoPublicacion"),EstadoPublicacion.CERRADA));
 
         query.where(predicate);
 

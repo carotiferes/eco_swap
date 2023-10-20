@@ -1,0 +1,36 @@
+#main-notificaciones {
+	.even-row {
+		background-color: #e2e1e1;
+		/* White background for even rows */
+	}
+
+	.odd-row {
+		background-color: transparent;
+		/* Grey background for odd rows */
+	}
+
+	/* Hover effect */
+	mat-list-item {
+		height: fit-content;
+		padding: 5px;
+
+		&:hover {
+			background-color: #e0e0e0;
+			/* Light grey background on hover */
+		}
+
+		.item-content {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin: 10px;
+
+			h4 {
+				margin: 0;
+			}
+			p {
+				font-size: 12px !important;
+			}
+		}
+	}
+}

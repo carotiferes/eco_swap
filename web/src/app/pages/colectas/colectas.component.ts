@@ -1,19 +1,19 @@
-import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FundacionModel } from 'src/app/models/fundacion.model';
+import { DatePipe } from '@angular/common';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+import { CardModel } from 'src/app/models/card.model';
 import { ColectaModel } from 'src/app/models/colecta.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import { FundacionesService } from 'src/app/services/fundaciones.service';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 import { ProductosService } from 'src/app/services/productos.service';
-import Swal from 'sweetalert2';
 import { ShowErrorService } from 'src/app/services/show-error.service';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatChipInputEvent } from '@angular/material/chips';
+import Swal from 'sweetalert2';
 
 @Component({
 	selector: 'app-colectas',
@@ -23,10 +23,9 @@ import { MatChipInputEvent } from '@angular/material/chips';
 })
 export class ColectasComponent implements OnInit {
 
-	colectas: ColectaModel[] = [];
+	//colectas: ColectaModel[] = [];
 	isMyColectas: boolean = false;
-	showColectas: ColectaModel[] = [];
-	paginatedColectas: ColectaModel[] = [];
+	colectasToShow: ColectaModel[] = [];
 	userData: any;
 
 	loading: boolean = true;
@@ -37,19 +36,16 @@ export class ColectasComponent implements OnInit {
 	filteredOptions: Observable<any[]>;
 	filtros: any = {};
 
-	pageSize = 10;
-	@ViewChild(MatPaginator) paginator!: MatPaginator;
+	colectasCardList: CardModel[] = [];
 
 	filteredLocalidades: Observable<string[]>;
 	localidades: string[] = [];
 	allLocalidades: string[] = [];
 
-	@ViewChild('localidadInput') localidadInput!: ElementRef<HTMLInputElement>;
-
 	constructor(private router: Router, private auth: AuthService,
 		private donacionesService: DonacionesService, private fundacionesService: FundacionesService,
 		private fb: FormBuilder, private productosService: ProductosService,
-		private showErrorService: ShowErrorService) {
+		private showErrorService: ShowErrorService, private datePipe: DatePipe) {
 
 		if (router.url == '/mis-colectas') this.isMyColectas = true;
 
@@ -87,17 +83,15 @@ export class ColectasComponent implements OnInit {
 		if (this.isMyColectas) {
 			this.donacionesService.getMisColectas().subscribe({
 				next: (res: any) => {
-					this.colectas = res;
-					this.showColectas = this.colectas.slice(0, this.pageSize);
-					this.showColectas.map(item => {
-						item.imagen = this.donacionesService.getImagen(item.imagen)
-					})
-					this.paginatedColectas = this.showColectas.slice(0, this.pageSize);
-					this.loading = false;
+					this.colectasToShow = res;
+					console.log(this.colectasToShow);
 				},
 				error: (error) => {
 					console.log('error mis colectas', error);
 					//this.showErrorService.show('Ocurrió un error!', 'Ocurrió un error al traer las colectas de la fundación. Por favor volvé a intentarlo más tarde.')
+					this.loading = false;
+				}, complete: () => {
+					this.generateCardList();
 					this.loading = false;
 				}
 			})
@@ -110,26 +104,54 @@ export class ColectasComponent implements OnInit {
 			if (this.localidades.length > 0) this.filtros['localidades'] = this.localidades;
 			if (tipoProducto) this.filtros['tipoProducto'] = tipoProducto;
 
-			console.log('filtros', this.filtros, this.localidades);
-			
-
 			this.donacionesService.getAllColectas(this.filtros).subscribe({
 				next: (res: any) => {
-					this.colectas = res;
-					this.showColectas = this.colectas;
-					this.showColectas.map(item => {
-						item.imagen = this.donacionesService.getImagen(item.imagen)
-					})
-					this.paginatedColectas = this.showColectas.slice(0, this.pageSize);
-					this.loading = false;
+					this.colectasToShow = res;
 				},
 				error: (error) => {
 					console.log('error all colectas', error);
-					//this.showErrorService.show('Ocurrió un error!', 'Ocurrió un error al traer las colectas. Por favor volvé a intentarlo más tarde.')
+					this.loading = false;
+				}, complete: () => {
+					this.generateCardList()
 					this.loading = false;
 				}
 			})
 		}
+	}
+
+	generateCardList() {
+		console.log(this.colectasToShow);
+		this.colectasCardList.splice(0)
+		for (const colecta of this.colectasToShow) {
+			let stringProductos = '';
+			for (const [i, producto] of colecta.productos.entries()) {
+				if(i==0) stringProductos = producto.descripcion
+				else stringProductos += ' - '+producto.descripcion
+			}
+			this.colectasCardList.push({
+				id: colecta.idColecta,
+				imagen: colecta.imagen,
+				titulo: colecta.titulo,
+				valorPrincipal: stringProductos,
+				fechaString: this.parseVigencia(colecta),
+				usuario: {
+					imagen: 'assets/perfiles/perfiles-24.jpg',//publicacion.particularDTO.
+					nombre: colecta.fundacionDTO.nombre,
+					puntaje: colecta.fundacionDTO.puntaje,
+					localidad: colecta.fundacionDTO.direcciones[0].localidad
+				},
+				action: 'access',
+				buttons: []
+			})
+		}
+	}
+
+	parseVigencia(colecta: ColectaModel) {
+		if(colecta.fechaInicio && colecta.fechaFin) {
+			return 'Desde el ' + this.datePipe.transform(colecta.fechaInicio, 'dd/MM/yyyy') + ' hasta el ' + this.datePipe.transform(colecta.fechaFin, 'dd/MM/yyyy')
+		} else if (colecta.fechaInicio) {
+			return 'A partir del ' + this.datePipe.transform(colecta.fechaInicio, 'dd/MM/yyyy')
+		} else return '';
 	}
 
 	addColecta() {
@@ -198,12 +220,6 @@ export class ColectasComponent implements OnInit {
 		this.router.navigateByUrl('colecta/' + colecta.idColecta)
 	}
 
-	changePage(event: any) {
-		const startIndex = event.pageIndex * event.pageSize;
-		const endIndex = startIndex + event.pageSize;
-		this.paginatedColectas = this.showColectas.slice(startIndex, endIndex);
-	}
-
 	/* FUNCIONES PARA FILTRO DE LOCALIDADES */
 	add(event: MatChipInputEvent): void {
 		const value = (event.value || '').trim();
@@ -221,8 +237,7 @@ export class ColectasComponent implements OnInit {
 
 	selected(event: MatAutocompleteSelectedEvent): void {
 		this.localidades.push(event.option.viewValue);
-		this.localidadInput.nativeElement.value = '';
-		this.formFiltros.controls['localidad'].setValue(null);
+		this.formFiltros.controls['localidad'].setValue('');
 	}
 
 	private _filterLocalidad(value: string): string[] {

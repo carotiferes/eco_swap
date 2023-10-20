@@ -15,7 +15,9 @@ public class ParticularDTO {
     private String cuil;
     private LocalDate fechaNacimiento;
     private TipoDocumento tipoDocumento;
-    private Integer puntaje;
+    private float puntaje;
     private List<DireccionDTO> direcciones;
     private UsuarioDTO usuarioDTO;
+    private String publicKey;
+    private String accessToken;
 }

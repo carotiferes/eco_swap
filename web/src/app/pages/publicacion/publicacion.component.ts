@@ -1,14 +1,16 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CardModel } from 'src/app/models/card.model';
 import { PublicacionModel } from 'src/app/models/publicacion.model';
+import { TruequeModel } from 'src/app/models/trueque.model';
 import { AuthService } from 'src/app/services/auth.service';
+import { ComprasService } from 'src/app/services/compras.service';
 import { ShowErrorService } from 'src/app/services/show-error.service';
 import { TruequesService } from 'src/app/services/trueques.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import Swal from 'sweetalert2';
 import { TrocarModalComponent } from './trocar-modal/trocar-modal.component';
-import { TruequeModel } from 'src/app/models/trueque.model';
 
 @Component({
 	selector: 'app-publicacion',
@@ -29,14 +31,30 @@ export class PublicacionComponent implements AfterViewInit {
 
 	userType: 'notLoggedIn' | 'publicacionOrigen' | 'publicacionPropuesta' = 'notLoggedIn';
 
+	truequeAceptado: CardModel[] = [];
+	historialTrueques: CardModel[] = [];
+	truequesActivos: CardModel[] = [];
+
+	init: number = 0;
+	screenWidth: number;
+
 	constructor(private truequeService: TruequesService, private route: ActivatedRoute,
 		private showErrorService: ShowErrorService, private auth: AuthService,
-		private router: Router, private usuarioService: UsuarioService, public dialog: MatDialog) {
+		private router: Router, private usuarioService: UsuarioService, public dialog: MatDialog,
+		private comprasService: ComprasService) {
 
 		this.userData = { isSwapper: auth.isUserSwapper(), isLoggedIn: auth.isUserLoggedIn }
 		this.route.paramMap.subscribe(params => {
+			this.loading = true;
 			this.id_publicacion = params.get('id_publicacion');
+			this.truequeAceptado = [];
+			this.historialTrueques = [];
+			this.truequesActivos = [];
+			
+			if(this.init != 0) this.ngAfterViewInit();
+			this.init++;
 		})
+		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 	}
 
 	ngAfterViewInit(): void {
@@ -47,7 +65,7 @@ export class PublicacionComponent implements AfterViewInit {
 					this.getPublicacion(this.id_publicacion);
 				}
 			})
-		}
+		} else this.getPublicacion(this.id_publicacion);
 	}
 
 	getPublicacion(id: number) {
@@ -59,29 +77,34 @@ export class PublicacionComponent implements AfterViewInit {
 					this.userType = 'publicacionOrigen';
 				}
 				if(this.userData.isLoggedIn) this.getTrueques()
+				else this.loading = false;
 			},
 			error: (error) => {
 				console.log(error);
+				this.loading = false;
 			}
 		})
 	}
 
 	getTrueques() {
 		this.loading = true;
+		this.truequesActivos.splice(0);
+		this.historialTrueques.splice(0);
+		this.truequeAceptado.splice(0);
+		this.publicacionesToShow.splice(0);
 		this.truequeService.getTruequesFromPublicacion(this.publicacion.idPublicacion).subscribe({
-			next: async (trueques: any) => {
+			next: (trueques: any) => {
 				//console.log('TRUEQUES', trueques);
 				// Todos los trueques en los que esta publicacion es ORIGEN
-				this.trueques = await trueques;
-				this.publicacionesToShow = [];
-
+				this.trueques = trueques;
+				
 				if(this.userType != 'publicacionOrigen' && this.userData.isLoggedIn) {
 					this.truequeService.getMisPublicaciones().subscribe({
-						next: async (res: any) => {
-							//console.log('PUBLICACIONES DEL USER',await res);
+						next: (res: any) => {
+							//console.log('PUBLICACIONES DEL USER', res);
 							// Publicaciones del usuario loggeado
-							const userPublicaciones = await res;
-							for (const trueque of trueques) {
+							const userPublicaciones = res;
+							for (const trueque of this.trueques) {
 								const commonItem = userPublicaciones.find((publicacion: PublicacionModel) =>
 									trueque.publicacionDTOpropuesta.idPublicacion == publicacion.idPublicacion)
 								if(commonItem){
@@ -95,8 +118,11 @@ export class PublicacionComponent implements AfterViewInit {
 							this.publicacionesToShow.map(item => {
 								item.parsedImagenes = item.imagenes.split('|')
 							})
+						}, error: () => {this.loading = false},
+						complete: () => {
+							this.parsePublicaciones()
 							this.loading = false;
-						}, error: () => {this.loading = false}
+						}
 					})
 					
 				} else if (this.userType == 'publicacionOrigen' && this.userData.isLoggedIn) {
@@ -108,6 +134,7 @@ export class PublicacionComponent implements AfterViewInit {
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
+					this.parsePublicaciones();
 					this.loading = false;
 				}
 			}, error: () => {this.loading = false}
@@ -116,13 +143,30 @@ export class PublicacionComponent implements AfterViewInit {
 
 	intercambiar() {
 		if (this.auth.isUserLoggedIn) {
-			const dialogRef = this.dialog.open(TrocarModalComponent, {
-				data: {
-					publicacion: this.publicacion,
-				},
-				minWidth: 100,
-				maxHeight: '90vh'
-			});
+			let dialogConfig: any;
+			if(this.screenWidth < 576) {
+				dialogConfig = {
+					data: {
+						publicacion: this.publicacion,
+					},
+					width: '70vw',
+					height: '80vh',
+					position: {
+						top: '50vh',
+						left: '50vw'
+					},
+					panelClass:'makeItMiddle'
+				}
+			} else {
+				dialogConfig = {
+					data: {
+						publicacion: this.publicacion,
+					},
+					width: '80vw',
+					height: '85vh',
+				}
+			}
+			const dialogRef = this.dialog.open(TrocarModalComponent, dialogConfig);
 
 			dialogRef.afterClosed().subscribe((result: any) => {
 				console.log('result trocar', result);
@@ -144,7 +188,20 @@ export class PublicacionComponent implements AfterViewInit {
 
 	comprar() {
 		if (this.auth.isUserLoggedIn) {
-
+			this.comprasService.comprar(this.publicacion.idPublicacion).subscribe({
+				next: (res: any) => {
+					console.log(res);
+					Swal.fire({
+						title: '¡Ya casi es tuyo!',
+						text: 'Terminá tu compra en Mercado Pago, luego podrás verla en Mis Compras!',
+						icon: 'success',
+						confirmButtonText: 'IR A MIS COMPRAS',
+						allowOutsideClick: false, allowEscapeKey: false
+					}).then(({isConfirmed}) => {
+						if(isConfirmed) window.open(res.initPoint, '_blank')
+					})
+				}
+			})
 		} else {
 			Swal.fire({
 				title: '¡Necesitás una cuenta!',
@@ -159,114 +216,55 @@ export class PublicacionComponent implements AfterViewInit {
 		}
 	}
 
-	getImage(image: any) {
-		return this.truequeService.getImagen(image)
-	}
-
-	zoomImage(img?: string) {
-		if (img) {
-			Swal.fire({
-				html: `<img src="${this.getImage(img)}" style="width: 100%"/>`,
-				showConfirmButton: false,
-				showCloseButton: true
-			})
-		}
-	}
-
-	changeStatusTrueque(event: any) {
-		console.log(event);
-		const trueque = this.trueques.find(item => item.publicacionDTOpropuesta.idPublicacion == event.publicacion.idPublicacion)
-		console.log(trueque);
-		if (trueque) {
-			let title = '';
-			let text = '';
-			let confirm = '';
-			let cancel = '';
-			let deny = '';
-			let icon: 'success' | 'warning' = 'warning';
-
-			switch (event.newStatus) {
-				case 'CANCELADO':
-					title = 'Confirmar Cancelación';
-					text = '¿Estás seguro/a que querés cancelar esta donación? La acción es irreversible, pero podrás crear otra donación luego.';
-					deny = 'Sí, cancelar donación';
-					cancel = 'No, mantener donación';
-					icon = 'warning';
-					break;
-				case 'ACEPTADO':
-					title = 'Confirmar Aprobación';
-					text = 'Confirmá que aceptás la donación. Esta acción es irreversible ya que comenzará con el proceso de envío.';
-					confirm = 'Sí, aceptar donación';
-					cancel = 'No, cancelar';
-					icon = 'warning';
-					break;
-				case 'RECHAZADO':
-					title = 'Confirmar Rechazo';
-					text = '¿Estás seguro/a que querés rechazar esta donación? La acción es irreversible.';
-					deny = 'Sí, rechazar donación';
-					cancel = 'No, cancelar';
-					icon = 'warning';
-					break;
-				default:
-					title = 'Confirmar Acción';
-					text = 'Cambiar el estado de la donación es irreversible, ¿Estás seguro/a que querés continuar?';
-					confirm = 'Sí, continuar';
-					cancel = 'No, cancelar';
-					icon = 'warning';
-					break;
-			}
-			Swal.fire({
-				title,
-				text,
-				showConfirmButton: confirm != '',
-				confirmButtonText: confirm,
-				showDenyButton: deny != '',
-				denyButtonText: deny,
-				showCancelButton: cancel != '',
-				cancelButtonText: cancel,
-				icon,
-				reverseButtons: true
-			}).then(({ isConfirmed, isDenied }) => {
-				if (isConfirmed || isDenied) {
-					this.truequeService.cambiarEstadoTrueque(trueque.idTrueque, event.newStatus).subscribe({
-						next: (res: any) => {
-							console.log(res);
-							this.getTrueques();
-							//Swal.fire('')
-						}
-					})
-				}
-			})
-		}
-	}
-
 	getButtonsForCards() {
 		if(this.userType == 'publicacionPropuesta') {
-			return [{name: 'cancelar', icon: 'close', color: 'warn', status: 'CANCELADO'}];
+			return [{name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADO'}];
 		} else if (this.userType == 'publicacionOrigen'){
 			return [
-				{name: 'aceptar', icon: 'check', color: 'primary', status: 'APROBADO'},
-				{name: 'rechazar', icon: 'close', color: 'warn', status: 'RECHAZADO'},
-				{name: 'recibida', icon: 'done_all', color: 'primary', status: 'RECIBIDO'},
+				{name: 'ACEPTAR', icon: 'check', color: 'primary', status: 'APROBADO'},
+				{name: 'RECHAZAR', icon: 'close', color: 'warn', status: 'RECHAZADO'},
+				{name: 'RECIBIDO', icon: 'done_all', color: 'primary', status: 'RECIBIDO'},
 			];
 		} else return [];
 	}
 
-	showPublicaciones(type: 'abiertas' | 'cerradas') {
-		return this.publicacionesToShow.filter(publicacion => {
-			let condition: boolean = false;
-			if(type == 'abiertas') condition = (!!publicacion.estadoTrueque && publicacion.estadoTrueque == 'PENDIENTE' && publicacion.estadoPublicacion == 'PENDIENTE')
-			else condition = (!!publicacion.estadoTrueque && (publicacion.estadoTrueque != 'PENDIENTE' && publicacion.estadoTrueque != 'APROBADO') || publicacion.estadoPublicacion != 'PENDIENTE')
-			return condition;
-		}).sort((a, b) => {
-			if (a.estadoTrueque === 'APROBADO' && b.estadoTrueque !== 'APROBADO') {
-			  return -1; // 'a' comes before 'b'
-			} else if (a.estadoTrueque !== 'APROBADO' && b.estadoTrueque === 'APROBADO') {
-			  return 1; // 'b' comes before 'a'
-			} else {
-			  return 0; // No change in order
+	parsePublicaciones() {
+		this.truequesActivos.splice(0);
+		this.historialTrueques.splice(0);
+		this.truequeAceptado.splice(0);
+		for (const publicacion of this.publicacionesToShow) {
+			const item: CardModel = {
+				id: publicacion.idPublicacion,
+				imagen: publicacion.parsedImagenes? publicacion.parsedImagenes[0] : 'no_image',
+				titulo: publicacion.titulo,
+				valorPrincipal: `$${publicacion.valorTruequeMin} - $${publicacion.valorTruequeMax}`,
+				fecha: publicacion.fechaPublicacion,
+				usuario: {
+					imagen: 'assets/perfiles/perfiles-17.jpg',//publicacion.particularDTO.
+					nombre: publicacion.particularDTO.nombre + ' ' + publicacion.particularDTO.apellido,
+					puntaje: publicacion.particularDTO.puntaje,
+					localidad: publicacion.particularDTO.direcciones[0].localidad
+				},
+				action: 'detail',
+				buttons: [],
+				estado: publicacion.estadoTrueque,
+				idAuxiliar: this.trueques.find(item => item.publicacionDTOpropuesta.idPublicacion == publicacion.idPublicacion)?.idTrueque
 			}
-		  });
+
+			if(publicacion.estadoTrueque == 'APROBADO') {
+				// ACEPTADO
+				this.truequeAceptado.push(item)
+			} else if(publicacion.estadoTrueque == 'PENDIENTE' && publicacion.estadoPublicacion == 'ABIERTA') {
+				// ACTIVOS
+				item.valorSecundario = publicacion.precioVenta ? `$${publicacion.precioVenta}` : undefined
+				item.buttons = this.getButtonsForCards();
+				this.truequesActivos.push(item)
+			} else /* if(publicacion.estadoTrueque != 'PENDIENTE' || publicacion.estadoPublicacion != 'ABIERTA') */ {
+				// HISTORIAL
+				item.disabled = true;
+				this.historialTrueques.push(item)
+			}
+		}
 	}
 
 	hasApprovedTrueque() {

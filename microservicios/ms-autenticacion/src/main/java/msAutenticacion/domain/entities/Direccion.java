@@ -42,6 +42,7 @@ public class Direccion {
     public DireccionDTO toDTO(){
         DireccionDTO direccionDTO = new DireccionDTO();
         direccionDTO.setCalle(calle);
+        direccionDTO.setDpto(dpto);
         direccionDTO.setPiso(piso);
         direccionDTO.setAltura(altura);
         direccionDTO.setLocalidad(localidad);

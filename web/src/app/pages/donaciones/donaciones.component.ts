@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { CardModel } from 'src/app/models/card.model';
 import { DonacionModel } from 'src/app/models/donacion.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
@@ -15,8 +16,9 @@ import Swal from 'sweetalert2';
 export class DonacionesComponent {
 
 	donaciones: DonacionModel[] = [];
+	donacionesCardList: CardModel[] = [];
 
-	buttonsCard: {name: string, icon: string, color: string, status: string, disabled: string}[] = []
+	loading: boolean = false;
 
 	constructor(public dialog: MatDialog, private donacionesService: DonacionesService,
 		private auth: AuthService, private showErrorService: ShowErrorService) {
@@ -24,6 +26,7 @@ export class DonacionesComponent {
 	}
 
 	getDonaciones() {
+		this.loading = true;
 		this.donacionesService.getMisDonaciones().subscribe({
 			next: (res: any) => {
 				if(res){
@@ -36,10 +39,42 @@ export class DonacionesComponent {
 			},
 			error: (error) => {
 				console.log(error);
+				this.loading = false;
 				//this.showErrorService.show('Error!', 'Ocurrió un error al traer la información de tus donaciones. Intentá nuevamente más tarde.')
-			}
+			}, complete: () => this.generateCardList()
 		})
 
+	}
+
+	generateCardList() {
+		this.donacionesCardList.splice(0);
+		for (const donacion of this.donaciones) {
+			let stringCaracteristicas = '';
+			for (const [i, caract] of donacion.caracteristicaDonacion.entries()) {
+				if(i==0) stringCaracteristicas = caract.caracteristica
+				else stringCaracteristicas += ' - '+caract.caracteristica
+			}
+			const item: CardModel = {
+				id: donacion.idDonacion,
+				imagen: donacion.parsedImagenes? donacion.parsedImagenes[0] : 'no_image',
+				titulo: donacion.descripcion,
+				valorPrincipal: `${donacion.cantidadDonacion} unidades de ${donacion.producto.descripcion}`,
+				valorSecundario: stringCaracteristicas,
+				fecha: donacion.fechaDonacion,
+				usuario: {
+					imagen: 'assets/perfiles/perfiles-17.jpg',//publicacion.particularDTO.
+					nombre: donacion.particularDTO.nombre + ' ' + donacion.particularDTO.apellido,
+					puntaje: donacion.particularDTO.puntaje,
+					localidad: donacion.particularDTO.direcciones[0].localidad
+				},
+				action: 'detail',
+				buttons: [{name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADA'}],
+				estado: donacion.estadoDonacion,
+				//idAuxiliar: this.colecta.idColecta
+			}
+			this.donacionesCardList.push(item)
+			this.loading = false;
+		}
 	}
 
 	zoomImage(img: string) {

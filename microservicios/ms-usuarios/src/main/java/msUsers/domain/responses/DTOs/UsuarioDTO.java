@@ -12,11 +12,10 @@ public class UsuarioDTO {
     private List<DireccionDTO> direcciones;
     private String telefono;
     private String email;
-    private Integer puntaje;
+    private float puntaje;
     private boolean isSwapper;
     private Integer intentos;
     private boolean validado;
     private boolean bloqueado;
     private List<OpinionDTO> opiniones;
-
 }

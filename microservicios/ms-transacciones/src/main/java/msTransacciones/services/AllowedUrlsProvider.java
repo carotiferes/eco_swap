@@ -20,6 +20,7 @@ public class AllowedUrlsProvider {
                 "/v3/api-docs",
                 "/v3/api-docs/*",
                 // COMPRAS
-                "/comprar/*");
+                "/comprar/*",
+                "/ms-transacciones/api/webhook");
     }
 }

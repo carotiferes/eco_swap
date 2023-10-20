@@ -1,17 +1,41 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot, Router, CanActivateFn } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, Router, CanActivateFn, NavigationEnd } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { inject } from '@angular/core';
 
 export const AuthGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
 	// Obtiene el servicio AuthService mediante inyección de dependencias
 	const authService = inject(AuthService);
-
+	const router = inject(Router);
+	console.log('IN AUTH GUARD');
+	
+	const onlyFundacionesURLs = ['mis-colectas', 'form-colecta']
+	const onlySwapperURLs = [
+		'publicaciones', 'form-publicacion', 'mis-publicaciones', 
+		'donacion', 'publicacion', 'mis-donaciones', 'mis-compras'
+	]
+	const noLoginNeededURLs = [
+		'', 'home', 'login', 'registro', 'not-found',
+		'publicaciones', 'publicacion',
+		'colectas', 'colecta'
+	]
+	/* other (requieren login pero no un perfil especifico): 
+		mi-perfil, perfil, edit-perfil, reset-password, notificaciones
+	 */
+	const url: string = route.url[0].path;
+	console.log('url', url);
+	
 	if (authService.isUserLoggedIn) {
+		if(authService.isUserSwapper() && onlyFundacionesURLs.some(item => item == url) 
+		|| !authService.isUserSwapper() && onlySwapperURLs.some(item => item == url)) {
+			router.navigate(['/home'])
+			return false;
+		}
+		else return true;
+	} else if(noLoginNeededURLs.includes(url)) {
 		return true;
-	} else {
+	}else {
 		// Si el usuario no ha iniciado sesión, redirige al componente de inicio de sesión
-		const router = inject(Router);
 		router.navigate(['/login']);
 		return false;
 	}

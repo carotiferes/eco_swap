@@ -1,18 +1,14 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FundacionModel } from 'src/app/models/fundacion.model';
-import { UsuarioModel } from 'src/app/models/usuario.model';
-import { DonacionModel } from 'src/app/models/donacion.model';
+import { CardModel } from 'src/app/models/card.model';
 import { ColectaModel } from 'src/app/models/colecta.model';
+import { DonacionModel } from 'src/app/models/donacion.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
-import Swal from 'sweetalert2';
-import { ShowErrorService } from 'src/app/services/show-error.service';
-import { FundacionesService } from 'src/app/services/fundaciones.service';
 import { ProductosService } from 'src/app/services/productos.service';
+import { ShowErrorService } from 'src/app/services/show-error.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
-import { MatDialog } from '@angular/material/dialog';
-import { MapComponent } from 'src/app/shared/map/map.component';
 
 @Component({
   selector: 'app-colecta',
@@ -28,12 +24,10 @@ export class ColectaComponent {
 	userData?: any;
 	userInfo?: any;
 	loading: boolean = true;
-	showDonaciones: boolean = false;
 	donacionesToShow: DonacionModel[] = [];
-	paginatedDonaciones: DonacionModel[] = [];
-	pageSize = 5;
 
-	buttonsCard: {name: string, icon: string, color: string, status: string, disabled: string}[] = []
+	donacionesAbiertas: CardModel[] = [];
+	donacionesCerradas: CardModel[] = [];
 
 	constructor(private route: ActivatedRoute, private router: Router, private auth: AuthService,
 		private donacionesService: DonacionesService, private showErrorService: ShowErrorService,
@@ -64,7 +58,7 @@ export class ColectaComponent {
 				if (colecta) {
 					//console.log(colecta);
 					this.colecta = colecta;
-					this.colecta.imagen = this.getImage(this.colecta.imagen);
+					//this.colecta.imagen = this.getImage(this.colecta.imagen);
 
 					this.productoService.getProductosColecta(colecta.idColecta).subscribe({
 						next: (res: any) => {
@@ -76,32 +70,8 @@ export class ColectaComponent {
 					})
 
 					if(this.auth.isUserLoggedIn){
-						this.donacionesService.getDonacionesColecta(this.colecta.idColecta).subscribe({
-							next: (donaciones: any) => {
-								console.log(donaciones);
-								this.donaciones = donaciones;
-								this.donaciones.map(donacion => {
-									if(donacion.imagenes) donacion.parsedImagenes = donacion.imagenes.split('|')
-								})
-
-								//TODO: REVISAR CUANDO MUESTRA DONACIONES
-								if (this.userData.isSwapper) {
-									this.donacionesToShow = this.donaciones.filter(item => item.particularDTO.idParticular == this.userInfo.particularDTO.idParticular)
-									this.showDonaciones = true;
-								} else if(this.userData) { // TODO: IF colecta.id_fundacion == userData.id_fundacion --> show donaciones
-									this.donacionesToShow = donaciones;
-									this.showDonaciones = true;
-								}
-								this.paginatedDonaciones = this.donacionesToShow.slice(0, this.pageSize);
-								console.log(this.showDonaciones);
-							},
-							error: (error) => {
-								console.log('error', error);
-								
-							}
-						})
-					}
-					this.loading = false;
+						this.getDonaciones();
+					} else this.loading = false;
 				} else this.showErrorService.show('Error!', 'No se encontró la información de la colecta que seleccionaste. Intentá nuevamente más tarde.')
 			},
 			error: (error) => {
@@ -111,99 +81,90 @@ export class ColectaComponent {
 		})
 	}
 
-	donar() {
-		if(this.auth.isUserLoggedIn){
-			Swal.fire({
-				title: '¡Estás un paso más cerca de hacer tu donación!',
-				text: 'Te vamos a pedir algunos datos de lo que vas a donar. Es importante que completes la información requerida para que la fundación conozca lo que vas a donar.', //'Seleccioná el producto que quieras donar',
-				icon: 'info',
-				confirmButtonText: '¡VAMOS!' //'Confirmar'
-			}).then(({isConfirmed, value}) => {
-				if(isConfirmed) this.router.navigate(['donacion/'+this.id_colecta])
-			})
-		} else {
-			Swal.fire({
-				title: '¡Necesitás una cuenta!',
-				text: 'Para poder donar, tenés que usar tu cuenta.',
-				icon: 'warning',
-				confirmButtonText: 'Iniciar sesión',
-				showCancelButton: true,
-				cancelButtonText: 'Cancelar'
-			}).then(({isConfirmed}) => {
-				if(isConfirmed) this.router.navigate(['login'])
-			})
-		}
-	}
+	getDonaciones() {
+		this.loading = true;
+		this.donacionesService.getDonacionesColecta(this.colecta.idColecta).subscribe({
+			next: (donaciones: any) => {
+				console.log(donaciones);
+				this.donaciones = donaciones;
+				this.donaciones.map(donacion => {
+					if(donacion.imagenes) donacion.parsedImagenes = donacion.imagenes.split('|')
+				})
 
-	zoomImage(img?: string){
-		if(img){
-			Swal.fire({
-				html: `<img src="${this.getImage(img)}" style="width: 100%"/>`,
-				showConfirmButton: false,
-				showCloseButton: true
-			})
-		}
-	}
-
-	showDireccion(fundacion: any){
-		console.log(fundacion);
-		let stringDir: string = fundacion.direcciones[0].direccion + fundacion.direcciones[0].altura || '';
-		const localidad = fundacion.direcciones[0].localidad || '';
-
-		const apiUrl = `https://apis.datos.gob.ar/georef/api/direcciones?provincia=02&localidad=${localidad}
-		&direccion=${encodeURIComponent(stringDir)}`
-		fetch(apiUrl).then(response => response.json()).then(data => {
-			//console.log(data);
-			if(data.cantidad > 0) {
-				const lat = data.direcciones[0].ubicacion.lat;
-		      	const lon = data.direcciones[0].ubicacion.lon;
-				  this.dialog.open(MapComponent, {
-					maxWidth: '70vw',
-					maxHeight: '60vh',
-					height: '100%',
-					width: '100%',
-					panelClass: 'full-screen-modal',
-					data: {lat, lon}
-				});
+				//TODO: REVISAR CUANDO MUESTRA DONACIONES
+				if (this.userData.isSwapper) {
+					this.donacionesToShow = this.donaciones.filter(item => item.particularDTO.idParticular == this.userInfo.particularDTO.idParticular)
+					//this.showDonaciones = true;
+				} else if(this.userData) { // TODO: IF colecta.id_fundacion == userData.id_fundacion --> show donaciones
+					this.donacionesToShow = donaciones;
+					//this.showDonaciones = true;
+				}
+				this.donacionesToShow.map(item => {
+					item.parsedImagenes = item.imagenes.split('|')
+				})
+			},
+			error: (error) => {
+				console.log('error', error);
+				
+			}, complete: () => {
+				this.parseDonaciones();
+				this.loading = false;
 			}
-		  }).catch(error => console.error(error));
-
-	}
-
-	showContactInfo(fundacion: FundacionModel) {
-		console.log(fundacion, this.userInfo);
-		Swal.fire({
-			title: 'Información de la fundación: \n '+ fundacion.nombre,
-			html: `
-			<p style="font-weight: 400;"><b>Email: </b>${fundacion.usuarioDTO.email}</p>
-			<p style="font-weight: 400;"><b>Teléfono: </b>${fundacion.usuarioDTO.telefono}</p>
-			`,
-			icon: 'info'
 		})
 	}
 
-	getImage(image: any ){
-		return this.donacionesService.getImagen(image)
+	parseDonaciones() {
+		this.donacionesAbiertas.splice(0);
+		this.donacionesCerradas.splice(0);
+		for (const donacion of this.donacionesToShow) {
+			console.log(donacion);
+			
+			let stringCaracteristicas = '';
+			for (const [i, caract] of donacion.caracteristicaDonacion.entries()) {
+				if(i==0) stringCaracteristicas = caract.caracteristica
+				else stringCaracteristicas += ' - '+caract.caracteristica
+			}
+			const item: CardModel = {
+				id: donacion.idDonacion,
+				imagen: donacion.parsedImagenes? donacion.parsedImagenes[0] : 'no_image',
+				titulo: donacion.descripcion,
+				valorPrincipal: `${donacion.cantidadDonacion} unidades de ${donacion.producto.descripcion}`,
+				valorSecundario: stringCaracteristicas,
+				fecha: donacion.fechaDonacion,
+				usuario: {
+					imagen: 'assets/perfiles/perfiles-17.jpg',//publicacion.particularDTO.
+					nombre: donacion.particularDTO.nombre + ' ' + donacion.particularDTO.apellido,
+					puntaje: donacion.particularDTO.puntaje,
+					localidad: donacion.particularDTO.direcciones[0].localidad
+				},
+				action: 'detail',
+				buttons: this.getButtonsForCard(donacion),
+				estado: donacion.estadoDonacion,
+				idAuxiliar: this.colecta.idColecta
+			}
+			if(donacion.estadoDonacion == 'PENDIENTE') this.donacionesAbiertas.push(item)
+			else this.donacionesCerradas.push(item)
+		}
+		console.log(this.donacionesAbiertas, this.donacionesCerradas);
+		
+	}
+
+	getButtonsForCard(donacion: DonacionModel) {
+		if(donacion.estadoDonacion == 'PENDIENTE') {
+			if(this.userData.isSwapper) return [{name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADA'}]
+			else {
+				return [
+					{name: 'ACEPTAR', icon: 'check', color: 'primary', status: 'APROBADA'},
+					{name: 'RECHAZAR', icon: 'close', color: 'warn', status: 'RECHAZADA'},
+				]
+			}
+		} else if(donacion.estadoDonacion == 'APROBADA') {
+			return [{name: 'RECIBIDO', icon: 'done_all', color: 'primary', status: 'RECIBIDA'}]
+		} else return [];
 	}
 
 	isArray(item:any){
 		return item.constructor === Array;
-	}
-
-	parseVigencia() {
-		//console.log(this.colecta.fechaInicio , this.colecta.fechaFin);
-		
-		if(this.colecta.fechaInicio && this.colecta.fechaFin) {
-			return 'Desde el ' + (new Date(this.colecta.fechaInicio)).toLocaleDateString() + ' hasta el ' + (new Date(this.colecta.fechaFin)).toLocaleDateString()
-		} else if (this.colecta.fechaInicio) {
-			return 'A partir del ' + (new Date(this.colecta.fechaInicio)).toLocaleDateString();
-		} else return '';
-	}
-
-	changePage(event: any) {
-		const startIndex = event.pageIndex * event.pageSize;
-		const endIndex = startIndex + event.pageSize;
-		this.paginatedDonaciones = this.donacionesToShow.slice(startIndex, endIndex);
 	}
 
 }

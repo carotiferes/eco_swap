@@ -3,6 +3,7 @@ package msUsers.exceptions.handler;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.exceptions.DonacionCreationException;
 import msUsers.exceptions.responses.DonationCreationExceptionResponse;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -12,6 +13,7 @@ import java.util.Date;
 
 @Slf4j
 @ControllerAdvice
+@Order(2)
 public class ColectaExceptionsHandler {
     @ExceptionHandler(DonacionCreationException.class)
     public ResponseEntity<DonationCreationExceptionResponse> handle(DonacionCreationException exception){

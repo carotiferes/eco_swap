@@ -11,9 +11,9 @@ export class UsuarioService {
 
 	constructor(private backendService: HttpBackEnd) { }
 
-	getCurrentUser() { // TODO: CAMBIAR CUANDO TRAIGA X TKN
+	/* getCurrentUser() { // TODO: CAMBIAR CUANDO TRAIGA X TKN
 		return this.backendService.get(URL_NAME, 'ms-autenticacion/api/v1/usuario/103');
-	}
+	} */
 
 	getUserByID(id: number) {
 		return this.backendService.get(URL_NAME, 'ms-autenticacion/api/v1/usuario/'+id);
@@ -33,5 +33,9 @@ export class UsuarioService {
 
 	confirmarCuenta(idUsuario: number, codigo: string) {
 		return this.backendService.patch(URL_NAME, 'ms-autenticacion/api/v1/usuario/confirmar', {idUsuario, codigo});
+	}
+
+	changePassword(body: any) { /* {nuevaPassword, confirmarPassword} */
+		return this.backendService.patch(URL_NAME, 'ms-autenticacion/api/v1/usuario/password', body);
 	}
 }

@@ -6,80 +6,94 @@
 
 <div id="main-profile" class="app-main-div">
 	<div class="top-div" *ngIf="userToShow">
-		<div class="top-img" (click)="selectImage()" [ngClass]="myProfile ? 'editable-img' : ''">
-			<img [src]="userData.isSwapper ? 'assets/perfiles/perfiles-17.jpg' : 'assets/perfiles/perfiles-24.jpg'" alt="">
-			<mat-icon class="edit-icon">edit</mat-icon>
+		<div class="top-img" (click)="myProfile ? selectImage() : ''" [ngClass]="myProfile ? 'editable-img' : ''">
+			<img [src]="userData.isSwapper ? 'assets/perfiles/perfiles-17.jpg' : 'assets/perfiles/perfiles-24.jpg'">
+			<mat-icon class="edit-icon" *ngIf="myProfile">edit</mat-icon>
 		</div>
 		<mat-card class="top-text">
+			<mat-card-content>
 				<h2>{{userToShow.nombre}}</h2>
 				<h4>{{userData.isSwapper ? 'Swapper' : 'Fundación'}}</h4>
+			</mat-card-content>
 		</mat-card>
 	</div>
 	<div class="bottom-div" *ngIf="userToShow">
 		<mat-card class="left">
-			<p><mat-icon>alternate_email</mat-icon>{{userToShow.email}}</p>
-			<p><mat-icon>phone</mat-icon>{{userToShow.telefono}}</p>
-			<a *ngIf="(!userData.isSwapper || myProfile) && userToShow.direccion" class="location clickable" (click)="showMap(userToShow.direccion)">
-				<mat-icon>place</mat-icon>
-				{{!userData.isSwapper || myProfile ? userToShow.direccion.calle + ' ' + userToShow.direccion.altura + ' ('+ userToShow.direccion.localidad + ')'
+			<mat-card-content>
+				<p><mat-icon>alternate_email</mat-icon>{{userToShow.email}}</p>
+				<p><mat-icon>phone</mat-icon>{{userToShow.telefono}}</p>
+				<a *ngIf="(!userData.isSwapper || myProfile) && userToShow.direccion" class="location clickable"
+					(click)="showMap(userToShow.direccion)">
+					<mat-icon>place</mat-icon>
+					{{!userData.isSwapper || myProfile ? userToShow.direccion.calle + ' ' + userToShow.direccion.altura
+					+ ' ('+ userToShow.direccion.localidad + ')'
 					: userToShow.direccion.localidad
-				}}
-			</a>
-			<p *ngIf="userData.isSwapper && !myProfile && userToShow.direccion" class="location">
-				<mat-icon>place</mat-icon>
-				{{userData.isSwapper ? userToShow.direccion.localidad :
-					userToShow.direccion.calle + ' ' + userToShow.direccion.altura + ' ('+ userToShow.direccion.localidad + ')'
-				}}
-			</p>
-			<div class="div-edit-info" *ngIf="myProfile">
-				<button mat-fab extended color="accent" (click)="edit()">EDITAR INFORMACIÓN</button>
-			</div>
-			<div class="div-cambiar-pass" *ngIf="myProfile">
-				<button mat-fab extended color="primary">CAMBIAR CONTRASEÑA</button>
-			</div>
+					}}
+				</a>
+				<p *ngIf="userData.isSwapper && !myProfile && userToShow.direccion" class="location">
+					<mat-icon>place</mat-icon>
+					{{userData.isSwapper ? userToShow.direccion.localidad :
+					userToShow.direccion.calle + ' ' + userToShow.direccion.altura + ' ('+
+					userToShow.direccion.localidad + ')'
+					}}
+				</p>
+				<div class="div-edit-info" *ngIf="myProfile">
+					<button mat-fab extended (click)="edit()">EDITAR INFORMACIÓN</button>
+				</div>
+				<div class="div-cambiar-pass" *ngIf="myProfile">
+					<button mat-fab extended (click)="changePassword()">CAMBIAR CONTRASEÑA</button>
+				</div>
+				<div class="div-cambiar-pass" *ngIf="myProfile && userData.isSwapper">
+					<button mat-fab extended style="background-color: #3fb6e9; color: white;"
+						(click)="credencialesMP()">
+						<img src="assets/redes/mercadopago.png" style="width: 40px;">
+						CREDENCIALES
+					</button>
+				</div>
+			</mat-card-content>
 		</mat-card>
 		<mat-card class="right">
-			<div class="puntaje">
-				<div class="title">
-					<h3>Puntaje:</h3>
-					<div>
-						<mat-icon *ngFor="let i of [].constructor(userToShow.puntaje || 0)" color="primary">star</mat-icon>
-						<mat-icon *ngFor="let i of [].constructor(5-(userToShow.puntaje || 0))" class="empty-star">star</mat-icon>
+			<mat-card-content>
+				<div class="puntaje">
+					<div class="title">
+						<h3>Puntaje:</h3>
+						<app-rating [puntuacion]="userToShow.puntaje" [remSize]="1.3"></app-rating>
+						<div>({{opiniones.length || 0}} {{opiniones.length == 1 ? 'opinión' :
+							'opiniones'}})</div>
 					</div>
-					<div>({{userToShow.opiniones?.length || 0}} {{userToShow.opiniones?.length == 1 ? 'opinión' : 'opiniones'}})</div>
+					<div class="div-opinar" *ngIf="!myProfile">
+						<button mat-fab extended (click)="opinar()">OPINAR</button>
+					</div>
 				</div>
-				<div class="div-opinar" *ngIf="!myProfile">
-					<button mat-fab extended color="primary">OPINAR</button>
-				</div>
-			</div>
-			<div class="opiniones">
-				<h3>Opiniones:</h3>
-				<div>
-					<mat-card *ngFor="let opinion of userToShow.opiniones" class="card-opinion">
-						<div class="valoracion">
-							<h4>Valoración:</h4>
-							<div style="margin: 0 10px; display: flex; align-items: center;">
-								<mat-icon *ngFor="let i of [].constructor(opinion.valoracion || 0)" color="primary">star</mat-icon>
-								<mat-icon *ngFor="let i of [].constructor(5-(opinion.valoracion || 0))" class="empty-star">star</mat-icon>
+				<div class="opiniones">
+					<h3>Opiniones:</h3>
+					<div>
+						<mat-card *ngFor="let opinion of paginatedOpiniones" class="card-opinion">
+							<div class="valoracion">
+								<h4>Valoración:</h4>
+								<div style="margin: 0 10px; display: flex; align-items: center;">
+									<app-rating [puntuacion]="opinion.valoracion"></app-rating>
+								</div>
+								<div>
+									({{opinion.usuarioOpina.username}} - {{opinion.fechaHoraOpinion | date : 'dd/MM/yyyy'}})
+								</div>
 							</div>
-							<div>
-								({{opinion.usuarioOpina}} - {{opinion.fechaOpinion | date : 'dd/MM/yyyy'}})
-							</div>
-						</div>
-						<!-- <div class="usuario-opinion">
+							<!-- <div class="usuario-opinion">
 							<h4>Opinión de:</h4>
 							<div>{{opinion.usuarioOpina}}</div>
 						</div> -->
-						<div class="descripcion">
-							<h4>Descripción:</h4>
-							<div>{{opinion.descripcion}}</div>
-						</div>
-					</mat-card>
-					<mat-paginator [pageSizeOptions]="[5, 10, 25]" [pageSize]="pageSize" [showFirstLastButtons]="true"
-		[length]="userToShow.opiniones.length" #paginator (page)="changePage($event)" style="border-radius: 15px;"
-		*ngIf="userToShow.opiniones && userToShow.opiniones.length > 0"></mat-paginator>
+							<div class="descripcion">
+								<!-- <h4>Descripción:</h4> -->
+								<div>{{opinion.descripcion}}</div>
+							</div>
+						</mat-card>
+						<mat-paginator [pageSizeOptions]="[5, 10, 25]" [pageSize]="pageSize"
+							[showFirstLastButtons]="true" [length]="opiniones.length" #paginator
+							(page)="changePage($event)" style="border-radius: 15px;"
+							*ngIf="opiniones.length > 0"></mat-paginator>
+					</div>
 				</div>
-			</div>
+			</mat-card-content>
 		</mat-card>
 	</div>
-</div> 
+</div>

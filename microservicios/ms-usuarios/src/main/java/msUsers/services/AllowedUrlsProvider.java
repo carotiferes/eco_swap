@@ -29,6 +29,9 @@ public class AllowedUrlsProvider {
                 "/api/publicaciones",
                 "/api/publicacion/*",
                 // PRODUCTOS
-                "/api/productos/*");
+                "/api/productos/*",
+                // COMPRAS
+                "/comprar/*",
+                "/ms-transacciones/api/webhook");
     }
 }

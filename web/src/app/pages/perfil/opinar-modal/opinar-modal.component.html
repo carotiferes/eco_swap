@@ -1,0 +1,31 @@
+<div id="main-opinar">
+	<div style="margin: 20px;">
+		<h2>Opiná sobre {{data.user.nombre}}</h2>
+	</div>
+
+	<div class="content">
+		<ngb-rating [(rate)]="valoracion" [max]="5">
+			<ng-template let-fill="fill" let-index="index">
+				<i class="bi-star{{fill === 100 ? '-fill' : ''}} star" [class.filled]="fill === 100"
+				[class.low]="index < 3"></i>
+			</ng-template>
+		</ngb-rating>
+	
+		<mat-form-field style="width: 70%;">
+			<mat-label>Descripción</mat-label>
+			<textarea matInput [(ngModel)]="descripcion" cols="10" rows="4"></textarea>
+		</mat-form-field>
+	</div>
+
+	<div class="buttons">
+		<button mat-fab extended color="light" (click)="dialogRef.close()">CANCELAR</button>
+		<div style="display: flex; align-items: center; gap: 5px;">
+			<button mat-fab extended class="confirm" [disabled]="!valoracion || loading" (click)="saveRating()">
+				<span>GUARDAR</span>
+			</button>
+			<mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+		</div>
+	</div>
+</div>
+
+

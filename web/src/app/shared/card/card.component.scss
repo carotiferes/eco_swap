@@ -1,0 +1,188 @@
+.card {
+	margin: 5px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	
+	&.big {
+		height: 440px;
+		h2 {
+			font-size: 18px !important;
+		}
+	}
+	&.small {
+		height: 380px;
+	}
+
+	* { text-align: center; }
+
+	&:hover {
+		cursor: pointer;
+	}
+
+	&.selected-card {
+		background-color: #bceba1;
+	}
+
+	.chip-localidad {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		//background-color: var(--primary-color);
+		padding: 2px;
+		font-weight: 500;
+
+		&.background-verde {
+			background-color: var(--trueques);
+		}
+		
+		&.background-lila {
+			background-color: var(--donaciones);
+		}
+	}
+
+	.img-div {
+		display: flex;
+		justify-content: center;
+		padding: 10px;
+		align-items: center;
+		height: 200px;
+
+		.card-img {
+			max-height: 160px;
+			margin: 20px;
+			width: auto;
+			max-width: 100%;
+			box-shadow: 2px 2px 5px var(--dark-grey);
+
+			&.big {
+				max-height: 160px;
+			}
+	
+			&.small {
+				max-height: 110px;
+			}
+		}
+	}
+
+	.productos {
+		display: flex;
+		max-width: 180px;
+		gap: 30px;
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+
+	.estado-publicacion {
+		margin-top: 5px;
+	}
+
+	
+	.card-body {
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		justify-content: space-around;
+
+		.card-title {
+			margin: 0;
+		}
+
+		.valor-principal {
+			//color: var(--trueques-dark);
+			h2 {
+				font-weight: bold !important;
+				margin: 0;
+			}
+		}
+	}
+
+	/* .productos {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+
+		.producto {
+			margin: 5px 10px;
+			min-width: 100px;
+		}
+	} */
+
+	.user-data {
+		text-align: center;
+		padding: 10px;
+		display: flex;
+		justify-content: space-around;
+		width: 100%;
+		align-items: center;
+		//background: #bceba1;
+		border-radius: 0 0 10px 10px;
+
+		* {margin: 0;}
+
+		.user-img {
+			width: 30px;
+			border-radius: 50%;
+		}
+
+		.mat-icon, span {
+			width: 16px;
+			height: 16px;
+			font-size: 16px;
+		}
+	}
+
+	.buttons {
+		display: flex;
+		//flex-direction: column;
+		gap: 10px;
+		margin: 10px auto;
+		
+		/* button {
+			text-transform: uppercase;
+			width: 100%;
+		} */
+
+	}
+}
+
+.result-icon {
+	font-size: 40px;
+
+	&.green {
+		color: var(--success);
+	}
+	&.red {
+		color: var(--warn);
+	}
+	&.purple {
+		color: var(--secondary-color);
+	}
+}
+
+@media (min-width: 0px) and (max-width: 576px) {
+	.buttons {
+		width: 50% !important;
+		
+		button {
+			text-transform: uppercase;
+			width: 100%;
+		}
+	}
+}
+
+.background-verde {
+	background-color: #bceba1;
+}
+
+.background-lila {
+	background-color: #dcb9ef;
+}
+
+.font-verde {
+	color: var(--trueques-dark);
+}
+
+.font-lila {
+	color: var(--donaciones-dark);
+}

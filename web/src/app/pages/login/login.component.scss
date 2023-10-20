@@ -92,3 +92,10 @@ main{
 .loginPanel #forgot:hover{
     color:var(--secondary-color)
 } 
+
+.spinner {
+	margin-left: 10px;
+	circle{
+		stroke: var(--dark-grey);
+	}
+}

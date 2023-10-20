@@ -6,15 +6,15 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 
 const routes: Routes = [
 	{ path: '', component: HomeComponent },
-	{ path: 'home', loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule) },
-	{ path: 'login', loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule), data: { hideFooter: true } },
-	{ path: 'registro', loadChildren: () => import('./pages/registro/registro.module').then(m => m.RegistroModule) },
-	{ path: 'publicaciones', loadChildren: () => import('./pages/publicaciones/publicaciones.module').then(m => m.PublicacionesModule) },
-	{ path: 'publicacion/:id_publicacion', loadChildren: () => import('./pages/publicacion/publicacion.module').then(m => m.PublicacionModule) },
-	{ path: 'not-found', loadChildren: () => import('./pages/not-found/not-found.module').then(m => m.NotFoundModule) },
-	{ path: 'error', loadChildren: () => import('./pages/error/error.module').then(m => m.ErrorModule) },
-	{ path: 'colectas', loadChildren: () => import('./pages/colectas/colectas.module').then(m => m.ColectasModule) },
-	{ path: 'colecta/:id_colecta', loadChildren: () => import('./pages/colecta/colecta.module').then(m => m.ColectaModule) },
+	{ path: 'home', loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule), canActivate: [AuthGuard] },
+	{ path: 'login', loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule), data: { hideFooter: true }, canActivate: [AuthGuard] },
+	{ path: 'registro', loadChildren: () => import('./pages/registro/registro.module').then(m => m.RegistroModule), canActivate: [AuthGuard] },
+	{ path: 'publicaciones', loadChildren: () => import('./pages/publicaciones/publicaciones.module').then(m => m.PublicacionesModule), canActivate: [AuthGuard] },
+	{ path: 'publicacion/:id_publicacion', loadChildren: () => import('./pages/publicacion/publicacion.module').then(m => m.PublicacionModule), canActivate: [AuthGuard] },
+	{ path: 'not-found', loadChildren: () => import('./pages/not-found/not-found.module').then(m => m.NotFoundModule), canActivate: [AuthGuard] },
+	{ path: 'error', loadChildren: () => import('./pages/error/error.module').then(m => m.ErrorModule), canActivate: [AuthGuard] },
+	{ path: 'colectas', loadChildren: () => import('./pages/colectas/colectas.module').then(m => m.ColectasModule), canActivate: [AuthGuard] },
+	{ path: 'colecta/:id_colecta', loadChildren: () => import('./pages/colecta/colecta.module').then(m => m.ColectaModule), canActivate: [AuthGuard] },
 	{
 		path: 'mi-perfil',
 		loadChildren: () => import('./pages/perfil/perfil.module').then(m => m.PerfilModule),
@@ -68,6 +68,11 @@ const routes: Routes = [
 	{
 		path: 'reset-password',
 		loadChildren: () => import('./pages/registro/registro.module').then(m => m.RegistroModule),
+		canActivate: [AuthGuard]
+	},
+	{
+		path: 'notificaciones',
+		loadChildren: () => import('./pages/notificaciones/notificaciones.module').then(m => m.NotificacionesModule),
 		canActivate: [AuthGuard]
 	},
 	{ path: '**', component: NotFoundComponent },

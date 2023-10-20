@@ -1,10 +1,5 @@
 .footer {
-	/* position: fixed;
-	bottom: 0;
-	left: 0;
-    right: 0;
-	background-color: var(--primary-color); */
-	background-image: url('../../../assets/footer.png');
+	background: transparent url('../../../assets/footer.png') no-repeat center;
 	background-size: cover;
     position: relative;
     height: 140px;
@@ -16,7 +11,7 @@
 
 	.footer-toolbar {
 		display: flex;
-		justify-content: space-between;
+		justify-content: space-around;
 
 		* {
 			color: white;

@@ -7,6 +7,7 @@ import jakarta.persistence.criteria.*;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.entities.*;
+import msUsers.domain.entities.enums.EstadoPublicacion;
 import msUsers.domain.entities.enums.EstadoTrueque;
 import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.repositories.PublicacionesRepository;
@@ -17,6 +18,7 @@ import msUsers.domain.responses.DTOs.PublicacionDTO;
 import msUsers.domain.responses.DTOs.TruequeDTO;
 import msUsers.domain.responses.ResponsePostEntityCreation;
 import msUsers.domain.responses.ResponseUpdateEntity;
+import msUsers.exceptions.TruequeCreationException;
 import msUsers.services.CriteriaBuilderQueries;
 import msUsers.services.TruequeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +103,8 @@ public class TruequeController {
                 criteriaBuilder.lessThanOrEqualTo(root.get("valorTruequeMin"), publicacion.getValorTruequeMax()),
                 criteriaBuilder.greaterThanOrEqualTo(root.get("valorTruequeMax"), publicacion.getValorTruequeMin()),
                 criteriaBuilder.notEqual(root.get("idPublicacion"),publicacion.getIdPublicacion()),
-                criteriaBuilder.equal(root.get("particular").get("idParticular"), publicacion.getParticular().getIdParticular())
+                criteriaBuilder.notEqual(root.get("estadoPublicacion"), EstadoPublicacion.CERRADA),
+                criteriaBuilder.equal(root.get("particular").get("idParticular"),particular.getIdParticular())
         );
 
         query.where(predicate);
@@ -161,10 +164,14 @@ public class TruequeController {
                 );
 
                 query.where(predicate);
+                trueque.getPublicacionOrigen().setEstadoPublicacion(EstadoPublicacion.CERRADA);
+                trueque.getPublicacionPropuesta().setEstadoPublicacion(EstadoPublicacion.CERRADA);
 
                 List<Trueque> truequesRelacionados = entityManager.createQuery(query).getResultList();
                 truequesRelacionados.forEach(t -> t.setEstadoTrueque(EstadoTrueque.ANULADO));
                 truequesRelacionados.forEach(entityManager::merge);
+
+
             }
             else {
                 trueque.setEstadoTrueque(EstadoTrueque.valueOf(request.getNuevoEstado()));
@@ -190,8 +197,20 @@ public class TruequeController {
         final var publicacionPropuesta = this.publicacionesRepository.findById(request.getIdPublicacionPropuesta()).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrada la publicacion propuesta: " + request.getIdPublicacionPropuesta()));
 
+        // Validaciones
         if(truequeService.existeTruequeConPublicaciones(publicacionOrigen.getIdPublicacion(), publicacionPropuesta.getIdPublicacion()))
             throw new EntityExistsException("Ya existe un trueque entre ambas publicaciones.");
+        if(truequeService.existeTruequeConXPublicacion(publicacionOrigen.getIdPublicacion()))
+            throw new EntityExistsException("La publicación " + publicacionOrigen.getTitulo() + "ya tiene un trueque.");
+        if(truequeService.existeTruequeConXPublicacion(publicacionPropuesta.getIdPublicacion()))
+            throw new EntityExistsException("La publicación " + publicacionPropuesta.getTitulo() + "ya tiene un trueque.");
+        if(publicacionOrigen.getParticular().getIdParticular() == publicacionPropuesta.getParticular().getIdParticular())
+            throw new TruequeCreationException("No podés crear un trueque con publicaciones del mismo usuario.");
+
+        if (!(publicacionPropuesta.getValorTruequeMin() <= publicacionOrigen.getValorTruequeMax() &&
+                publicacionPropuesta.getValorTruequeMax() >= publicacionOrigen.getValorTruequeMin())) {
+            throw new TruequeCreationException("La publicación propuesta no está dentro del intervalo de la publicación origen.");
+        }
 
         Trueque trueque = new Trueque();
         trueque.setEstadoTrueque(EstadoTrueque.PENDIENTE);

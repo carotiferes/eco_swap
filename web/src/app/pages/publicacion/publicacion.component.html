@@ -3,90 +3,37 @@
 <div id="main-publicacion" class="app-main-div">
 	<app-spinner [loading]="loading"></app-spinner>
 
-	<mat-card *ngIf="!loading && publicacion">
-		<mat-card-header style="border-bottom: solid 1px var(--light-grey); padding-bottom: 10px;">
-			<div class="div-header">
-				<div class="header-info">
-					<div mat-card-avatar class="example-header-image"></div>
-					<div>
-						<mat-card-title style="display: flex; align-items: center;">
-							<a [href]="'/perfil/'+publicacion.particularDTO.usuarioDTO.idUsuario" *ngIf="userData.isLoggedIn">
-								{{publicacion.particularDTO.nombre}} {{publicacion.particularDTO.apellido}}
-							</a>
-							<span *ngIf="!userData.isLoggedIn">{{publicacion.particularDTO.nombre}} {{publicacion.particularDTO.apellido}}</span>
-							<!-- <mat-icon class="address" (click)="showDireccion(publicacion.fundacion.usuario)">place</mat-icon> -->
-						</mat-card-title>
-						<mat-card-subtitle>
-							<mat-icon *ngFor="let i of [].constructor(publicacion.particularDTO.puntaje || 0)"
-								color="primary">star</mat-icon>
-							<mat-icon *ngFor="let i of [].constructor(5-(publicacion.particularDTO.puntaje || 0))"
-								class="empty-star">star</mat-icon>
-						</mat-card-subtitle>
-					</div>
-				</div>
-				<div class="div-fecha-zona">
-					<div>{{publicacion.fechaPublicacion | date: 'dd/MM/yyyy'}}</div>
-					<div *ngIf="publicacion.particularDTO.direcciones.length > 0">
-						{{publicacion.particularDTO.direcciones[0].localidad}}</div>
-				</div>
-			</div>
-		</mat-card-header>
-		<mat-card-content class="card-content">
-			<div class="imagenes">
-				<img [src]="getImage(img)" *ngFor="let img of publicacion.parsedImagenes" (click)="zoomImage(img)" />
-			</div>
-			<div>
-				<h2 class="card-title">{{publicacion.titulo}}</h2>
-				<div class="descripcion">
-					{{publicacion.descripcion}}
-				</div>
-				<div class="trueque">
-					Valor de trueque: ${{publicacion.valorTruequeMin}} - ${{publicacion.valorTruequeMax}}
-				</div>
-				<div class="venta" *ngIf="publicacion.tipoPublicacion == 'VENTA_Y_TRUEQUE'">
-					Precio de venta: ${{publicacion.precioVenta}}
-				</div>
-				<div class="caracteristicas" *ngIf="publicacion.caracteristicaProducto.length > 0">
-					<b>Características:</b>
-					<div *ngFor="let caract of publicacion.caracteristicaProducto" class="producto">
-						{{caract.caracteristica}}
-					</div>
-				</div>
-			</div>
-		</mat-card-content>
-		<mat-card-actions class="card-button" *ngIf="this.userType != 'publicacionOrigen'">
-			<button mat-fab extended color="primary" (click)="intercambiar()">QUIERO INTERCAMBIAR</button>
-			<button mat-fab extended color="accent" (click)="comprar()"
-				*ngIf="publicacion.tipoPublicacion == 'VENTA_Y_TRUEQUE'">QUIERO COMPRAR</button>
-		</mat-card-actions>
-	</mat-card>
+	<div class="row" *ngIf="!loading">
+		<div [class]="userData.isLoggedIn && truequeAceptado.length == 1 ? 'col-sm-12 col-md-8' : ''">
+			<app-main-card-publicacion [publicacion]="publicacion" [userData]="userData" [userType]="userType"
+			(intercambiarEvent)="intercambiar()" (comprarEvent)="comprar()"></app-main-card-publicacion>
+		</div>
+		<div *ngIf="userData.isLoggedIn && truequeAceptado.length == 1" class="col-sm-12 col-md-4">
+			<!-- <h3 style="margin: 20px 0 0 5px; font-weight: bold;"> Trueque Aceptado! </h3> -->
+			<app-card [cardData]="truequeAceptado[0]" app="publicaciones"></app-card>
+		</div>
+	</div>
+
 
 	<div *ngIf="userData.isLoggedIn">
-		<div *ngIf="hasApprovedTrueque().length == 0">
+		<div ><!-- *ngIf="truequeAceptado.length == 0" -->
 			<h3 style="margin: 20px 0 0 5px; font-weight: bold;">
 				{{this.userType == 'publicacionPropuesta' ? 'Mi Trueque Activo' : 'Propuestas de Trueque'}}
 			</h3>
-			<div *ngIf="showPublicaciones('abiertas').length == 0 && !loading" style="text-align: center;">Esta
-				publicación no tiene nuevas propuestas aún!</div>
-			<app-deck-publicaciones *ngIf="publicacionesToShow.length > 0"
-				[publicacionesToShow]="showPublicaciones('abiertas')" origin="propuestas"
-				[buttons]="getButtonsForCards()" (changeStatus)="changeStatusTrueque($event)"></app-deck-publicaciones>
+			<div *ngIf="truequesActivos.length == 0 && !loading" style="text-align: center;">
+				Esta publicación no tiene nuevas propuestas aún!
+			</div>
+			<div *ngIf="truequesActivos.length > 0">
+				<app-deck [cardList]="truequesActivos" app="publicaciones" [fullScreenWidth]="true"
+				(statusChanged)="getTrueques()"></app-deck>
+			</div>
 		</div>
 
-		<div *ngIf="hasApprovedTrueque().length > 0">
-			<h3 style="margin: 20px 0 0 5px; font-weight: bold;"> Trueque Aceptado </h3>
-			<app-deck-publicaciones *ngIf="publicacionesToShow.length > 0" [publicacionesToShow]="hasApprovedTrueque()"
-				origin="propuestas" [buttons]="[]"
-				(changeStatus)="changeStatusTrueque($event)"></app-deck-publicaciones>
-		</div>
-
-		<div *ngIf="showPublicaciones('cerradas').length > 0">
+		<div *ngIf="historialTrueques.length > 0">
 			<h3 style="margin: 20px 0 0 5px; font-weight: bold;">
 				Historial de Trueques
 			</h3>
-			<app-deck-publicaciones *ngIf="publicacionesToShow.length > 0"
-				[publicacionesToShow]="showPublicaciones('cerradas')" origin="propuestas" [buttons]="[]"
-				(changeStatus)="changeStatusTrueque($event)"></app-deck-publicaciones>
+			<app-deck [cardList]="historialTrueques" app="publicaciones" [fullScreenWidth]="true"></app-deck>
 		</div>
 	</div>
 </div>

@@ -1,28 +1,20 @@
 
 <div id="main-trocar" *ngIf="!loading">
 
-	<div class="publicacion-origen" *ngIf="publicacionOrigen">
-		Publicación de {{publicacionOrigen.particularDTO.nombre}} {{publicacionOrigen.particularDTO.apellido}}
-		<div class="imagenes">
-			<img [src]="getImage(img)" *ngFor="let img of publicacionOrigen.parsedImagenes" />
-		</div>
-		<div class="descripcion">
-			{{publicacionOrigen.descripcion}}
-		</div>
-		<div class="trueque">
-			Valor de trueque: ${{publicacionOrigen.valorTruequeMin}} - ${{publicacionOrigen.valorTruequeMax}} 
-		</div>
-		<div class="venta" *ngIf="publicacionOrigen.tipoPublicacion == 'VENTA_Y_TRUEQUE'">
-			Precio de venta: ${{publicacionOrigen.precioVenta}}
+	<div class="publicacion-origen" *ngIf="cardPublicacionOrigen">
+		<h3>Vas a intercambiar por:</h3>
+		<div style="transform: scale(0.8); transform-origin: top; max-height: 60vh;">
+			<app-card app="publicaciones" [cardData]="cardPublicacionOrigen"></app-card>
 		</div>
 	</div>
-	<div class="mis-publicaciones">
+	<div class="mis-publicaciones" *ngIf="publicacionesCardList.length > 0">
 		<h3 style="text-align: center;">Seleccioná una de tus publicaciones para intercambiar!</h3>
-		<div>
-			<app-deck-publicaciones [publicacionesToShow]="misPublicaciones" origin="intercambio"
-			(selectedCard)="selectCard($event)"></app-deck-publicaciones>
+		<div  style="max-width: 98%; transform: scale(0.8); transform-origin: top; max-height: 60vh;">
+			<app-deck [cardList]="publicacionesCardList" app="publicaciones"
+			(cardSelected)="selectCard($event)" [fixedPageSize]="1" [smallWidth]="true"></app-deck>
 		</div>
 	</div>
+	<div *ngIf="publicacionesCardList.length == 0">No tenés publicaciones aún! Creá una para poder hacer intercambios</div>
 </div>
 <div id="trocar-buttons">
 	<button mat-fab extended color="light" (click)="close()">CANCELAR</button>
