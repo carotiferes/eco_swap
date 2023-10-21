@@ -10,7 +10,7 @@
 	flex-wrap: wrap;
 	max-width: 100%;
 	gap: 5%;
-	margin: 20% 2%;
+	margin: 15% 2%;
 
 	.card {
 		transition: transform 0.2s;
@@ -54,6 +54,7 @@
 			align-items: center;
 			//background: #bceba1;
 			border-radius: 0 0 10px 10px;
+			height: 18%;
 
 			* {
 				margin: 0;
@@ -67,13 +68,14 @@
 				background-color: #dcb9ef;
 			}
 		}
+
 	}
 
 
 }
 
 #valores {
-	margin: 20% 2%;
+	margin: 15% 2%;
 
 	.content-valores {
 		display: flex;
@@ -97,7 +99,7 @@
 }
 
 #beneficios {
-	margin: 20% 2%;
+	margin: 15% 2%;
 
 	.beneficios-content {
 		display: flex;
@@ -115,33 +117,49 @@
 				transform: scale(1.05);
 			}
 
-			img.card-img {
-				width: 40vw;
-				height: 100%;
-				border-radius: 13px;
-				filter: brightness(0.4);
-				object-fit: cover;
-
-			}
-
-			.card-img-overlay {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-
-				h2 {
-					font-weight: 600;
-					font-size: 36px;
-					color: white;
-					line-height: 1;
-				}
-			}
+			
 		}
 	}
 }
 
+img.card-img {
+	width: 30vw;
+	height: 100%;
+	border-radius: 13px;
+	filter: brightness(0.4);
+	object-fit: cover;
+
+	&.small {
+		border-radius: 13px 13px 0 0;
+		height: 82%;
+		object-fit: cover;
+		object-position: bottom;
+		width: 300px !important;
+	}
+
+}
+
+.card-img-overlay {
+	display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+
+	h2, h1 {
+		font-weight: 600;
+		font-size: 36px;
+		color: white;
+		line-height: 1;
+	}
+	p {
+		color: white;
+
+	}
+}
+
 #quienes-somos {
-	margin: 20% 2%;
+	margin: 15% 2%;
 
 	img {
 		object-fit: contain;
@@ -203,14 +221,12 @@
 		width: 80vw !important;
 	}
 
-	#beneficios {
-		img.card-img {
-			width: 80vw;
-		}
+	img.card-img {
+		width: 80vw;
 	}
 
 	.card-img-overlay h2 {
-		font-size: 20px !important;
+		font-size: 30px !important;
 	}
 
 	/* .topleft {
@@ -225,7 +241,7 @@
 
 @media (min-width: 577px) and (max-width: 768px) {
 	.card-img-overlay h2 {
-		font-size: 30px !important;
+		font-size: 26px !important;
 	}
 
 	/* .text {

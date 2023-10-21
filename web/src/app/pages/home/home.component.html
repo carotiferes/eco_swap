@@ -41,31 +41,37 @@
 </section>
 
 <section id="accesos">
-	<div id="colectas" class="card">
-		<div class="card-body">
-			<h1>Colectas</h1>
-			<p>
-				Clickeá acá para ver todas las colectas disponibles en fundaciones.
-				<br>
-				Realizá donaciones fácilmente!
-			</p>
+	<div id="colectas" class="card" (click)="goTo('colectas')">
+		<!-- <div class="card-body"> -->
+			<img src="assets/home/donacion.avif" alt="" class="card-img small">
+			<div class="card-img-overlay">
+				<h1>Colectas</h1>
+				<p>
+					Clickeá acá para ver todas las colectas disponibles en fundaciones.
+					<br>
+					Realizá donaciones fácilmente!
+				</p>
+			</div>
+			<div class="card-bottom colecta">
+				<mat-icon>open_in_new</mat-icon>
+			</div>
 
-		</div>
-		<div class="card-bottom colecta">
-			<mat-icon>open_in_new</mat-icon>
-		</div>
+		<!-- </div> -->
 	</div>
 
-	<div id="publicaciones" class="card">
-		<div class="card-body">
-			<h1>Publicaciones</h1>
-			<p>
-				Clickeá acá para ver todas las publicaciones de los Swappers.
-				<br>
-				Realizá intercambios fácilmente!
-
-			</p>
-		</div>
+	<div id="publicaciones" class="card" (click)="goTo('publicaciones')">
+		<!-- <div class="card-body"> -->
+			<img src="assets/home/intercambio.avif" alt="" class="card-img small">
+			<div class="card-img-overlay">
+				<h1>Publicaciones</h1>
+				<p>
+					Clickeá acá para ver todas las publicaciones de los Swappers.
+					<br>
+					Realizá intercambios fácilmente!
+					
+				</p>
+			</div>
+		<!-- </div> -->
 		<div class="card-bottom publicacion">
 			<mat-icon>open_in_new</mat-icon>
 		</div>
