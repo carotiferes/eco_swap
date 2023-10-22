@@ -101,6 +101,10 @@ mat-toolbar-row div {
 				letter-spacing: 1px;
 				font-size: 18px;
 				text-wrap: balance;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				max-width: 100%;
 			}
 		}
 	}

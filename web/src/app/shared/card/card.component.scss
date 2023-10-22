@@ -130,6 +130,13 @@
 			height: 16px;
 			font-size: 16px;
 		}
+
+		h4 {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			max-width: 100%;
+		}
 	}
 
 	.buttons {

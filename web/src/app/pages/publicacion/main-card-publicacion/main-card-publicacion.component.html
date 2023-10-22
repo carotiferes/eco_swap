@@ -50,7 +50,7 @@
 	<mat-card-actions class="card-button" *ngIf="this.userType != 'publicacionOrigen'">
 		<button mat-fab extended color="primary" (click)="intercambiar()">QUIERO INTERCAMBIAR</button>
 		<button mat-fab extended style="background-color: #3fb6e9; color: white;" (click)="comprar()"
-			*ngIf="publicacion.tipoPublicacion == 'VENTA_Y_TRUEQUE'">
+			*ngIf="publicacion.tipoPublicacion == 'VENTA_Y_TRUEQUE' && publicacion.particularDTO.accessToken && publicacion.particularDTO.publicKey">
 			<img src="assets/redes/mercadopago.png" style="width: 40px;">
 			QUIERO COMPRAR
 		</button>
