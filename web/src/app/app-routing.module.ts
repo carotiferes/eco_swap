@@ -75,6 +75,11 @@ const routes: Routes = [
 		loadChildren: () => import('./pages/notificaciones/notificaciones.module').then(m => m.NotificacionesModule),
 		canActivate: [AuthGuard]
 	},
+	{
+		path: 'admin-logistica',
+		loadChildren: () => import('./pages/admin-logistica/admin-logistica.module').then(m => m.AdminLogisticaModule),
+		canActivate: [AuthGuard]
+	},
 	{ path: '**', component: NotFoundComponent },
 ];
 

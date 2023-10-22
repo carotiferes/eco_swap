@@ -19,6 +19,7 @@ export const AuthGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
 		'publicaciones', 'publicacion',
 		'colectas', 'colecta'
 	]
+	const onlyAdminsURLs = ['admin-logistica'];
 	/* other (requieren login pero no un perfil especifico): 
 		mi-perfil, perfil, edit-perfil, reset-password, notificaciones
 	 */
@@ -26,6 +27,13 @@ export const AuthGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
 	console.log('url', url);
 	
 	if (authService.isUserLoggedIn) {
+		if(authService.getUserID() == 999) {
+			if(onlyAdminsURLs.some(item => item == url)) return true;
+			else {
+				router.navigate(['/admin-logistica'])
+				return false
+			}
+		}
 		if(authService.isUserSwapper() && onlyFundacionesURLs.some(item => item == url) 
 		|| !authService.isUserSwapper() && onlySwapperURLs.some(item => item == url)) {
 			router.navigate(['/home'])

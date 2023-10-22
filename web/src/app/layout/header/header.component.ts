@@ -25,6 +25,7 @@ export class HeaderComponent {
 	profileType: 'particular' | 'fundacion';
 
 	notifications: number = 0;
+	isAdmin: boolean = false;
 
 	constructor(private router: Router, private auth: AuthService, private usuarioService: UsuarioService){
 		this.mainTabs = menuData.filter((item: MenuModel) => item.type == 'pages')
@@ -34,8 +35,10 @@ export class HeaderComponent {
 		this.isUserLoggedIn = auth.isUserLoggedIn
 		this.profileType = auth.isUserSwapper() ? 'particular' : 'fundacion';
 
-		if (this.isUserLoggedIn) {
-			usuarioService.getUserByID(auth.getUserID()).subscribe({
+		const userID = auth.getUserID();
+		if(userID == 999) this.isAdmin = true;
+		else if (this.isUserLoggedIn) {
+			usuarioService.getUserByID(userID).subscribe({
 				next: (res: any) => {
 					this.userData = res;
 					//console.log(this.userData);
