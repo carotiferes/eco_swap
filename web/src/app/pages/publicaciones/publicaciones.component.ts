@@ -34,6 +34,7 @@ export class PublicacionesComponent {
 	allLocalidades: string[] = [];
 
 	publicacionesCardList: CardModel[] = []
+	filteredPublicacionesCardList: CardModel[] = []
 
 	constructor(private router: Router, private auth: AuthService, private fb: FormBuilder,
 		private productosService: ProductosService, private showErrorService: ShowErrorService,
@@ -148,6 +149,7 @@ export class PublicacionesComponent {
 				codigo: 'Publicación'
 			})
 		}
+		this.filteredPublicacionesCardList = this.publicacionesCardList;
 	}
 
 	limpiarFiltros() {
@@ -189,6 +191,11 @@ export class PublicacionesComponent {
 	private _filterLocalidad(value: string): string[] {
 		const filterValue = value.toLowerCase();
 		return this.allLocalidades.filter(localidad => localidad.toLowerCase().includes(filterValue));
+	}
+
+	filterByStatus(event: any) {
+		const status = event.value == 'open' ? 'ABIERTA' : event.value == 'closed' ? 'CERRADA' : ['ABIERTA', 'CERRADA'];
+		this.filteredPublicacionesCardList = this.publicacionesCardList.filter(item => item.estado && status.includes(item.estado) )
 	}
 
 }

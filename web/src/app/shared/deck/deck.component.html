@@ -5,7 +5,7 @@
 		<app-card [cardData]="card" [app]="app" (statusChanged)="cardStatusChanged($event)"
 		(cardSelected)="cardWasSelected($event)"></app-card>
 	</div>
-	<mat-paginator [pageSizeOptions]="fixedPageSize ?[fixedPageSize] :fullScreenWidth ? [3, 12, 24] : [4, 12, 24]" [pageSize]="pageSize" [showFirstLastButtons]="true"
+	<mat-paginator [hidePageSize]="true" [pageSize]="pageSize" [showFirstLastButtons]="true"
 		[length]="cardList.length" #paginator (page)="changePage($event)"
 		style="border-radius: 15px;" *ngIf="cardList.length > 0">
 	</mat-paginator>

@@ -1,4 +1,5 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { AfterViewInit, Component, Inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardModel } from 'src/app/models/card.model';
@@ -34,14 +35,25 @@ export class PublicacionComponent implements AfterViewInit {
 	truequeAceptado: CardModel[] = [];
 	historialTrueques: CardModel[] = [];
 	truequesActivos: CardModel[] = [];
+	mainPublicacionCard?: CardModel;
 
 	init: number = 0;
 	screenWidth: number;
 
+	mensajes: {id_user: number, text: string}[] = [
+		{id_user: 1, text: 'Este es un mensaje'},
+		{id_user: 2, text: 'Este es otro mensaje'},
+		{id_user: 1, text: 'Este es un mensaje'},
+		{id_user: 2, text: 'Este es otro mensaje'},
+	];
+	nuevoMensaje: string = '';
+
+	initChat: number = 0;
+
 	constructor(private truequeService: TruequesService, private route: ActivatedRoute,
 		private showErrorService: ShowErrorService, private auth: AuthService,
 		private router: Router, private usuarioService: UsuarioService, public dialog: MatDialog,
-		private comprasService: ComprasService) {
+		private comprasService: ComprasService, @Inject(DOCUMENT) private document: Document) {
 
 		this.userData = { isSwapper: auth.isUserSwapper(), isLoggedIn: auth.isUserLoggedIn }
 		this.route.paramMap.subscribe(params => {
@@ -66,6 +78,12 @@ export class PublicacionComponent implements AfterViewInit {
 				}
 			})
 		} else this.getPublicacion(this.id_publicacion);
+		this.scrollToBottom();
+	}
+
+	scrollToBottom() {
+		const elem = this.document.getElementById('chatContainer')
+		if(elem) elem.scrollTop = elem.scrollHeight;
 	}
 
 	getPublicacion(id: number) {
@@ -254,6 +272,23 @@ export class PublicacionComponent implements AfterViewInit {
 			if(publicacion.estadoTrueque == 'APROBADO') {
 				// ACEPTADO
 				this.truequeAceptado.push(item)
+				this.mainPublicacionCard = {
+					id: this.publicacion.idPublicacion,
+					imagen: this.publicacion.parsedImagenes? this.publicacion.parsedImagenes[0] : 'no_image',
+					titulo: this.publicacion.titulo,
+					valorPrincipal: `$${this.publicacion.valorTruequeMin} - $${this.publicacion.valorTruequeMax}`,
+					fecha: this.publicacion.fechaPublicacion,
+					usuario: {
+						imagen: 'assets/perfiles/perfiles-17.jpg',//publicacion.particularDTO.
+						nombre: this.publicacion.particularDTO.nombre + ' ' + this.publicacion.particularDTO.apellido,
+						puntaje: this.publicacion.particularDTO.puntaje,
+						localidad: this.publicacion.particularDTO.direcciones[0].localidad
+					},
+					action: 'detail',
+					buttons: [],
+					estado: this.publicacion.estadoTrueque,
+					idAuxiliar: this.trueques.find(item => item.publicacionDTOpropuesta.idPublicacion == this.publicacion.idPublicacion)?.idTrueque
+				}
 			} else if(publicacion.estadoTrueque == 'PENDIENTE' && publicacion.estadoPublicacion == 'ABIERTA') {
 				// ACTIVOS
 				item.valorSecundario = publicacion.precioVenta ? `$${publicacion.precioVenta}` : undefined

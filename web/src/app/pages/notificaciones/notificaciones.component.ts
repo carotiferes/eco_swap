@@ -13,7 +13,7 @@ export class NotificacionesComponent {
 	hoveredItem: any;
 	
 	@ViewChild(MatPaginator) paginator!: MatPaginator;
-	pageSize = 6;
+	pageSize = 10;
 
 	ngOnInit(): void {
 		this.paginatedNotifications = this.notifications.slice(0, this.pageSize);

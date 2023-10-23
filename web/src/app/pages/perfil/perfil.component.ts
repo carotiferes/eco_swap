@@ -40,7 +40,7 @@ export class PerfilComponent {
 		publicKey?: string
 	}
 
-	pageSize = 3;
+	pageSize = 5;
 
 	opiniones: OpinionModel[] = [];
 	paginatedOpiniones: OpinionModel[] = [];

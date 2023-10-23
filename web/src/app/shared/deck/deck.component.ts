@@ -19,12 +19,12 @@ export class DeckComponent {
 	paginatedCardList: CardModel[] = [];
 
 	@ViewChild(MatPaginator) paginator!: MatPaginator;
-	@Input() pageSize = 4;
+	@Input() pageSize = 12;
 	@Input() fixedPageSize?: number;
 
 	ngOnChanges(changes: any): void {
 		//console.log('change', this.cardList);
-		if(this.pageSize == 4) this.pageSize = this.fullScreenWidth ? 3 : 4;
+		//if(this.pageSize == 4) this.pageSize = this.fullScreenWidth ? 3 : 4;
 		if(this.fixedPageSize) this.pageSize = this.fixedPageSize;
 		this.paginatedCardList = this.cardList.slice(0, this.pageSize);
 	}

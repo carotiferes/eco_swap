@@ -23,7 +23,7 @@
 		</mat-list-item>
 	</ng-container>
 </mat-nav-list>
-<mat-paginator [pageSizeOptions]="[10]" [pageSize]="pageSize" [showFirstLastButtons]="true"
+<mat-paginator [hidePageSize]="true" [pageSize]="pageSize" [showFirstLastButtons]="true"
 	[length]="list.length" #paginator (page)="changePage($event)" style="border-radius: 15px;"
 	*ngIf="list.length > 0">
 </mat-paginator>

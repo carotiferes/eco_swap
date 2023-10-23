@@ -3,17 +3,19 @@
 
 	mat-card {
 		margin: 10px;
+		border-radius: 15px;
 	}
 
 	.top-div {
 		display: grid;
-		grid-template-columns: 1fr 2fr;
+		grid-template-columns: 1fr 5fr;
 
 		.top-img {
 			position: relative;
 			display: inline-block;
 			border-radius: 50%;
 			height: 145px;
+			
 
 			img {
 				display: block;
@@ -67,10 +69,11 @@
 
 	.bottom-div {
 		display: grid;
-		grid-template-columns: 1fr 2fr;
+		grid-template-columns: 1fr 5fr;
 
 		.left {
 			text-align: center;
+			min-width: 210px;
 			//margin: 20px;
 
 			p,
@@ -78,6 +81,7 @@
 				display: flex;
 				align-items: center;
 				gap: 5px;
+				//font-size: 11px;
 
 				&.location {
 					text-transform: capitalize;

@@ -69,7 +69,7 @@ export class CardComponent {
 						userType: 'publicacionOrigen'
 					}
 					data.publicacion.parsedImagenes = data.publicacion.imagenes.split('|')
-					this.openDialog(component, data)
+					this.openDialog(component, data, '80vh')
 				}
 			})
 		}
@@ -79,10 +79,10 @@ export class CardComponent {
 		if(card.action == 'list') this.openDialog(ListComponent, card);
 	}
 
-	openDialog(component: any, data: any) {
+	openDialog(component: any, data: any, height: string = '60vh') {
 		const dialogRef = this.dialog.open(component, {
 			maxWidth: '80vw',
-			maxHeight: '60vh',
+			maxHeight: height,
 			height: 'fit-content',
 			width: '100%',
 			panelClass: 'full-screen-modal',

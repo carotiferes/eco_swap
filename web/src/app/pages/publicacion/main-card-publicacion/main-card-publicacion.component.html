@@ -25,8 +25,21 @@
 		</div>
 	</mat-card-header>
 	<mat-card-content class="card-content">
-		<div class="imagenes">
+		<!-- <div class="imagenes">
 			<img [src]="getImage(img)" *ngFor="let img of publicacion.parsedImagenes" (click)="zoomImage(img)" />
+		</div> -->
+		<div style="width: 60%; margin: 0 auto;">
+			<ngb-carousel *ngIf="publicacion.parsedImagenes && publicacion.parsedImagenes.length > 0"
+				[showNavigationArrows]="publicacion.parsedImagenes.length > 1"
+				[showNavigationIndicators]="publicacion.parsedImagenes.length > 1">
+				<ng-template ngbSlide *ngFor="let img of publicacion.parsedImagenes">
+					<div class="picsum-img-wrapper">
+						<img [src]="getImage(img)" class="w-80"/>
+					</div>
+					<div class="carousel-caption">
+					</div>
+				</ng-template>
+			</ngb-carousel>
 		</div>
 		<div>
 			<h2 class="card-title">{{publicacion.titulo}}</h2>
