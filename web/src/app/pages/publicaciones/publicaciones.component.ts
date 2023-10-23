@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { Observable, map, startWith } from 'rxjs';
 import { CardModel } from 'src/app/models/card.model';
 import { PublicacionModel } from 'src/app/models/publicacion.model';
+import { TruequeModel } from 'src/app/models/trueque.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { ComprasService } from 'src/app/services/compras.service';
 import { ProductosService } from 'src/app/services/productos.service';
@@ -35,6 +36,8 @@ export class PublicacionesComponent {
 
 	publicacionesCardList: CardModel[] = []
 	filteredPublicacionesCardList: CardModel[] = []
+
+	trueques: TruequeModel[] = [];
 
 	constructor(private router: Router, private auth: AuthService, private fb: FormBuilder,
 		private productosService: ProductosService, private showErrorService: ShowErrorService,
@@ -110,7 +113,14 @@ export class PublicacionesComponent {
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
-				}, complete: () => this.generateCardList()
+					
+				}, complete: () => {
+					this.truequesService.getTruequesParticular(this.publicacionesToShow[0].particularDTO.idParticular).subscribe({
+						next: (res: any) => {
+							this.trueques = res;
+						}, complete: () => this.generateCardList()
+					})
+				}
 			})
 		} else { // myCompras
 			this.comprasService.getMyCompras().subscribe({
@@ -130,6 +140,13 @@ export class PublicacionesComponent {
 	generateCardList() {
 		this.publicacionesCardList.splice(0)
 		for (const publicacion of this.publicacionesToShow) {
+
+			let idPublicacionOrigen: number | undefined;
+			if(publicacion.estadoPublicacion == 'CERRADA') {
+				const trueque = this.trueques.find(item => item.estadoTrueque == 'APROBADO' && item.publicacionDTOpropuesta.idPublicacion == publicacion.idPublicacion)
+				if(trueque) idPublicacionOrigen = trueque.publicacionDTOorigen.idPublicacion
+			}
+
 			this.publicacionesCardList.push({
 				id: publicacion.idPublicacion,
 				imagen: publicacion.parsedImagenes? publicacion.parsedImagenes[0] : 'no_image',
@@ -143,7 +160,8 @@ export class PublicacionesComponent {
 					puntaje: publicacion.particularDTO.puntaje,
 					localidad: publicacion.particularDTO.direcciones[0].localidad
 				},
-				action: this.origin == 'myPublicaciones' ? 'list' : 'access',
+				action: !!idPublicacionOrigen ? 'trueque' : this.origin == 'myPublicaciones' ? 'list' : 'access',
+				idAuxiliar: !!idPublicacionOrigen ? idPublicacionOrigen : undefined,
 				buttons: [],
 				estado: this.origin == 'myPublicaciones' ? publicacion.estadoPublicacion : undefined,
 				codigo: 'Publicación'

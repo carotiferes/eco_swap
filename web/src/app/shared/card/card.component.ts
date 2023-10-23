@@ -47,6 +47,9 @@ export class CardComponent {
 			case 'detail':
 				this.showDetail(card)
 				break;
+			case 'trueque':
+				this.router.navigate(['publicacion/' + card.idAuxiliar])
+				break;
 			default:
 				const url = this.app == 'colectas' ? 'colecta/' : (this.app == 'publicaciones' ? 'publicacion/' : 'donacion/')
 				this.router.navigate([url + card.id])
@@ -77,6 +80,7 @@ export class CardComponent {
 
 	chipClick(card: CardModel) {
 		if(card.action == 'list') this.openDialog(ListComponent, card);
+		//else if(card.action == 'trueque') this.router.navigate(['publicacion/' + card.idAuxiliar])
 	}
 
 	openDialog(component: any, data: any, height: string = '60vh') {
