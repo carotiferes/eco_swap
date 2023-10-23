@@ -142,7 +142,7 @@ export class PublicacionesComponent {
 					puntaje: publicacion.particularDTO.puntaje,
 					localidad: publicacion.particularDTO.direcciones[0].localidad
 				},
-				action: 'access',
+				action: this.origin == 'myPublicaciones' ? 'list' : 'access',
 				buttons: [],
 				estado: this.origin == 'myPublicaciones' ? publicacion.estadoPublicacion : undefined,
 				codigo: 'Publicación'

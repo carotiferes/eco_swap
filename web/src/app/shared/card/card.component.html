@@ -1,8 +1,9 @@
 <div class="card" (click)="clicked(cardData)" *ngIf="cardData" [class.selected-card]="cardData.isSelected"
 	[ngClass]="app == 'publicaciones' && cardData.buttons.length == 0 ? 'small' : 'big'">
-	<mat-chip class="chip-localidad" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'">
+	<mat-chip class="chip-localidad" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'"
+	(click)="chipClick(cardData); $event.stopPropagation()" [style]="cardData.action == 'list' ? 'cursor: pointer;':''">
 		<span>
-			{{cardData.usuario.localidad}}
+			{{cardData.action == 'list' ? '¿Dónde lo propuse?' : cardData.usuario.localidad}}
 		</span>
 	</mat-chip>
 	<div style="position: absolute; top: 10px; left: 10px;">
@@ -51,6 +52,7 @@
 		<img class="user-img" [src]="cardData.usuario.imagen">
 		<h4>
 			{{cardData.usuario.nombre}}
+			<!-- <p>(YO)</p> -->
 			<div style="margin: 0 10px;display: flex;align-items: center;justify-content: center;">
 				<app-rating [puntuacion]="cardData.usuario.puntaje"
 				[color]="app == 'publicaciones' ? 'var(--trueques-dark)' : 'var(--donaciones-dark)'"></app-rating>

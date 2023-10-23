@@ -47,7 +47,7 @@
 			</div>
 		</div>
 	</mat-card-content>
-	<mat-card-actions class="card-button" *ngIf="this.userType != 'publicacionOrigen'">
+	<mat-card-actions class="card-button" *ngIf="this.userType != 'publicacionOrigen' && publicacion.estadoPublicacion == 'ABIERTA'">
 		<button mat-fab extended color="primary" (click)="intercambiar()">QUIERO INTERCAMBIAR</button>
 		<button mat-fab extended style="background-color: #3fb6e9; color: white;" (click)="comprar()"
 			*ngIf="publicacion.tipoPublicacion == 'VENTA_Y_TRUEQUE' && publicacion.particularDTO.accessToken && publicacion.particularDTO.publicKey">

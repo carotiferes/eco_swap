@@ -40,6 +40,10 @@ export class TruequesService {
 		return this.backendService.get(URL_NAME, `api/publicacion/${idPublicacionOrigen}/trueques`);
 	}
 
+	getPropuestasFromPublicacion(idPublicacionPropuesta: number){
+		return this.backendService.get(URL_NAME, `api/publicacion/${idPublicacionPropuesta}/propuestas`);
+	}
+
 	getMisPublicacionesForTrueque(idPublicacionOrigen: number){
 		return this.backendService.get(URL_NAME, `api/${idPublicacionOrigen}/publicaciones`);
 	}

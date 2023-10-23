@@ -7,6 +7,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import { TruequesService } from 'src/app/services/trueques.service';
 import Swal from 'sweetalert2';
+import { ListComponent } from '../list/list.component';
 
 @Component({
 	selector: 'app-card',
@@ -72,6 +73,10 @@ export class CardComponent {
 				}
 			})
 		}
+	}
+
+	chipClick(card: CardModel) {
+		if(card.action == 'list') this.openDialog(ListComponent, card);
 	}
 
 	openDialog(component: any, data: any) {

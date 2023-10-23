@@ -1,0 +1,33 @@
+<mat-nav-list *ngIf="list.length > 0">
+	<ng-container *ngFor="let item of paginatedList; let even = even; let odd = odd">
+		<mat-list-item [ngClass]="{ 'even-row': even, 'odd-row': odd }" (mouseenter)="hoveredItem = item"
+			(mouseleave)="hoveredItem = null" (click)="$event.stopPropagation()">
+			<img [src]="item.img" matListItemIcon class="item-img">
+			<div class="item-content">
+				<div>
+					<h4>{{item.title}}</h4>
+					<p>{{item.description}}</p>
+				</div>
+				<div style="display: flex; gap: 10px;">
+					<span class="material-icons-outlined result-icon"
+						[style.color]="colorMap[item.estado] || 'var(--warn)'"
+						>
+						{{ iconMap[item.estado] || 'dangerous' }}
+					</span>
+					{{item.estado}}
+				</div>
+				<div>
+					<mat-icon (click)="access(item)" style="cursor: pointer;">open_in_new</mat-icon>
+				</div>
+			</div>
+		</mat-list-item>
+	</ng-container>
+</mat-nav-list>
+<mat-paginator [pageSizeOptions]="[10]" [pageSize]="pageSize" [showFirstLastButtons]="true"
+	[length]="list.length" #paginator (page)="changePage($event)" style="border-radius: 15px;"
+	*ngIf="list.length > 0">
+</mat-paginator>
+
+<div style="padding: 10%; text-align: center;" *ngIf="list.length == 0">
+	Todavía no propusiste esta publicación en ningún trueque!
+</div>
