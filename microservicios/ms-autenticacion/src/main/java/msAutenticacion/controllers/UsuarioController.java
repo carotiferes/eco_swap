@@ -123,6 +123,17 @@ public class UsuarioController {
         return ResponseEntity.ok(responseUpdateEntity);
 
     }
+    @PutMapping(path = "/usuario/avatar", consumes = JSON, produces = JSON)
+    @ResponseStatus(HttpStatus.OK)
+    @Transactional
+    public ResponseEntity<ResponseUpdateEntity> editarAvatar(@RequestBody @Valid RequestEditAvatar requestEditAvatar){
+        log.info("Request: {}", requestEditAvatar);
+        final Usuario user = UsuarioContext.getUsuario();
+        log.info("Editar perfil >> Editando el avatar del usuario: {}", user.getEmail());
+        ResponseUpdateEntity responseUpdateEntity = usuarioService.editarAvatar(requestEditAvatar, user);
+        return ResponseEntity.ok(responseUpdateEntity);
+
+    }
 
     @PatchMapping(path = "/usuario/confirmar", consumes = JSON, produces = JSON)
     @ResponseStatus(HttpStatus.OK)

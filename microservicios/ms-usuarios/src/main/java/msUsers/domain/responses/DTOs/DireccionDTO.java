@@ -10,4 +10,5 @@ public class DireccionDTO {
     private String piso;
     private String dpto;
     private String localidad;
+    private String codigoPostal;
 }

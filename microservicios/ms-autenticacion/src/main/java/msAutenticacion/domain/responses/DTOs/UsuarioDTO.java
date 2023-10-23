@@ -19,5 +19,5 @@ public class UsuarioDTO {
         private boolean validado;
         private FundacionDTO fundacionDTO;
         private ParticularDTO particularDTO;
-
+        private String avatar;
 }
