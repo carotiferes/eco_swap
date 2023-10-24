@@ -69,10 +69,15 @@ public class UsuarioController {
     @Transactional
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Long> postSignUp(@RequestBody @Valid RequestSignUp body){
-        log.info("postSignUp: creando nuevo usuario: " + body.getEmail());
-        Usuario usuarioCreado = usuarioService.crearUsuario(body);
-        log.info("postSignUp: Usuario creado con ID: "+ usuarioCreado.getIdUsuario());
-        return ResponseEntity.ok(usuarioCreado.getIdUsuario());
+        try {
+            log.info("postSignUp: creando nuevo usuario: " + body.getEmail());
+            Usuario usuarioCreado = usuarioService.crearUsuario(body);
+            log.info("postSignUp: Usuario creado con ID: "+ usuarioCreado.getIdUsuario());
+            return ResponseEntity.ok(usuarioCreado.getIdUsuario());
+        } catch (Exception e) {
+            log.error("postSignUp: ERROR AL CREAR USER: " + e.getMessage());
+            throw e;
+        }
     }
 
     @PatchMapping(path = "/usuario/password", produces = JSON)

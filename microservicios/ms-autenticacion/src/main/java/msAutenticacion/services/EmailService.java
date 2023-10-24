@@ -26,10 +26,11 @@ public class EmailService {
         Tiene la ventaja de ser método nativo de Java 8.
          */
         CompletableFuture.supplyAsync(() -> {
+         //   log.info("INTENTAMOS ENVIAR UN MAIL a: {}", usuario.getEmail());
             try {
                 return sendConfirmEmail(usuario.getEmail(), "Gracias por sumarte a ECOSWAP", usuario, codigoConfirmacion);
             } catch (Exception e) {
-                log.error("Error al enviar correo de confirmación: {}", e.getMessage(), e);
+                log.info("Error al enviar correo de confirmación: {}", e.getMessage(), e);
                 return false; // O manejar el error de acuerdo a tus necesidades
             }
         });
@@ -41,6 +42,7 @@ public class EmailService {
         Tiene la ventaja de ser método nativo de Java 8.
          */
         CompletableFuture.supplyAsync(() -> {
+          //  log.info("INTENTAMOS ENVIAR UN MAIL a: {}", usuario.getEmail());
             try {
                 return sendConfirmEmail(usuario.getEmail(), "Reenvío de código de confirmación", usuario, codigoConfirmacion);
             } catch (Exception e) {
