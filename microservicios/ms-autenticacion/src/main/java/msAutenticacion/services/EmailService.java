@@ -54,7 +54,7 @@ public class EmailService {
 
     private Boolean sendConfirmEmail(String toEmail, String subject, Usuario usuario, String codigoActivacion) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("no-responde@ecoswap.com");
+        message.setFrom("webmaster@ecoswap.com.ar");
         message.setTo(toEmail);
         message.setText("Hola " + usuario.getUsername() + ", bienvenido seas. A continuación ingrese el " +
                 "siguiente código para poder finalizar su registro: " +codigoActivacion);

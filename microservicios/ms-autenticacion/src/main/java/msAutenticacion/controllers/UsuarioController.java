@@ -138,6 +138,7 @@ public class UsuarioController {
         ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
         responseUpdateEntity.setDescripcion("Validado: " + confirmado.toString().toUpperCase());
         responseUpdateEntity.setStatus(HttpStatus.OK.name());
+        log.info("<< usuario confirmado: {}", requestConfirm.getIdUsuario());
         return ResponseEntity.ok(responseUpdateEntity);
     }
 
