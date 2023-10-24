@@ -155,7 +155,7 @@ export class PublicacionesComponent {
 				valorSecundario: publicacion.precioVenta ? `$${publicacion.precioVenta}` : undefined,
 				fecha: publicacion.fechaPublicacion,
 				usuario: {
-					imagen: 'assets/perfiles/perfiles-17.jpg',//publicacion.particularDTO.
+					imagen: publicacion.particularDTO.usuarioDTO.avatar,
 					nombre: publicacion.particularDTO.nombre + ' ' + publicacion.particularDTO.apellido,
 					puntaje: publicacion.particularDTO.puntaje,
 					localidad: publicacion.particularDTO.direcciones[0].localidad

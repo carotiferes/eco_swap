@@ -18,4 +18,5 @@ public class UsuarioDTO {
     private boolean validado;
     private boolean bloqueado;
     private List<OpinionDTO> opiniones;
+    private String avatar;
 }

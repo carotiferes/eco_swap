@@ -12,6 +12,7 @@
 	</div>
 	<div class="buttons">
 		<button mat-fab extended color="light" (click)="close()">CANCELAR</button>
-		<button mat-fab extended color="primary" (click)="confirm()" [disabled]="!selectedImage">GUARDAR</button>
+		<button mat-fab extended color="primary" (click)="confirm()" [disabled]="!selectedImage || loadingSave">GUARDAR</button>
+		<mat-spinner diameter="20" *ngIf="loadingSave"></mat-spinner>
 	</div>
 </div>

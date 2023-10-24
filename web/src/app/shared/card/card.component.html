@@ -49,7 +49,7 @@
 	</div>
 
 	<div class="user-data" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'">
-		<img class="user-img" [src]="cardData.usuario.imagen">
+		<img class="user-img" [src]="'assets/perfiles/perfiles-'+cardData.usuario.imagen+'.jpg'">
 		<h4>
 			{{cardData.usuario.nombre}}
 			<!-- <p>(YO)</p> -->

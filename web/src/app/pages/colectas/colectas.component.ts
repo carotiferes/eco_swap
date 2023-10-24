@@ -135,7 +135,7 @@ export class ColectasComponent implements OnInit {
 				valorPrincipal: stringProductos,
 				fechaString: this.parseVigencia(colecta),
 				usuario: {
-					imagen: 'assets/perfiles/perfiles-24.jpg',//publicacion.particularDTO.
+					imagen: colecta.fundacionDTO.usuarioDTO.avatar,
 					nombre: colecta.fundacionDTO.nombre,
 					puntaje: colecta.fundacionDTO.puntaje,
 					localidad: colecta.fundacionDTO.direcciones[0].localidad

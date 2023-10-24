@@ -34,7 +34,7 @@
 				[showNavigationIndicators]="publicacion.parsedImagenes.length > 1">
 				<ng-template ngbSlide *ngFor="let img of publicacion.parsedImagenes">
 					<div class="picsum-img-wrapper">
-						<img [src]="getImage(img)" class="w-80"/>
+						<img [src]="getImage(img)" style="width: 100%; height: 100%; object-fit: contain;"/>
 					</div>
 					<div class="carousel-caption">
 					</div>

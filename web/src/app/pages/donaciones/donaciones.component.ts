@@ -27,6 +27,7 @@ export class DonacionesComponent {
 
 	getDonaciones() {
 		this.loading = true;
+		this.donaciones.splice(0)
 		this.donacionesService.getMisDonaciones().subscribe({
 			next: (res: any) => {
 				if(res){
@@ -48,6 +49,7 @@ export class DonacionesComponent {
 
 	generateCardList() {
 		this.donacionesCardList.splice(0);
+		const auxDonaciones: CardModel[] = [];
 		for (const donacion of this.donaciones) {
 			let stringCaracteristicas = '';
 			for (const [i, caract] of donacion.caracteristicaDonacion.entries()) {
@@ -62,7 +64,7 @@ export class DonacionesComponent {
 				valorSecundario: stringCaracteristicas,
 				fecha: donacion.fechaDonacion,
 				usuario: {
-					imagen: 'assets/perfiles/perfiles-17.jpg',//publicacion.particularDTO.
+					imagen: donacion.particularDTO.usuarioDTO.avatar,
 					nombre: donacion.particularDTO.nombre + ' ' + donacion.particularDTO.apellido,
 					puntaje: donacion.particularDTO.puntaje,
 					localidad: donacion.particularDTO.direcciones[0].localidad
@@ -70,11 +72,12 @@ export class DonacionesComponent {
 				action: 'detail',
 				buttons: [{name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADA'}],
 				estado: donacion.estadoDonacion,
-				//idAuxiliar: this.colecta.idColecta
+				idAuxiliar: donacion.producto.colectaDTO.idColecta
 			}
-			this.donacionesCardList.push(item)
+			auxDonaciones.push(item)
 			this.loading = false;
 		}
+		this.donacionesCardList = auxDonaciones;
 	}
 
 	zoomImage(img: string) {

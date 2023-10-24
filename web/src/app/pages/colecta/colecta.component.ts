@@ -132,7 +132,7 @@ export class ColectaComponent {
 				valorSecundario: stringCaracteristicas,
 				fecha: donacion.fechaDonacion,
 				usuario: {
-					imagen: 'assets/perfiles/perfiles-17.jpg',//publicacion.particularDTO.
+					imagen: donacion.particularDTO.usuarioDTO.avatar,
 					nombre: donacion.particularDTO.nombre + ' ' + donacion.particularDTO.apellido,
 					puntaje: donacion.particularDTO.puntaje,
 					localidad: donacion.particularDTO.direcciones[0].localidad

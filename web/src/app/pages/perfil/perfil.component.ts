@@ -45,6 +45,8 @@ export class PerfilComponent {
 	opiniones: OpinionModel[] = [];
 	paginatedOpiniones: OpinionModel[] = [];
 
+	refreshHeader: number = 0;
+
 	constructor(private auth: AuthService, private usuarioService: UsuarioService,
 		public router: Router, private particularService: ParticularesService,
 		public dialog: MatDialog, private opinionesService: OpinionesService) {
@@ -173,14 +175,18 @@ export class PerfilComponent {
 	selectImage() {
 		const dialogRef = this.dialog.open(ImagesModalComponent, {
 			maxWidth: '80vw',
-			maxHeight: '60vh',
+			maxHeight: '75vh',
 			height: '100%',
 			width: '100%',
 			panelClass: 'full-screen-modal'
 		});
 		dialogRef.afterClosed().subscribe((result) => {
 			console.log('closed', result);
-			
+			if(result){
+				this.getUserInformation(this.userData.id);
+				this.getMyOpiniones()
+				this.refreshHeader++;
+			}
 		})
 	}
 
