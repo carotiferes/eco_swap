@@ -82,6 +82,25 @@ public class TruequeController {
         return ResponseEntity.ok(truequesDTO);
     }
 
+    @GetMapping(path = "/publicacion/{id_publicacion}/propuestas", produces = json)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<TruequeDTO>> getTruequesXIdPublicacionPropuesta(@PathVariable("id_publicacion") Long id) {
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Trueque> query = criteriaBuilder.createQuery(Trueque.class);
+        Root<Trueque> from = query.from(Trueque.class);
+
+        Join<Trueque, Publicacion> publicacionOrigenJoin = from.join("publicacionPropuesta");
+        Predicate predicate = criteriaBuilder.equal(publicacionOrigenJoin.get("idPublicacion"), id);
+
+        query.where(predicate);
+        List<Trueque> trueques = entityManager.createQuery(query).getResultList();
+        List<TruequeDTO> truequesDTO = trueques.stream().map(Trueque::toDTO).toList();
+
+        log.info(">> Se retornan {} trueques.", truequesDTO.size());
+        return ResponseEntity.ok(truequesDTO);
+    }
+
     @GetMapping(path = "/{id_publicacion}/publicaciones", produces = json)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<PublicacionDTO>> listPublicacionesParaTrueque(@PathVariable("id_publicacion") Long id) {

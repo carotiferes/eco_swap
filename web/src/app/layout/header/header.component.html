@@ -44,7 +44,7 @@
 			</li>
 			<div ngbDropdown class="dropdown nav-item">
 				<div ngbDropdownToggle class="nav-link nav-white px-2" type="button" id="dropdownMenuButton1" aria-expanded="false">
-					<img [src]="isUserLoggedIn && this.profileType == 'particular' ? 'assets/perfiles/perfiles-17.jpg' : 'assets/perfiles/perfiles-24.jpg'">
+					<img *ngIf="userData" [src]="'assets/perfiles/perfiles-'+userData.avatar+'.jpg'">
 					Mi Cuenta
 				</div>
 				<ul ngbDropdownMenu aria-labelledby="dropdownMenuButton1" class="dropdown-menu-end">

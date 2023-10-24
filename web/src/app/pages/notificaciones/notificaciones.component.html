@@ -17,9 +17,9 @@
 			</mat-list-item>
 		</ng-container>
 	</mat-nav-list>
-	<mat-paginator [pageSizeOptions]="[6, 12, 24]" [pageSize]="pageSize" [showFirstLastButtons]="true"
+	<mat-paginator [pageSize]="pageSize" [showFirstLastButtons]="true"
 		[length]="notifications.length" #paginator (page)="changePage($event)" style="border-radius: 15px;"
-		*ngIf="notifications.length > 0">
+		*ngIf="notifications.length > 0" [hidePageSize]="true">
 	</mat-paginator>
 	<!-- <mat-list>
 		<mat-list-item>

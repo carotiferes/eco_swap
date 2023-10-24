@@ -7,6 +7,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import { TruequesService } from 'src/app/services/trueques.service';
 import Swal from 'sweetalert2';
+import { ListComponent } from '../list/list.component';
 
 @Component({
 	selector: 'app-card',
@@ -46,6 +47,9 @@ export class CardComponent {
 			case 'detail':
 				this.showDetail(card)
 				break;
+			case 'trueque':
+				this.router.navigate(['publicacion/' + card.idAuxiliar])
+				break;
 			default:
 				const url = this.app == 'colectas' ? 'colecta/' : (this.app == 'publicaciones' ? 'publicacion/' : 'donacion/')
 				this.router.navigate([url + card.id])
@@ -68,16 +72,21 @@ export class CardComponent {
 						userType: 'publicacionOrigen'
 					}
 					data.publicacion.parsedImagenes = data.publicacion.imagenes.split('|')
-					this.openDialog(component, data)
+					this.openDialog(component, data, '80vh')
 				}
 			})
 		}
 	}
 
-	openDialog(component: any, data: any) {
+	chipClick(card: CardModel) {
+		if(card.action == 'list') this.openDialog(ListComponent, card);
+		//else if(card.action == 'trueque') this.router.navigate(['publicacion/' + card.idAuxiliar])
+	}
+
+	openDialog(component: any, data: any, height: string = '60vh') {
 		const dialogRef = this.dialog.open(component, {
 			maxWidth: '80vw',
-			maxHeight: '60vh',
+			maxHeight: height,
 			height: 'fit-content',
 			width: '100%',
 			panelClass: 'full-screen-modal',

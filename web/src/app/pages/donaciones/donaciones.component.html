@@ -6,6 +6,10 @@
 		[usuarioHeader]="donacion.producto.colectaDTO.fundacionDTO" [buttons]="[{name: 'cancelar', icon: 'close', color: 'warn', status: 'CANCELADA', disabled: donacion.estadoDonacion != 'PENDIENTE'}]"></app-card-donacion>
 	</div> -->
 	<div *ngIf="donacionesCardList.length > 0">
-		<app-deck [cardList]="donacionesCardList" app="donaciones" [fullScreenWidth]="true"></app-deck>
+		<app-deck [cardList]="donacionesCardList" app="donaciones" [fullScreenWidth]="true"
+		(statusChanged)="getDonaciones()"></app-deck>
+	</div>
+	<div *ngIf="donacionesCardList.length == 0" style="margin: 10%; text-align: center;">
+		No hay ninguna donación para mostrar!
 	</div>
 </div>

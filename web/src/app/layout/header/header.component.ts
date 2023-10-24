@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuModel } from 'src/app/models/menu.model';
 import { AuthService } from 'src/app/services/auth.service';
@@ -13,6 +13,7 @@ const menuData = require('../../data/menu.json')
 export class HeaderComponent {
 
 	@Input() title!: string;
+	@Input() refresh?: number;
 
 	url: string = 'home';
 
@@ -26,6 +27,7 @@ export class HeaderComponent {
 
 	notifications: number = 0;
 	isAdmin: boolean = false;
+	userID?: number;
 
 	constructor(private router: Router, private auth: AuthService, private usuarioService: UsuarioService){
 		this.mainTabs = menuData.filter((item: MenuModel) => item.type == 'pages')
@@ -38,11 +40,27 @@ export class HeaderComponent {
 		const userID = auth.getUserID();
 		if(userID == 999) this.isAdmin = true;
 		else if (this.isUserLoggedIn) {
-			usuarioService.getUserByID(userID).subscribe({
+			this.userID = this.auth.getUserID()
+			this.getUserData()
+		}
+	}
+
+	ngOnChanges(changes: SimpleChanges): void {
+		//Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
+		//Add '${implements OnChanges}' to the class.
+		console.log(changes['refresh']);
+		if(changes['refresh'] && !changes['refresh'].isFirstChange() && changes['refresh'].currentValue != changes['refresh'].previousValue){
+			this.getUserData()
+		}
+	}
+
+	getUserData() {
+		if(this.userID) {
+			this.usuarioService.getUserByID(this.userID).subscribe({
 				next: (res: any) => {
 					this.userData = res;
 					//console.log(this.userData);
-
+	
 					// GET NOTIFICATIONS
 				}
 			})
