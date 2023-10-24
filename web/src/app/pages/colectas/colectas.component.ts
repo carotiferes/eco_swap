@@ -122,13 +122,15 @@ export class ColectasComponent implements OnInit {
 	generateCardList() {
 		console.log(this.colectasToShow);
 		this.colectasCardList.splice(0)
+		const auxList: CardModel[] = [];
+
 		for (const colecta of this.colectasToShow) {
 			let stringProductos = '';
 			for (const [i, producto] of colecta.productos.entries()) {
 				if(i==0) stringProductos = producto.descripcion
 				else stringProductos += ' - '+producto.descripcion
 			}
-			this.colectasCardList.push({
+			auxList.push({
 				id: colecta.idColecta,
 				imagen: colecta.imagen,
 				titulo: colecta.titulo,
@@ -144,6 +146,7 @@ export class ColectasComponent implements OnInit {
 				buttons: []
 			})
 		}
+		this.colectasCardList = auxList;
 	}
 
 	parseVigencia(colecta: ColectaModel) {

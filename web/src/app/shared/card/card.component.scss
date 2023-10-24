@@ -3,9 +3,10 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	max-width: 515px !important;
 	
 	&.big {
-		height: 440px;
+		height: 460px;
 		h2 {
 			font-size: 18px !important;
 		}

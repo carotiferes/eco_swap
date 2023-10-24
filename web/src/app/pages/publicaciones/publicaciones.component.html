@@ -36,7 +36,7 @@
 								</mat-form-field>
 								<mat-form-field appearance="outline">
 									<mat-label>Tipo del Producto</mat-label>
-									<mat-select formControlName="tipoProducto" panelClass="example-panel">
+									<mat-select formControlName="tipoProducto">
 										<mat-option *ngFor="let tipo of tipos_productos" [value]="tipo.nombre">
 											{{tipo.descripcion}}
 										</mat-option>
@@ -63,15 +63,15 @@
 			</div>
 		</div>
 	</div>
-	<div class="row" *ngIf="!loading">
+	<div class="row">
 		<app-spinner [loading]="loading"></app-spinner>
-		<div *ngIf="filteredPublicacionesCardList.length==0" style="text-align: center;">No hay publicaciones para mostrar</div>
-		<app-deck *ngIf="filteredPublicacionesCardList.length > 0" [cardList]="filteredPublicacionesCardList" app="publicaciones"></app-deck>
+		<div *ngIf="filteredPublicacionesCardList.length==0 && !loading" style="text-align: center;">No hay publicaciones para mostrar</div>
+		<app-deck *ngIf="filteredPublicacionesCardList.length > 0 && !loading" [cardList]="filteredPublicacionesCardList" app="publicaciones"></app-deck>
 	</div>
-	<div class="floating-button-container">
-		<button mat-fab color="primary" aria-label="Agregar Publicación" (click)="addPublicacion()"
-			matTooltip="Agregar Publicación" matTooltipPosition="before">
-			<mat-icon>add</mat-icon>
-		</button>
-	</div>
+</div>
+<div class="floating-button-container">
+	<button mat-fab color="primary" aria-label="Agregar Publicación" (click)="addPublicacion()"
+		matTooltip="Agregar Publicación" matTooltipPosition="before">
+		<mat-icon>add</mat-icon>
+	</button>
 </div>

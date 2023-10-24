@@ -23,7 +23,9 @@
 			<h3 class="card-title">{{cardData.titulo}}</h3>
 			<!-- <h3>{{cardData.usuario.nombre}}</h3> -->
 			<div class="valor-principal">
-				<h2 [ngClass]="app == 'publicaciones' ? 'font-verde' : 'font-lila'">{{cardData.valorPrincipal}}</h2>
+				<h2 [ngClass]="app == 'publicaciones' ? 'font-verde' : 'font-lila'" style="max-width: 300px;">
+					{{cardData.valorPrincipal}}
+				</h2>
 			</div>
 			<div class="valor-secundario" *ngIf="cardData.valorSecundario">
 				{{cardData.valorSecundario}}
@@ -50,7 +52,7 @@
 
 	<div class="user-data" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'">
 		<img class="user-img" [src]="'assets/perfiles/perfiles-'+cardData.usuario.imagen+'.jpg'">
-		<h4>
+		<h4 style="max-width: 200px;">
 			{{cardData.usuario.nombre}}
 			<!-- <p>(YO)</p> -->
 			<div style="margin: 0 10px;display: flex;align-items: center;justify-content: center;">

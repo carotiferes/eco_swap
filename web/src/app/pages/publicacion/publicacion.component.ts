@@ -250,6 +250,10 @@ export class PublicacionComponent implements AfterViewInit {
 		this.truequesActivos.splice(0);
 		this.historialTrueques.splice(0);
 		this.truequeAceptado.splice(0);
+		const auxList1: CardModel[] = [];
+		const auxList2: CardModel[] = [];
+		const auxList3: CardModel[] = [];
+
 		for (const publicacion of this.publicacionesToShow) {
 			const item: CardModel = {
 				id: publicacion.idPublicacion,
@@ -271,7 +275,7 @@ export class PublicacionComponent implements AfterViewInit {
 
 			if(publicacion.estadoTrueque == 'APROBADO') {
 				// ACEPTADO
-				this.truequeAceptado.push(item)
+				auxList1.push(item)
 				this.mainPublicacionCard = {
 					id: this.publicacion.idPublicacion,
 					imagen: this.publicacion.parsedImagenes? this.publicacion.parsedImagenes[0] : 'no_image',
@@ -293,12 +297,16 @@ export class PublicacionComponent implements AfterViewInit {
 				// ACTIVOS
 				item.valorSecundario = publicacion.precioVenta ? `$${publicacion.precioVenta}` : undefined
 				item.buttons = this.getButtonsForCards();
-				this.truequesActivos.push(item)
+				auxList2.push(item)
 			} else /* if(publicacion.estadoTrueque != 'PENDIENTE' || publicacion.estadoPublicacion != 'ABIERTA') */ {
 				// HISTORIAL
 				item.disabled = true;
-				this.historialTrueques.push(item)
+				auxList3.push(item)
 			}
+
+			this.truequeAceptado = auxList1;
+			this.truequesActivos = auxList2;
+			this.historialTrueques = auxList3;
 		}
 	}
 

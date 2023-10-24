@@ -116,6 +116,8 @@ export class ColectaComponent {
 	parseDonaciones() {
 		this.donacionesAbiertas.splice(0);
 		this.donacionesCerradas.splice(0);
+		const auxListAbierta: CardModel[] = [];
+		const auxListCerrada: CardModel[] = [];
 		for (const donacion of this.donacionesToShow) {
 			console.log(donacion);
 			
@@ -142,9 +144,12 @@ export class ColectaComponent {
 				estado: donacion.estadoDonacion,
 				idAuxiliar: this.colecta.idColecta
 			}
-			if(donacion.estadoDonacion == 'PENDIENTE') this.donacionesAbiertas.push(item)
-			else this.donacionesCerradas.push(item)
+			if(donacion.estadoDonacion == 'PENDIENTE') auxListAbierta.push(item)//this.donacionesAbiertas.push(item)
+			else auxListCerrada.push(item)//this.donacionesCerradas.push(item)
 		}
+
+		this.donacionesAbiertas = auxListAbierta;
+		this.donacionesCerradas = auxListCerrada;
 		console.log(this.donacionesAbiertas, this.donacionesCerradas);
 		
 	}

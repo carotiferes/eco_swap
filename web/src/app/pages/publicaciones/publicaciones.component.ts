@@ -25,7 +25,7 @@ export class PublicacionesComponent {
 	formFiltros: FormGroup;
 	tipos_productos: any[] = [];
 
-	loading: boolean = false;
+	loading: boolean = true;
 
 	publicacionesToShow: PublicacionModel[] = [];
 	filtros: any;
@@ -88,6 +88,7 @@ export class PublicacionesComponent {
 	}
 
 	filtrarPublicaciones() {
+		this.loading = true;
 		if(this.origin == 'all'){
 			this.filtros = {};
 			//const localidad = this.formFiltros.controls['localidad'].value;
@@ -96,6 +97,9 @@ export class PublicacionesComponent {
 			if (this.localidades.length > 0) this.filtros['localidades'] = this.localidades;
 			if (tipoProducto) this.filtros['tipoProducto'] = tipoProducto;
 
+			console.log('filtro', this.filtros);
+			
+
 			this.truequesService.getPublicaciones(this.filtros).subscribe({
 				next: (data: any) => {
 					console.log(data);
@@ -103,7 +107,8 @@ export class PublicacionesComponent {
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
-				}, complete: () => this.generateCardList()
+				}, complete: () => this.generateCardList(),
+				error: ()=> this.loading = false
 			})
 		} else if(this.origin == 'myPublicaciones'){
 			this.truequesService.getMisPublicaciones().subscribe({
@@ -120,7 +125,7 @@ export class PublicacionesComponent {
 							this.trueques = res;
 						}, complete: () => this.generateCardList()
 					})
-				}
+				}, error: ()=> this.loading = false
 			})
 		} else { // myCompras
 			this.comprasService.getMyCompras().subscribe({
@@ -132,13 +137,15 @@ export class PublicacionesComponent {
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
-				}, complete: () => this.generateCardList()
+				}, complete: () => this.generateCardList(),
+				error: ()=> this.loading = false
 			})
 		}
 	}
 
 	generateCardList() {
 		this.publicacionesCardList.splice(0)
+		const auxList: CardModel[] = [];
 		for (const publicacion of this.publicacionesToShow) {
 
 			let idPublicacionOrigen: number | undefined;
@@ -147,7 +154,7 @@ export class PublicacionesComponent {
 				if(trueque) idPublicacionOrigen = trueque.publicacionDTOorigen.idPublicacion
 			}
 
-			this.publicacionesCardList.push({
+			auxList.push({
 				id: publicacion.idPublicacion,
 				imagen: publicacion.parsedImagenes? publicacion.parsedImagenes[0] : 'no_image',
 				titulo: publicacion.titulo,
@@ -167,7 +174,9 @@ export class PublicacionesComponent {
 				codigo: 'Publicación'
 			})
 		}
+		this.publicacionesCardList = auxList;
 		this.filteredPublicacionesCardList = this.publicacionesCardList;
+		this.loading = false;
 	}
 
 	limpiarFiltros() {
