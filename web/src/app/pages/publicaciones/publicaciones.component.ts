@@ -57,6 +57,9 @@ export class PublicacionesComponent {
 			map((localidad: string | null) => (localidad ? this._filterLocalidad(localidad) : this.allLocalidades.slice())),
 		);
 
+	}
+	
+	ngOnInit(): void {
 		this.getTiposProductos();
 		this.getLocalidades();
 		this.filtrarPublicaciones()
@@ -91,14 +94,12 @@ export class PublicacionesComponent {
 		this.loading = true;
 		if(this.origin == 'all'){
 			this.filtros = {};
-			//const localidad = this.formFiltros.controls['localidad'].value;
 			const tipoProducto = this.formFiltros.controls['tipoProducto'].value;
 
 			if (this.localidades.length > 0) this.filtros['localidades'] = this.localidades;
 			if (tipoProducto) this.filtros['tipoProducto'] = tipoProducto;
 
 			console.log('filtro', this.filtros);
-			
 
 			this.truequesService.getPublicaciones(this.filtros).subscribe({
 				next: (data: any) => {
@@ -159,7 +160,7 @@ export class PublicacionesComponent {
 				imagen: publicacion.parsedImagenes? publicacion.parsedImagenes[0] : 'no_image',
 				titulo: publicacion.titulo,
 				valorPrincipal: `$${publicacion.valorTruequeMin} - $${publicacion.valorTruequeMax}`,
-				valorSecundario: publicacion.precioVenta ? `$${publicacion.precioVenta}` : undefined,
+				valorSecundario: !!publicacion.particularDTO.accessToken ? (publicacion.precioVenta ? `$${publicacion.precioVenta}` : undefined) : undefined,
 				fecha: publicacion.fechaPublicacion,
 				usuario: {
 					imagen: publicacion.particularDTO.usuarioDTO.avatar,

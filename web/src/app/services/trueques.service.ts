@@ -16,7 +16,7 @@ export class TruequesService {
 		return this.backendService.post(URL_NAME, 'api/publicacion', body);
 	}
 
-	getPublicaciones(filtros: any = {}){
+	getPublicaciones(filtros?: any){
 		return this.backendService.get(URL_NAME, 'api/publicaciones', filtros);
 	}
 

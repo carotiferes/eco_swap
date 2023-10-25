@@ -29,7 +29,8 @@ import { ListComponent } from './list/list.component';
 		SpinnerComponent,
 		CardComponent,
     	DeckComponent,
-		RatingComponent
+		RatingComponent,
+		ListComponent
 	]
 })
 export class SharedModule { }

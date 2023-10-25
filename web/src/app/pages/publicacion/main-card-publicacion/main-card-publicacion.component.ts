@@ -19,6 +19,8 @@ export class MainCardPublicacionComponent {
 	@Output() intercambiarEvent = new EventEmitter<any>();
 	@Output() comprarEvent = new EventEmitter<any>();
 
+	costoEnvio?: number = 100;
+
 	constructor(private truequeService: TruequesService, @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
 	private logisticaService: LogisticaService
 	){

@@ -72,10 +72,10 @@
 		<div *ngIf="colectasCardList.length==0 && !loading" style="text-align: center;">No hay colectas para mostrar</div>
 		<app-deck *ngIf="colectasCardList.length > 0 && !loading" [cardList]="colectasCardList" app="colectas"></app-deck>
 	</div>
-</div>
-<div class="floating-button-container" *ngIf="!userData.isSwapper">
-	<button mat-fab color="accent" aria-label="Agregar Colecta" (click)="addColecta()" matTooltip="Agregar Colecta"
-		matTooltipPosition="before">
-		<mat-icon>add</mat-icon>
-	</button>
+	<div class="floating-button-container" *ngIf="!userData.isSwapper">
+		<button mat-fab color="accent" aria-label="Agregar Colecta" (click)="addColecta()" matTooltip="Agregar Colecta"
+			matTooltipPosition="before">
+			<mat-icon>add</mat-icon>
+		</button>
+	</div>
 </div>

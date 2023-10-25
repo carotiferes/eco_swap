@@ -47,10 +47,12 @@
 				{{publicacion.descripcion}}
 			</div>
 			<div class="trueque">
-				Valor de trueque: ${{publicacion.valorTruequeMin}} - ${{publicacion.valorTruequeMax}}
+				Valor de trueque: 
+				<h2 style="color: var(--trueques-dark); ">{{publicacion.valorTruequeMin | currency}} - {{publicacion.valorTruequeMax | currency}}</h2>
 			</div>
-			<div class="venta" *ngIf="publicacion.tipoPublicacion == 'VENTA_Y_TRUEQUE'">
-				Precio de venta: ${{publicacion.precioVenta}}
+			<div class="venta" *ngIf="publicacion.tipoPublicacion == 'VENTA_Y_TRUEQUE' && !!publicacion.particularDTO.accessToken">
+				Precio de venta: <h2>{{publicacion.precioVenta | currency }} </h2>
+				<p style="font-size: 14px;">Si comprás, te lo enviamos por {{costoEnvio | currency}}!</p>
 			</div>
 			<div class="caracteristicas" *ngIf="publicacion.caracteristicaProducto.length > 0">
 				<b>Características:</b>

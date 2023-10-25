@@ -33,9 +33,9 @@ export const AuthGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
 				router.navigate(['/admin-logistica'])
 				return false
 			}
-		}
-		if(authService.isUserSwapper() && onlyFundacionesURLs.some(item => item == url) 
-		|| !authService.isUserSwapper() && onlySwapperURLs.some(item => item == url)) {
+		} else if(authService.isUserSwapper() && onlyFundacionesURLs.some(item => item == url) 
+		|| !authService.isUserSwapper() && onlySwapperURLs.some(item => item == url)
+		|| onlyAdminsURLs.some(item => item == url)) {
 			router.navigate(['/home'])
 			return false;
 		}

@@ -213,10 +213,13 @@ export class PublicacionComponent implements AfterViewInit {
 						title: '¡Ya casi es tuyo!',
 						text: 'Terminá tu compra en Mercado Pago, luego podrás verla en Mis Compras!',
 						icon: 'success',
-						confirmButtonText: 'IR A MIS COMPRAS',
+						confirmButtonText: '¡VAMOS!',
 						allowOutsideClick: false, allowEscapeKey: false
 					}).then(({isConfirmed}) => {
-						if(isConfirmed) window.open(res.initPoint, '_blank')
+						if(isConfirmed) {
+							this.router.navigate(['/mis-compras'])
+							window.open(res.initPoint, '_blank')
+						}
 					})
 				}
 			})
@@ -276,23 +279,7 @@ export class PublicacionComponent implements AfterViewInit {
 			if(publicacion.estadoTrueque == 'APROBADO') {
 				// ACEPTADO
 				auxList1.push(item)
-				this.mainPublicacionCard = {
-					id: this.publicacion.idPublicacion,
-					imagen: this.publicacion.parsedImagenes? this.publicacion.parsedImagenes[0] : 'no_image',
-					titulo: this.publicacion.titulo,
-					valorPrincipal: `$${this.publicacion.valorTruequeMin} - $${this.publicacion.valorTruequeMax}`,
-					fecha: this.publicacion.fechaPublicacion,
-					usuario: {
-						imagen: this.publicacion.particularDTO.usuarioDTO.avatar,
-						nombre: this.publicacion.particularDTO.nombre + ' ' + this.publicacion.particularDTO.apellido,
-						puntaje: this.publicacion.particularDTO.puntaje,
-						localidad: this.publicacion.particularDTO.direcciones[0].localidad
-					},
-					action: 'detail',
-					buttons: [],
-					estado: this.publicacion.estadoTrueque,
-					idAuxiliar: this.trueques.find(item => item.publicacionDTOpropuesta.idPublicacion == this.publicacion.idPublicacion)?.idTrueque
-				}
+				
 			} else if(publicacion.estadoTrueque == 'PENDIENTE' && publicacion.estadoPublicacion == 'ABIERTA') {
 				// ACTIVOS
 				item.valorSecundario = publicacion.precioVenta ? `$${publicacion.precioVenta}` : undefined
@@ -303,7 +290,23 @@ export class PublicacionComponent implements AfterViewInit {
 				item.disabled = true;
 				auxList3.push(item)
 			}
-
+			this.mainPublicacionCard = {
+				id: this.publicacion.idPublicacion,
+				imagen: this.publicacion.parsedImagenes? this.publicacion.parsedImagenes[0] : 'no_image',
+				titulo: this.publicacion.titulo,
+				valorPrincipal: `$${this.publicacion.valorTruequeMin} - $${this.publicacion.valorTruequeMax}`,
+				fecha: this.publicacion.fechaPublicacion,
+				usuario: {
+					imagen: this.publicacion.particularDTO.usuarioDTO.avatar,
+					nombre: this.publicacion.particularDTO.nombre + ' ' + this.publicacion.particularDTO.apellido,
+					puntaje: this.publicacion.particularDTO.puntaje,
+					localidad: this.publicacion.particularDTO.direcciones[0].localidad
+				},
+				action: 'detail',
+				buttons: [],
+				estado: this.publicacion.estadoPublicacion,
+				idAuxiliar: this.trueques.find(item => item.publicacionDTOpropuesta.idPublicacion == this.publicacion.idPublicacion)?.idTrueque
+			}
 			this.truequeAceptado = auxList1;
 			this.truequesActivos = auxList2;
 			this.historialTrueques = auxList3;

@@ -78,6 +78,10 @@ mat-card {
 
 	.trueque, .venta {
 		font-size: 16px;
+		h2 {
+			font-weight: bold;
+
+		}
 	}
 
 	.caracteristicas {
@@ -92,6 +96,12 @@ mat-card {
 		display: flex;
 	} */
 } 
+
+@media (min-width: 0px) and (max-width: 576px) {
+	.card-content {
+		grid-template-columns: 1fr !important;
+	}
+}
 
 @media (min-width: 0px) and (max-width: 800px) {
 	.div-fecha-zona {

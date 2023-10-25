@@ -14,7 +14,7 @@ export class HttpBackEnd {
 
 	get(urlName: string, endpoint: string, params?: any) {
 		const URL = this.getUrlByName(urlName);
-		return this.httpClient.get(URL + endpoint,  params );
+		return this.httpClient.get(URL + endpoint,  {params} );
 	}
 
 	getImg(urlName: string, endpoint: string, params?: any) {

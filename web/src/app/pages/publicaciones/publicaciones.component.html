@@ -68,10 +68,10 @@
 		<div *ngIf="filteredPublicacionesCardList.length==0 && !loading" style="text-align: center;">No hay publicaciones para mostrar</div>
 		<app-deck *ngIf="filteredPublicacionesCardList.length > 0 && !loading" [cardList]="filteredPublicacionesCardList" app="publicaciones"></app-deck>
 	</div>
-</div>
-<div class="floating-button-container">
-	<button mat-fab color="primary" aria-label="Agregar Publicación" (click)="addPublicacion()"
-		matTooltip="Agregar Publicación" matTooltipPosition="before">
-		<mat-icon>add</mat-icon>
-	</button>
+	<div class="floating-button-container">
+		<button mat-fab color="primary" aria-label="Agregar Publicación" (click)="addPublicacion()"
+			matTooltip="Agregar Publicación" matTooltipPosition="before">
+			<mat-icon>add</mat-icon>
+		</button>
+	</div>
 </div>
