@@ -10,9 +10,11 @@ import msUsers.domain.client.shipnow.response.ResponseGetListOrders;
 import msUsers.domain.entities.*;
 import msUsers.domain.logistica.Order;
 import msUsers.domain.logistica.PingPong;
+import msUsers.domain.logistica.enums.OrdenEstadoEnum;
 import msUsers.domain.model.EstadoOrdenEnum;
 import msUsers.domain.repositories.*;
 import msUsers.domain.requests.logistica.PostOrderRequest;
+import msUsers.domain.requests.logistica.PostProductosRequest;
 import msUsers.domain.requests.logistica.PutOrderRequest;
 import msUsers.domain.responses.ResponseShippingOptions;
 import msUsers.domain.responses.logistica.resultResponse.ResultShippingOptions;
@@ -50,6 +52,7 @@ public class LogisticaService {
 
     private ProductosRepository productosRepository;
     private OrdenesRepository ordenesRepository;
+    private ColectasRepository colectasRepository;
 
 
     public PingPong pingpong() {
@@ -91,25 +94,6 @@ public class LogisticaService {
                     .build();
         }
     }
-/*
-    private ShipDirection createShippingDirection() {
-        return ShipDirection.builder()
-                .email()
-                .floor()
-                .city()
-                .doc_number()
-                .country()
-                .zip_code()
-                .full_name()
-                .last_name()
-                .state()
-                .street_name()
-                .street_name()
-                .phone()
-                .build();
-    }
-
- */
 
 
     public List<ResponseOrdenDeEnvio> obtenerOrden(String userIdOrigen) {
@@ -123,7 +107,11 @@ public class LogisticaService {
                 .map(x-> ResponseOrdenDeEnvio.builder()
                         .orderId(String.valueOf(x.getIdOrden()))
                         .usernameDestino(x.getNombreUserDestino())
-                        .listaFechaEstado(null)
+                        .listaFechaEstado(
+                                x.getListaFechaEnvios().stream()
+                                        .map(FechaEnvios::crearFechaEnvioResponse)
+                                        .collect(Collectors.toList())
+                        )
                         .build()
                 )
                 .toList();
@@ -142,10 +130,14 @@ public class LogisticaService {
         log.info(">> Cambio de estado de orden {} desde actual {} al nuevo {}", ordenId, ultimoEstado.getEstado().name(), putOrderRequest.getNuevoEstado());
         if(this.cancelarEnvio(putOrderRequest.getNuevoEstado(), ultimoEstado.getEstado().name())) {
             //QUITAR LO RECIBIDO DEL PRODUCTO
-            Producto producto = productosRepository.findById(orderAEnviar.getProductoId()).get();
-            producto.setCantidadRecibida(producto.getCantidadRecibida()- orderAEnviar.getCantidad());
-            productosRepository.save(producto);
+            List<ProductosADonarDeOrden> listaProductos = orderAEnviar.getProductosADonarDeOrdenList();
+            for(ProductosADonarDeOrden productoDeOrden : listaProductos) {
+                Producto producto = productosRepository.findById(productoDeOrden.getIdProducto()).get();
+                producto.setCantidadRecibida((int) (producto.getCantidadRecibida()- productoDeOrden.getCantidad()));
+                productosRepository.save(producto);
+            }
             //CAMBIAR LA DIRECCIÓN A DONDE ENVIAR
+            /*
             Usuario usuarioOrigen = usuariosRepository.getReferenceById(orderAEnviar.getIdUsuarioOrigen());
             Direccion direccionOrigen = usuarioOrigen.getDirecciones().get(0);
             orderAEnviar.setCodigoPostal(direccionOrigen.getCodigoPostal());
@@ -157,6 +149,8 @@ public class LogisticaService {
             orderAEnviar.setNombreUserDestino(orderAEnviar.getNombreUserOrigen());
             orderAEnviar.setNombreUserOrigen(nombreDestino);
             //SI USAMOS EL TEMA DE TICKETS DE JASPER, LO USAREMOS AQUI
+
+             */
         }
 
         LocalDate today = LocalDate.now();
@@ -166,7 +160,7 @@ public class LogisticaService {
 
         FechaEnvios nuevaFechaEnvio = FechaEnvios.builder()
                 .fechaEnvio(formattedDate)
-                .estado(EnumEstadoOrden.valueOf(putOrderRequest.getNuevoEstado()))
+                .estado(OrdenEstadoEnum.valueOf(putOrderRequest.getNuevoEstado()))
                 .build();
 
         List<FechaEnvios> listadoFechasEnviosNuevo = orderAEnviar.getListaFechaEnvios();
@@ -175,70 +169,6 @@ public class LogisticaService {
         ordenesRepository.save(orderAEnviar);
         log.info("<< Actualizacion de orden finalizada");
     }
-
-    public ResponseOrderDetails obtenerOrdenPorId(String ordenId) {
-        log.info(">> OBTENER ORDENES DE: {}", ordenId);
-
-
-
-        try {
-            //Create connection
-            URL url = new URL(serviceUrl+"/orders/"+ordenId);
-            HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
-            con.setRequestMethod("GET");
-            con.setRequestProperty("Authorization", tokenAuth);
-            con.setRequestProperty("Accept", "application/json");
-            con.setDoOutput(true);
-
-            int responseCode = con.getResponseCode();
-            log.info("-- SEND GET ORDEN X ID DE {} TO URL: {}", ordenId, serviceUrl+"/orders/"+ordenId);
-            log.info("-- RESPONSE CODE: {}", responseCode);
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getInputStream())
-            );
-            String inputLine;
-            StringBuilder response = new StringBuilder();
-            while((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-            Order orderEspecifica = new Gson().fromJson(response.toString(), Order.class);
-            log.info("-- RESPONSE BODY: {}", orderEspecifica);
-       //     Order orderEspecifica = obtenidos;
-
-            return ResponseOrderDetails.builder()
-                    .store(orderEspecifica.getStore())
-                    .created_at(orderEspecifica.getCreated_at())
-                    .timestamps(orderEspecifica.getTimestamps())
-                    .items(orderEspecifica.getItems())
-                    .comment(orderEspecifica.getComment())
-                    .shippingOption(orderEspecifica.getShipping_option())
-                    .id(orderEspecifica.getId())
-                    .status(orderEspecifica.getStatus())
-                    .ship_to(orderEspecifica.getShip_to())
-                    .ship_from(orderEspecifica.getShip_from())
-                    .last_updated_date(orderEspecifica.getTimestamps().getUpdated_at())
-                    .build();
-/*
-            return PingPong.builder()
-                    .cache(String.valueOf(convertedObject.get("cache").getAsString()))
-                    .db(String.valueOf(convertedObject.get("db").getAsString()))
-                    .build();
- */
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-/*
-            return PingPong.builder()
-                    .cache("fail")
-                    .db("fail")
-                    .build();
-
-
- */
-        }
-    }
-
 
     public OrdenDeEnvio obtenerDetallesDeOrdenXOrdenId(Long ordenId) throws Exception {
         log.info(">> Obtener Detalles de ORDEN dado a OrdenId: {}", ordenId);
@@ -276,85 +206,6 @@ public class LogisticaService {
         //GENERAR CARTA DE ENVIO DE SHIPNOW
         log.info("<< ORDEN CREADA: {}", ordenCreada);
         return response;
-        /*
-            NO USAREMOS SHIPNOW PARA ESTO, MOCKEAREMOS LAS RESPUESTAS YA QUE NO TIENE SENTIDO USAR ESFUERZO EN ALGO
-            QUE NO USAREMOS
-         */
-        /*
-        ArrayList<ResponseVariant> itemBuscado = this.obtenerVariantes(postOrderRequest.getItems());
-
-        HttpsURLConnection connection = null;
-        Order orderACrear = this.buildOrder(postOrderRequest, itemBuscado);
-
-        try {
-            //Create connection
-            URL url = new URL(serviceUrl+"/orders");
-            HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Authorization", tokenAuth);
-            con.setRequestProperty("Accept", "application/json");
-            con.setRequestProperty("Content-Type", "application/json");
-            con.setDoOutput(true);
-
-            String gsonVariant = new Gson().toJson(orderACrear);
-            try (DataOutputStream dos = new DataOutputStream(con.getOutputStream())) {
-                dos.writeBytes(gsonVariant);
-            }
-
-            int responseCode = con.getResponseCode();
-            log.info("-- SEND POST ORDER TO URL: {}", serviceUrl);
-            log.info("-- RESPONSE CODE: {}", responseCode);
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getErrorStream())
-            );
-            String inputLine;
-            StringBuilder response = new StringBuilder();
-            while((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            log.info("-- RESPONSE BODY: {}", response.toString());
-            in.close();
-
-            Order orderEspecifica = new Gson().fromJson(response.toString(), Order.class);
-            log.info("-- RESPONSE BODY: {}", orderEspecifica);
-            //     Order orderEspecifica = obtenidos;
-
-            return ResponseOrderDetails.builder()
-                    .store(orderEspecifica.getStore())
-                    .created_at(orderEspecifica.getCreated_at())
-                    .timestamps(orderEspecifica.getTimestamps())
-                    .items(orderEspecifica.getItems())
-                    .comment(orderEspecifica.getComment())
-                    .shippingOption(orderEspecifica.getShipping_option())
-                    .id(orderEspecifica.getId())
-                    .status(orderEspecifica.getStatus())
-                    .ship_to(orderEspecifica.getShip_to())
-                    .ship_from(orderEspecifica.getShip_from())
-                    .last_updated_date(orderEspecifica.getTimestamps().getUpdated_at())
-                    .build();
-/*
-            return PingPong.builder()
-                    .cache(String.valueOf(convertedObject.get("cache").getAsString()))
-                    .db(String.valueOf(convertedObject.get("db").getAsString()))
-                    .build();
-
-
- /
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            /*
-
-
-            return PingPong.builder()
-                    .cache("fail")
-                    .db("fail")
-                    .build();
-
-             /
-            return null;
-        }
-        */
     }
 
     public ResultShippingOptions getCostoEnvio(Long weight, String zipCode, String types) {
@@ -405,32 +256,38 @@ public class LogisticaService {
 
         Direccion direccionOrigen = usuarioOrigen.getDirecciones().get(0);
         Direccion direccionDestino = usuarioDestino.getDirecciones().get(0);
+        List<PostProductosRequest> requestList = postOrderRequest.getListProductos();
+        if(postOrderRequest.getIdColecta()!=null) {
+            Colecta colecta = colectasRepository.getReferenceById(postOrderRequest.getIdColecta());
 
+            //FILTRAMOS LOS PRODUCTOS QUE SI VAMOS A CONSIDERAR PARA RESTAR
+            List<Producto> productosADonar = colecta.getProductos()
+                    .stream()
+                    .filter(x-> requestList.stream().anyMatch(xxx->xxx.getProductoId()==x.getIdProducto()))
+                    .toList();
+            for(Producto producto: productosADonar) {
+                Long cantidad = requestList.stream()
+                        .filter(x->x.getProductoId()== producto.getIdProducto())
+                        .map(PostProductosRequest::getCantidad)
+                        .toList()
+                        .get(0);
+                if(cantidad > (producto.getCantidadSolicitada()-producto.getCantidadRecibida())){
+                    log.error("La intención de orden no es correcta");
+                    throw new Exception("La cantidad a pedir es mayor que la cantidad solicitada restante");
+                }
+                producto.setCantidadRecibida((int) (producto.getCantidadRecibida()+cantidad));
 
-        Producto producto = productosRepository.findById(postOrderRequest.getIdDeItems().get(0)).get();
-        if(postOrderRequest.getCantidad() > (producto.getCantidadSolicitada()-producto.getCantidadRecibida())){
-            log.error("La intención de orden no es correcta");
-            throw new Exception("La cantidad a pedir es mayor que la cantidad solicitada restante");
+                productosRepository.save(producto);
+            }
         }
-        producto.setCantidadRecibida(producto.getCantidadRecibida()+postOrderRequest.getCantidad());
-
-        productosRepository.save(producto);
-/*
-        OrderAEnviar orderAEnviar = OrderAEnviar.builder()
-                .titulo(postOrderRequest.getTitulo())
-                .direccionAEnviarDestino(DirrecionAEnviar.crear(direccionDestino))
-                .dirrecionAEnviarOrigen(DirrecionAEnviar.crear(direccionOrigen))
-                .nombreUserDestino(nombreDestino)
-                .nombreUserOrigen(nombreOrigen)
-                .listItemAEnviar(List.of(ItemAEnviar.crear(producto, postOrderRequest.getCantidad())))
-                .build();
- */
-
         LocalDate today = LocalDate.now();
         // - Custom Pattern
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String formattedDate = today.format(pattern);  //17-02-2022
 
+        List<ProductosADonarDeOrden> listaProductosAEnviar = requestList.stream()
+                .map(ProductosADonarDeOrden::crearProductoADonarRequest)
+                .toList();
         return OrdenDeEnvio.builder()
                 .idUsuarioDestino(usuarioDestino.getIdUsuario())
                 .idUsuarioOrigen(usuarioOrigen.getIdUsuario())
@@ -442,13 +299,13 @@ public class LogisticaService {
                 .nombreUserDestino(nombreDestino)
                 .nombreUserOrigen(nombreOrigen)
                 .precioEnvio(postOrderRequest.getCostoEnvio())
-                .cantidad(postOrderRequest.getCantidad())
+                .productosADonarDeOrdenList(listaProductosAEnviar)
                 .listaFechaEnvios(List.of(FechaEnvios.builder()
-                                .estado(EnumEstadoOrden.POR_DESPACHAR)
+                                .estado(OrdenEstadoEnum.POR_DESPACHAR)
                                 .fechaEnvio(formattedDate)
                         .build()))
-                .publicacionColectaId(postOrderRequest.getPublicacionOColectaId())
-                .esPublicacion(postOrderRequest.getEsPublicacion())
+                .publicacionId(postOrderRequest.getIdPublicacion())
+                .colectaId(postOrderRequest.getIdColecta())
                 .build();
 
     }

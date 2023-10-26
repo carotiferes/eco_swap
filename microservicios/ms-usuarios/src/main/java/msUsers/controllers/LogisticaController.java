@@ -4,7 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.client.shipnow.ResponseOrder;
 import msUsers.domain.client.shipnow.ResponseOrderDetails;
 import msUsers.domain.entities.OrdenDeEnvio;
+import msUsers.domain.entities.Usuario;
 import msUsers.domain.logistica.PingPong;
+import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.requests.logistica.PostOrderRequest;
 import msUsers.domain.requests.logistica.PutOrderRequest;
 import msUsers.domain.responses.logistica.resultResponse.ResultShippingOptions;
@@ -35,8 +37,12 @@ public class LogisticaController {
     @ResponseStatus(HttpStatus.OK)
     @Transactional
     public ResponseEntity<ResponseOrdenDeEnvio> crearOrden(
-            @RequestHeader String authorization,
             @RequestBody PostOrderRequest postOrderRequest) throws Exception {
+        final Usuario user = UsuarioContext.getUsuario();
+        Long userId = user.getIdUsuario();
+        if(!userId.equals(postOrderRequest.getUserIdOrigen())) {
+            throw new Exception("El usuario no tiene permiso para enviar una orden con los datos enviados");
+        }
         log.info(">> POST ORDER");
         ResponseOrdenDeEnvio response = logisticaService.generarOrden(postOrderRequest);
         log.info("<< ORDER CREADA CON ORDER ID {}", response.getOrderId());
@@ -45,9 +51,9 @@ public class LogisticaController {
 
     @GetMapping(path = "/orden", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<ResponseOrdenDeEnvio>> obtenerOrdenesSegunUserId(
-            @RequestHeader String authorization,
-            @RequestParam(value = "userId", required = true)  String userId) {
+    public ResponseEntity<List<ResponseOrdenDeEnvio>> obtenerOrdenesSegunUserId() {
+        final Usuario user = UsuarioContext.getUsuario();
+        String userId = String.valueOf(user.getIdUsuario());
         log.info(">> GET ORDER PARA EXTERNAL_REFERENCE: {}", userId);
         List<ResponseOrdenDeEnvio> order = logisticaService.obtenerOrden(userId);
         log.info("<< ORDENES OBTENIDAS PARA {} con la cantidad de {} ordenes", userId, order.size());
@@ -57,7 +63,6 @@ public class LogisticaController {
     @GetMapping(path = "/orden/{orderId}", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<OrdenDeEnvio> obtenerOrdenesSegunOrderId(
-            @RequestHeader String authorization,
             @PathVariable(value = "orderId", required = true)  String orderId) throws Exception {
         log.info(">> GET ORDER PARA EXTERNAL_REFERENCE: {}", orderId);
         OrdenDeEnvio order = logisticaService.obtenerDetallesDeOrdenXOrdenId(Long.valueOf(orderId));
@@ -68,7 +73,6 @@ public class LogisticaController {
     @PutMapping(path = "/orden/{orderId}", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> actualizarOrdenDeCompra(
-            @RequestHeader String authorization,
             @PathVariable(value = "orderId", required = true)  String orderId,
             @RequestBody PutOrderRequest putOrderRequest)  {
         log.info(">> PUT ORDER  {} PARA ACTUALIZAR A NUEVO ESTADO: {}", orderId, putOrderRequest.getNuevoEstado());
@@ -80,7 +84,6 @@ public class LogisticaController {
     @GetMapping(path = "/costoEnvio", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ResponseCostoEnvio> obtenerPrecioDeShipping(
-            @RequestHeader String authorization,
             @RequestParam("peso") Long peso,
             @RequestParam("codigoPostal") String codigoPostal
     ) {
@@ -97,7 +100,6 @@ public class LogisticaController {
     @GetMapping(path = "/ping", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<PingPong> ping(
-            @RequestHeader String authorization
     )  {
         log.info(">> PING");
         PingPong response = logisticaService.pingpong();

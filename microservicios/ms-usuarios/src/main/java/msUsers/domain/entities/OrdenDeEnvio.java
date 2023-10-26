@@ -1,5 +1,6 @@
 package msUsers.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -50,13 +51,15 @@ public class OrdenDeEnvio {
     @NotNull
     private String nombreUserOrigen;
     @NotNull
-    private Integer cantidad;
-    @NotNull
     private String telefono;
-    @NotNull
-    private Long productoId;
-    @NotNull
-    private Long publicacionColectaId;
+
+    @OneToMany(mappedBy = "producto",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    //@JsonManagedReference
+    private List<ProductosADonarDeOrden> productosADonarDeOrdenList;
+
+    private Long publicacionId;
+
+    private Long colectaId;
     @NotNull
     private Boolean esPublicacion;
 

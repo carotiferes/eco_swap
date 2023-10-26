@@ -17,20 +17,18 @@ public class WebMvcConfig implements WebMvcConfigurer {
     private String urlHost2;
     @Autowired
     private JwtInterceptor jwtInterceptor;
-/*
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/**");
     }
 
- */
-
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("/*")
-       //         .allowedOrigins(urlHost1, urlHost2)
+        //        .allowedOrigins("/*")
+                .allowedOrigins(urlHost1, urlHost2)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH") // Agrega aquí los métodos permitidos
                 .allowedHeaders("Content-Type", "Authorization", "Access-Control-Allow-Origin") // Agrega aquí los encabezados permitidos en tus solicitudes
                 .allowCredentials(true)
