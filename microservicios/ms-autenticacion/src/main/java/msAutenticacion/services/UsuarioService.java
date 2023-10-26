@@ -130,6 +130,19 @@ public class UsuarioService {
         log.info(("actualizarContrasenia: Se ha actualizar con ÉXITO la contraseña para usuarioId: " + usuario.getUsername()));
     }
 
+    public ResponseUpdateEntity editarAvatar(RequestEditAvatar requestEditAvatar, Usuario usuario){
+
+        usuario.setAvatar(requestEditAvatar.getAvatar());
+        entityManager.merge(usuario);
+        log.info("<< Avatar editado correctamente.");
+
+        ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
+        responseUpdateEntity.setStatus(HttpStatus.OK.name());
+        responseUpdateEntity.setDescripcion("Avatar editado correctamente.");
+
+        return responseUpdateEntity;
+    }
+
     public Boolean confirmarUsuario(RequestConfirm request) {
         log.info("confirmarUsuario: Confirmar usuarioId {}", request.getIdUsuario());
         try {

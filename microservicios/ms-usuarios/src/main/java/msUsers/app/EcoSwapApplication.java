@@ -12,7 +12,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 		"msUsers.domain.repositories",
 		"msUsers.exceptions.handler",
 		"msUsers.services",
-		"msUsers.configuration"
+		"msUsers.configuration",
+		"msUsers.components"
 })
 @EntityScan(basePackages = "msUsers.domain.entities")
 @EnableJpaRepositories("msUsers.domain.repositories")
