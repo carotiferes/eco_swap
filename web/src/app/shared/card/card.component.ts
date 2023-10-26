@@ -8,6 +8,7 @@ import { DonacionesService } from 'src/app/services/donaciones.service';
 import { TruequesService } from 'src/app/services/trueques.service';
 import Swal from 'sweetalert2';
 import { ListComponent } from '../list/list.component';
+import { EnvioModalComponent } from 'src/app/shared/envio-modal/envio-modal.component';
 
 @Component({
 	selector: 'app-card',
@@ -80,14 +81,14 @@ export class CardComponent {
 
 	chipClick(card: CardModel) {
 		if(card.action == 'list') this.openDialog(ListComponent, card);
+		else if(card.codigo == 'Compra') this.openDialog(EnvioModalComponent, card, '60vh', '60vw')
 		//else if(card.action == 'trueque') this.router.navigate(['publicacion/' + card.idAuxiliar])
 	}
 
-	openDialog(component: any, data: any, height: string = '60vh') {
+	openDialog(component: any, data: any, height: string = '60vh', width: string = '80vw') {
 		const dialogRef = this.dialog.open(component, {
-			maxWidth: '80vw',
+			maxWidth: width,
 			maxHeight: height,
-			height: 'fit-content',
 			width: '100%',
 			panelClass: 'full-screen-modal',
 			data

@@ -133,6 +133,8 @@ export class PublicacionesComponent {
 				next: (data: any) => {
 					console.log(data);
 					for (const publicacion of data) {
+						publicacion.publicacionDTO.idCompra = publicacion.idCompra;
+						publicacion.publicacionDTO.estadoCompra = publicacion.estadoCompra;
 						this.publicacionesToShow.push(publicacion.publicacionDTO);
 					}
 					this.publicacionesToShow.map(item => {
@@ -163,16 +165,17 @@ export class PublicacionesComponent {
 				valorSecundario: !!publicacion.particularDTO.accessToken ? (publicacion.precioVenta ? `$${publicacion.precioVenta}` : undefined) : undefined,
 				fecha: publicacion.fechaPublicacion,
 				usuario: {
+					id: publicacion.particularDTO.usuarioDTO.idUsuario,
 					imagen: publicacion.particularDTO.usuarioDTO.avatar,
 					nombre: publicacion.particularDTO.nombre + ' ' + publicacion.particularDTO.apellido,
 					puntaje: publicacion.particularDTO.puntaje,
 					localidad: publicacion.particularDTO.direcciones[0].localidad
 				},
 				action: !!idPublicacionOrigen ? 'trueque' : this.origin == 'myPublicaciones' ? 'list' : 'access',
-				idAuxiliar: !!idPublicacionOrigen ? idPublicacionOrigen : undefined,
+				idAuxiliar: !!idPublicacionOrigen ? idPublicacionOrigen : publicacion.idCompra ? publicacion.idCompra : undefined,
 				buttons: [],
-				estado: this.origin == 'myPublicaciones' ? publicacion.estadoPublicacion : undefined,
-				codigo: 'Publicación'
+				estado: this.origin == 'myPublicaciones' ? publicacion.estadoPublicacion : publicacion.estadoCompra ? publicacion.estadoCompra : undefined,
+				codigo: publicacion.idCompra ? 'Compra' : 'Publicación'
 			})
 		}
 		this.publicacionesCardList = auxList;

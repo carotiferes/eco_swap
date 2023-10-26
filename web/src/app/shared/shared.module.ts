@@ -9,6 +9,7 @@ import { MaterialModule } from './material/material.module';
 import { SpinnerComponent } from './spinner/spinner.component';
 import { RatingComponent } from './rating/rating.component';
 import { ListComponent } from './list/list.component';
+import { EnvioModalComponent } from './envio-modal/envio-modal.component';
 
 @NgModule({
 	declarations: [
@@ -17,7 +18,8 @@ import { ListComponent } from './list/list.component';
 	    CardComponent,
 	    DeckComponent,
      RatingComponent,
-     ListComponent
+     ListComponent,
+	 EnvioModalComponent
 	],
 	imports: [
 		MaterialModule,
@@ -30,7 +32,8 @@ import { ListComponent } from './list/list.component';
 		CardComponent,
     	DeckComponent,
 		RatingComponent,
-		ListComponent
+		ListComponent,
+		EnvioModalComponent
 	]
 })
 export class SharedModule { }

@@ -40,6 +40,14 @@
 		&.background-lila {
 			background-color: var(--donaciones);
 		}
+
+		&.background-warn {
+			background-color: var(--info);
+			&:hover {
+				cursor: pointer;
+
+			}
+		}
 	}
 
 	.img-div {
