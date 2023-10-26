@@ -185,8 +185,11 @@ public class UsuarioService {
             throw new LoginUserBlockedException("El usuario fue bloqueado");
         log.info(("login: Login EXITOSO para username: " + request.getUsername()));
         usuario.setIntentos(0);
+
+        String secretJWT = this.crearSalt();
+        usuario.setSecretJWT(secretJWT);
         usuarioRepository.save(usuario);
-        return this.crearJWT(usuario);
+        return this.crearJWT(usuario, secretJWT);
     }
 
     private Boolean compararContrasenias(String passwordHashIngresado, String passwordHashGuardado) {
@@ -256,13 +259,13 @@ public class UsuarioService {
     }
     
 
-    private String crearJWT(Usuario usuario) throws NoSuchAlgorithmException {
+    private String crearJWT(Usuario usuario, String secretJWT) throws NoSuchAlgorithmException {
         try {
             KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
             kpg.initialize(1024);
             KeyPair kp = kpg.generateKeyPair();
            // Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) kp.getPublic(), null); // (RSAPrivateKey) kp.getPrivate());
-            Algorithm algorithm = Algorithm.HMAC256("secret");
+            Algorithm algorithm = Algorithm.HMAC256(secretJWT);
           //  log.info("DATA JWT: public {}; private {}", kp.getPublic(), kp.getPrivate());
             //return JWT.create()
             String email = usuario.getEmail();
@@ -283,7 +286,7 @@ public class UsuarioService {
             return jwtCreated;
         } catch (JWTCreationException | NoSuchAlgorithmException exception){
             log.error(("login: JWT dió error durante la creación: " + exception.getMessage()));
-            return "";
+            throw exception;
         }
     }
 
