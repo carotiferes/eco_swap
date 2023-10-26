@@ -15,6 +15,7 @@ public class AllowedUrlsProvider {
                 "/api/getImage/*.jpg",
                 "/api/getImage/*.png",
                 "/api/getImage/*.webp",
+                "/api/getImage/*.x-msdownload",
                 // SWAGGER
                 "/swagger-ui/*",
                 "/v3/api-docs",
@@ -32,6 +33,6 @@ public class AllowedUrlsProvider {
                 "/api/productos/*",
                 // COMPRAS
                 "/comprar/*",
-                "/ms-transacciones/api/webhook");
+                "/ms-users/api/webhook");
     }
 }

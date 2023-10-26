@@ -7,6 +7,8 @@ import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import { TruequesService } from 'src/app/services/trueques.service';
 import Swal from 'sweetalert2';
+import { ListComponent } from '../list/list.component';
+import { EnvioModalComponent } from 'src/app/shared/envio-modal/envio-modal.component';
 
 @Component({
 	selector: 'app-card',
@@ -20,6 +22,7 @@ export class CardComponent {
 
 	@Output() statusChanged = new EventEmitter<any>();
 	@Output() cardSelected = new EventEmitter<any>();
+	@Output() cardUnselected = new EventEmitter<any>();
 
 	iconMap: { [key: string]: string } = {
 		'APROBADO': 'verified', 'APROBADA': 'verified',
@@ -40,11 +43,17 @@ export class CardComponent {
 	clicked(card: CardModel) {
 		switch (card.action) {
 			case 'select':
-				this.cardSelected.emit(card.id);
-				if(this.cardData) this.cardData.isSelected = true;
+				if(this.cardData){
+					this.cardData.isSelected = !this.cardData.isSelected;
+					if(this.cardData.isSelected) this.cardSelected.emit(card.id);
+					else this.cardUnselected.emit(card.id);
+				}
 				break;
 			case 'detail':
 				this.showDetail(card)
+				break;
+			case 'trueque':
+				this.router.navigate(['publicacion/' + card.idAuxiliar])
 				break;
 			default:
 				const url = this.app == 'colectas' ? 'colecta/' : (this.app == 'publicaciones' ? 'publicacion/' : 'donacion/')
@@ -68,17 +77,22 @@ export class CardComponent {
 						userType: 'publicacionOrigen'
 					}
 					data.publicacion.parsedImagenes = data.publicacion.imagenes.split('|')
-					this.openDialog(component, data)
+					this.openDialog(component, data, '80vh')
 				}
 			})
 		}
 	}
 
-	openDialog(component: any, data: any) {
+	chipClick(card: CardModel) {
+		if(card.action == 'list') this.openDialog(ListComponent, card);
+		else if(card.codigo == 'Compra') this.openDialog(EnvioModalComponent, {card}, '60vh', '60vw')
+		//else if(card.action == 'trueque') this.router.navigate(['publicacion/' + card.idAuxiliar])
+	}
+
+	openDialog(component: any, data: any, height: string = '60vh', width: string = '80vw') {
 		const dialogRef = this.dialog.open(component, {
-			maxWidth: '80vw',
-			maxHeight: '60vh',
-			height: 'fit-content',
+			maxWidth: width,
+			maxHeight: height,
 			width: '100%',
 			panelClass: 'full-screen-modal',
 			data

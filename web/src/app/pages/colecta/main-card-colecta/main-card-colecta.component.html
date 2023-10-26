@@ -4,7 +4,7 @@
 			<div class="header-info">
 				<div mat-card-avatar class="example-header-image"></div>
 				<div>
-					<mat-card-title style="display: flex; align-items: center;">
+					<mat-card-title style="display: flex; align-items: center; flex-wrap: wrap;">
 						<a [href]="'/perfil/'+colecta.fundacionDTO.usuarioDTO.idUsuario">{{colecta.fundacionDTO.nombre}}</a>
 						<mat-icon class="address" (click)="showDireccion(colecta.fundacionDTO)" *ngIf="colecta.fundacionDTO && colecta.fundacionDTO.direcciones.length > 0">place</mat-icon>
 						<mat-icon class="address" (click)="showContactInfo(colecta.fundacionDTO)" *ngIf="colecta.fundacionDTO">info</mat-icon>
@@ -49,6 +49,9 @@
 		</div>
 	</mat-card-content>
 	<mat-card-actions class="card-button" *ngIf="!(userData.isLoggedIn && !userData.isSwapper)">
+		<div class="envio">
+			<h2 style="font-size: 16px; text-align: center;">Podés elegir enviarlo a la fundación con ShipNow, sin costo adicional!</h2>
+		</div>
 		<button mat-fab extended color="accent" (click)="donar()">QUIERO DONAR</button>
 	</mat-card-actions>
 </mat-card>

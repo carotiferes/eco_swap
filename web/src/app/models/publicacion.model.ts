@@ -17,5 +17,7 @@ export interface PublicacionModel {
 	valorTruequeMax: number,
 	valorTruequeMin: number,
 	caracteristicaProducto: any[],
-	estadoTrueque?: string
+	estadoTrueque?: string,
+	idCompra?: number,
+	estadoCompra?: string
 }
