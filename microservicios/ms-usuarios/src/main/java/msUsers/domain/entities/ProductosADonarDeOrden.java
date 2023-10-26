@@ -22,6 +22,8 @@ public class ProductosADonarDeOrden {
     private long idProducto;
     @NotNull
     private long cantidad;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private OrdenDeEnvio ordenDeEnvio;
 
     public static ProductosADonarDeOrden crearProductoADonar(Producto producto) {
         return ProductosADonarDeOrden.builder()

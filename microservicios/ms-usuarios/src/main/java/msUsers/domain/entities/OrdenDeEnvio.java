@@ -53,7 +53,7 @@ public class OrdenDeEnvio {
     @NotNull
     private String telefono;
 
-    @OneToMany(mappedBy = "producto",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "ordenDeEnvio",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     //@JsonManagedReference
     private List<ProductosADonarDeOrden> productosADonarDeOrdenList;
 
