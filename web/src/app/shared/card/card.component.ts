@@ -22,6 +22,7 @@ export class CardComponent {
 
 	@Output() statusChanged = new EventEmitter<any>();
 	@Output() cardSelected = new EventEmitter<any>();
+	@Output() cardUnselected = new EventEmitter<any>();
 
 	iconMap: { [key: string]: string } = {
 		'APROBADO': 'verified', 'APROBADA': 'verified',
@@ -42,8 +43,11 @@ export class CardComponent {
 	clicked(card: CardModel) {
 		switch (card.action) {
 			case 'select':
-				this.cardSelected.emit(card.id);
-				if(this.cardData) this.cardData.isSelected = true;
+				if(this.cardData){
+					this.cardData.isSelected = !this.cardData.isSelected;
+					if(this.cardData.isSelected) this.cardSelected.emit(card.id);
+					else this.cardUnselected.emit(card.id);
+				}
 				break;
 			case 'detail':
 				this.showDetail(card)
@@ -81,7 +85,7 @@ export class CardComponent {
 
 	chipClick(card: CardModel) {
 		if(card.action == 'list') this.openDialog(ListComponent, card);
-		else if(card.codigo == 'Compra') this.openDialog(EnvioModalComponent, card, '60vh', '60vw')
+		else if(card.codigo == 'Compra') this.openDialog(EnvioModalComponent, {card}, '60vh', '60vw')
 		//else if(card.action == 'trueque') this.router.navigate(['publicacion/' + card.idAuxiliar])
 	}
 

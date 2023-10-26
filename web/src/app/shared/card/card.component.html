@@ -1,9 +1,9 @@
 <div class="card" (click)="clicked(cardData)" *ngIf="cardData" [class.selected-card]="cardData.isSelected"
-	[ngClass]="app == 'publicaciones' && cardData.buttons.length == 0 ? 'small' : 'big'">
-	<mat-chip class="chip-localidad" [ngClass]="cardData.codigo == 'Compra' ? 'background-warn' : app == 'publicaciones' ? 'background-verde' : 'background-lila'"
+	[ngClass]="app == 'publicaciones' && cardData.buttons.length == 0 ? 'small' : 'big'" [class.is-donacion]="cardData.codigo == 'Donación'">
+	<mat-chip class="chip-localidad" [ngClass]="cardData.action == 'select' && cardData.codigo == 'Donación' ? 'background-warn' : cardData.codigo == 'Compra' ? 'background-warn' : app == 'publicaciones' ? 'background-verde' : 'background-lila'"
 	(click)="chipClick(cardData); $event.stopPropagation()" [style]="cardData.action == 'list' ? 'cursor: pointer;':''">
 		<span>
-			{{cardData.codigo == 'Compra' ? 'Coordinar Envío' : cardData.action == 'list' ? '¿Dónde lo propuse?' : cardData.action == 'trueque' ? 'Trueque aprobado' : cardData.usuario.localidad}}
+			{{cardData.codigo == 'Compra' ? 'Coordinar Envío' : cardData.action == 'list' ? '¿Dónde lo propuse?' : cardData.action == 'trueque' ? 'Trueque aprobado' : cardData.action == 'select' && cardData.codigo == 'Donación' ? 'SELECCIONAR' : cardData.usuario.localidad}}
 		</span>
 	</mat-chip>
 	<div style="position: absolute; top: 10px; left: 10px;">

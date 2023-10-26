@@ -23,6 +23,10 @@
 
 	&.selected-card {
 		background-color: #bceba1;
+
+		&.is-donacion {
+			background-color: #dcb9ef;
+		}
 	}
 
 	.chip-localidad {

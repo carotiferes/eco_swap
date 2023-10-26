@@ -5,6 +5,7 @@ import { DonacionModel } from 'src/app/models/donacion.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import { ShowErrorService } from 'src/app/services/show-error.service';
+import { EnvioModalComponent } from 'src/app/shared/envio-modal/envio-modal.component';
 import { MapComponent } from 'src/app/shared/map/map.component';
 import Swal from 'sweetalert2';
 
@@ -19,6 +20,9 @@ export class DonacionesComponent {
 	donacionesCardList: CardModel[] = [];
 
 	loading: boolean = false;
+
+	selectingMode: boolean = false;
+	selectedCards: number[] = [];
 
 	constructor(public dialog: MatDialog, private donacionesService: DonacionesService,
 		private auth: AuthService, private showErrorService: ShowErrorService) {
@@ -64,10 +68,10 @@ export class DonacionesComponent {
 				valorSecundario: stringCaracteristicas,
 				fecha: donacion.fechaDonacion,
 				usuario: {
-					imagen: donacion.particularDTO.usuarioDTO.avatar,
-					nombre: donacion.particularDTO.nombre + ' ' + donacion.particularDTO.apellido,
-					puntaje: donacion.particularDTO.puntaje,
-					localidad: donacion.particularDTO.direcciones[0].localidad
+					imagen: donacion.producto.colectaDTO.fundacionDTO.usuarioDTO.avatar,//donacion.particularDTO.usuarioDTO.avatar,
+					nombre: donacion.producto.colectaDTO.fundacionDTO.nombre,//donacion.particularDTO.nombre + ' ' + donacion.particularDTO.apellido,
+					puntaje: donacion.producto.colectaDTO.fundacionDTO.puntaje,//donacion.particularDTO.puntaje,
+					localidad: donacion.producto.colectaDTO.fundacionDTO.direcciones[0].localidad,//donacion.particularDTO.direcciones[0].localidad
 				},
 				action: 'detail',
 				buttons: [{name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADA'}],
@@ -78,6 +82,49 @@ export class DonacionesComponent {
 			this.loading = false;
 		}
 		this.donacionesCardList = auxDonaciones;
+	}
+
+	selectDonaciones() {
+		Swal.fire({
+			title: 'Configurá tu envío!',
+			text: 'Seleccioná las tarjetas de tus donaciones haciendo click en ellas, vas a ver que las que seleccionen se pintarán. Recordá que solo podés seleccionar donaciones a una misma fundación. Una vez que termines, clickeá el botón CONFIRMAR SELECCIÓN.',
+			icon: 'info',
+			confirmButtonText: '¡VAMOS!'
+		})
+		const auxDonaciones = this.donacionesCardList;
+		auxDonaciones.map(donacion => {donacion.action = 'select'; donacion.codigo = 'Donación'});
+		this.donacionesCardList = auxDonaciones;
+		this.selectingMode = true;
+	}
+
+	selectCard(cardID: number) {
+		/* VALIDAR QUE LA TARJETA SELECCIONADA TENGA EL MISMO ID FUNDACION QUE LAS DEMAS QUE YA ESTÉN SELECCIONADAS */
+		this.donacionesCardList.map(item => {if(item.id == cardID) item.isSelected = true})
+		this.selectedCards.push(cardID)
+	}
+
+	unselectCard(cardID: number) {
+		this.donacionesCardList.map(item => {if(item.id == cardID) item.isSelected = false})
+		const aux = this.selectedCards.filter(item => item == cardID)
+		this.selectedCards = aux;
+	}
+
+	cancelSelect() {
+		this.selectedCards = [];
+		this.selectingMode = false;
+	}
+
+	confirmSelectedCards() {
+		const dialogRef = this.dialog.open(EnvioModalComponent, {
+			maxWidth: '60vw',
+			maxHeight: '60vh',
+			width: '100%',
+			panelClass: 'full-screen-modal',
+			data: {cards: this.selectedCards}
+		});
+		/* dialogRef.afterClosed().subscribe((result) => {
+			console.log('closed', result);
+		}) */
 	}
 
 	zoomImage(img: string) {

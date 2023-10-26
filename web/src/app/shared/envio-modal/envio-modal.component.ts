@@ -35,6 +35,7 @@ export class EnvioModalComponent {
 				const compra = compras.find((item: any) => item.idCompra == this.data.idAuxiliar)
 				console.log(compra);
 				
+				/* REVISAR SI EL DATA TIENE card O cards --> si son varias agregar los ids */
 				if(compra) {
 					this.logisticaService.getCostoEnvio().subscribe({
 						next: (envio: any) => {
