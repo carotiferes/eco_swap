@@ -59,8 +59,11 @@ public class Usuario {
     @Column(columnDefinition = "boolean default 1")
     private boolean bloqueado;
 
-    @OneToMany(mappedBy = "usuarioOpina", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "usuarioOpina", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Opinion> opiniones;
+
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Notificacion> notificaciones;
 
     public UsuarioDTO toDTO() {
         UsuarioDTO usuarioDTO = new UsuarioDTO();

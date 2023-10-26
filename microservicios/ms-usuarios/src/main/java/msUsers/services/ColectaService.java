@@ -36,9 +36,10 @@ public class ColectaService {
     @Autowired
     private CaracteristicaDonacionRepository caracteristicaDonacionRepository;
 
-    public void crearDonacion(RequestComunicarDonacionColectaModel request, Long idColecta, Long idParticular) {
+    public Donacion crearDonacion(RequestComunicarDonacionColectaModel request, Long idColecta, Long idParticular) {
         log.info(">> SERVICE: Se comenzo la creacion de donacion para la colecta: {}", idColecta);
         Colecta colecta = colectasRepository.findById(idColecta).get();
+        Donacion donacionNueva = new Donacion();
         Producto producto = colecta.getProductos().
                    stream()
                    .filter(x -> x.getIdProducto() == request.getProductoId())
@@ -50,15 +51,17 @@ public class ColectaService {
         Particular particular = particularesRepository.findById(idParticular).get();
 
         // Validations
-        if(request.getCantidadOfrecida() > producto.getCantidadSolicitada()-producto.getCantidadRecibida() &&  producto.getCantidadSolicitada() > 0)
+        if(request.getCantidadOfrecida() > producto.getCantidadSolicitada()-producto.getCantidadRecibida() &&  producto.getCantidadSolicitada() > 0) {
             throw new DonacionCreationException("Error: Cantidad ofrecida mayor a la requerida.");
-        if(LocalDate.now().isBefore(colecta.getFechaInicio()))
+        }
+        if(LocalDate.now().isBefore(colecta.getFechaInicio())) {
             throw new DonacionCreationException("Colecta aun iniciada.");
-        if(LocalDate.now().isAfter(colecta.getFechaFin()))
+        }
+        if(LocalDate.now().isAfter(colecta.getFechaFin())) {
             throw new DonacionCreationException("Colecta expirada.");
+        }
 
         try{
-            Donacion donacionNueva = new Donacion();
             donacionNueva.setCantidadDonacion(request.getCantidadOfrecida());
             donacionNueva.setDescripcion(request.getMensaje());
             donacionNueva.setEstadoDonacion(EstadoDonacion.PENDIENTE);
@@ -83,6 +86,7 @@ public class ColectaService {
 
         log.info("<< Listado de donaciones originales de solciitud ID de donaciones: {}, cantidad original {}", idColecta, listaDonaciones.size());
         log.info("<< Colecta actualizada con ID de donaciones: {}", listaDonaciones.stream().map(Donacion::getIdDonacion).toList());
+        return donacionNueva;
     }
 
     public List<Donacion> obtenerTodasLasDonaciones(Long idColecta) {
