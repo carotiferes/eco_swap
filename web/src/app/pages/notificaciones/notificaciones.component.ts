@@ -36,7 +36,16 @@ export class NotificacionesComponent {
 		this.notificacionesService.getMisNotificaciones().subscribe({
 			next: (res: any) => {
 				this.notifications = res;
-				this.paginatedNotifications = this.notifications.slice(0, this.pageSize);
+				this.notifications.sort((a, b) => {
+					if (a.estadoNotificacion === 'LEIDO' && b.estadoNotificacion !== 'LEIDO') {
+						return 1; // 'a' comes before 'b'
+					} else if (a.estadoNotificacion !== 'LEIDO' && b.estadoNotificacion === 'LEIDO') {
+						return -1; // 'b' comes before 'a'
+					} else {
+						return 0; // No change in order
+					}
+				});
+				this.paginatedNotifications = this.notifications.slice(0, this.pageSize)
 				this.loading = false;
 			}
 		})

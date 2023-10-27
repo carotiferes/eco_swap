@@ -7,5 +7,6 @@ export interface NotificacionModel {
     mensaje: string,
     idReferenciaNotificacion: number,
 	estadoNotificacion: 'LEIDO' | 'NO_LEIDO',
-	tipoNotificacion: string
+	tipoNotificacion: string,
+	fechaNotificacion: Date
 }

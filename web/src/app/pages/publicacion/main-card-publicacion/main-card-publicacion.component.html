@@ -52,7 +52,7 @@
 			</div>
 			<div class="venta" *ngIf="publicacion.tipoPublicacion == 'VENTA_Y_TRUEQUE' && !!publicacion.particularDTO.accessToken">
 				Precio de venta: <h2>{{publicacion.precioVenta | currency }} </h2>
-				<p style="font-size: 14px;">Si comprás, te lo enviamos por {{costoEnvio | currency}}!</p>
+				<p style="font-size: 14px;">Si comprás, te lo enviamos<!--  por {{costoEnvio | currency}} -->!</p>
 			</div>
 			<div class="caracteristicas" *ngIf="publicacion.caracteristicaProducto.length > 0">
 				<b>Características:</b>
