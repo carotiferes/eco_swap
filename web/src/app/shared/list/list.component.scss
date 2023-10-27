@@ -1,0 +1,42 @@
+.even-row {
+	background-color: #e2e1e1;
+	/* White background for even rows */
+}
+
+.odd-row {
+	background-color: transparent;
+	/* Grey background for odd rows */
+}
+
+/* Hover effect */
+mat-list-item {
+	height: fit-content !important;
+	padding: 5px;
+	cursor: default;
+
+	&:hover {
+		background-color: #e0e0e0;
+		/* Light grey background on hover */
+	}
+
+	.item-img {
+		width: 60px;
+		height: 60px;
+		border-radius: 5px;
+		box-shadow: 2px 2px 5px var(--dark-grey);
+	}
+
+	.item-content {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+
+		h4 {
+			margin: 0;
+		}
+		p {
+			font-size: 12px !important;
+		}
+	}
+}

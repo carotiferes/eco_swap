@@ -3,9 +3,10 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	max-width: 515px !important;
 	
 	&.big {
-		height: 440px;
+		height: 460px;
 		h2 {
 			font-size: 18px !important;
 		}
@@ -22,6 +23,10 @@
 
 	&.selected-card {
 		background-color: #bceba1;
+
+		&.is-donacion {
+			background-color: #dcb9ef;
+		}
 	}
 
 	.chip-localidad {
@@ -38,6 +43,14 @@
 		
 		&.background-lila {
 			background-color: var(--donaciones);
+		}
+
+		&.background-warn {
+			background-color: var(--info);
+			&:hover {
+				cursor: pointer;
+
+			}
 		}
 	}
 
@@ -129,6 +142,13 @@
 			width: 16px;
 			height: 16px;
 			font-size: 16px;
+		}
+
+		h4 {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			max-width: 100%;
 		}
 	}
 

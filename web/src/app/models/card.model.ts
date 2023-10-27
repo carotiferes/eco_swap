@@ -9,6 +9,7 @@ export interface CardModel {
 	fecha?: any;
 	fechaString?: string;
 	usuario: {
+		id?: number;
 		imagen: string;
 		nombre: string;
 		puntaje: number;
@@ -20,7 +21,7 @@ export interface CardModel {
 		color: string;
 		status: string;
 	}[];
-	action: 'select' | 'access' | 'detail';
+	action: 'select' | 'access' | 'detail' | 'list' | 'trueque';
 	disabled?: boolean;
 	idAuxiliar?: number;
 	codigo?: string;

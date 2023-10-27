@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Inject, Input, Optional, Output } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PublicacionModel } from 'src/app/models/publicacion.model';
+import { LogisticaService } from 'src/app/services/logistica.service';
 import { TruequesService } from 'src/app/services/trueques.service';
 import Swal from 'sweetalert2';
 
@@ -18,7 +19,11 @@ export class MainCardPublicacionComponent {
 	@Output() intercambiarEvent = new EventEmitter<any>();
 	@Output() comprarEvent = new EventEmitter<any>();
 
-	constructor(private truequeService: TruequesService, @Optional() @Inject(MAT_DIALOG_DATA) public data: any){
+	costoEnvio?: number = 100;
+
+	constructor(private truequeService: TruequesService, @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
+	private logisticaService: LogisticaService
+	){
 		console.log(this.publicacion, data);
 		if(data) {
 			this.publicacion = data.publicacion
@@ -47,5 +52,14 @@ export class MainCardPublicacionComponent {
 
 	comprar() {
 		this.comprarEvent.emit()
+	}
+
+	getCostoEnvio() {
+		this.logisticaService.getCostoEnvio().subscribe({
+			next: (res: any) => {
+				console.log(res);
+				
+			}
+		})
 	}
 }

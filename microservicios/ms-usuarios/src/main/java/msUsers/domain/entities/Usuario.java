@@ -65,6 +65,9 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Notificacion> notificaciones;
 
+    @Column(name = "avatar")
+    private String avatar;
+
     public UsuarioDTO toDTO() {
         UsuarioDTO usuarioDTO = new UsuarioDTO();
         usuarioDTO.setIdUsuario(idUsuario);
@@ -78,6 +81,7 @@ public class Usuario {
         usuarioDTO.setValidado(validado);
         usuarioDTO.setBloqueado(bloqueado);
         usuarioDTO.setOpiniones(opiniones.stream().map(Opinion::toDTO).toList());
+        usuarioDTO.setAvatar(avatar);
         return usuarioDTO;
     }
 

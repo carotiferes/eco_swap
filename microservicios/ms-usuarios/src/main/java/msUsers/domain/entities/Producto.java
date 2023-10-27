@@ -41,9 +41,6 @@ public class Producto {
     @JoinColumn(name = "id_colecta")
     private Colecta colecta;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Publicacion publicacion;
-
     public ProductoDTO toDTO(boolean includeColecta) {
         ProductoDTO productoDTO = new ProductoDTO();
         productoDTO.setIdProducto(idProducto);

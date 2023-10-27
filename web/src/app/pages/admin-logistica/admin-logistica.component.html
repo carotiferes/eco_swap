@@ -1,0 +1,24 @@
+<app-header></app-header>
+
+<div id="main-admin-logistica" class="app-main-div">
+	<h3>Completá con los datos de la orden que quieras mockear:</h3>
+	<form [formGroup]="ordenForm" class="form">
+		<mat-form-field>
+			<mat-label>ID orden</mat-label>
+			<input matInput formControlName="idOrden">
+		</mat-form-field>
+
+		<mat-form-field>
+			<mat-label>Nuevo Estado</mat-label>
+			<mat-select formControlName="nuevoEstado">
+				<mat-option *ngFor="let estado of estados" [value]="estado">
+					{{estado}}
+				</mat-option>
+			</mat-select>
+		</mat-form-field>
+
+		<button mat-fab extended (click)="enviar();ordenForm.markAllAsTouched(); ordenForm.valid" [disabled]="!ordenForm.valid">
+			ENVIAR
+		</button>
+	</form>
+</div>

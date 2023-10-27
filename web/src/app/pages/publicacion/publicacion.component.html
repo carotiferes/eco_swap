@@ -1,21 +1,68 @@
 <app-header></app-header>
 
-<div id="main-publicacion" class="app-main-div">
+<div id="main-publicacion" class="app-main-div" (mouseover)="this.initChat == 0 ? scrollToBottom() : ''">
 	<app-spinner [loading]="loading"></app-spinner>
 
-	<div class="row" *ngIf="!loading">
-		<div [class]="userData.isLoggedIn && truequeAceptado.length == 1 ? 'col-sm-12 col-md-8' : ''">
+	<div *ngIf="!loading">
+		<div *ngIf="truequeAceptado.length == 0">
+			<!-- <div> [class]="userData.isLoggedIn && truequeAceptado.length == 1 ? 'col-sm-12 col-md-8' : ''" -->
 			<app-main-card-publicacion [publicacion]="publicacion" [userData]="userData" [userType]="userType"
 			(intercambiarEvent)="intercambiar()" (comprarEvent)="comprar()"></app-main-card-publicacion>
+			<!-- </div> -->
 		</div>
-		<div *ngIf="userData.isLoggedIn && truequeAceptado.length == 1" class="col-sm-12 col-md-4">
-			<!-- <h3 style="margin: 20px 0 0 5px; font-weight: bold;"> Trueque Aceptado! </h3> -->
-			<app-card [cardData]="truequeAceptado[0]" app="publicaciones"></app-card>
+		<div *ngIf="userData.isLoggedIn && truequeAceptado.length == 1 && mainPublicacionCard" class="main-row">
+			<div ngbAccordion #accordion="ngbAccordion" class="dense-3">
+				<div ngbAccordionItem="first" #first="ngbAccordionItem" [collapsed]="false">
+					<h2 ngbAccordionHeader>
+						<button ngbAccordionButton class="bg-transparent accordion-header-button">
+							<mat-icon>question_answer</mat-icon> <span style="margin-left: 10px;">Chat</span>
+						</button>
+					</h2>
+					<div ngbAccordionCollapse>
+						<div ngbAccordionBody>
+							<ng-template>
+								<div style="margin-bottom: 20px; max-height: 200px; overflow: auto; scrollbar-color: #888 #f1f1f1; scrollbar-width: thin;"
+								#chatContainer id="chatContainer">
+									<div *ngFor="let mensaje of mensajes" class="mensaje"
+									[ngClass]="mensaje.id_user == 1 ? 'mio' : 'otro'">
+										{{mensaje.text}}
+										<mat-icon class="arrow-globo">arrow_drop_down</mat-icon>
+									</div>
+								</div>
+									
+								<mat-form-field appearance="outline" style="min-width: 210px; width: 100%;" floatLabel="always">
+									<!-- <mat-label>Nuevo Mensaje</mat-label> -->
+									<textarea matInput [placeholder]="'Enviar mensaje a '+mainPublicacionCard.usuario.nombre" [(ngModel)]="nuevoMensaje" style="resize: none;"></textarea>
+									<!-- <input matInput formControlName="tipoProducto"> -->
+								</mat-form-field>
+									
+								
+							</ng-template>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12 col-lg-5">
+					<!-- <h3 style="margin: 20px 0 0 5px; font-weight: bold;"> Trueque Aceptado! </h3> -->
+					<app-card [cardData]="mainPublicacionCard" app="publicaciones"></app-card>
+				</div>
+				<div class="col-sm-12 col-lg-2" style="display: flex; align-items: center; justify-content: center;">
+					<mat-icon class="swap-icon">
+						{{screenWidth > 992 ? 'swap_horiz' : 'swap_vert'}}
+					</mat-icon>
+					<!-- <mat-icon *ngIf="screenWidth <= 992" class="swap-icon">swap_vert</mat-icon> -->
+				</div>
+				<div class="col-sm-12 col-lg-5">
+					<!-- <h3 style="margin: 20px 0 0 5px; font-weight: bold;"> Trueque Aceptado! </h3> -->
+					<app-card [cardData]="truequeAceptado[0]" app="publicaciones"></app-card>
+				</div>
+			</div>
 		</div>
 	</div>
 
 
-	<div *ngIf="userData.isLoggedIn">
+	<div *ngIf="userData.isLoggedIn && truequeAceptado.length == 0 && mainPublicacionCard && mainPublicacionCard.estado == 'ABIERTA'">
 		<div ><!-- *ngIf="truequeAceptado.length == 0" -->
 			<h3 style="margin: 20px 0 0 5px; font-weight: bold;">
 				{{this.userType == 'publicacionPropuesta' ? 'Mi Trueque Activo' : 'Propuestas de Trueque'}}

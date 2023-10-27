@@ -65,7 +65,9 @@ export class TrocarModalComponent {
 	}
 
 	parsePublicaciones() {
-		this.publicacionesCardList.splice(0)
+		this.publicacionesCardList.splice(0);
+		const auxList: CardModel[] = [];
+		
 		for (const publicacion of this.misPublicaciones) {
 			const item: CardModel = {
 				id: publicacion.idPublicacion,
@@ -83,8 +85,9 @@ export class TrocarModalComponent {
 				buttons: [],
 				estado: publicacion.estadoTrueque,
 			}
-			this.publicacionesCardList.push(item);
+			auxList.push(item);
 		}
+		this.publicacionesCardList = auxList;
 	}
 
 	getImage(image: any) {

@@ -106,7 +106,7 @@ public class MercadoPagoController {
             PreferenceRequest request = PreferenceRequest.builder()
                     .items(items)
                     .externalReference(String.valueOf(entity.getIdCompra()))
-                    .notificationUrl("https://www.ecoswap.com.ar/ms-users/api/webhook") // Esto cambia cada vez que use ngrok
+                    .notificationUrl("https://www.ecoswap.com.ar:8080/ms-users/api/webhook") // Esto cambia cada vez que use ngrok
                     .build();
 
             Preference preference = client.create(request);

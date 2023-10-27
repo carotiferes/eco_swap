@@ -59,7 +59,8 @@
 		<!-- </div> -->
 	</div>
 
-	<div id="publicaciones" class="card" (click)="goTo('publicaciones')">
+	<div id="publicaciones" class="card" (click)="goTo('publicaciones')"
+    *ngIf="!userData.isLoggedIn || (userData.isLoggedIn && userData.isSwapper)">
 		<!-- <div class="card-body"> -->
 			<img src="assets/home/intercambio.avif" alt="" class="card-img small">
 			<div class="card-img-overlay">

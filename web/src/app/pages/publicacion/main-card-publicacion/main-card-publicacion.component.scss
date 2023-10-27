@@ -7,6 +7,8 @@
 }
 
 mat-card {
+	border-radius: 15px;
+
 	mat-card-header, mat-card-content, mat-card-actions {
 		margin: 10px;
 	}
@@ -16,6 +18,11 @@ mat-card {
 		gap: 10px;
 		flex-wrap: wrap;
     	justify-content: center;
+		margin: 20px !important;
+	}
+
+	* {
+		max-width: 100%;
 	}
 }
 
@@ -24,6 +31,7 @@ mat-card {
 	width: 100%;
 	justify-content: space-between;
 	align-items: flex-end;
+	flex-wrap: wrap;
 
 	.header-info {
 		display: flex;
@@ -31,15 +39,12 @@ mat-card {
 
 		a {
 			text-decoration: none;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			text-wrap: balance;
 		}
 
-	}
-	.div-fecha-zona {
-		height: 100%;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: flex-end;
 	}
 }
 
@@ -73,6 +78,10 @@ mat-card {
 
 	.trueque, .venta {
 		font-size: 16px;
+		h2 {
+			font-weight: bold;
+
+		}
 	}
 
 	.caracteristicas {
@@ -87,3 +96,36 @@ mat-card {
 		display: flex;
 	} */
 } 
+
+@media (min-width: 0px) and (max-width: 576px) {
+	.card-content {
+		grid-template-columns: 1fr !important;
+	}
+}
+
+@media (min-width: 0px) and (max-width: 800px) {
+	.div-fecha-zona {
+		display: flex;
+		gap: 10%;
+		width: 100%;
+		justify-content: space-around;
+	}
+
+	.header-info a {
+		max-width: 80%;
+	}
+}
+
+@media (min-width: 801px) {
+	.div-fecha-zona {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-end;
+	}
+
+	.header-info a {
+		max-width: 420px;
+}
+}

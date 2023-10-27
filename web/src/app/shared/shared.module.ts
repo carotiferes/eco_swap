@@ -8,6 +8,8 @@ import { MapComponent } from './map/map.component';
 import { MaterialModule } from './material/material.module';
 import { SpinnerComponent } from './spinner/spinner.component';
 import { RatingComponent } from './rating/rating.component';
+import { ListComponent } from './list/list.component';
+import { EnvioModalComponent } from './envio-modal/envio-modal.component';
 
 @NgModule({
 	declarations: [
@@ -15,7 +17,9 @@ import { RatingComponent } from './rating/rating.component';
 		SpinnerComponent,
 	    CardComponent,
 	    DeckComponent,
-     RatingComponent
+     RatingComponent,
+     ListComponent,
+	 EnvioModalComponent
 	],
 	imports: [
 		MaterialModule,
@@ -27,7 +31,9 @@ import { RatingComponent } from './rating/rating.component';
 		SpinnerComponent,
 		CardComponent,
     	DeckComponent,
-		RatingComponent
+		RatingComponent,
+		ListComponent,
+		EnvioModalComponent
 	]
 })
 export class SharedModule { }
