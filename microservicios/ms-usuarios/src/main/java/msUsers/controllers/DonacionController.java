@@ -4,6 +4,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import msUsers.components.events.NuevaDonacionEvent;
+import msUsers.components.events.NuevoEstadoDonacionEvent;
 import msUsers.domain.entities.*;
 import msUsers.domain.entities.enums.EstadoDonacion;
 import msUsers.domain.model.UsuarioContext;
@@ -18,6 +20,7 @@ import msUsers.domain.responses.ResponseUpdateEntity;
 import msUsers.services.ColectaService;
 import msUsers.services.CriteriaBuilderQueries;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +30,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
 
@@ -44,11 +46,16 @@ public class DonacionController {
     @Autowired
     ColectaService colectaService;
     @Autowired
+    private ApplicationEventPublisher eventPublisher;
+    @Autowired
     EntityManager entityManager;
     @Autowired
     CriteriaBuilderQueries criteriaBuilderQueries;
     @Autowired
     ParticularesRepository particularesRepository;
+
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     private static final String json = "application/json";
 
@@ -59,6 +66,8 @@ public class DonacionController {
             @PathVariable("id_donacion") Long idDonacion,
             @PathVariable("id_colecta") Long idColecta,
             @RequestBody @Valid RequestCambiarEstadoDonacion request) {
+
+        final Usuario user = UsuarioContext.getUsuario();
 
         log.info(">> Se va cambiar el estado de la donacion {} a {}", idDonacion, request.getNuevoEstado());
         final var donacion = this.donacionesRepository.findById(idDonacion).
@@ -95,8 +104,12 @@ public class DonacionController {
             ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
             responseUpdateEntity.setStatus(HttpStatus.OK.name());
             responseUpdateEntity.setDescripcion("Se cambio el estado de la donacion de " + anteriorEstado + " a " + request.getNuevoEstado());
-            return ResponseEntity.ok(responseUpdateEntity);
 
+            NuevoEstadoDonacionEvent nuevoEstadoDonacionEvent = new NuevoEstadoDonacionEvent(this, donacion, donacion.getProducto().getColecta(), user, nuevoEstado);
+            applicationEventPublisher.publishEvent(nuevoEstadoDonacionEvent);
+            log.info("<< Notificación creada para el usuario: {}", user.getEmail());
+
+            return ResponseEntity.ok(responseUpdateEntity);
         }
 
     @GetMapping(path = "/particular/misDonaciones", produces = json)
@@ -122,12 +135,20 @@ public class DonacionController {
         Optional<Particular> optionalParticular = criteriaBuilderQueries.getParticularPorUsuario(user.getIdUsuario());
         Particular particular = optionalParticular.orElseThrow(() -> new EntityNotFoundException("No fue encontrado el particular."));
 
-        colectaService.crearDonacion(request, idColecta, particular.getIdParticular());
+        final var colecta = this.colectasRepository.findById(idColecta).
+                orElseThrow(() -> new EntityNotFoundException("No fue encontrada la colecta: " + idColecta));
+
+        var donacion = colectaService.crearDonacion(request, idColecta, particular.getIdParticular());
         ResponsePostEntityCreation response = new ResponsePostEntityCreation();
         response.setId(idColecta);
         response.setDescripcion("Donacion creada.");
         response.setStatus(HttpStatus.OK.name());
         log.info("<< Donacion creada en la colecta: {}", idColecta);
+
+        NuevaDonacionEvent nuevaDonacion = new NuevaDonacionEvent(this, donacion, colecta, user);
+        eventPublisher.publishEvent(nuevaDonacion);
+        log.info("<< Notificación creada para el usuario: {}", user.getEmail());
+
         return ResponseEntity.ok(response);
     }
 
@@ -149,25 +170,5 @@ public class DonacionController {
         return donacion.toDTO();
     }
 
-
-    /*
-    COMUNICACION DE DONACIONES
-     */
-
-    /* POSTERGAMOS ESTE DESARROLLO
-    @PutMapping(path = "/colecta/{idColecta}/donaciones/{idDonacionComunicacion}", consumes = json, produces = json)
-    @ResponseStatus(HttpStatus.CREATED)
-    @Transactional
-    public ResponseEntity<Object> agregarMensajeComunicacionDeDonacion(
-            @PathVariable(required = true) Long idColecta,
-            @PathVariable(required = true) Long idDonacionComunicacion,
-            @Valid @RequestBody RequestMensajeRespuesta request) {
-        log.info(">> Request para idDonacionComunicacion {} con mensaje para comunicar donacion: {}",
-                idDonacionComunicacion, request.toString());
-        colectaService.agregarMensajeParaDonacionComunicacion(request, idColecta, idDonacionComunicacion);
-        log.info("<< Mensaje añadido para idDonacionComunicacion {}", idDonacionComunicacion);
-        return ResponseEntity.ok().build();
-    }
-     */
 }
 

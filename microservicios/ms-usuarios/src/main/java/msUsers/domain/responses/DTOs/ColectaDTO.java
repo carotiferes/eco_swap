@@ -1,6 +1,5 @@
 package msUsers.domain.responses.DTOs;
 
-import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;

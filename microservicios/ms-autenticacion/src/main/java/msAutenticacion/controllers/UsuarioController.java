@@ -3,11 +3,9 @@ package msAutenticacion.controllers;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import msAutenticacion.domain.entities.Direccion;
 import msAutenticacion.domain.entities.Fundacion;
 import msAutenticacion.domain.entities.Particular;
 import msAutenticacion.domain.entities.Usuario;
-import msAutenticacion.domain.entities.enums.TipoDocumento;
 import msAutenticacion.domain.model.EnumValue;
 import msAutenticacion.domain.model.UsuarioContext;
 import msAutenticacion.domain.model.enums.TipoDocumentoEnum;
@@ -16,12 +14,12 @@ import msAutenticacion.domain.responses.DTOs.TipoDocumentoDTO;
 import msAutenticacion.domain.responses.DTOs.UsuarioDTO;
 import msAutenticacion.domain.responses.ResponseLogin;
 import msAutenticacion.domain.responses.ResponseUpdateEntity;
+import msAutenticacion.domain.responses.ResponseUsuarioAvatar;
 import msAutenticacion.exceptions.LoginUserBlockedException;
 import msAutenticacion.exceptions.LoginUserException;
 import msAutenticacion.exceptions.LoginUserWrongCredentialsException;
 import msAutenticacion.services.CriteriaBuilderQueries;
 import msAutenticacion.services.UsuarioService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -125,6 +123,28 @@ public class UsuarioController {
         final Usuario user = UsuarioContext.getUsuario();
         log.info("Editar perfil >> Editando el perfil: {}", user.getEmail());
         ResponseUpdateEntity responseUpdateEntity = usuarioService.editarUsuario(requestEditProfile, user);
+        return ResponseEntity.ok(responseUpdateEntity);
+
+    }
+    @GetMapping(path = "/usuario/avatar")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<ResponseUsuarioAvatar> getAvatar(){
+        final Usuario user = UsuarioContext.getUsuario();
+        log.info(">> Get Avatar del usuario: {}", user.getEmail());
+        ResponseUsuarioAvatar responseUsuarioAvatar = new ResponseUsuarioAvatar();
+        responseUsuarioAvatar.setAvatar(user.getAvatar());
+        log.info(">> Se retorna el el avatar {}", user.getAvatar());
+        return ResponseEntity.ok(responseUsuarioAvatar);
+    }
+
+    @PutMapping(path = "/usuario/avatar", consumes = JSON, produces = JSON)
+    @ResponseStatus(HttpStatus.OK)
+    @Transactional
+    public ResponseEntity<ResponseUpdateEntity> editarAvatar(@RequestBody @Valid RequestEditAvatar requestEditAvatar){
+        log.info("Request: {}", requestEditAvatar);
+        final Usuario user = UsuarioContext.getUsuario();
+        log.info("Editar perfil >> Editando el avatar del usuario: {}", user.getEmail());
+        ResponseUpdateEntity responseUpdateEntity = usuarioService.editarAvatar(requestEditAvatar, user);
         return ResponseEntity.ok(responseUpdateEntity);
 
     }

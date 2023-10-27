@@ -76,6 +76,9 @@ public class Usuario {
 
     private String secretJWT;
 
+    @Column(name = "avatar")
+    private String avatar;
+
     public void aumentarIntentoEn1() {
         this.setIntentos(intentos+1);
     }
@@ -91,6 +94,7 @@ public class Usuario {
         usuarioDTO.setBloqueado(bloqueado);
         usuarioDTO.setValidado(validado);
         usuarioDTO.setIntentos(intentos);
+        usuarioDTO.setAvatar(avatar);
         return usuarioDTO;
     }
 
