@@ -1,4 +1,17 @@
 #main-notificaciones {
+	.buttons {
+		display: flex;
+		justify-content: flex-end;
+		transform: scale(0.8);
+		transform-origin: right;
+		align-items: center;
+		gap: 10px;
+
+		button {
+			background-color: white;
+		}
+	}
+
 	.even-row {
 		background-color: #e2e1e1;
 		/* White background for even rows */
@@ -19,6 +32,14 @@
 			/* Light grey background on hover */
 		}
 
+		.primary {
+			color: var(--primary-color) !important;
+		}
+
+		.secondary {
+			color: var(--secondary-color) !important;
+		}
+
 		.item-content {
 			display: flex;
 			justify-content: space-between;
@@ -27,9 +48,11 @@
 
 			h4 {
 				margin: 0;
+				text-wrap: wrap;
 			}
 			p {
 				font-size: 12px !important;
+				text-wrap: wrap;
 			}
 		}
 	}

@@ -1,7 +1,9 @@
 import { Component, Input, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuModel } from 'src/app/models/menu.model';
+import { NotificacionModel } from 'src/app/models/notificacion.model';
 import { AuthService } from 'src/app/services/auth.service';
+import { NotificacionesService } from 'src/app/services/notificaciones.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 const menuData = require('../../data/menu.json')
 
@@ -29,7 +31,8 @@ export class HeaderComponent {
 	isAdmin: boolean = false;
 	userID?: number;
 
-	constructor(private router: Router, private auth: AuthService, private usuarioService: UsuarioService){
+	constructor(private router: Router, private auth: AuthService, private usuarioService: UsuarioService,
+		private notificacionesService: NotificacionesService){
 		this.mainTabs = menuData.filter((item: MenuModel) => item.type == 'pages')
 		this.personalTabs = menuData.filter((item: MenuModel) => item.type == 'personal')
 		this.url = router.url;
@@ -42,15 +45,29 @@ export class HeaderComponent {
 		else if (this.isUserLoggedIn) {
 			this.userID = this.auth.getUserID()
 			this.getUserData()
+			this.notificacionesService.getMisNotificaciones().subscribe({
+				next: (res: any) => {
+					const notRead: NotificacionModel[] = res.filter((item:any) => item.estadoNotificacion == 'NO_LEIDO')
+					this.notifications = notRead.length;
+				}
+			})
 		}
 	}
 
 	ngOnChanges(changes: SimpleChanges): void {
 		//Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
 		//Add '${implements OnChanges}' to the class.
-		console.log(changes['refresh']);
+		console.log('REFRESH HEADER',changes['refresh']);
 		if(changes['refresh'] && !changes['refresh'].isFirstChange() && changes['refresh'].currentValue != changes['refresh'].previousValue){
 			this.getUserData()
+		}
+		if (this.isUserLoggedIn && !this.isAdmin) {
+			this.notificacionesService.getMisNotificaciones().subscribe({
+				next: (res: any) => {
+					const notRead: NotificacionModel[] = res.filter((item:any) => item.estadoNotificacion == 'NO_LEIDO')
+					this.notifications = notRead.length;
+				}
+			})
 		}
 	}
 

@@ -92,7 +92,7 @@ export class ColectaComponent {
 				})
 
 				//TODO: REVISAR CUANDO MUESTRA DONACIONES
-				if (this.userData.isSwapper) {
+				if (this.userData.isSwapper && this.userInfo) {
 					this.donacionesToShow = this.donaciones.filter(item => item.particularDTO.idParticular == this.userInfo.particularDTO.idParticular)
 					//this.showDonaciones = true;
 				} else if(this.userData) { // TODO: IF colecta.id_fundacion == userData.id_fundacion --> show donaciones

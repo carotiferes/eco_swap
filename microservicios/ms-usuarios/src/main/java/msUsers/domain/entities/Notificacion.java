@@ -49,6 +49,7 @@ public class Notificacion {
         notificacionDTO.setTitulo(titulo);
         notificacionDTO.setIdReferenciaNotificacion(idReferenciaNotificacion);
         notificacionDTO.setEstadoNotificacion(estadoNotificacion);
+        notificacionDTO.setTipoNotificacion(tipoNotificacion);
         return notificacionDTO;
     }
 }
