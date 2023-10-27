@@ -119,21 +119,30 @@ public class LogisticaService {
         return response;
     }
 
+    private Boolean userPuedeHacerOrdenes(Usuario user, OrdenDeEnvio ordenDeEnvio) {
+        return ((user.getIdUsuario()==ordenDeEnvio.getIdUsuarioOrigen() &&
+            ordenDeEnvio.getListaFechaEnvios().get(ordenDeEnvio.getListaFechaEnvios().size()-1).getEstado().equals(OrdenEstadoEnum.ENVIADO))
+            || (user.getIdUsuario()==ordenDeEnvio.getIdUsuarioDestino() &&
+                ordenDeEnvio.getListaFechaEnvios().get(ordenDeEnvio.getListaFechaEnvios().size()-1).getEstado().equals(OrdenEstadoEnum.RECIBIDO)));
+    }
+
     @Transactional
-    public void actualizarEstadoDeOrdenXOrdenId(String ordenId, PutOrderRequest putOrderRequest) {
+    public void actualizarEstadoDeOrdenXOrdenId(String ordenId, PutOrderRequest putOrderRequest, Usuario usuario) throws Exception {
         //FALTA EL TEMA DE LOS OPTIONALS
         log.info(">> Actualizar el estado de OrdenId {} al estado: {}", ordenId, putOrderRequest.getNuevoEstado());
         OrdenDeEnvio orderAEnviar = ordenesRepository.findById(Long.valueOf(ordenId)).get();
-
+        if (usuario.getIdUsuario() != 999 || !this.userPuedeHacerOrdenes(usuario, orderAEnviar)) {
+            throw new Exception("No se tiene permiso para realizar modificación en la orden de envio.");
+        }
         List<FechaEnvios> listadoFechasEnvios = orderAEnviar.getListaFechaEnvios();
-        FechaEnvios ultimoEstado = listadoFechasEnvios.get(listadoFechasEnvios.isEmpty()?0:listadoFechasEnvios.size()-1);
+        FechaEnvios ultimoEstado = listadoFechasEnvios.get(listadoFechasEnvios.isEmpty() ? 0 : listadoFechasEnvios.size() - 1);
         log.info(">> Cambio de estado de orden {} desde actual {} al nuevo {}", ordenId, ultimoEstado.getEstado().name(), putOrderRequest.getNuevoEstado());
-        if(this.cancelarEnvio(putOrderRequest.getNuevoEstado(), ultimoEstado.getEstado().name())) {
+        if (this.cancelarEnvio(putOrderRequest.getNuevoEstado(), ultimoEstado.getEstado().name())) {
             //QUITAR LO RECIBIDO DEL PRODUCTO
             List<ProductosADonarDeOrden> listaProductos = orderAEnviar.getProductosADonarDeOrdenList();
-            for(ProductosADonarDeOrden productoDeOrden : listaProductos) {
+            for (ProductosADonarDeOrden productoDeOrden : listaProductos) {
                 Producto producto = productosRepository.findById(productoDeOrden.getIdProducto()).get();
-                producto.setCantidadRecibida((int) (producto.getCantidadRecibida()- productoDeOrden.getCantidad()));
+                producto.setCantidadRecibida((int) (producto.getCantidadRecibida() - productoDeOrden.getCantidad()));
                 productosRepository.save(producto);
             }
             //CAMBIAR LA DIRECCIÓN A DONDE ENVIAR
@@ -168,6 +177,7 @@ public class LogisticaService {
         orderAEnviar.setListaFechaEnvios(listadoFechasEnviosNuevo);
         ordenesRepository.save(orderAEnviar);
         log.info("<< Actualizacion de orden finalizada");
+
     }
 
     public OrdenDeEnvio obtenerDetallesDeOrdenXOrdenId(Long ordenId) throws Exception {
@@ -338,12 +348,11 @@ public class LogisticaService {
     }
 
     private Boolean cancelarEnvio(String estadoNuevo, String estadoDeOrden) {
-        if(estadoDeOrden.equals(EstadoOrdenEnum.EN_ESPERA.name()) ||
-                estadoDeOrden.equals(EstadoOrdenEnum.ENVIADO.name()) ||
-                estadoDeOrden.equals(EstadoOrdenEnum.RECIBIDO.name())
+        if(estadoDeOrden.equals(OrdenEstadoEnum.POR_DESPACHAR.name()) ||
+                estadoDeOrden.equals(OrdenEstadoEnum.ENVIADO.name()) ||
+                estadoDeOrden.equals(OrdenEstadoEnum.RECIBIDO.name())
         ) {
-            return estadoNuevo.equals(EstadoOrdenEnum.CANCELADO.name()) ||
-                    estadoNuevo.equals(EstadoOrdenEnum.ENVIADO_A_DEVOLVER.name());
+            return estadoNuevo.equals(OrdenEstadoEnum.CANCELADO.name());
         }
         return false;
     }

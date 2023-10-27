@@ -74,9 +74,11 @@ public class LogisticaController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> actualizarOrdenDeCompra(
             @PathVariable(value = "orderId", required = true)  String orderId,
-            @RequestBody PutOrderRequest putOrderRequest)  {
+            @RequestBody PutOrderRequest putOrderRequest) throws Exception {
         log.info(">> PUT ORDER  {} PARA ACTUALIZAR A NUEVO ESTADO: {}", orderId, putOrderRequest.getNuevoEstado());
-        logisticaService.actualizarEstadoDeOrdenXOrdenId(orderId, putOrderRequest);
+        final Usuario user = UsuarioContext.getUsuario();
+
+        logisticaService.actualizarEstadoDeOrdenXOrdenId(orderId, putOrderRequest, user);
         log.info("<< ORDEN {} ACTUALIZADA CON NUEVO ESTATUS PARA {}", orderId, putOrderRequest.getNuevoEstado());
         return ResponseEntity.ok("OK");
     }
