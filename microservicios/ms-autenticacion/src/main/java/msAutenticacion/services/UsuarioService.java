@@ -1,8 +1,11 @@
 package msAutenticacion.services;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -188,15 +191,18 @@ public class UsuarioService {
                 }
                 log.error("Cantidad de intentos actual: {}", usuario.getIntentos());
                 usuarioRepository.save(usuario);
-                throw new LoginUserWrongCredentialsException("Usuario y/o contraseña invalido");
+                throw new LoginUserWrongCredentialsException("Usuario y/o contraseña inválido");
             }
         }
         else
             throw new LoginUserBlockedException("El usuario fue bloqueado");
         log.info(("login: Login EXITOSO para username: " + request.getUsername()));
         usuario.setIntentos(0);
+
+        String secretJWT = this.crearSalt();
+        usuario.setSecretJWT(secretJWT);
         usuarioRepository.save(usuario);
-        return this.crearJWT(usuario);
+        return this.crearJWT(usuario, secretJWT);
     }
 
     private Boolean compararContrasenias(String passwordHashIngresado, String passwordHashGuardado) {
@@ -266,24 +272,52 @@ public class UsuarioService {
     }
     
 
-    private String crearJWT(Usuario usuario) throws NoSuchAlgorithmException {
+    private String crearJWT(Usuario usuario, String secretJWT) throws NoSuchAlgorithmException {
         try {
             KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
-            kpg.initialize(2048);
+            kpg.initialize(1024);
             KeyPair kp = kpg.generateKeyPair();
-            Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) kp.getPublic(), (RSAPrivateKey) kp.getPrivate());
-            return JWT.create()
-                    .withIssuer("ecoswap")
-                    .withExpiresAt(Instant.now().plusSeconds(604800))
-                    .withClaim("email", usuario.getEmail())
-                    .withClaim("id", usuario.getIdUsuario())
-                    .withClaim("esParticular", usuario.isSwapper())
-                    .withClaim("usuarioValidado", usuario.isValidado())
+           // Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) kp.getPublic(), null); // (RSAPrivateKey) kp.getPrivate());
+            Algorithm algorithm = Algorithm.HMAC256(secretJWT);
+          //  log.info("DATA JWT: public {}; private {}", kp.getPublic(), kp.getPrivate());
+            //return JWT.create()
+            String email = usuario.getEmail();
+            Long userId = usuario.getIdUsuario();
+            Boolean esParticular = usuario.isSwapper();
+            Boolean userValidado = usuario.isValidado();
+            String jwtCreated = JWT.create()
+                    .withIssuer(email)
+                    .withExpiresAt(Instant.now().plusSeconds(1))
+                    .withClaim("email", email)
+                    .withClaim("id", userId)
+                    .withClaim("esParticular", esParticular)
+                    .withClaim("usuarioValidado", userValidado)
                     .sign(algorithm);
+             //       .sign(algorithm);
+         //   System.in.wait(5000);
+            this.validateJWT(jwtCreated);
+            return jwtCreated;
         } catch (JWTCreationException | NoSuchAlgorithmException exception){
             log.error(("login: JWT dió error durante la creación: " + exception.getMessage()));
-            return "";
+            throw exception;
         }
+    }
+
+    private void validateJWT(String jwtAuth) {
+        try {
+            DecodedJWT decode = JWT.decode(jwtAuth);
+            Algorithm algorithm = Algorithm.HMAC256("secret");
+            log.info("ISSUER: {}", decode.getIssuer());
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer(decode.getIssuer())
+                    .build();
+            verifier.verify(jwtAuth);
+            //   return true;
+        } catch (SignatureVerificationException e) {
+            log.error("Error durante la validacion del JWT Token del usuario");
+            throw e;
+        }
+
     }
 
     private void eliminarDireccionesAntiguas(Usuario user) {

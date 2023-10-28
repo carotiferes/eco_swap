@@ -62,6 +62,8 @@ public class Usuario {
     @OneToMany(mappedBy = "usuarioOpina", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Opinion> opiniones;
 
+    private String secretJWT;
+
     @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Notificacion> notificaciones;
 
