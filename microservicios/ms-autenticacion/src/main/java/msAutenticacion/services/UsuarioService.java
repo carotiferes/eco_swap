@@ -287,39 +287,18 @@ public class UsuarioService {
             Boolean userValidado = usuario.isValidado();
             String jwtCreated = JWT.create()
                     .withIssuer(email)
-                    .withExpiresAt(Instant.now().plusSeconds(1))
+                    .withExpiresAt(Instant.now().plusSeconds(86400))
                     .withClaim("email", email)
                     .withClaim("id", userId)
                     .withClaim("esParticular", esParticular)
                     .withClaim("usuarioValidado", userValidado)
                     .sign(algorithm);
-             //       .sign(algorithm);
-         //   System.in.wait(5000);
-            this.validateJWT(jwtCreated);
             return jwtCreated;
         } catch (JWTCreationException | NoSuchAlgorithmException exception){
             log.error(("login: JWT dió error durante la creación: " + exception.getMessage()));
             throw exception;
         }
     }
-
-    private void validateJWT(String jwtAuth) {
-        try {
-            DecodedJWT decode = JWT.decode(jwtAuth);
-            Algorithm algorithm = Algorithm.HMAC256("secret");
-            log.info("ISSUER: {}", decode.getIssuer());
-            JWTVerifier verifier = JWT.require(algorithm)
-                    .withIssuer(decode.getIssuer())
-                    .build();
-            verifier.verify(jwtAuth);
-            //   return true;
-        } catch (SignatureVerificationException e) {
-            log.error("Error durante la validacion del JWT Token del usuario");
-            throw e;
-        }
-
-    }
-
     private void eliminarDireccionesAntiguas(Usuario user) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaDelete<Direccion> delete = criteriaBuilder.createCriteriaDelete(Direccion.class);
