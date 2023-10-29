@@ -227,7 +227,7 @@ public class LogisticaService {
             URL url = new URL(urlString);
             HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
             con.setRequestMethod("GET");
-            con.setRequestProperty("Authorization", tokenAuth);
+            con.setRequestProperty("Authorization", "Bearer " + tokenAuth);
             con.setRequestProperty("Accept", "application/json");
             con.setDoOutput(true);
             int responseCode = con.getResponseCode();

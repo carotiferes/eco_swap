@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ComprasService } from 'src/app/services/compras.service';
 import { LogisticaService } from 'src/app/services/logistica.service';
+import Swal from 'sweetalert2';
 
 @Component({
 	selector: 'app-envio-modal',
@@ -15,6 +16,10 @@ export class EnvioModalComponent {
 	loadingSave: boolean = false;
 	ordenForm: FormGroup;
 
+	sendDonaciones: boolean = false;
+
+	costoEnvio?: number = 234;
+
 	// SE LLAMA DESDE EL card.component.ts
 
 	constructor(private fb: FormBuilder, public dialogRef: MatDialogRef<EnvioModalComponent>,
@@ -26,42 +31,82 @@ export class EnvioModalComponent {
 			peso: ['', Validators.required],
 			codigoPostal: ['', Validators.required]
 		})
+
+		if(data.cards) this.sendDonaciones = true;
+	}
+
+	calcularEnvio() {
+		this.logisticaService.getCostoEnvio(this.ordenForm.value.peso,this.ordenForm.value.codigoPostal).subscribe({
+			next: (envio: any) => {
+				this.costoEnvio = envio.precio;
+			}
+		})
 	}
 
 	crearOrden() {
-		this.compraService.getMyCompras().subscribe({
-			next: (res: any) => {
-				const compras = res;
-				const compra = compras.find((item: any) => item.idCompra == this.data.idAuxiliar)
-				console.log(compra);
-				
-				/* REVISAR SI EL DATA TIENE card O cards --> si son varias agregar los ids */
-				if(compra) {
-					this.logisticaService.getCostoEnvio().subscribe({
-						next: (envio: any) => {
-							const orden = {
-								titulo: this.data.titulo,
-								userIdDestino: compra.particularCompradorDTO.usuarioDTO.idUsuario,
-								userIdOrigen: compra.publicacionDTO.particularDTO.usuarioDTO.idUsuario,
-								publicacionOColectaId: this.data.id,
-								esPublicacion: this.data.codigo == 'Compra',
-								cantidad: 1,
-								idDeItems: [
-								  0
-								],
-								costoEnvio: envio.precio
-							}
-							/* this.logisticaService.crearOrden(orden).subscribe({
-								next: (res: any) => {
-					
-								}
-							}) */
-							
-						}
-					})
-				}
-			}
+		console.log(this.data);
+		Swal.fire({
+			title: 'Confirmar envío',
+			text: 'Los datos que ingresaste se guardarán y se creará una orden de envío. No podrás hacer cambios luego. ¿Deseás continuar?',
+			icon: 'question',
+			showCancelButton: true, cancelButtonText: 'CANCELAR',
+			confirmButtonText: 'CONFIRMAR'
+		}).then(({isConfirmed}) => {
+			if(isConfirmed) this.confirmarOrden();
 		})
+	}
+
+	confirmarOrden() {
+		if(this.sendDonaciones) { // UNA O MAS DONACIONES
+			const donaciones = this.data.cards;
+			this.logisticaService.getCostoEnvio(this.ordenForm.value.peso,this.ordenForm.value.codigoPostal).subscribe({
+				next: (envio: any) => {
+					const orden = {
+						titulo: this.data.titulo,
+						userIdDestino: 1,
+						userIdOrigen: 2,
+						idColecta: 0,
+						listProductos: [
+						{
+							productoId: 0,
+							cantidad: 0
+						}
+						],
+						costoEnvio: envio.precio
+					}
+					this.enviarOrden(orden);
+				}
+			})
+		} else {
+			this.compraService.getMyCompras().subscribe({
+				next: (res: any) => {
+					const compras = res;
+					const compra = compras.find((item: any) => item.idCompra == this.data.idAuxiliar)
+					if(compra) {
+						this.logisticaService.getCostoEnvio(this.ordenForm.value.peso,this.ordenForm.value.codigoPostal).subscribe({
+							next: (envio: any) => {
+								const orden = {
+									titulo: this.data.titulo,
+									userIdDestino: compra.particularCompradorDTO.usuarioDTO.idUsuario,
+									userIdOrigen: compra.publicacionDTO.particularDTO.usuarioDTO.idUsuario,
+									idPublicacion: compra.publicacionDTO.idPublicacion,
+									costoEnvio: envio.precio
+								}
+								this.enviarOrden(orden);
+							}
+						})
+					}
+				}
+			})
+		}
+	}
+
+	enviarOrden(orden: any) {
+		/* this.logisticaService.crearOrden(orden).subscribe({
+			next: (res: any) => {
+
+			}
+		}) */
 	}
 
 }

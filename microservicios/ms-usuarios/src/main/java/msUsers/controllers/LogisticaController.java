@@ -83,7 +83,7 @@ public class LogisticaController {
         return ResponseEntity.ok("OK");
     }
 
-    @GetMapping(path = "/costoEnvio", consumes = json, produces = json)
+    @GetMapping(path = "/costoEnvio", produces = json)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ResponseCostoEnvio> obtenerPrecioDeShipping(
             @RequestParam("peso") Long peso,

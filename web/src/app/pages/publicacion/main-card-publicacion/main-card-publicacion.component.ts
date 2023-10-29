@@ -53,13 +53,4 @@ export class MainCardPublicacionComponent {
 	comprar() {
 		this.comprarEvent.emit()
 	}
-
-	getCostoEnvio() {
-		this.logisticaService.getCostoEnvio().subscribe({
-			next: (res: any) => {
-				console.log(res);
-				
-			}
-		})
-	}
 }

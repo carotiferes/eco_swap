@@ -16,7 +16,7 @@
 				<div ngbAccordionCollapse>
 					<div ngbAccordionBody>
 						<ng-template>
-							<div class="buttons">
+							<div class="buttons" *ngIf="showButtons()">
 								<button mat-fab extended style="background-color: var(--info); height: fit-content;"
 								(click)="selectDonaciones()" [disabled]="selectingMode">
 									SELECCIONAR DONACIONES PARA ENVIAR
@@ -26,9 +26,12 @@
 									CANCELAR
 								</button>
 								<button mat-fab extended style="background-color: var(--info);"
-								(click)="confirmSelectedCards()" [disabled]="!selectingMode">
+								(click)="confirmSelectedCards()" [disabled]="!selectingMode || selectedCards.length == 0">
 									CONFIRMAR SELECCIÓN
 								</button>
+							</div>
+							<div style="min-width: 210px; margin-bottom: 20px; text-align: center;" *ngIf="!showButtons()">
+								No tenés donaciones pendientes de envío!
 							</div>
 						</ng-template>
 					</div>

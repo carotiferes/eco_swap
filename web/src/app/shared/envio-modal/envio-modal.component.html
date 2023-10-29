@@ -27,11 +27,15 @@
 			</mat-error>
 		</mat-form-field>
 	</form>
+	<div *ngIf="ordenForm.valid" class="costo-envio">
+		<div>Costo de envío: {{costoEnvio | currency}}</div>
+		<button mat-fab extended class="confirm" (click)="calcularEnvio()">Calcular</button>
+	</div>
 	<div class="buttons">
 		<button mat-fab extended color="light" (click)="dialogRef.close()">CANCELAR</button>
 		<button mat-fab extended class="confirm" [disabled]="loadingSave || !ordenForm.valid"
 		(click)="crearOrden();ordenForm.markAllAsTouched(); ordenForm.valid">
-			<span>GUARDAR</span>
+			<span>CONFIRMAR</span>
 		</button>
 		<mat-spinner diameter="20" *ngIf="loadingSave"></mat-spinner>
 	</div>

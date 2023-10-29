@@ -22,7 +22,9 @@ export class DonacionesComponent {
 	loading: boolean = false;
 
 	selectingMode: boolean = false;
-	selectedCards: number[] = [];
+	selectedCards: CardModel[] = [];
+
+	colectaParaEnvio?: number;
 
 	constructor(public dialog: MatDialog, private donacionesService: DonacionesService,
 		private auth: AuthService, private showErrorService: ShowErrorService) {
@@ -87,26 +89,76 @@ export class DonacionesComponent {
 	selectDonaciones() {
 		Swal.fire({
 			title: 'Configurá tu envío!',
-			text: 'Seleccioná las tarjetas de tus donaciones haciendo click en ellas, vas a ver que las que seleccionen se pintarán. Recordá que solo podés seleccionar donaciones a una misma fundación. Una vez que termines, clickeá el botón CONFIRMAR SELECCIÓN.',
+			text: 'Seleccioná las tarjetas de tus donaciones haciendo click en ellas, vas a ver que las que seleccionen se pintarán. Recordá que solo podés seleccionar donaciones a una misma colecta. Una vez que termines, clickeá el botón CONFIRMAR SELECCIÓN.',
 			icon: 'info',
 			confirmButtonText: '¡VAMOS!'
 		})
 		const auxDonaciones = this.donacionesCardList;
-		auxDonaciones.map(donacion => {donacion.action = 'select'; donacion.codigo = 'Donación'});
+		auxDonaciones.map(donacion => {
+			if(donacion.estado == 'APROBADA') {
+				donacion.action = 'select';
+				donacion.codigo = 'Donación';
+			}
+		});
 		this.donacionesCardList = auxDonaciones;
 		this.selectingMode = true;
 	}
 
+	showButtons(){
+		if(this.donacionesCardList.some(item => item.estado == 'APROBADA')) return true;
+		else return false;
+	}
+
 	selectCard(cardID: number) {
 		/* VALIDAR QUE LA TARJETA SELECCIONADA TENGA EL MISMO ID FUNDACION QUE LAS DEMAS QUE YA ESTÉN SELECCIONADAS */
-		this.donacionesCardList.map(item => {if(item.id == cardID) item.isSelected = true})
-		this.selectedCards.push(cardID)
+		const donacionSeleccionada = this.donacionesCardList.find(item => item.id == cardID)
+
+		if(donacionSeleccionada) {
+			if(this.selectedCards.length == 0) { // first one selected
+				this.colectaParaEnvio = donacionSeleccionada?.idAuxiliar;
+				this.donacionesCardList.map(item => {if(item.id == cardID) item.isSelected = true})
+				this.selectedCards.push(donacionSeleccionada)
+				const auxDonaciones = this.donacionesCardList;
+				auxDonaciones.map(donacion => {
+					if(donacion.idAuxiliar != this.colectaParaEnvio) {
+						donacion.action = 'detail';
+						donacion.codigo = undefined;
+					}
+				});
+				this.donacionesCardList = auxDonaciones;
+			} else {
+				if(this.colectaParaEnvio != donacionSeleccionada.idAuxiliar) {
+					Swal.fire('¡Colecta distinta!', 'No podés seleccionar distintas colectas para un mismo envío', 'warning')
+				}
+			}
+
+		}
+
 	}
 
 	unselectCard(cardID: number) {
+		const donacionDeseleccionada = this.donacionesCardList.find(item => item.id == cardID)
+		if(donacionDeseleccionada) {
+			if(this.selectedCards.length == 1) { // last one selected
+				this.colectaParaEnvio = undefined;
+				const auxDonaciones = this.donacionesCardList;
+				auxDonaciones.map(donacion => {
+					if(donacion.estado == 'APROBADA') {
+						donacion.action = 'select';
+						donacion.codigo = 'Donación';
+					} else {
+						donacion.action = 'detail';
+						donacion.codigo = undefined;
+					}
+				});
+				this.donacionesCardList = auxDonaciones;
+				this.selectedCards = [];
+			} else {
+				const aux = this.selectedCards.filter(item => item.id != cardID)
+				this.selectedCards = aux;
+			}
+		}
 		this.donacionesCardList.map(item => {if(item.id == cardID) item.isSelected = false})
-		const aux = this.selectedCards.filter(item => item == cardID)
-		this.selectedCards = aux;
 	}
 
 	cancelSelect() {
@@ -117,7 +169,7 @@ export class DonacionesComponent {
 	confirmSelectedCards() {
 		const dialogRef = this.dialog.open(EnvioModalComponent, {
 			maxWidth: '60vw',
-			maxHeight: '60vh',
+			maxHeight: '70vh',
 			width: '100%',
 			panelClass: 'full-screen-modal',
 			data: {cards: this.selectedCards}

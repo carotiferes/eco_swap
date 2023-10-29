@@ -85,7 +85,7 @@ export class CardComponent {
 
 	chipClick(card: CardModel) {
 		if(card.action == 'list') this.openDialog(ListComponent, card);
-		else if(card.codigo == 'Compra') this.openDialog(EnvioModalComponent, {card}, '60vh', '60vw')
+		else if(card.codigo == 'Compra') this.openDialog(EnvioModalComponent, {card}, '70vh', '60vw')
 		//else if(card.action == 'trueque') this.router.navigate(['publicacion/' + card.idAuxiliar])
 	}
 

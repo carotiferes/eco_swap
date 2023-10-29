@@ -3,7 +3,7 @@
 	<mat-chip class="chip-localidad" [ngClass]="cardData.action == 'select' && cardData.codigo == 'Donación' ? 'background-warn' : cardData.codigo == 'Compra' ? 'background-warn' : app == 'publicaciones' ? 'background-verde' : 'background-lila'"
 	(click)="chipClick(cardData); $event.stopPropagation()" [style]="cardData.action == 'list' ? 'cursor: pointer;':''">
 		<span>
-			{{cardData.codigo == 'Compra' ? 'Coordinar Envío' : cardData.action == 'list' ? '¿Dónde lo propuse?' : cardData.action == 'trueque' ? 'Trueque aprobado' : cardData.action == 'select' && cardData.codigo == 'Donación' ? 'SELECCIONAR' : cardData.usuario.localidad}}
+			{{cardData.codigo == 'Compra' ? 'Coordinar Envío' : cardData.action == 'list' ? '¿Dónde lo propuse?' : cardData.action == 'trueque' ? 'Trueque aprobado' : cardData.action == 'select' && cardData.codigo == 'Donación' ? 'Podés seleccionar' : cardData.usuario.localidad}}
 		</span>
 	</mat-chip>
 	<div style="position: absolute; top: 10px; left: 10px;">
