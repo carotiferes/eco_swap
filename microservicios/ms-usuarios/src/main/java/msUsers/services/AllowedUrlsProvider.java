@@ -32,6 +32,6 @@ public class AllowedUrlsProvider {
                 "/api/productos/*",
                 // COMPRAS
                 "/comprar/*",
-                "/ms-transacciones/api/webhook");
+                "/ms-users/api/webhook");
     }
 }

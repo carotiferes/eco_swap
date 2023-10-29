@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import msUsers.domain.responses.DTOs.UsuarioDTO;
+import msUsers.domain.responses.DTOs.UsuarioEnChatDTO;
 import msUsers.domain.responses.DTOs.UsuarioEnOpinionDTO;
 import org.hibernate.validator.constraints.Range;
 
@@ -91,6 +92,13 @@ public class Usuario {
         usuarioDTO.setValidado(validado);
         usuarioDTO.setBloqueado(bloqueado);
         return usuarioDTO;
+    }
+
+    public UsuarioEnChatDTO toUsuarioEnChatDTO(){
+        UsuarioEnChatDTO usuarioEnChatDTO = new UsuarioEnChatDTO();
+        usuarioEnChatDTO.setIdUsuario(idUsuario);
+        usuarioEnChatDTO.setEmail(email);
+        return usuarioEnChatDTO;
     }
 
 }
