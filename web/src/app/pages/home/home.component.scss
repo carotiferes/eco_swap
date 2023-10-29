@@ -4,52 +4,248 @@
 	}
 }
 
-.info-bar {
-	background-color: #ddbdef;
-    height: 100px;
-    display: flex;
-    justify-content: space-evenly;
-    margin: 20px 0 !important;
+#accesos {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	max-width: 100%;
+	gap: 5%;
+	margin: 15% 2%;
 
-	.info-div {
+	.card {
+		transition: transform 0.2s;
+		cursor: pointer;
+		height: 40vh;
+
+		&:hover {
+			transform: scale(1.1);
+		}
+
+		&#colectas {
+
+			h1,
+			p {
+				opacity: 1 !important;
+			}
+		}
+
+		.card-body {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+
+			h1 {
+				width: 185px;
+			}
+
+			p {
+				width: 30vw;
+			}
+		}
+
+		.card-bottom {
+			text-align: center;
+			padding: 10px;
+			display: flex;
+			justify-content: space-around;
+			width: 100%;
+			align-items: center;
+			//background: #bceba1;
+			border-radius: 0 0 10px 10px;
+			height: 18%;
+
+			* {
+				margin: 0;
+			}
+
+			&.publicacion {
+				background-color: #bceba1;
+			}
+
+			&.colecta {
+				background-color: #dcb9ef;
+			}
+		}
+
+	}
+
+
+}
+
+#valores {
+	margin: 15% 2%;
+
+	.content-valores {
 		display: flex;
-		flex-direction: column;
-		align-items: center;
-		width: 135px;
 		justify-content: center;
+		flex-wrap: wrap;
+		max-width: 100%;
+		gap: 5%;
 		text-align: center;
-		font-size: 16px;
 
-		span {
-			font-size: 32px;
-			color: #2f9a19;
+		mat-icon {
+			font-size: 60px;
+			width: 60px;
+			height: 60px;
+			color: var(--trueques-dark);
+		}
+
+		.p-text {
+			width: 20vw;
 		}
 	}
 }
 
-.grid-div {
-	width: 100%;
-	padding: 15px 30px;
+#beneficios {
+	margin: 15% 2%;
 
-	.row-div {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 10px;
-		height: 200px;
+	.beneficios-content {
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		max-width: 100%;
+		gap: 5%;
+		text-align: center;
 
-		.col-div {
-			text-align: center;
+		.card {
+			cursor: default;
+			transition: transform 0.2s;
 
-			img {
-				height: 200px;
-				object-fit: cover;
-				margin: 0 auto;
-				border-radius: 15px;
-
-				&:hover {
-					cursor: pointer;
-				}
+			&:hover {
+				transform: scale(1.05);
 			}
+
+			
 		}
 	}
+}
+
+img.card-img {
+	width: 30vw;
+	height: 100%;
+	border-radius: 13px;
+	filter: brightness(0.4);
+	object-fit: cover;
+
+	&.small {
+		border-radius: 13px 13px 0 0;
+		height: 82%;
+		object-fit: cover;
+		object-position: bottom;
+		width: 300px !important;
+	}
+
+}
+
+.card-img-overlay {
+	display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+
+	h2, h1 {
+		font-weight: 600;
+		font-size: 36px;
+		color: white;
+		line-height: 1;
+	}
+	p {
+		color: white;
+
+	}
+}
+
+#quienes-somos {
+	margin: 15% 2%;
+
+	img {
+		object-fit: contain;
+	}
+
+	/* .quienes-somos-content {
+		.img-back {
+			width: 100%;
+			opacity: 1;
+			display: block;
+			width: 100%;
+			height: auto;
+			transition: .5s ease;
+			backface-visibility: hidden;
+		}
+
+		.middle {
+			transition: .5s ease;
+			//opacity: 0;
+			position: absolute;
+			top: 20%;
+			left: 3%;
+		}
+
+		/* &:hover *
+		.img-back {
+			filter: brightness(0.5);
+		}
+
+		/* &:hover .middle {
+			opacity: 1;
+		  } *
+
+		.text {
+			//background-color: #4CAF50;
+			color: white;
+			font-size: 16px;
+			padding: 16px 32px;
+			width: 50%;
+		}
+
+		.topleft {
+			position: absolute;
+			top: 10%;
+			left: 5%;
+			//transform: translate(-50%, -50%);
+			font-size: 36px;
+			color: white;
+		}
+	} */
+}
+
+@media (min-width: 0px) and (max-width: 576px) {
+	#accesos .card .card-body p {
+		width: 80vw !important;
+	}
+
+	.p-text {
+		width: 80vw !important;
+	}
+
+	img.card-img {
+		width: 80vw;
+	}
+
+	.card-img-overlay h2 {
+		font-size: 30px !important;
+	}
+
+	/* .topleft {
+		font-size: 18px !important;
+	}
+
+	.text {
+		width: 100% !important;
+		font-size: 12px !important;
+	} */
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+	.card-img-overlay h2 {
+		font-size: 26px !important;
+	}
+
+	/* .text {
+		width: 80% !important;
+		font-size: 14px;
+	} */
 }

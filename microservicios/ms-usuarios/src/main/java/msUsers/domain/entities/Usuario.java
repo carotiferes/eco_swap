@@ -60,8 +60,14 @@ public class Usuario {
     @Column(columnDefinition = "boolean default 1")
     private boolean bloqueado;
 
-    @OneToMany(mappedBy = "usuarioOpina", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "usuarioOpina", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Opinion> opiniones;
+
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Notificacion> notificaciones;
+
+    @Column(name = "avatar")
+    private String avatar;
 
     public UsuarioDTO toDTO() {
         UsuarioDTO usuarioDTO = new UsuarioDTO();
@@ -76,6 +82,7 @@ public class Usuario {
         usuarioDTO.setValidado(validado);
         usuarioDTO.setBloqueado(bloqueado);
         usuarioDTO.setOpiniones(opiniones.stream().map(Opinion::toDTO).toList());
+        usuarioDTO.setAvatar(avatar);
         return usuarioDTO;
     }
 

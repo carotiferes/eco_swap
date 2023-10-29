@@ -92,7 +92,7 @@ export class ColectaComponent {
 				})
 
 				//TODO: REVISAR CUANDO MUESTRA DONACIONES
-				if (this.userData.isSwapper) {
+				if (this.userData.isSwapper && this.userInfo) {
 					this.donacionesToShow = this.donaciones.filter(item => item.particularDTO.idParticular == this.userInfo.particularDTO.idParticular)
 					//this.showDonaciones = true;
 				} else if(this.userData) { // TODO: IF colecta.id_fundacion == userData.id_fundacion --> show donaciones
@@ -116,6 +116,8 @@ export class ColectaComponent {
 	parseDonaciones() {
 		this.donacionesAbiertas.splice(0);
 		this.donacionesCerradas.splice(0);
+		const auxListAbierta: CardModel[] = [];
+		const auxListCerrada: CardModel[] = [];
 		for (const donacion of this.donacionesToShow) {
 			console.log(donacion);
 			
@@ -132,7 +134,7 @@ export class ColectaComponent {
 				valorSecundario: stringCaracteristicas,
 				fecha: donacion.fechaDonacion,
 				usuario: {
-					imagen: 'assets/perfiles/perfiles-17.jpg',//publicacion.particularDTO.
+					imagen: donacion.particularDTO.usuarioDTO.avatar,
 					nombre: donacion.particularDTO.nombre + ' ' + donacion.particularDTO.apellido,
 					puntaje: donacion.particularDTO.puntaje,
 					localidad: donacion.particularDTO.direcciones[0].localidad
@@ -142,9 +144,12 @@ export class ColectaComponent {
 				estado: donacion.estadoDonacion,
 				idAuxiliar: this.colecta.idColecta
 			}
-			if(donacion.estadoDonacion == 'PENDIENTE') this.donacionesAbiertas.push(item)
-			else this.donacionesCerradas.push(item)
+			if(donacion.estadoDonacion == 'PENDIENTE') auxListAbierta.push(item)//this.donacionesAbiertas.push(item)
+			else auxListCerrada.push(item)//this.donacionesCerradas.push(item)
 		}
+
+		this.donacionesAbiertas = auxListAbierta;
+		this.donacionesCerradas = auxListCerrada;
 		console.log(this.donacionesAbiertas, this.donacionesCerradas);
 		
 	}

@@ -16,6 +16,6 @@ export class ComprasService {
 	}
 
 	comprar(id_publicacion: number) {
-		return this.backendService.post(URL_NAME_TRANSAC, `ms-transacciones/api/comprar/${id_publicacion}`, {});
+		return this.backendService.post(URL_NAME_TRANSAC, `ms-users/api/comprar/${id_publicacion}`, {});
 	}
 }

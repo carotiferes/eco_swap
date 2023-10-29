@@ -2,6 +2,8 @@
 @use '@angular/material' as mat;
 @import './assets/bootstrap.scss';
 
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
 /* @import '~maplibre-gl/dist/maplibre-gl.css'; */
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined");
 @import "~bootstrap-icons/font/bootstrap-icons.css";
@@ -98,7 +100,7 @@ $eco-swap-theme: mat.define-light-theme((
 
 	--success: #5fc32f;
 	--warn: var(--warn-color);
-	--info: #ccb014;
+	--info: #ffd740;
 }
 
 mat-form-field {
@@ -130,6 +132,11 @@ html, body {
     height: 100%;
     box-sizing: border-box;
     margin: 0;
+	//p, h1,h2,h3,h4,h5,h6, mat-label, mat-chip, mat-paginator, mat-button, a {
+	*:not(mat-icon, .material-icons-outlined, .material-symbols-rounded)	{
+		font-family: 'Poppins', sans-serif !important;
+
+	}
 	//background-color: #f1e3f8;
 }
 

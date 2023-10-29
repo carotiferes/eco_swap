@@ -14,5 +14,7 @@ export interface ParticularModel {
 	donaciones?: DonacionModel[],
 	puntaje: number,
 	direcciones: any[],
-	usuarioDTO: UsuarioModel
+	usuarioDTO: UsuarioModel,
+	accessToken: string,
+	publicKey: string
 }

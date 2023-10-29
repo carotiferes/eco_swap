@@ -1,25 +1,57 @@
-<app-header title="Notificaciones"></app-header>
+<app-header title="Notificaciones" [refresh]="refreshHeader"></app-header>
 
-<div id="main-notificaciones" class="app-main-div">
-	<mat-nav-list>
+<div style="display: flex; justify-content: center;">
+	<mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+</div>
+
+<div id="main-notificaciones" class="app-main-div" *ngIf="!loading">
+	<div class="buttons">
+		<button mat-fab extended [disabled]="selectedNotifications.length == 0 || loadingSave"
+		(click)="leerNotificaciones()">
+			MARCAR COMO LEÍDO
+		</button>
+		<div style="width: 25px;">
+			<mat-spinner diameter="25" *ngIf="loadingSave"></mat-spinner>
+		</div>
+	</div>
+	<mat-nav-list style="gap: 10px; display: flex; flex-direction: column;">
 		<ng-container *ngFor="let item of paginatedNotifications; let even = even; let odd = odd">
 			<mat-list-item [ngClass]="{ 'even-row': even, 'odd-row': odd }" (mouseenter)="hoveredItem = item"
-				(mouseleave)="hoveredItem = null" (click)="access(item)">
+				(mouseleave)="hoveredItem = null" style="border-radius: 15px;"
+				[style.background-color]="item.estadoNotificacion == 'LEIDO' ? 'inherit' : 'white'">
+				<mat-icon matListItemIcon [ngClass]="item.tipoNotificacion == 'TRUEQUE' || item.tipoNotificacion == 'NUEVO_ESTADO_TRUEQUE' ? 'primary' : 'secondary' ">{{item.estadoNotificacion == 'LEIDO' ? 'drafts' : 'email'}}</mat-icon>
 				<div class="item-content">
-					<div>
-						<h4>{{item.name}}</h4>
-						<p>{{item.descrip}}</p>
+					<div (click)="access(item)" style="width: 100%;">
+						<h4>{{item.titulo}}</h4>
+						<p>{{item.mensaje}}</p>
+					</div>
+					<div (click)="access(item)" style="min-height: 70px; display: flex; align-items: center;">
+						<p>{{item.fechaNotificacion | date: 'dd/MM/yyyy'}}</p>
 					</div>
 					<div>
-						<mat-icon>open_in_new</mat-icon>
+						<mat-checkbox (change)="selectNotification($event, item);" [disabled]="item.estadoNotificacion == 'LEIDO'"
+						[color]="item.tipoNotificacion == 'TRUEQUE' || item.tipoNotificacion == 'NUEVO_ESTADO_TRUEQUE' ? 'primary' : 'secondary' "></mat-checkbox>
 					</div>
 				</div>
 			</mat-list-item>
 		</ng-container>
 	</mat-nav-list>
-	<mat-paginator [pageSizeOptions]="[6, 12, 24]" [pageSize]="pageSize" [showFirstLastButtons]="true"
-		[length]="notifications.length" #paginator (page)="changePage($event)" style="border-radius: 15px;"
-		*ngIf="notifications.length > 0">
+	<!-- 
+		<mat-selection-list #shoes>
+		<mat-list-option *ngFor="let item of paginatedNotifications; let even = even; let odd = odd"
+		[ngClass]="{ 'even-row': even, 'odd-row': odd }" (mouseenter)="hoveredItem = item"
+		(mouseleave)="hoveredItem = null" (click)="access(item)">
+		<div class="item-content">
+			<div>
+				<h4>{{item.titulo}}</h4>
+				<p>{{item.mensaje}}</p>
+			</div>
+		</div>
+		</mat-list-option>
+	  </mat-selection-list>
+	 -->
+	<mat-paginator [pageSize]="pageSize" [showFirstLastButtons]="true" [length]="notifications.length" #paginator
+		(page)="changePage($event)" style="border-radius: 15px;" *ngIf="notifications.length > 0" [hidePageSize]="true">
 	</mat-paginator>
 	<!-- <mat-list>
 		<mat-list-item>

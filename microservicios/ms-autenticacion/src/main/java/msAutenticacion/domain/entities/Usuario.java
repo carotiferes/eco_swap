@@ -74,6 +74,9 @@ public class Usuario {
     @OneToMany(mappedBy = "usuarioOpina", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Opinion> opiniones;
 
+    @Column(name = "avatar")
+    private String avatar;
+
     public void aumentarIntentoEn1() {
         this.setIntentos(intentos+1);
     }
@@ -89,6 +92,7 @@ public class Usuario {
         usuarioDTO.setBloqueado(bloqueado);
         usuarioDTO.setValidado(validado);
         usuarioDTO.setIntentos(intentos);
+        usuarioDTO.setAvatar(avatar);
         return usuarioDTO;
     }
 

@@ -6,6 +6,8 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.*;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import msUsers.components.events.NuevaPropuestaTruequeEvent;
+import msUsers.components.events.NuevoEstadoTruequeEvent;
 import msUsers.domain.entities.*;
 import msUsers.domain.entities.enums.EstadoPublicacion;
 import msUsers.domain.entities.enums.EstadoTrueque;
@@ -22,6 +24,7 @@ import msUsers.exceptions.TruequeCreationException;
 import msUsers.services.CriteriaBuilderQueries;
 import msUsers.services.TruequeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,9 +50,10 @@ public class TruequeController {
     private EntityManager entityManager;
     @Autowired
     private TruequeService truequeService;
-
     @Autowired
     private CriteriaBuilderQueries criteriaBuilderQueries;
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     private static final String json = "application/json";
 
@@ -72,6 +76,25 @@ public class TruequeController {
         Root<Trueque> from = query.from(Trueque.class);
 
         Join<Trueque, Publicacion> publicacionOrigenJoin = from.join("publicacionOrigen");
+        Predicate predicate = criteriaBuilder.equal(publicacionOrigenJoin.get("idPublicacion"), id);
+
+        query.where(predicate);
+        List<Trueque> trueques = entityManager.createQuery(query).getResultList();
+        List<TruequeDTO> truequesDTO = trueques.stream().map(Trueque::toDTO).toList();
+
+        log.info(">> Se retornan {} trueques.", truequesDTO.size());
+        return ResponseEntity.ok(truequesDTO);
+    }
+
+    @GetMapping(path = "/publicacion/{id_publicacion}/propuestas", produces = json)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<TruequeDTO>> getTruequesXIdPublicacionPropuesta(@PathVariable("id_publicacion") Long id) {
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Trueque> query = criteriaBuilder.createQuery(Trueque.class);
+        Root<Trueque> from = query.from(Trueque.class);
+
+        Join<Trueque, Publicacion> publicacionOrigenJoin = from.join("publicacionPropuesta");
         Predicate predicate = criteriaBuilder.equal(publicacionOrigenJoin.get("idPublicacion"), id);
 
         query.where(predicate);
@@ -123,6 +146,7 @@ public class TruequeController {
                                                                      @RequestBody @Valid RequestCambiarEstadoTrueque request) {
 
         log.info(">> Se va cambiar el estado del trueque {} a {}", idTrueque, request.getNuevoEstado());
+        Usuario usuarioLogueado = UsuarioContext.getUsuario();
         final var trueque = this.truequesRepository.findById(idTrueque).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrada el trueque: " + idTrueque));
 
@@ -138,10 +162,11 @@ public class TruequeController {
             return ResponseEntity.badRequest().body(responseUpdateEntity);
         }
 
+        EstadoTrueque nuevoEstado = EstadoTrueque.valueOf(request.getNuevoEstado());
         if(EstadoTrueque.valueOf(request.getNuevoEstado()).equals(EstadoTrueque.RECHAZADO) ||
                 EstadoTrueque.valueOf(request.getNuevoEstado()).equals(EstadoTrueque.CANCELADO)) {
-            EstadoTrueque nuevoEstado = EstadoTrueque.valueOf(request.getNuevoEstado());
             trueque.setEstadoTrueque(nuevoEstado);
+
         } else {
             if (EstadoTrueque.valueOf(request.getNuevoEstado()).equals(EstadoTrueque.APROBADO)) {
                 trueque.setEstadoTrueque(EstadoTrueque.APROBADO);
@@ -171,18 +196,29 @@ public class TruequeController {
                 truequesRelacionados.forEach(t -> t.setEstadoTrueque(EstadoTrueque.ANULADO));
                 truequesRelacionados.forEach(entityManager::merge);
 
-
             }
             else {
                 trueque.setEstadoTrueque(EstadoTrueque.valueOf(request.getNuevoEstado()));
             }
         }
 
+        NuevoEstadoTruequeEvent nuevoEstadoTruequeEvent;
+        Usuario usuarioPropuesta = trueque.getPublicacionPropuesta().getParticular().getUsuario();
+        Usuario usuarioOrigen = trueque.getPublicacionOrigen().getParticular().getUsuario();
+        if(usuarioLogueado.getIdUsuario() == usuarioPropuesta.getIdUsuario()) {
+            nuevoEstadoTruequeEvent = new NuevoEstadoTruequeEvent(this, trueque, usuarioOrigen, trueque.getPublicacionPropuesta(), nuevoEstado);
+        }else{
+            nuevoEstadoTruequeEvent = new NuevoEstadoTruequeEvent(this, trueque, usuarioPropuesta, trueque.getPublicacionPropuesta(), nuevoEstado);
+        }
+        applicationEventPublisher.publishEvent(nuevoEstadoTruequeEvent);
+        log.info("<< Notificación creada para el usuario: {}", usuarioPropuesta.getEmail());
+
         this.truequesRepository.save(trueque);
 
         ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
         responseUpdateEntity.setStatus(HttpStatus.OK.name());
         responseUpdateEntity.setDescripcion("Se cambio el estado del trueque de " + anteriorEstado + " a " + request.getNuevoEstado());
+
         return ResponseEntity.ok(responseUpdateEntity);
     }
 
@@ -190,6 +226,8 @@ public class TruequeController {
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public ResponseEntity<ResponsePostEntityCreation> crearTrueque(@RequestBody @Valid RequestTrueque request) {
+
+        final Usuario user = UsuarioContext.getUsuario();
 
         log.info(">> Trueque con la publicacion origen {} y la publicacion propuesta {}", request.getIdPublicacionOrigen(), request.getIdPublicacionPropuesta());
         final var publicacionOrigen = this.publicacionesRepository.findById(request.getIdPublicacionOrigen()).
@@ -226,6 +264,10 @@ public class TruequeController {
         responsePostEntityCreation.setDescripcion("Trueque creado.");
         responsePostEntityCreation.setStatus(HttpStatus.OK.name());
         log.info("<< Trueque creado con ID: {}", entity.getIdTrueque());
+
+        NuevaPropuestaTruequeEvent nuevaPropuestaTruequeEvent = new NuevaPropuestaTruequeEvent(this, trueque, publicacionOrigen.getParticular().getUsuario(), publicacionOrigen);
+        applicationEventPublisher.publishEvent(nuevaPropuestaTruequeEvent);
+        log.info("<< Notificación creada para el usuario: {}", user.getEmail());
 
         return ResponseEntity.created(location).body(responsePostEntityCreation);
     }

@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { Observable, map, startWith } from 'rxjs';
 import { CardModel } from 'src/app/models/card.model';
 import { PublicacionModel } from 'src/app/models/publicacion.model';
+import { TruequeModel } from 'src/app/models/trueque.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { ComprasService } from 'src/app/services/compras.service';
 import { ProductosService } from 'src/app/services/productos.service';
@@ -24,7 +25,7 @@ export class PublicacionesComponent {
 	formFiltros: FormGroup;
 	tipos_productos: any[] = [];
 
-	loading: boolean = false;
+	loading: boolean = true;
 
 	publicacionesToShow: PublicacionModel[] = [];
 	filtros: any;
@@ -34,6 +35,9 @@ export class PublicacionesComponent {
 	allLocalidades: string[] = [];
 
 	publicacionesCardList: CardModel[] = []
+	filteredPublicacionesCardList: CardModel[] = []
+
+	trueques: TruequeModel[] = [];
 
 	constructor(private router: Router, private auth: AuthService, private fb: FormBuilder,
 		private productosService: ProductosService, private showErrorService: ShowErrorService,
@@ -53,6 +57,9 @@ export class PublicacionesComponent {
 			map((localidad: string | null) => (localidad ? this._filterLocalidad(localidad) : this.allLocalidades.slice())),
 		);
 
+	}
+	
+	ngOnInit(): void {
 		this.getTiposProductos();
 		this.getLocalidades();
 		this.filtrarPublicaciones()
@@ -84,13 +91,15 @@ export class PublicacionesComponent {
 	}
 
 	filtrarPublicaciones() {
+		this.loading = true;
 		if(this.origin == 'all'){
 			this.filtros = {};
-			//const localidad = this.formFiltros.controls['localidad'].value;
 			const tipoProducto = this.formFiltros.controls['tipoProducto'].value;
 
 			if (this.localidades.length > 0) this.filtros['localidades'] = this.localidades;
 			if (tipoProducto) this.filtros['tipoProducto'] = tipoProducto;
+
+			console.log('filtro', this.filtros);
 
 			this.truequesService.getPublicaciones(this.filtros).subscribe({
 				next: (data: any) => {
@@ -99,7 +108,8 @@ export class PublicacionesComponent {
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
-				}, complete: () => this.generateCardList()
+				}, complete: () => this.generateCardList(),
+				error: ()=> this.loading = false
 			})
 		} else if(this.origin == 'myPublicaciones'){
 			this.truequesService.getMisPublicaciones().subscribe({
@@ -109,45 +119,68 @@ export class PublicacionesComponent {
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
-				}, complete: () => this.generateCardList()
+					
+				}, complete: () => {
+					this.truequesService.getTruequesParticular(this.publicacionesToShow[0].particularDTO.idParticular).subscribe({
+						next: (res: any) => {
+							this.trueques = res;
+						}, complete: () => this.generateCardList()
+					})
+				}, error: ()=> this.loading = false
 			})
 		} else { // myCompras
 			this.comprasService.getMyCompras().subscribe({
 				next: (data: any) => {
 					console.log(data);
 					for (const publicacion of data) {
+						publicacion.publicacionDTO.idCompra = publicacion.idCompra;
+						publicacion.publicacionDTO.estadoCompra = publicacion.estadoCompra;
 						this.publicacionesToShow.push(publicacion.publicacionDTO);
 					}
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
-				}, complete: () => this.generateCardList()
+				}, complete: () => this.generateCardList(),
+				error: ()=> this.loading = false
 			})
 		}
 	}
 
 	generateCardList() {
 		this.publicacionesCardList.splice(0)
+		const auxList: CardModel[] = [];
 		for (const publicacion of this.publicacionesToShow) {
-			this.publicacionesCardList.push({
+
+			let idPublicacionOrigen: number | undefined;
+			if(publicacion.estadoPublicacion == 'CERRADA') {
+				const trueque = this.trueques.find(item => item.estadoTrueque == 'APROBADO' && item.publicacionDTOpropuesta.idPublicacion == publicacion.idPublicacion)
+				if(trueque) idPublicacionOrigen = trueque.publicacionDTOorigen.idPublicacion
+			}
+
+			auxList.push({
 				id: publicacion.idPublicacion,
 				imagen: publicacion.parsedImagenes? publicacion.parsedImagenes[0] : 'no_image',
 				titulo: publicacion.titulo,
 				valorPrincipal: `$${publicacion.valorTruequeMin} - $${publicacion.valorTruequeMax}`,
-				valorSecundario: publicacion.precioVenta ? `$${publicacion.precioVenta}` : undefined,
+				valorSecundario: !!publicacion.particularDTO.accessToken ? (publicacion.precioVenta ? `$${publicacion.precioVenta}` : undefined) : undefined,
 				fecha: publicacion.fechaPublicacion,
 				usuario: {
-					imagen: 'assets/perfiles/perfiles-17.jpg',//publicacion.particularDTO.
+					id: publicacion.particularDTO.usuarioDTO.idUsuario,
+					imagen: publicacion.particularDTO.usuarioDTO.avatar,
 					nombre: publicacion.particularDTO.nombre + ' ' + publicacion.particularDTO.apellido,
 					puntaje: publicacion.particularDTO.puntaje,
 					localidad: publicacion.particularDTO.direcciones[0].localidad
 				},
-				action: 'access',
+				action: !!idPublicacionOrigen ? 'trueque' : this.origin == 'myPublicaciones' ? 'list' : 'access',
+				idAuxiliar: !!idPublicacionOrigen ? idPublicacionOrigen : publicacion.idCompra ? publicacion.idCompra : undefined,
 				buttons: [],
-				estado: this.origin == 'myPublicaciones' ? publicacion.estadoPublicacion : undefined,
-				codigo: 'Publicación'
+				estado: this.origin == 'myPublicaciones' ? publicacion.estadoPublicacion : publicacion.estadoCompra ? publicacion.estadoCompra : undefined,
+				codigo: publicacion.idCompra ? 'Compra' : 'Publicación'
 			})
 		}
+		this.publicacionesCardList = auxList;
+		this.filteredPublicacionesCardList = this.publicacionesCardList;
+		this.loading = false;
 	}
 
 	limpiarFiltros() {
@@ -189,6 +222,11 @@ export class PublicacionesComponent {
 	private _filterLocalidad(value: string): string[] {
 		const filterValue = value.toLowerCase();
 		return this.allLocalidades.filter(localidad => localidad.toLowerCase().includes(filterValue));
+	}
+
+	filterByStatus(event: any) {
+		const status = event.value == 'open' ? 'ABIERTA' : event.value == 'closed' ? 'CERRADA' : ['ABIERTA', 'CERRADA'];
+		this.filteredPublicacionesCardList = this.publicacionesCardList.filter(item => item.estado && status.includes(item.estado) )
 	}
 
 }

@@ -3,58 +3,140 @@
 <ngb-carousel *ngIf="images" [interval]="3500">
 	<ng-template ngbSlide *ngFor="let img of images">
 		<div class="picsum-img-wrapper">
-			<img [src]="img"/>
+			<img [src]="img" />
 		</div>
 		<div class="carousel-caption">
 		</div>
 	</ng-template>
 </ngb-carousel>
 
+<section id="quienes-somos">
+	<div class="quienes-somos-content">
+		<!-- <img class="img-back" src="assets/home/economia-circular-grande.jpg" alt="">
+		<h1 class="topleft">Quiénes Somos</h1>
+		<div class="middle">
+			<div class="text">
+				Ecoswap es una comunidad que busca promover e implementar la economía circular para sus usuarios.
+				Desde nuestra plataforma vas a poder <b>DONAR</b> a fundaciones que lo necesitan, conociendo sus
+				distintas <b>COLECTAS</b>.
+				También podrás hacer <b>INTERCAMBIOS</b> con otros <b>SWAPPERS</b>, lo que logrará que no solo
+				reduzcas tus residuos sino que también te dará la posibilidad de obtener otro producto!
+			</div>
+		</div> -->
+		<div class="row">
+			<div class="col-xs-12 col-sm-6">
+				<h1>Quiénes Somos</h1>
+				<h3>
+					Ecoswap es una comunidad que busca promover e implementar la economía circular para sus usuarios.
+					Desde nuestra plataforma vas a poder <b>DONAR</b> a fundaciones que lo necesitan, conociendo sus
+					distintas <b>COLECTAS</b>.
+					También podrás hacer <b>INTERCAMBIOS</b> con otros <b>SWAPPERS</b>, lo que logrará que no solo
+					reduzcas tus residuos sino que también te dará la posibilidad de obtener otro producto!
+				</h3>
+			</div>
+			<img src="assets/logo_green_small.png" alt="" class="col-xs-12 col-sm-6">
+		</div>
+		<div style="text-align: center;"><h2>LA SEGUNDA OPORTUNIDAD DE TUS COSAS</h2></div>
+	</div>
+</section>
 
-<div class="grid-div">
-	<div class="row-div" *ngIf="!userData.isLoggedIn || (userData.isLoggedIn && userData.isSwapper)">
-		<div class="col-div">
-			<img src="assets/home/publicaciones.jpg" (click)="goTo('publicaciones')">
+<section id="accesos">
+	<div id="colectas" class="card" (click)="goTo('colectas')">
+		<!-- <div class="card-body"> -->
+			<img src="assets/home/donacion.avif" alt="" class="card-img small">
+			<div class="card-img-overlay">
+				<h1>Colectas</h1>
+				<p>
+					Clickeá acá para ver todas las colectas disponibles en fundaciones.
+					<br>
+					Realizá donaciones fácilmente!
+				</p>
+			</div>
+			<div class="card-bottom colecta">
+				<mat-icon>open_in_new</mat-icon>
+			</div>
+
+		<!-- </div> -->
+	</div>
+
+	<div id="publicaciones" class="card" (click)="goTo('publicaciones')"
+    *ngIf="!userData.isLoggedIn || (userData.isLoggedIn && userData.isSwapper)">
+		<!-- <div class="card-body"> -->
+			<img src="assets/home/intercambio.avif" alt="" class="card-img small">
+			<div class="card-img-overlay">
+				<h1>Publicaciones</h1>
+				<p>
+					Clickeá acá para ver todas las publicaciones de los Swappers.
+					<br>
+					Realizá intercambios fácilmente!
+					
+				</p>
+			</div>
+		<!-- </div> -->
+		<div class="card-bottom publicacion">
+			<mat-icon>open_in_new</mat-icon>
 		</div>
 	</div>
-	<div class="row-div">
-		<div></div>
-		<div class="col-div">
-			<img src="assets/home/colectas.jpg" (click)="goTo('colectas')">
+</section>
+
+<section id="valores">
+	<h1 style="text-align: center;">Nuestros Valores</h1>
+
+	<div class="content-valores">
+		<div>
+			<mat-icon>room_preferences</mat-icon>
+			<h3>Valor 1</h3>
+			<p class="p-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fringilla laoreet
+				condimentum. Donec varius tortor mi, vel cursus lacus porttitor quis. Sed mollis velit neque, eget
+				faucibus orci volutpat tincidunt.
+		</div>
+
+		<div>
+			<mat-icon>room_preferences</mat-icon>
+			<h3>Valor 2</h3>
+			<p class="p-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fringilla laoreet
+				condimentum. Donec varius tortor mi, vel cursus lacus porttitor quis. Sed mollis velit neque, eget
+				faucibus orci volutpat tincidunt.
+		</div>
+
+		<div>
+			<mat-icon>room_preferences</mat-icon>
+			<h3>Valor 3</h3>
+			<p class="p-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fringilla laoreet
+				condimentum. Donec varius tortor mi, vel cursus lacus porttitor quis. Sed mollis velit neque, eget
+				faucibus orci volutpat tincidunt.
 		</div>
 	</div>
-</div>
 
-<div class="info-bar" [ngClass]="screenWidth < 576 ? 'small-bar' : 'big-bar'">
-	<div class="info-div">
-		<span class="material-icons-outlined">change_circle</span>
-		Intercambiá con otros Swappers!
-	</div>
+</section>
 
-	<div class="info-div">
-		<span class="material-icons-outlined">volunteer_activism</span>
-		Doná a fundaciones!
-	</div>
 
-	<div class="info-div">
-		<span class="material-icons-outlined">local_shipping</span>
-		Elegí enviar todos tus productos!
-	</div>
-
-	<div class="info-div">
-		<span class="material-icons-outlined">payments</span>
-		Pagá con Mercado Pago!
-	</div>
-</div>
-
-<div class="grid-div">
-	<div class="row-div" *ngIf="!userData.isLoggedIn || (userData.isLoggedIn && userData.isSwapper)">
-		<div class="col-div">
-			<img src="assets/home/publicar.png" (click)="goTo('form-publicacion', true)">
+<section id="beneficios">
+	<h1 style="text-align: center;">BENEFICIOS DE ECOSWAP</h1>
+	<div class="beneficios-content">
+		<div class="card">
+			<img src="assets/home/economia-circular.jpg" alt="" class="card-img">
+			<div class="card-img-overlay">
+				<h2>ECONOMÍA CIRCULAR</h2>
+			</div>
+		</div>
+		<div class="card">
+			<img src="assets/home/ahorrar.jpg" alt="" class="card-img">
+			<div class="card-img-overlay">
+				<h2>AHORRÁ Y EVITÁ COMPRAR</h2>
+			</div>
+		</div>
+		<div class="card">
+			<img src="assets/home/residuos.jpg" alt="" class="card-img">
+			<div class="card-img-overlay">
+				<h2>REDUCÍ TUS RESIDUOS</h2>
+			</div>
+		</div>
+		<div class="card">
+			<img src="assets/home/comunidad.jpg" alt="" class="card-img">
+			<div class="card-img-overlay">
+				<h2>SÉ PARTE DE LA COMUNIDAD</h2>
+			</div>
 		</div>
 	</div>
-</div>
-<!-- <mat-grid-list cols="2" rowHeight="200px" gutterSize="10px">
-	<mat-grid-tile [colspan]="1" [rowspan]="1">
-	</mat-grid-tile>
-</mat-grid-list> -->
+</section>
