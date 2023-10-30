@@ -70,13 +70,14 @@ export class DonacionesComponent {
 				valorSecundario: stringCaracteristicas,
 				fecha: donacion.fechaDonacion,
 				usuario: {
+					id: donacion.producto.colectaDTO.fundacionDTO.usuarioDTO.idUsuario,
 					imagen: donacion.producto.colectaDTO.fundacionDTO.usuarioDTO.avatar,//donacion.particularDTO.usuarioDTO.avatar,
 					nombre: donacion.producto.colectaDTO.fundacionDTO.nombre,//donacion.particularDTO.nombre + ' ' + donacion.particularDTO.apellido,
 					puntaje: donacion.producto.colectaDTO.fundacionDTO.puntaje,//donacion.particularDTO.puntaje,
 					localidad: donacion.producto.colectaDTO.fundacionDTO.direcciones[0].localidad,//donacion.particularDTO.direcciones[0].localidad
 				},
 				action: 'detail',
-				buttons: [{name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADA'}],
+				buttons: donacion.estadoDonacion == 'APROBADA' ? [] : [{name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADA'}],
 				estado: donacion.estadoDonacion,
 				idAuxiliar: donacion.producto.colectaDTO.idColecta
 			}
@@ -98,6 +99,7 @@ export class DonacionesComponent {
 			if(donacion.estado == 'APROBADA') {
 				donacion.action = 'select';
 				donacion.codigo = 'Donación';
+				donacion.buttons = [{name: 'Agregar', icon: 'add', color: 'info', status: 'INFO'}]
 			}
 		});
 		this.donacionesCardList = auxDonaciones;
@@ -123,6 +125,9 @@ export class DonacionesComponent {
 					if(donacion.idAuxiliar != this.colectaParaEnvio) {
 						donacion.action = 'detail';
 						donacion.codigo = undefined;
+						donacion.buttons = [];
+					} else if(this.selectedCards.includes(donacionSeleccionada)) {
+						donacion.buttons = [{name: 'Quitar', icon: 'remove', color: 'info', status: 'INFO'}]
 					}
 				});
 				this.donacionesCardList = auxDonaciones;
@@ -146,9 +151,11 @@ export class DonacionesComponent {
 					if(donacion.estado == 'APROBADA') {
 						donacion.action = 'select';
 						donacion.codigo = 'Donación';
+						donacion.buttons = [{name: 'Agregar', icon: 'add', color: 'info', status: 'INFO'}]
 					} else {
 						donacion.action = 'detail';
 						donacion.codigo = undefined;
+						donacion.buttons = [];
 					}
 				});
 				this.donacionesCardList = auxDonaciones;

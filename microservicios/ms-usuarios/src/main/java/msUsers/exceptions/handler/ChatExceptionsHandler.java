@@ -1,7 +1,9 @@
 package msUsers.exceptions.handler;
 
 import lombok.extern.slf4j.Slf4j;
+import msUsers.exceptions.ChatException;
 import msUsers.exceptions.DonacionCreationException;
+import msUsers.exceptions.responses.ChatExceptionResponse;
 import msUsers.exceptions.responses.DonationCreationExceptionResponse;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -13,11 +15,11 @@ import java.util.Date;
 
 @Slf4j
 @ControllerAdvice
-@Order(3)
-public class ColectaExceptionsHandler {
-    @ExceptionHandler(DonacionCreationException.class)
-    public ResponseEntity<DonationCreationExceptionResponse> handle(DonacionCreationException exception){
-        DonationCreationExceptionResponse response = new DonationCreationExceptionResponse();
+@Order(2)
+public class ChatExceptionsHandler {
+    @ExceptionHandler(ChatException.class)
+    public ResponseEntity<ChatExceptionResponse> handle(ChatException exception){
+        ChatExceptionResponse response = new ChatExceptionResponse();
         response.setDescripcion(exception.getMessage());
         Date date = new Date();
         response.setTimestamp(date.getTime());

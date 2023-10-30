@@ -12,6 +12,8 @@ import { TruequesService } from 'src/app/services/trueques.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import Swal from 'sweetalert2';
 import { TrocarModalComponent } from './trocar-modal/trocar-modal.component';
+import { ChatService } from 'src/app/services/chat.service';
+import { ParticularModel } from 'src/app/models/particular.model';
 
 @Component({
 	selector: 'app-publicacion',
@@ -40,20 +42,17 @@ export class PublicacionComponent implements AfterViewInit {
 	init: number = 0;
 	screenWidth: number;
 
-	mensajes: {id_user: number, text: string}[] = [
-		{id_user: 1, text: 'Este es un mensaje'},
-		{id_user: 2, text: 'Este es otro mensaje'},
-		{id_user: 1, text: 'Este es un mensaje'},
-		{id_user: 2, text: 'Este es otro mensaje'},
-	];
+	mensajes: any[] = [];
 	nuevoMensaje: string = '';
 
 	initChat: number = 0;
+	elOtroSwapper?: ParticularModel;
 
 	constructor(private truequeService: TruequesService, private route: ActivatedRoute,
 		private showErrorService: ShowErrorService, private auth: AuthService,
 		private router: Router, private usuarioService: UsuarioService, public dialog: MatDialog,
-		private comprasService: ComprasService, @Inject(DOCUMENT) private document: Document) {
+		private comprasService: ComprasService, @Inject(DOCUMENT) private document: Document,
+		private chatService: ChatService) {
 
 		this.userData = { isSwapper: auth.isUserSwapper(), isLoggedIn: auth.isUserLoggedIn }
 		this.route.paramMap.subscribe(params => {
@@ -71,6 +70,7 @@ export class PublicacionComponent implements AfterViewInit {
 
 	ngAfterViewInit(): void {
 		if (this.userData && this.userData.isLoggedIn) {
+			this.userData.id_user = this.auth.getUserID()
 			this.usuarioService.getUserByID(this.auth.getUserID()).subscribe({
 				next: (res: any) => {
 					this.userInfo = res;
@@ -265,6 +265,7 @@ export class PublicacionComponent implements AfterViewInit {
 				valorPrincipal: `$${publicacion.valorTruequeMin} - $${publicacion.valorTruequeMax}`,
 				fecha: publicacion.fechaPublicacion,
 				usuario: {
+					id: publicacion.particularDTO.usuarioDTO.idUsuario,
 					imagen: publicacion.particularDTO.usuarioDTO.avatar,
 					nombre: publicacion.particularDTO.nombre + ' ' + publicacion.particularDTO.apellido,
 					puntaje: publicacion.particularDTO.puntaje,
@@ -279,7 +280,15 @@ export class PublicacionComponent implements AfterViewInit {
 			if(publicacion.estadoTrueque == 'APROBADO') {
 				// ACEPTADO
 				auxList1.push(item)
-				
+				const trueque = this.trueques.find(item => item.publicacionDTOpropuesta.idPublicacion == publicacion.idPublicacion && item.estadoTrueque == 'APROBADO')
+				if(trueque) {
+					this.elOtroSwapper = this.userType == 'publicacionOrigen' ? trueque.publicacionDTOpropuesta.particularDTO : trueque.publicacionDTOorigen.particularDTO
+					this.chatService.getMyMensajes(trueque.idTrueque).subscribe({
+						next: (res: any) => {
+							this.mensajes = res;
+						}
+					})
+				}
 			} else if(publicacion.estadoTrueque == 'PENDIENTE' && publicacion.estadoPublicacion == 'ABIERTA') {
 				// ACTIVOS
 				item.valorSecundario = publicacion.precioVenta ? `$${publicacion.precioVenta}` : undefined
@@ -298,6 +307,7 @@ export class PublicacionComponent implements AfterViewInit {
 			valorPrincipal: `$${this.publicacion.valorTruequeMin} - $${this.publicacion.valorTruequeMax}`,
 			fecha: this.publicacion.fechaPublicacion,
 			usuario: {
+				id: this.publicacion.particularDTO.usuarioDTO.idUsuario,
 				imagen: this.publicacion.particularDTO.usuarioDTO.avatar,
 				nombre: this.publicacion.particularDTO.nombre + ' ' + this.publicacion.particularDTO.apellido,
 				puntaje: this.publicacion.particularDTO.puntaje,
@@ -315,5 +325,27 @@ export class PublicacionComponent implements AfterViewInit {
 
 	hasApprovedTrueque() {
 		return this.publicacionesToShow.filter(item => item.estadoTrueque == 'APROBADO')
+	}
+
+	sendMensaje() {
+		const trueque = this.trueques.find(item => item.publicacionDTOorigen.idPublicacion == this.publicacion.idPublicacion && item.estadoTrueque == 'APROBADO')
+		if(trueque && trueque.idTrueque) {
+			this.chatService.sendMensaje({
+				idTrueque: trueque.idTrueque,
+				mensaje: this.nuevoMensaje,
+				usuarioReceptor: this.userType == 'publicacionOrigen' ? trueque.publicacionDTOpropuesta.particularDTO.usuarioDTO.idUsuario : trueque.publicacionDTOorigen.particularDTO.usuarioDTO.idUsuario
+			}).subscribe({
+				next: (res: any) => {
+					console.log('mensaje enviado:', res);
+					this.chatService.getMyMensajes(trueque.idTrueque).subscribe({
+						next: (res: any) => {
+							this.mensajes = res;
+							this.nuevoMensaje = ''
+						}
+					})
+				}
+			})
+
+		}
 	}
 }

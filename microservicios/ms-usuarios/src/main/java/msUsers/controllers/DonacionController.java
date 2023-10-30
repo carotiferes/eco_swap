@@ -145,7 +145,7 @@ public class DonacionController {
         response.setStatus(HttpStatus.OK.name());
         log.info("<< Donacion creada en la colecta: {}", idColecta);
 
-        NuevaDonacionEvent nuevaDonacion = new NuevaDonacionEvent(this, donacion, colecta, user);
+        NuevaDonacionEvent nuevaDonacion = new NuevaDonacionEvent(this, donacion, colecta, colecta.getFundacion().getUsuario());
         eventPublisher.publishEvent(nuevaDonacion);
         log.info("<< Notificación creada para el usuario: {}", user.getEmail());
 

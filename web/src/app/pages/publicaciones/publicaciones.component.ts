@@ -153,10 +153,16 @@ export class PublicacionesComponent {
 		const auxList: CardModel[] = [];
 		for (const publicacion of this.publicacionesToShow) {
 
-			let idPublicacionOrigen: number | undefined;
+			let idPublicacionOrigen: number | undefined = undefined;
+			let idPublicacionPropuesta: number | undefined = undefined;
+			
 			if(publicacion.estadoPublicacion == 'CERRADA') {
 				const trueque = this.trueques.find(item => item.estadoTrueque == 'APROBADO' && item.publicacionDTOpropuesta.idPublicacion == publicacion.idPublicacion)
-				if(trueque) idPublicacionOrigen = trueque.publicacionDTOorigen.idPublicacion
+				if(trueque != undefined) idPublicacionOrigen = trueque.publicacionDTOorigen.idPublicacion
+				else {
+					const trueque = this.trueques.find(item => item.estadoTrueque == 'APROBADO' && item.publicacionDTOorigen.idPublicacion == publicacion.idPublicacion)
+					if(trueque) idPublicacionPropuesta = trueque.publicacionDTOpropuesta.idPublicacion
+				}
 			}
 
 			auxList.push({
@@ -173,9 +179,9 @@ export class PublicacionesComponent {
 					puntaje: publicacion.particularDTO.puntaje,
 					localidad: publicacion.particularDTO.direcciones[0].localidad
 				},
-				action: !!idPublicacionOrigen ? 'trueque' : this.origin == 'myPublicaciones' ? 'list' : 'access',
-				idAuxiliar: !!idPublicacionOrigen ? idPublicacionOrigen : publicacion.idCompra ? publicacion.idCompra : undefined,
-				buttons: [],
+				action: !!idPublicacionOrigen || !!idPublicacionPropuesta ? 'trueque' : this.origin == 'myPublicaciones' ? 'list' : 'access',
+				idAuxiliar: !!idPublicacionOrigen ? idPublicacionOrigen : !!idPublicacionPropuesta ? publicacion.idPublicacion : publicacion.idCompra ? publicacion.idCompra : undefined,
+				buttons: this.getButtonsForCard(publicacion, !!idPublicacionOrigen || !!idPublicacionPropuesta),
 				estado: this.origin == 'myPublicaciones' ? publicacion.estadoPublicacion : publicacion.estadoCompra ? publicacion.estadoCompra : undefined,
 				codigo: publicacion.idCompra ? 'Compra' : 'Publicación'
 			})
@@ -183,6 +189,19 @@ export class PublicacionesComponent {
 		this.publicacionesCardList = auxList;
 		this.filteredPublicacionesCardList = this.publicacionesCardList;
 		this.loading = false;
+	}
+
+	getButtonsForCard(publicacion: PublicacionModel, truequeAprobado: boolean = false) {
+		if(this.origin == 'myPublicaciones') {
+			return [{
+				name: !truequeAprobado ? '¿Dónde lo propuse?' : 'Ver trueque',
+				icon: 'info',
+				color: 'primary',
+				status: 'INFO'
+			}];
+		} else if (this.origin == 'myCompras'){
+			return [{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO'}];
+		} else return [];
 	}
 
 	limpiarFiltros() {
