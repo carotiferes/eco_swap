@@ -265,6 +265,7 @@ export class PublicacionComponent implements AfterViewInit {
 				valorPrincipal: `$${publicacion.valorTruequeMin} - $${publicacion.valorTruequeMax}`,
 				fecha: publicacion.fechaPublicacion,
 				usuario: {
+					id: publicacion.particularDTO.usuarioDTO.idUsuario,
 					imagen: publicacion.particularDTO.usuarioDTO.avatar,
 					nombre: publicacion.particularDTO.nombre + ' ' + publicacion.particularDTO.apellido,
 					puntaje: publicacion.particularDTO.puntaje,
@@ -306,6 +307,7 @@ export class PublicacionComponent implements AfterViewInit {
 			valorPrincipal: `$${this.publicacion.valorTruequeMin} - $${this.publicacion.valorTruequeMax}`,
 			fecha: this.publicacion.fechaPublicacion,
 			usuario: {
+				id: this.publicacion.particularDTO.usuarioDTO.idUsuario,
 				imagen: this.publicacion.particularDTO.usuarioDTO.avatar,
 				nombre: this.publicacion.particularDTO.nombre + ' ' + this.publicacion.particularDTO.apellido,
 				puntaje: this.publicacion.particularDTO.puntaje,

@@ -59,8 +59,7 @@ public class OpinionController {
     public ResponseEntity<List<OpinionDTO>> getMisOpiniones() {
 
         final Usuario user = UsuarioContext.getUsuario();
-        Optional<Particular> optionalParticular = criteriaBuilderQueries.getParticularPorUsuario(user.getIdUsuario());
-        Particular particular = optionalParticular.orElseThrow(() -> new EntityNotFoundException("¡El particular no existe!"));
+
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Opinion> query = cb.createQuery(Opinion.class);
@@ -68,7 +67,7 @@ public class OpinionController {
         Predicate predicate = cb.conjunction();
 
         Join<Opinion, Usuario> join = from.join("usuarioOpinado");
-        predicate = cb.and(predicate, cb.equal(join.get("idUsuario"), particular.getIdParticular()));
+        predicate = cb.and(predicate, cb.equal(join.get("idUsuario"), user.getIdUsuario()));
 
         query.where(predicate);
 

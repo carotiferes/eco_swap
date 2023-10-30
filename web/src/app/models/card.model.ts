@@ -9,7 +9,7 @@ export interface CardModel {
 	fecha?: any;
 	fechaString?: string;
 	usuario: {
-		id?: number;
+		id: number;
 		imagen: string;
 		nombre: string;
 		puntaje: number;

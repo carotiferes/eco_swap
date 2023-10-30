@@ -137,6 +137,7 @@ export class ColectasComponent implements OnInit {
 				valorPrincipal: stringProductos,
 				fechaString: this.parseVigencia(colecta),
 				usuario: {
+					id: colecta.fundacionDTO.usuarioDTO.idUsuario,
 					imagen: colecta.fundacionDTO.usuarioDTO.avatar,
 					nombre: colecta.fundacionDTO.nombre,
 					puntaje: colecta.fundacionDTO.puntaje,
