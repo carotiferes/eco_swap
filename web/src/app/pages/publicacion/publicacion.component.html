@@ -15,7 +15,11 @@
 				<div ngbAccordionItem="first" #first="ngbAccordionItem" [collapsed]="false">
 					<h2 ngbAccordionHeader>
 						<button ngbAccordionButton class="bg-transparent accordion-header-button">
-							<mat-icon>question_answer</mat-icon> <span style="margin-left: 10px;">Chat</span>
+							<mat-icon>question_answer</mat-icon>
+							<span style="margin-left: 10px; display: flex; align-items: center; gap: 10px;">
+								<span>Chat</span>
+								<mat-icon style="color: var(--info)" matTooltip="EcoSwap no se responsabiliza por el intercambio físico de las publicaciones involucradas.">warning</mat-icon>
+							</span>
 						</button>
 					</h2>
 					<div ngbAccordionCollapse>
@@ -24,17 +28,23 @@
 								<div style="margin-bottom: 20px; max-height: 200px; overflow: auto; scrollbar-color: #888 #f1f1f1; scrollbar-width: thin;"
 								#chatContainer id="chatContainer">
 									<div *ngFor="let mensaje of mensajes" class="mensaje"
-									[ngClass]="mensaje.id_user == 1 ? 'mio' : 'otro'">
-										{{mensaje.text}}
+									[ngClass]="mensaje.usuarioEmisor.idUsuario == userData.id_user ? 'mio' : 'otro'">
+										<span style="width: 100%;">{{mensaje.mensaje}}</span>
+										<span style="font-size: 10px;">{{mensaje.fechaHoraEnvio | date: 'dd/MM/yyyy'}}</span>
 										<mat-icon class="arrow-globo">arrow_drop_down</mat-icon>
 									</div>
 								</div>
+
+								<div style="display: flex; flex-direction: column;">
+									<mat-form-field appearance="outline" style="min-width: 210px; width: 100%;" floatLabel="always">
+										<!-- <mat-label>Nuevo Mensaje</mat-label> -->
+										<textarea matInput [placeholder]="'Enviar mensaje a '+elOtroSwapper.nombre +' '+elOtroSwapper.apellido" [(ngModel)]="nuevoMensaje" style="resize: none;" *ngIf="elOtroSwapper"></textarea>
+										<!-- <input matInput formControlName="tipoProducto"> -->
+									</mat-form-field>
 									
-								<mat-form-field appearance="outline" style="min-width: 210px; width: 100%;" floatLabel="always">
-									<!-- <mat-label>Nuevo Mensaje</mat-label> -->
-									<textarea matInput [placeholder]="'Enviar mensaje a '+mainPublicacionCard.usuario.nombre" [(ngModel)]="nuevoMensaje" style="resize: none;"></textarea>
-									<!-- <input matInput formControlName="tipoProducto"> -->
-								</mat-form-field>
+									<button mat-fab extended color="primary" (click)="sendMensaje()">Enviar</button>
+								</div>
+									
 									
 								
 							</ng-template>
