@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.entities.Compra;
 import msUsers.domain.entities.MensajeChat;
 import msUsers.domain.entities.Usuario;
+import msUsers.domain.entities.enums.EstadoTrueque;
 import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.repositories.MensajesChatRepository;
 import msUsers.domain.repositories.TruequesRepository;
@@ -19,6 +20,7 @@ import msUsers.domain.requests.RequestMensajeChat;
 import msUsers.domain.responses.DTOs.MensajeChatDTO;
 import msUsers.domain.responses.ResponsePostEntityCreation;
 import msUsers.domain.responses.ResponseUpdateEntity;
+import msUsers.exceptions.ChatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -76,6 +78,8 @@ public class MensajeChatController {
         final var trueque = this.truequesRepository.findById(requestMensajeChat.getIdTrueque()).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrado el trueque: " + requestMensajeChat.getIdTrueque()));
 
+        if(!(trueque.getEstadoTrueque() == EstadoTrueque.APROBADO))
+            throw new ChatException("El trueque no está aprobado. No se puede iniciar una conversación hasta que no cambie de estado.");
 
         MensajeChat mensaje = new MensajeChat();
         mensaje.setMensaje(requestMensajeChat.getMensaje());
@@ -83,10 +87,11 @@ public class MensajeChatController {
         mensaje.setFechaHoraEnvio(LocalDateTime.now());
         mensaje.setUsuarioEmisor(usuarioEmisor);
         mensaje.setUsuarioReceptor(usuarioReceptor);
-        this.mensajesChatRepository.save(mensaje);
+        var enttiy = this.mensajesChatRepository.save(mensaje);
 
         ResponsePostEntityCreation responsePostEntityCreation = new ResponsePostEntityCreation();
         responsePostEntityCreation.setStatus(HttpStatus.OK.name());
+        responsePostEntityCreation.setId(enttiy.getId());
         responsePostEntityCreation.setDescripcion("Mensaje enviado correctamente.");
 
         return ResponseEntity.ok(responsePostEntityCreation);
