@@ -61,9 +61,8 @@
 		</div>
 	</div>
 
-
 	<div *ngIf="userData.isLoggedIn && truequeAceptado.length == 0 && mainPublicacionCard && mainPublicacionCard.estado == 'ABIERTA'">
-		<div ><!-- *ngIf="truequeAceptado.length == 0" -->
+		<div>
 			<h3 style="margin: 20px 0 0 5px; font-weight: bold;">
 				{{this.userType == 'publicacionPropuesta' ? 'Mi Trueque Activo' : 'Propuestas de Trueque'}}
 			</h3>

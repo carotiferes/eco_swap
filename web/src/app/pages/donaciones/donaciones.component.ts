@@ -167,12 +167,13 @@ export class DonacionesComponent {
 	}
 
 	confirmSelectedCards() {
+		const cardsWithData = this.donaciones.filter(item => this.selectedCards.some(card => card.id == item.idDonacion))
 		const dialogRef = this.dialog.open(EnvioModalComponent, {
 			maxWidth: '60vw',
 			maxHeight: '70vh',
 			width: '100%',
 			panelClass: 'full-screen-modal',
-			data: {cards: this.selectedCards}
+			data: {cards: cardsWithData}
 		});
 		/* dialogRef.afterClosed().subscribe((result) => {
 			console.log('closed', result);

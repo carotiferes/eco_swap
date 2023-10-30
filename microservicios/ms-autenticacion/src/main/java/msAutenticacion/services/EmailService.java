@@ -56,8 +56,9 @@ public class EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("webmaster@ecoswap.com.ar");
         message.setTo(toEmail);
-        message.setText("Hola " + usuario.getUsername() + ", bienvenido seas. A continuación ingrese el " +
-                "siguiente código para poder finalizar su registro: " +codigoActivacion);
+        message.setText("¡Hola " + usuario.getUsername() + "!\nTe damos la bienvenida a EcoSwap. \n"+
+                "Con tu cuenta vas a poder donar a fundaciones que lo necesiten, y crear publicaciones para intercambiar y vender!" +
+                "\n\nPara terminar tu registro vas a necesitar el siguiente código: " +codigoActivacion);
         message.setSubject(subject);
         javaMailSender.send(message);
         log.info("Email fue enviado con éxito a: {}", toEmail);

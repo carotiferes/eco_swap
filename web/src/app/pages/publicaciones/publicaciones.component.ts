@@ -121,11 +121,13 @@ export class PublicacionesComponent {
 					})
 					
 				}, complete: () => {
-					this.truequesService.getTruequesParticular(this.publicacionesToShow[0].particularDTO.idParticular).subscribe({
-						next: (res: any) => {
-							this.trueques = res;
-						}, complete: () => this.generateCardList()
-					})
+					if(this.publicacionesToShow.length > 0) {
+						this.truequesService.getTruequesParticular(this.publicacionesToShow[0].particularDTO.idParticular).subscribe({
+							next: (res: any) => {
+								this.trueques = res;
+							}, complete: () => this.generateCardList()
+						})
+					} else this.loading = false;
 				}, error: ()=> this.loading = false
 			})
 		} else { // myCompras

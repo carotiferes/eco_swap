@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { DonacionModel } from 'src/app/models/donacion.model';
 import { ComprasService } from 'src/app/services/compras.service';
 import { LogisticaService } from 'src/app/services/logistica.service';
 import Swal from 'sweetalert2';
@@ -58,19 +59,20 @@ export class EnvioModalComponent {
 
 	confirmarOrden() {
 		if(this.sendDonaciones) { // UNA O MAS DONACIONES
-			const donaciones = this.data.cards;
+			const donaciones: DonacionModel[] = this.data.cards;
+			console.log(donaciones);
+
+			const productosToSend: { productoId: number, cantidad: number }[] = [];
+			
 			this.logisticaService.getCostoEnvio(this.ordenForm.value.peso,this.ordenForm.value.codigoPostal).subscribe({
 				next: (envio: any) => {
 					const orden = {
 						titulo: this.data.titulo,
-						userIdDestino: 1,
-						userIdOrigen: 2,
-						idColecta: 0,
+						userIdDestino: donaciones[0].producto.colectaDTO.fundacionDTO.usuarioDTO.idUsuario,
+						userIdOrigen: donaciones[0].particularDTO.usuarioDTO.idUsuario,
+						idColecta: donaciones[0].producto.colectaDTO.idColecta,
 						listProductos: [
-						{
-							productoId: 0,
-							cantidad: 0
-						}
+						
 						],
 						costoEnvio: envio.precio
 					}

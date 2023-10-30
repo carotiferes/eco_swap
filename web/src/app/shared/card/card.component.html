@@ -52,8 +52,8 @@
 
 	<div class="user-data" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'">
 		<img class="user-img" [src]="'assets/perfiles/perfiles-'+cardData.usuario.imagen+'.jpg'">
-		<h4 style="max-width: 200px;">
-			{{cardData.usuario.nombre}}
+		<h4>
+			<div class="name">{{cardData.usuario.nombre}}</div>
 			<!-- <p>(YO)</p> -->
 			<div style="margin: 0 10px;display: flex;align-items: center;justify-content: center;">
 				<app-rating [puntuacion]="cardData.usuario.puntaje"

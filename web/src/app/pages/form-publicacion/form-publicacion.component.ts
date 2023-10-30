@@ -33,7 +33,7 @@ export class FormPublicacionComponent {
 			descripcion: ['', Validators.required],
 			valorMinimo: ['', Validators.required],
 			valorMaximo: ['', Validators.required],
-			finalidadVenta: [{value: false, disabled: this.hasMPCredentials == false}],
+			finalidadVenta: [false],
 			precioVenta: [''],
 			caracteristicas: this.fb.array([]),
 			file: ['', Validators.required],

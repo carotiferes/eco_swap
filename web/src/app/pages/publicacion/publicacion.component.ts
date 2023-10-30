@@ -290,27 +290,27 @@ export class PublicacionComponent implements AfterViewInit {
 				item.disabled = true;
 				auxList3.push(item)
 			}
-			this.mainPublicacionCard = {
-				id: this.publicacion.idPublicacion,
-				imagen: this.publicacion.parsedImagenes? this.publicacion.parsedImagenes[0] : 'no_image',
-				titulo: this.publicacion.titulo,
-				valorPrincipal: `$${this.publicacion.valorTruequeMin} - $${this.publicacion.valorTruequeMax}`,
-				fecha: this.publicacion.fechaPublicacion,
-				usuario: {
-					imagen: this.publicacion.particularDTO.usuarioDTO.avatar,
-					nombre: this.publicacion.particularDTO.nombre + ' ' + this.publicacion.particularDTO.apellido,
-					puntaje: this.publicacion.particularDTO.puntaje,
-					localidad: this.publicacion.particularDTO.direcciones[0].localidad
-				},
-				action: 'detail',
-				buttons: [],
-				estado: this.publicacion.estadoPublicacion,
-				idAuxiliar: this.trueques.find(item => item.publicacionDTOpropuesta.idPublicacion == this.publicacion.idPublicacion)?.idTrueque
-			}
-			this.truequeAceptado = auxList1;
-			this.truequesActivos = auxList2;
-			this.historialTrueques = auxList3;
 		}
+		this.mainPublicacionCard = {
+			id: this.publicacion.idPublicacion,
+			imagen: this.publicacion.parsedImagenes? this.publicacion.parsedImagenes[0] : 'no_image',
+			titulo: this.publicacion.titulo,
+			valorPrincipal: `$${this.publicacion.valorTruequeMin} - $${this.publicacion.valorTruequeMax}`,
+			fecha: this.publicacion.fechaPublicacion,
+			usuario: {
+				imagen: this.publicacion.particularDTO.usuarioDTO.avatar,
+				nombre: this.publicacion.particularDTO.nombre + ' ' + this.publicacion.particularDTO.apellido,
+				puntaje: this.publicacion.particularDTO.puntaje,
+				localidad: this.publicacion.particularDTO.direcciones[0].localidad
+			},
+			action: 'detail',
+			buttons: [],
+			estado: this.publicacion.estadoPublicacion,
+			idAuxiliar: this.trueques.find(item => item.publicacionDTOpropuesta.idPublicacion == this.publicacion.idPublicacion)?.idTrueque
+		}
+		this.truequeAceptado = auxList1;
+		this.truequesActivos = auxList2;
+		this.historialTrueques = auxList3;
 	}
 
 	hasApprovedTrueque() {

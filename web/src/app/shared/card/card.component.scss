@@ -124,10 +124,14 @@
 	.user-data {
 		text-align: center;
 		padding: 10px;
-		display: flex;
+		/* display: flex;
 		justify-content: space-around;
-		width: 100%;
+		align-items: center; */
+		display: grid;
+		grid-template-columns: 1fr 4fr 2fr;
+		justify-items: center;
 		align-items: center;
+		width: 100%;
 		//background: #bceba1;
 		border-radius: 0 0 10px 10px;
 
@@ -144,11 +148,21 @@
 			font-size: 16px;
 		}
 
-		h4 {
-			white-space: nowrap;
+		/* h4 {
+			white-space: break-spaces;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			max-width: 100%;
+			height: 75px;
+		} */
+
+		.name {
+			display: -webkit-box;
+			-webkit-line-clamp: 2; /* Limit the text to 2 lines */
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: normal; /* Use 'normal' to break text by words */
 		}
 	}
 
