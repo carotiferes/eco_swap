@@ -1,24 +1,21 @@
 package msUsers.services;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.client.shipnow.ResponseOrder;
-import msUsers.domain.client.shipnow.ResponseOrderDetails;
-import msUsers.domain.client.shipnow.response.ResponseGetListOrders;
 import msUsers.domain.entities.*;
 import msUsers.domain.logistica.Order;
 import msUsers.domain.logistica.PingPong;
 import msUsers.domain.logistica.enums.OrdenEstadoEnum;
-import msUsers.domain.model.EstadoOrdenEnum;
 import msUsers.domain.repositories.*;
 import msUsers.domain.requests.logistica.PostOrderRequest;
 import msUsers.domain.requests.logistica.PostProductosRequest;
 import msUsers.domain.requests.logistica.PutOrderRequest;
-import msUsers.domain.responses.ResponseShippingOptions;
 import msUsers.domain.responses.logistica.resultResponse.ResultShippingOptions;
-import msUsers.domain.responses.logisticaResponse.EnumEstadoOrden;
 import msUsers.domain.responses.logisticaResponse.ResponseFechasEnvio;
 import msUsers.domain.responses.logisticaResponse.ResponseOrdenDeEnvio;
 import org.springframework.beans.factory.annotation.Value;
@@ -233,6 +230,7 @@ public class LogisticaService {
             int responseCode = con.getResponseCode();
             log.info("-- SEND GET PING TO URL: {}", serviceUrl);
             log.info("-- RESPONSE CODE: {}", responseCode);
+            log.info("-- Shipnow Response: {}", con.getContent());
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(con.getInputStream())
             );
@@ -241,13 +239,16 @@ public class LogisticaService {
             while((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
-            log.info("-- RESPONSE BODY: {}", response.toString());
 
             in.close();
 
-            ResponseShippingOptions result = new Gson().fromJson(response.toString(), ResponseShippingOptions.class);
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode root = objectMapper.readTree(response.toString());
+            JsonNode firstOption = root.path("results").get(0); // Tomamos el primer envio de las opciones que vuelven
+            ResultShippingOptions result = objectMapper.treeToValue(firstOption, ResultShippingOptions.class);
+
             log.info("-- RESPONSE BODY: {}", result.toString());
-            return result.getResults().get(0);
+            return result;
 
         } catch (Exception e) {
             e.printStackTrace();

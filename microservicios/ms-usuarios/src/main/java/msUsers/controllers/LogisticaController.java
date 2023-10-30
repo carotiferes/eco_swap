@@ -95,14 +95,13 @@ public class LogisticaController {
                 .fechaMaximaEnvio(response.getMaximum_delivery())
                 .precio(response.getPrice())
                 .build();
-        log.info("<< Obteniendo ShippingOptions con respuesta {}", response.toString());
+        log.info("<< Costo de envio recibido: {}", response.getPrice());
         return ResponseEntity.ok(costoEnvio);
     }
 
-    @GetMapping(path = "/ping", consumes = json, produces = json)
+    @GetMapping(path = "/ping", produces = json)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<PingPong> ping(
-    )  {
+    public ResponseEntity<PingPong> ping()  {
         log.info(">> PING");
         PingPong response = logisticaService.pingpong();
         log.info("<< PONG");
