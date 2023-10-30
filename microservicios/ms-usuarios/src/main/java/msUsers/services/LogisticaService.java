@@ -258,8 +258,8 @@ public class LogisticaService {
     @Transactional
     private OrdenDeEnvio buildOrder(PostOrderRequest postOrderRequest) throws Exception {
 
-        Usuario usuarioOrigen = usuariosRepository.getReferenceById(postOrderRequest.getUserIdOrigen());
-        Usuario usuarioDestino = usuariosRepository.getReferenceById(postOrderRequest.getUserIdDestino());
+        Usuario usuarioOrigen = usuariosRepository.findById(postOrderRequest.getUserIdOrigen()).get();
+        Usuario usuarioDestino = usuariosRepository.findById(postOrderRequest.getUserIdDestino()).get();
 
         String nombreOrigen = this.obtenerNombreUser(usuarioOrigen.getIdUsuario(), usuarioOrigen.isSwapper());
         String nombreDestino = this.obtenerNombreUser(usuarioDestino.getIdUsuario(), usuarioDestino.isSwapper());
@@ -268,7 +268,7 @@ public class LogisticaService {
         Direccion direccionDestino = usuarioDestino.getDirecciones().get(0);
         List<PostProductosRequest> requestList = postOrderRequest.getListProductos();
         if(postOrderRequest.getIdColecta()!=null) {
-            Colecta colecta = colectasRepository.getReferenceById(postOrderRequest.getIdColecta());
+            Colecta colecta = colectasRepository.findById(postOrderRequest.getIdColecta()).get();
 
             //FILTRAMOS LOS PRODUCTOS QUE SI VAMOS A CONSIDERAR PARA RESTAR
             List<Producto> productosADonar = colecta.getProductos()
@@ -322,10 +322,10 @@ public class LogisticaService {
 
     private String obtenerNombreUser(Long userId, Boolean isSwapper) {
         if(isSwapper) {
-            Particular particular = particularesRepository.getReferenceById(userId);
+            Particular particular = particularesRepository.findById(userId).get();
             return particular.getNombre() + " " + particular.getApellido();
         } else {
-            Fundacion fundacion = fundacionesRepository.getReferenceById(userId);
+            Fundacion fundacion = fundacionesRepository.findById(userId).get();
             return fundacion.getNombre();
         }
     }
