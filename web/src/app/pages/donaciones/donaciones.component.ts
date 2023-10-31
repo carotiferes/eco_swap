@@ -5,6 +5,7 @@ import { DonacionModel } from 'src/app/models/donacion.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import { ShowErrorService } from 'src/app/services/show-error.service';
+import { EnvioModalComponent } from 'src/app/shared/envio-modal/envio-modal.component';
 import { MapComponent } from 'src/app/shared/map/map.component';
 import Swal from 'sweetalert2';
 
@@ -20,6 +21,11 @@ export class DonacionesComponent {
 
 	loading: boolean = false;
 
+	selectingMode: boolean = false;
+	selectedCards: CardModel[] = [];
+
+	colectaParaEnvio?: number;
+
 	constructor(public dialog: MatDialog, private donacionesService: DonacionesService,
 		private auth: AuthService, private showErrorService: ShowErrorService) {
 		this.getDonaciones()
@@ -27,6 +33,7 @@ export class DonacionesComponent {
 
 	getDonaciones() {
 		this.loading = true;
+		this.donaciones.splice(0)
 		this.donacionesService.getMisDonaciones().subscribe({
 			next: (res: any) => {
 				if(res){
@@ -48,6 +55,7 @@ export class DonacionesComponent {
 
 	generateCardList() {
 		this.donacionesCardList.splice(0);
+		const auxDonaciones: CardModel[] = [];
 		for (const donacion of this.donaciones) {
 			let stringCaracteristicas = '';
 			for (const [i, caract] of donacion.caracteristicaDonacion.entries()) {
@@ -62,19 +70,121 @@ export class DonacionesComponent {
 				valorSecundario: stringCaracteristicas,
 				fecha: donacion.fechaDonacion,
 				usuario: {
-					imagen: 'assets/perfiles/perfiles-17.jpg',//publicacion.particularDTO.
-					nombre: donacion.particularDTO.nombre + ' ' + donacion.particularDTO.apellido,
-					puntaje: donacion.particularDTO.puntaje,
-					localidad: donacion.particularDTO.direcciones[0].localidad
+					id: donacion.producto.colectaDTO.fundacionDTO.usuarioDTO.idUsuario,
+					imagen: donacion.producto.colectaDTO.fundacionDTO.usuarioDTO.avatar,//donacion.particularDTO.usuarioDTO.avatar,
+					nombre: donacion.producto.colectaDTO.fundacionDTO.nombre,//donacion.particularDTO.nombre + ' ' + donacion.particularDTO.apellido,
+					puntaje: donacion.producto.colectaDTO.fundacionDTO.puntaje,//donacion.particularDTO.puntaje,
+					localidad: donacion.producto.colectaDTO.fundacionDTO.direcciones[0].localidad,//donacion.particularDTO.direcciones[0].localidad
 				},
 				action: 'detail',
-				buttons: [{name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADA'}],
+				buttons: donacion.estadoDonacion == 'APROBADA' ? [] : [{name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADA'}],
 				estado: donacion.estadoDonacion,
-				//idAuxiliar: this.colecta.idColecta
+				idAuxiliar: donacion.producto.colectaDTO.idColecta
 			}
-			this.donacionesCardList.push(item)
+			auxDonaciones.push(item)
 			this.loading = false;
 		}
+		this.donacionesCardList = auxDonaciones;
+	}
+
+	selectDonaciones() {
+		Swal.fire({
+			title: 'Configurá tu envío!',
+			text: 'Seleccioná las tarjetas de tus donaciones haciendo click en ellas, vas a ver que las que seleccionen se pintarán. Recordá que solo podés seleccionar donaciones a una misma colecta. Una vez que termines, clickeá el botón CONFIRMAR SELECCIÓN.',
+			icon: 'info',
+			confirmButtonText: '¡VAMOS!'
+		})
+		const auxDonaciones = this.donacionesCardList;
+		auxDonaciones.map(donacion => {
+			if(donacion.estado == 'APROBADA') {
+				donacion.action = 'select';
+				donacion.codigo = 'Donación';
+				donacion.buttons = [{name: 'Agregar', icon: 'add', color: 'info', status: 'INFO'}]
+			}
+		});
+		this.donacionesCardList = auxDonaciones;
+		this.selectingMode = true;
+	}
+
+	showButtons(){
+		if(this.donacionesCardList.some(item => item.estado == 'APROBADA')) return true;
+		else return false;
+	}
+
+	selectCard(cardID: number) {
+		/* VALIDAR QUE LA TARJETA SELECCIONADA TENGA EL MISMO ID FUNDACION QUE LAS DEMAS QUE YA ESTÉN SELECCIONADAS */
+		const donacionSeleccionada = this.donacionesCardList.find(item => item.id == cardID)
+
+		if(donacionSeleccionada) {
+			if(this.selectedCards.length == 0) { // first one selected
+				this.colectaParaEnvio = donacionSeleccionada?.idAuxiliar;
+				this.donacionesCardList.map(item => {if(item.id == cardID) item.isSelected = true})
+				this.selectedCards.push(donacionSeleccionada)
+				const auxDonaciones = this.donacionesCardList;
+				auxDonaciones.map(donacion => {
+					if(donacion.idAuxiliar != this.colectaParaEnvio) {
+						donacion.action = 'detail';
+						donacion.codigo = undefined;
+						donacion.buttons = [];
+					} else if(this.selectedCards.includes(donacionSeleccionada)) {
+						donacion.buttons = [{name: 'Quitar', icon: 'remove', color: 'info', status: 'INFO'}]
+					}
+				});
+				this.donacionesCardList = auxDonaciones;
+			} else {
+				if(this.colectaParaEnvio != donacionSeleccionada.idAuxiliar) {
+					Swal.fire('¡Colecta distinta!', 'No podés seleccionar distintas colectas para un mismo envío', 'warning')
+				}
+			}
+
+		}
+
+	}
+
+	unselectCard(cardID: number) {
+		const donacionDeseleccionada = this.donacionesCardList.find(item => item.id == cardID)
+		if(donacionDeseleccionada) {
+			if(this.selectedCards.length == 1) { // last one selected
+				this.colectaParaEnvio = undefined;
+				const auxDonaciones = this.donacionesCardList;
+				auxDonaciones.map(donacion => {
+					if(donacion.estado == 'APROBADA') {
+						donacion.action = 'select';
+						donacion.codigo = 'Donación';
+						donacion.buttons = [{name: 'Agregar', icon: 'add', color: 'info', status: 'INFO'}]
+					} else {
+						donacion.action = 'detail';
+						donacion.codigo = undefined;
+						donacion.buttons = [];
+					}
+				});
+				this.donacionesCardList = auxDonaciones;
+				this.selectedCards = [];
+			} else {
+				const aux = this.selectedCards.filter(item => item.id != cardID)
+				this.selectedCards = aux;
+			}
+		}
+		this.donacionesCardList.map(item => {if(item.id == cardID) item.isSelected = false})
+	}
+
+	cancelSelect() {
+		this.selectedCards = [];
+		this.selectingMode = false;
+	}
+
+	confirmSelectedCards() {
+		const cardsWithData = this.donaciones.filter(item => this.selectedCards.some(card => card.id == item.idDonacion))
+		const dialogRef = this.dialog.open(EnvioModalComponent, {
+			maxWidth: '60vw',
+			maxHeight: '70vh',
+			width: '100%',
+			panelClass: 'full-screen-modal',
+			data: {cards: cardsWithData}
+		});
+		/* dialogRef.afterClosed().subscribe((result) => {
+			console.log('closed', result);
+		}) */
 	}
 
 	zoomImage(img: string) {

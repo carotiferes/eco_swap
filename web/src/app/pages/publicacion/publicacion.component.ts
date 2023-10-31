@@ -1,4 +1,5 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { AfterViewInit, Component, Inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardModel } from 'src/app/models/card.model';
@@ -11,6 +12,8 @@ import { TruequesService } from 'src/app/services/trueques.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import Swal from 'sweetalert2';
 import { TrocarModalComponent } from './trocar-modal/trocar-modal.component';
+import { ChatService } from 'src/app/services/chat.service';
+import { ParticularModel } from 'src/app/models/particular.model';
 
 @Component({
 	selector: 'app-publicacion',
@@ -34,14 +37,22 @@ export class PublicacionComponent implements AfterViewInit {
 	truequeAceptado: CardModel[] = [];
 	historialTrueques: CardModel[] = [];
 	truequesActivos: CardModel[] = [];
+	mainPublicacionCard?: CardModel;
 
 	init: number = 0;
 	screenWidth: number;
 
+	mensajes: any[] = [];
+	nuevoMensaje: string = '';
+
+	initChat: number = 0;
+	elOtroSwapper?: ParticularModel;
+
 	constructor(private truequeService: TruequesService, private route: ActivatedRoute,
 		private showErrorService: ShowErrorService, private auth: AuthService,
 		private router: Router, private usuarioService: UsuarioService, public dialog: MatDialog,
-		private comprasService: ComprasService) {
+		private comprasService: ComprasService, @Inject(DOCUMENT) private document: Document,
+		private chatService: ChatService) {
 
 		this.userData = { isSwapper: auth.isUserSwapper(), isLoggedIn: auth.isUserLoggedIn }
 		this.route.paramMap.subscribe(params => {
@@ -59,6 +70,7 @@ export class PublicacionComponent implements AfterViewInit {
 
 	ngAfterViewInit(): void {
 		if (this.userData && this.userData.isLoggedIn) {
+			this.userData.id_user = this.auth.getUserID()
 			this.usuarioService.getUserByID(this.auth.getUserID()).subscribe({
 				next: (res: any) => {
 					this.userInfo = res;
@@ -66,6 +78,12 @@ export class PublicacionComponent implements AfterViewInit {
 				}
 			})
 		} else this.getPublicacion(this.id_publicacion);
+		this.scrollToBottom();
+	}
+
+	scrollToBottom() {
+		const elem = this.document.getElementById('chatContainer')
+		if(elem) elem.scrollTop = elem.scrollHeight;
 	}
 
 	getPublicacion(id: number) {
@@ -195,10 +213,13 @@ export class PublicacionComponent implements AfterViewInit {
 						title: '¡Ya casi es tuyo!',
 						text: 'Terminá tu compra en Mercado Pago, luego podrás verla en Mis Compras!',
 						icon: 'success',
-						confirmButtonText: 'IR A MIS COMPRAS',
+						confirmButtonText: '¡VAMOS!',
 						allowOutsideClick: false, allowEscapeKey: false
 					}).then(({isConfirmed}) => {
-						if(isConfirmed) window.open(res.initPoint, '_blank')
+						if(isConfirmed) {
+							this.router.navigate(['/mis-compras'])
+							window.open(res.initPoint, '_blank')
+						}
 					})
 				}
 			})
@@ -232,6 +253,10 @@ export class PublicacionComponent implements AfterViewInit {
 		this.truequesActivos.splice(0);
 		this.historialTrueques.splice(0);
 		this.truequeAceptado.splice(0);
+		const auxList1: CardModel[] = [];
+		const auxList2: CardModel[] = [];
+		const auxList3: CardModel[] = [];
+
 		for (const publicacion of this.publicacionesToShow) {
 			const item: CardModel = {
 				id: publicacion.idPublicacion,
@@ -240,7 +265,8 @@ export class PublicacionComponent implements AfterViewInit {
 				valorPrincipal: `$${publicacion.valorTruequeMin} - $${publicacion.valorTruequeMax}`,
 				fecha: publicacion.fechaPublicacion,
 				usuario: {
-					imagen: 'assets/perfiles/perfiles-17.jpg',//publicacion.particularDTO.
+					id: publicacion.particularDTO.usuarioDTO.idUsuario,
+					imagen: publicacion.particularDTO.usuarioDTO.avatar,
 					nombre: publicacion.particularDTO.nombre + ' ' + publicacion.particularDTO.apellido,
 					puntaje: publicacion.particularDTO.puntaje,
 					localidad: publicacion.particularDTO.direcciones[0].localidad
@@ -253,21 +279,73 @@ export class PublicacionComponent implements AfterViewInit {
 
 			if(publicacion.estadoTrueque == 'APROBADO') {
 				// ACEPTADO
-				this.truequeAceptado.push(item)
+				auxList1.push(item)
+				const trueque = this.trueques.find(item => item.publicacionDTOpropuesta.idPublicacion == publicacion.idPublicacion && item.estadoTrueque == 'APROBADO')
+				if(trueque) {
+					this.elOtroSwapper = this.userType == 'publicacionOrigen' ? trueque.publicacionDTOpropuesta.particularDTO : trueque.publicacionDTOorigen.particularDTO
+					this.chatService.getMyMensajes(trueque.idTrueque).subscribe({
+						next: (res: any) => {
+							this.mensajes = res;
+						}
+					})
+				}
 			} else if(publicacion.estadoTrueque == 'PENDIENTE' && publicacion.estadoPublicacion == 'ABIERTA') {
 				// ACTIVOS
 				item.valorSecundario = publicacion.precioVenta ? `$${publicacion.precioVenta}` : undefined
 				item.buttons = this.getButtonsForCards();
-				this.truequesActivos.push(item)
+				auxList2.push(item)
 			} else /* if(publicacion.estadoTrueque != 'PENDIENTE' || publicacion.estadoPublicacion != 'ABIERTA') */ {
 				// HISTORIAL
 				item.disabled = true;
-				this.historialTrueques.push(item)
+				auxList3.push(item)
 			}
 		}
+		this.mainPublicacionCard = {
+			id: this.publicacion.idPublicacion,
+			imagen: this.publicacion.parsedImagenes? this.publicacion.parsedImagenes[0] : 'no_image',
+			titulo: this.publicacion.titulo,
+			valorPrincipal: `$${this.publicacion.valorTruequeMin} - $${this.publicacion.valorTruequeMax}`,
+			fecha: this.publicacion.fechaPublicacion,
+			usuario: {
+				id: this.publicacion.particularDTO.usuarioDTO.idUsuario,
+				imagen: this.publicacion.particularDTO.usuarioDTO.avatar,
+				nombre: this.publicacion.particularDTO.nombre + ' ' + this.publicacion.particularDTO.apellido,
+				puntaje: this.publicacion.particularDTO.puntaje,
+				localidad: this.publicacion.particularDTO.direcciones[0].localidad
+			},
+			action: 'detail',
+			buttons: [],
+			estado: this.publicacion.estadoPublicacion,
+			idAuxiliar: this.trueques.find(item => item.publicacionDTOpropuesta.idPublicacion == this.publicacion.idPublicacion)?.idTrueque
+		}
+		this.truequeAceptado = auxList1;
+		this.truequesActivos = auxList2;
+		this.historialTrueques = auxList3;
 	}
 
 	hasApprovedTrueque() {
 		return this.publicacionesToShow.filter(item => item.estadoTrueque == 'APROBADO')
+	}
+
+	sendMensaje() {
+		const trueque = this.trueques.find(item => item.publicacionDTOorigen.idPublicacion == this.publicacion.idPublicacion && item.estadoTrueque == 'APROBADO')
+		if(trueque && trueque.idTrueque) {
+			this.chatService.sendMensaje({
+				idTrueque: trueque.idTrueque,
+				mensaje: this.nuevoMensaje,
+				usuarioReceptor: this.userType == 'publicacionOrigen' ? trueque.publicacionDTOpropuesta.particularDTO.usuarioDTO.idUsuario : trueque.publicacionDTOorigen.particularDTO.usuarioDTO.idUsuario
+			}).subscribe({
+				next: (res: any) => {
+					console.log('mensaje enviado:', res);
+					this.chatService.getMyMensajes(trueque.idTrueque).subscribe({
+						next: (res: any) => {
+							this.mensajes = res;
+							this.nuevoMensaje = ''
+						}
+					})
+				}
+			})
+
+		}
 	}
 }

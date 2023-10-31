@@ -84,7 +84,8 @@ export class AuthService {
 		this.setLocalStorage('isSwapper', JSON.stringify(userData.esParticular));
 		this.isUserLoggedIn = true;
 		this.setUserLoggedIn();
-		this.router.navigate([''])
+		if(this.getUserID() == 999) this.router.navigate(['admin-logistica'])
+		else this.router.navigate([''])
 	}
 
 	setLocalStorage(key: string, data: string) {

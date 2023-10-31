@@ -15,5 +15,6 @@ export interface UsuarioModel {
 	opiniones: any[],
 	direcciones: any[],
 	particularDTO: ParticularModel,
-	fundacionDTO: FundacionModel
+	fundacionDTO: FundacionModel,
+	avatar: string
 }

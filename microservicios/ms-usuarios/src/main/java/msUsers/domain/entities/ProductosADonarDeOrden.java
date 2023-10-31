@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.requests.logistica.PostProductosRequest;
 
 @Entity
@@ -23,7 +25,10 @@ public class ProductosADonarDeOrden {
     @NotNull
     private long cantidad;
     @ManyToOne(cascade = CascadeType.ALL)
+    @ToString.Exclude
     private OrdenDeEnvio ordenDeEnvio;
+    @NotNull
+    private Long idDonacion;
 
     public static ProductosADonarDeOrden crearProductoADonar(Producto producto) {
         return ProductosADonarDeOrden.builder()
@@ -35,6 +40,7 @@ public class ProductosADonarDeOrden {
         return ProductosADonarDeOrden.builder()
                 .idProducto(producto.getProductoId())
                 .cantidad(producto.getCantidad())
+                .idDonacion(producto.getDonacionId())
                 .build();
     }
 }

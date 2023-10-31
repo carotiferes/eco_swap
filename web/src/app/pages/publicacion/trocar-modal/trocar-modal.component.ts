@@ -34,6 +34,7 @@ export class TrocarModalComponent {
 			valorPrincipal: `$${this.publicacionOrigen.valorTruequeMin} - $${this.publicacionOrigen.valorTruequeMax}`,
 			fecha: this.publicacionOrigen.fechaPublicacion,
 			usuario: {
+				id: this.publicacionOrigen.particularDTO.usuarioDTO.idUsuario,
 				imagen: 'assets/perfiles/perfiles-17.jpg',//publicacion.particularDTO.
 				nombre: this.publicacionOrigen.particularDTO.nombre + ' ' + this.publicacionOrigen.particularDTO.apellido,
 				puntaje: this.publicacionOrigen.particularDTO.puntaje,
@@ -65,7 +66,9 @@ export class TrocarModalComponent {
 	}
 
 	parsePublicaciones() {
-		this.publicacionesCardList.splice(0)
+		this.publicacionesCardList.splice(0);
+		const auxList: CardModel[] = [];
+		
 		for (const publicacion of this.misPublicaciones) {
 			const item: CardModel = {
 				id: publicacion.idPublicacion,
@@ -74,6 +77,7 @@ export class TrocarModalComponent {
 				valorPrincipal: `$${publicacion.valorTruequeMin} - $${publicacion.valorTruequeMax}`,
 				fecha: publicacion.fechaPublicacion,
 				usuario: {
+					id: publicacion.particularDTO.usuarioDTO.idUsuario,
 					imagen: 'assets/perfiles/perfiles-17.jpg',//publicacion.particularDTO.
 					nombre: publicacion.particularDTO.nombre + ' ' + publicacion.particularDTO.apellido,
 					puntaje: publicacion.particularDTO.puntaje,
@@ -83,8 +87,9 @@ export class TrocarModalComponent {
 				buttons: [],
 				estado: publicacion.estadoTrueque,
 			}
-			this.publicacionesCardList.push(item);
+			auxList.push(item);
 		}
+		this.publicacionesCardList = auxList;
 	}
 
 	getImage(image: any) {

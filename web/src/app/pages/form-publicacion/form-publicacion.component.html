@@ -64,13 +64,13 @@
 				</div>
 
 				<div class="form-col" style="flex-direction: row;">
-					<mat-checkbox formControlName="finalidadVenta" (change)="allowVenta($event)" [disabled]="!hasMPCredentials">
+					<mat-checkbox formControlName="finalidadVenta" (change)="allowVenta($event)">
 						<label class="venta-label">
 							Acepta Venta
 						</label>
 					</mat-checkbox>
 					<mat-icon class="material-icons-outlined" style="color: var(--grey-text); margin: 5px;"
-						matTooltip="Si chequeás este campo, además de propuestas de intercambio, te pueden llegar propuestas de compra de tu producto. Para hacerlo, es necesario que configures tus credenciales de Mercado Pago desde tu perfil.">
+						matTooltip="Si chequeás este campo, además de propuestas de intercambio, te pueden llegar propuestas de compra de tu producto. Para que te puedan comprar, es necesario que configures tus credenciales de Mercado Pago desde tu perfil.">
 							info
 					</mat-icon>
 					<mat-form-field hidden >

@@ -38,4 +38,8 @@ export class UsuarioService {
 	changePassword(body: any) { /* {nuevaPassword, confirmarPassword} */
 		return this.backendService.patch(URL_NAME, 'ms-autenticacion/api/v1/usuario/password', body);
 	}
+
+	editAvatar(avatar: string){
+		return this.backendService.put(URL_NAME, 'ms-autenticacion/api/v1/usuario/avatar', {avatar});
+	}
 }

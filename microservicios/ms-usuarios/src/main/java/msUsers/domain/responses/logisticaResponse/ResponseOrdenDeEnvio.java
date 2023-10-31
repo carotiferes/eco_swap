@@ -12,4 +12,5 @@ public class ResponseOrdenDeEnvio {
     private String orderId;
     private String usernameDestino;
     private List<ResponseFechasEnvio> listaFechaEstado;
+    private String fechaADespachar;
 }

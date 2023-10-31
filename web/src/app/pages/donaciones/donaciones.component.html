@@ -1,11 +1,49 @@
 <app-header title="Mis Donaciones"></app-header>
 
-<div class="app-main-div">
+<div id="main-donaciones" class="app-main-div">
 	<!-- <div *ngFor="let donacion of donaciones">
 		<app-card-donacion [donacion]="donacion" *ngIf="donacion.idDonacion"
 		[usuarioHeader]="donacion.producto.colectaDTO.fundacionDTO" [buttons]="[{name: 'cancelar', icon: 'close', color: 'warn', status: 'CANCELADA', disabled: donacion.estadoDonacion != 'PENDIENTE'}]"></app-card-donacion>
 	</div> -->
+	<div class="dense-3">
+		<div ngbAccordion #accordion="ngbAccordion">
+			<div ngbAccordionItem="first" #first="ngbAccordionItem" [collapsed]="false">
+				<h2 ngbAccordionHeader>
+					<button ngbAccordionButton class="bg-transparent accordion-header-button">
+						<mat-icon>local_shipping</mat-icon> <span style="margin-left: 10px;">Envío</span>
+					</button>
+				</h2>
+				<div ngbAccordionCollapse>
+					<div ngbAccordionBody>
+						<ng-template>
+							<div class="buttons" *ngIf="showButtons()">
+								<button mat-fab extended class="long-text"
+								(click)="selectDonaciones()" [disabled]="selectingMode">
+									SELECCIONAR DONACIONES PARA ENVIAR
+								</button>
+								<button mat-fab extended style="background-color: var(--light-grey);"
+								(click)="cancelSelect()" [disabled]="!selectingMode">
+									CANCELAR
+								</button>
+								<button mat-fab extended style="background-color: var(--info);"
+								(click)="confirmSelectedCards()" [disabled]="!selectingMode || selectedCards.length == 0">
+									CONFIRMAR SELECCIÓN
+								</button>
+							</div>
+							<div style="min-width: 210px; margin-bottom: 20px; text-align: center;" *ngIf="!showButtons()">
+								No tenés donaciones pendientes de envío!
+							</div>
+						</ng-template>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 	<div *ngIf="donacionesCardList.length > 0">
-		<app-deck [cardList]="donacionesCardList" app="donaciones" [fullScreenWidth]="true"></app-deck>
+		<app-deck [cardList]="donacionesCardList" app="donaciones"
+		(statusChanged)="getDonaciones()" (cardSelected)="selectCard($event)" (cardUnselected)="unselectCard($event)"></app-deck>
+	</div>
+	<div *ngIf="donacionesCardList.length == 0" style="margin: 10%; text-align: center;">
+		No hay ninguna donación para mostrar!
 	</div>
 </div>

@@ -251,6 +251,7 @@ public class UsuarioService {
                 .altura(direccionCrear.getAltura())
                 .dpto(direccionCrear.getDepartamento())
                 .piso(direccionCrear.getPiso())
+                .codigoPostal(direccionCrear.getCodigoPostal())
                 .build();
     }
 

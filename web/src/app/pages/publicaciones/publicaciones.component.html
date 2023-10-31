@@ -3,8 +3,7 @@
 
 <div id="main-publicaciones" class="app-main-div">
 	<div class="dense-3">
-
-		<div ngbAccordion *ngIf="origin == 'all'" #accordion="ngbAccordion">
+		<div ngbAccordion *ngIf="origin != 'myCompras'" #accordion="ngbAccordion">
 			<div ngbAccordionItem="first" #first="ngbAccordionItem" [collapsed]="false">
 				<h2 ngbAccordionHeader>
 					<button ngbAccordionButton class="bg-transparent accordion-header-button">
@@ -14,7 +13,7 @@
 				<div ngbAccordionCollapse>
 					<div ngbAccordionBody>
 						<ng-template>
-							<form [formGroup]="formFiltros" id="form-filtros">
+							<form [formGroup]="formFiltros" id="form-filtros" *ngIf="origin == 'all'">
 								<mat-form-field class="example-chip-list" appearance="outline">
 									<mat-label>Localidades</mat-label>
 									<mat-chip-grid #chipGrid aria-label="Localidad">
@@ -37,7 +36,7 @@
 								</mat-form-field>
 								<mat-form-field appearance="outline">
 									<mat-label>Tipo del Producto</mat-label>
-									<mat-select formControlName="tipoProducto" panelClass="example-panel">
+									<mat-select formControlName="tipoProducto">
 										<mat-option *ngFor="let tipo of tipos_productos" [value]="tipo.nombre">
 											{{tipo.descripcion}}
 										</mat-option>
@@ -51,16 +50,23 @@
 										style="background-color: white;">LIMPIAR</button>
 								</div>
 							</form>
+							<div style="min-width: 210px;" *ngIf="origin == 'myPublicaciones'">
+								<mat-radio-group value="all" style="display: flex; flex-direction: column;" (change)="filterByStatus($event)">
+									<mat-radio-button value="all">Todas</mat-radio-button>
+									<mat-radio-button value="open">Abiertas</mat-radio-button>
+									<mat-radio-button value="closed">Cerradas</mat-radio-button>
+								</mat-radio-group>
+							</div>
 						</ng-template>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="row" *ngIf="!loading">
+	<div class="row">
 		<app-spinner [loading]="loading"></app-spinner>
-		<div *ngIf="publicacionesCardList.length==0" style="text-align: center;">No hay publicaciones para mostrar</div>
-		<app-deck *ngIf="publicacionesCardList.length > 0" [cardList]="publicacionesCardList" app="publicaciones"></app-deck>
+		<div *ngIf="filteredPublicacionesCardList.length==0 && !loading" style="text-align: center;">No hay publicaciones para mostrar</div>
+		<app-deck *ngIf="filteredPublicacionesCardList.length > 0 && !loading" [cardList]="filteredPublicacionesCardList" app="publicaciones"></app-deck>
 	</div>
 	<div class="floating-button-container">
 		<button mat-fab color="primary" aria-label="Agregar Publicación" (click)="addPublicacion()"

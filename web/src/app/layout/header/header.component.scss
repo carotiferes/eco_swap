@@ -101,9 +101,16 @@ mat-toolbar-row div {
 				letter-spacing: 1px;
 				font-size: 18px;
 				text-wrap: balance;
+				//white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				max-width: 100%;
 			}
 		}
 	}
+}
+.mi-cuenta {
+	display: flex;
 }
 
 #dropdownMenuButton1 {
@@ -123,4 +130,10 @@ mat-toolbar-row div {
 	top: -15px;
 	right: 0px;
 	color: var(--primary-color) !important;
+}
+
+@media (min-width: 0px) and (max-width: 768px) {
+	.mi-cuenta {
+		flex-direction: column;
+	}
 }

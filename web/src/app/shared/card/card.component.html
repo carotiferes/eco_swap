@@ -1,59 +1,49 @@
 <div class="card" (click)="clicked(cardData)" *ngIf="cardData" [class.selected-card]="cardData.isSelected"
-	[ngClass]="app == 'publicaciones' && cardData.buttons.length == 0 ? 'small' : 'big'">
+	[ngClass]="app == 'publicaciones' && cardData.buttons.length == 0 ? 'small' : 'big'"
+	[class.is-donacion]="cardData.codigo == 'Donación'">
 	<mat-chip class="chip-localidad" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'">
-		<span>
-			{{cardData.usuario.localidad}}
-		</span>
+		<span> {{cardData.usuario.localidad}} </span>
 	</mat-chip>
 	<div style="position: absolute; top: 10px; left: 10px;">
 		<span *ngIf="cardData.estado" class="material-icons-outlined result-icon"
-			[ngClass]="colorMap[cardData.estado] || 'red'"
-			[matTooltip]=" cardData.codigo ? cardData.codigo+' '+cardData.estado :
+			[ngClass]="colorMap[cardData.estado] || 'red'" [matTooltip]=" cardData.codigo ? cardData.codigo+' '+cardData.estado :
 			app == 'donaciones' ? 'Donación '+ cardData.estado : 'Trueque '+ cardData.estado">
 			{{ iconMap[cardData.estado] || 'dangerous' }}
 		</span>
 	</div>
 	<div class="img-div" style="display: flex; justify-content: center;">
 		<img class="card-img" [src]="getImagen(cardData.imagen)">
-		<!-- [ngClass]="origin=='publicaciones' || origin=='mis-publicaciones' ? 'big':'small'" -->
 	</div>
 	<div class="card-body">
 		<div class="body-data">
 			<h3 class="card-title">{{cardData.titulo}}</h3>
-			<!-- <h3>{{cardData.usuario.nombre}}</h3> -->
 			<div class="valor-principal">
-				<h2 [ngClass]="app == 'publicaciones' ? 'font-verde' : 'font-lila'">{{cardData.valorPrincipal}}</h2>
+				<h2 [ngClass]="app == 'publicaciones' ? 'font-verde' : 'font-lila'" style="max-width: 300px;">
+					{{cardData.valorPrincipal}}
+				</h2>
 			</div>
 			<div class="valor-secundario" *ngIf="cardData.valorSecundario">
 				{{cardData.valorSecundario}}
 			</div>
-			<!-- <div class="estado" *ngIf="cardData.estado">
-				Estado: {{cardData.estado}}
-			</div> -->
 		</div>
-
-		<!-- <div class="estado-cardData" *ngIf="origin=='mis-publicaciones'">
-			Estado de la publicación: {{cardData.estadoPublicacion}}
-		</div> -->
 	</div>
 
 	<div class="buttons" *ngIf="cardData.buttons.length > 0">
 		<button *ngFor="let button of cardData.buttons" mat-mini-fab [color]="button.color"
-			[disabled]="(button.status != 'RECIBIDO' && button.status != 'RECIBIDA') ? cardData.estado != 'PENDIENTE' : (cardData.estado != 'APROBADO' && cardData.estado != 'APROBADA')"
-			[matTooltip]="button.name" matTooltipPosition="above"
-			(click)="changeStatus(cardData, button.status); $event.stopPropagation()">
+			[disabled]="(button.status != 'RECIBIDO' && button.status != 'RECIBIDA') ? (cardData.estado != 'PENDIENTE' && button.status != 'INFO')  : (cardData.estado != 'APROBADO' && cardData.estado != 'APROBADA')"
+			[matTooltip]="button.name" matTooltipPosition="above" [style]="button.color == 'info' ? 'background-color: var(--info)' :''"
+			(click)="buttonClicked(cardData, button); $event.stopPropagation()">
 			<mat-icon>{{button.icon}}</mat-icon>
-			<!-- {{button.name}} -->
-		</button> <!-- (click)="changeEstadoPublicacion(cardData, button.status); $event.stopPropagation()" -->
+		</button>
 	</div>
 
 	<div class="user-data" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'">
-		<img class="user-img" [src]="cardData.usuario.imagen">
+		<img class="user-img" [src]="'assets/perfiles/perfiles-'+cardData.usuario.imagen+'.jpg'">
 		<h4>
-			{{cardData.usuario.nombre}}
+			<div class="name"><a [href]="'perfil/'+cardData.usuario.id">{{cardData.usuario.nombre}}</a></div>
 			<div style="margin: 0 10px;display: flex;align-items: center;justify-content: center;">
 				<app-rating [puntuacion]="cardData.usuario.puntaje"
-				[color]="app == 'publicaciones' ? 'var(--trueques-dark)' : 'var(--donaciones-dark)'"></app-rating>
+					[color]="app == 'publicaciones' ? 'var(--trueques-dark)' : 'var(--donaciones-dark)'"></app-rating>
 
 			</div>
 		</h4>

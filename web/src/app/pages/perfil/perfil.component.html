@@ -1,4 +1,4 @@
-<app-header></app-header>
+<app-header [refresh]="refreshHeader"></app-header>
 
 <!-- <app-my-profile *ngIf="myProfile && user && userData" [user]="user" [userData]="userData" [router]="router" [screenWidth]="screenWidth"></app-my-profile> -->
 
@@ -7,31 +7,38 @@
 <div id="main-profile" class="app-main-div">
 	<div class="top-div" *ngIf="userToShow">
 		<div class="top-img" (click)="myProfile ? selectImage() : ''" [ngClass]="myProfile ? 'editable-img' : ''">
-			<img [src]="userData.isSwapper ? 'assets/perfiles/perfiles-17.jpg' : 'assets/perfiles/perfiles-24.jpg'">
-			<mat-icon class="edit-icon" *ngIf="myProfile">edit</mat-icon>
+			<div style="min-width: 285px;">
+				<img [src]="'assets/perfiles/perfiles-'+user.avatar+'.jpg'">
+				<mat-icon class="edit-icon" *ngIf="myProfile">edit</mat-icon>
+
+			</div>
 		</div>
 		<mat-card class="top-text">
 			<mat-card-content>
 				<h2>{{userToShow.nombre}}</h2>
-				<h4>{{userData.isSwapper ? 'Swapper' : 'Fundación'}}</h4>
+				<!-- <h4>{{userData.isSwapper ? 'Swapper' : 'Fundación'}}</h4> -->
+				<h5 style="display: flex; gap: 5px; font-size: 14px;"><mat-icon>alternate_email</mat-icon>{{userToShow.email}}</h5>
 			</mat-card-content>
 		</mat-card>
 	</div>
 	<div class="bottom-div" *ngIf="userToShow">
 		<mat-card class="left">
 			<mat-card-content>
-				<p><mat-icon>alternate_email</mat-icon>{{userToShow.email}}</p>
+				<!-- <p><mat-icon>alternate_email</mat-icon>{{userToShow.email}}</p> -->
+				<p style="text-align: center; display: flex; border-bottom: 1px solid var(--light-grey); justify-content: center; padding-bottom: 10px;">
+					{{userData.isSwapper ? 'Swapper' : 'Fundación'}}
+				</p>
 				<p><mat-icon>phone</mat-icon>{{userToShow.telefono}}</p>
 				<a *ngIf="(!userData.isSwapper || myProfile) && userToShow.direccion" class="location clickable"
 					(click)="showMap(userToShow.direccion)">
-					<mat-icon>place</mat-icon>
+					<mat-icon style="min-width: 20px;">place</mat-icon>
 					{{!userData.isSwapper || myProfile ? userToShow.direccion.calle + ' ' + userToShow.direccion.altura
 					+ ' ('+ userToShow.direccion.localidad + ')'
 					: userToShow.direccion.localidad
 					}}
 				</a>
 				<p *ngIf="userData.isSwapper && !myProfile && userToShow.direccion" class="location">
-					<mat-icon>place</mat-icon>
+					<mat-icon style="min-width: 20px;">place</mat-icon>
 					{{userData.isSwapper ? userToShow.direccion.localidad :
 					userToShow.direccion.calle + ' ' + userToShow.direccion.altura + ' ('+
 					userToShow.direccion.localidad + ')'
@@ -44,7 +51,7 @@
 					<button mat-fab extended (click)="changePassword()">CAMBIAR CONTRASEÑA</button>
 				</div>
 				<div class="div-cambiar-pass" *ngIf="myProfile && userData.isSwapper">
-					<button mat-fab extended style="background-color: #3fb6e9; color: white;"
+					<button mat-fab extended style="background-color: #3fb6e9; color: white; height: fit-content; padding: 5px 20px;"
 						(click)="credencialesMP()">
 						<img src="assets/redes/mercadopago.png" style="width: 40px;">
 						CREDENCIALES
@@ -87,10 +94,10 @@
 								<div>{{opinion.descripcion}}</div>
 							</div>
 						</mat-card>
-						<mat-paginator [pageSizeOptions]="[5, 10, 25]" [pageSize]="pageSize"
+						<mat-paginator [pageSize]="pageSize"
 							[showFirstLastButtons]="true" [length]="opiniones.length" #paginator
 							(page)="changePage($event)" style="border-radius: 15px;"
-							*ngIf="opiniones.length > 0"></mat-paginator>
+							*ngIf="opiniones.length > 0" [hidePageSize]="true"></mat-paginator>
 					</div>
 				</div>
 			</mat-card-content>

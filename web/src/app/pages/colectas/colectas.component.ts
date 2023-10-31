@@ -122,20 +122,23 @@ export class ColectasComponent implements OnInit {
 	generateCardList() {
 		console.log(this.colectasToShow);
 		this.colectasCardList.splice(0)
+		const auxList: CardModel[] = [];
+
 		for (const colecta of this.colectasToShow) {
 			let stringProductos = '';
 			for (const [i, producto] of colecta.productos.entries()) {
 				if(i==0) stringProductos = producto.descripcion
 				else stringProductos += ' - '+producto.descripcion
 			}
-			this.colectasCardList.push({
+			auxList.push({
 				id: colecta.idColecta,
 				imagen: colecta.imagen,
 				titulo: colecta.titulo,
 				valorPrincipal: stringProductos,
 				fechaString: this.parseVigencia(colecta),
 				usuario: {
-					imagen: 'assets/perfiles/perfiles-24.jpg',//publicacion.particularDTO.
+					id: colecta.fundacionDTO.usuarioDTO.idUsuario,
+					imagen: colecta.fundacionDTO.usuarioDTO.avatar,
 					nombre: colecta.fundacionDTO.nombre,
 					puntaje: colecta.fundacionDTO.puntaje,
 					localidad: colecta.fundacionDTO.direcciones[0].localidad
@@ -144,6 +147,7 @@ export class ColectasComponent implements OnInit {
 				buttons: []
 			})
 		}
+		this.colectasCardList = auxList;
 	}
 
 	parseVigencia(colecta: ColectaModel) {

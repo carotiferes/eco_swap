@@ -34,13 +34,19 @@ public class LogisticaController {
     private static final String json = "application/json";
 
     @PostMapping(path = "/orden", consumes = json, produces = json)
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public ResponseEntity<ResponseOrdenDeEnvio> crearOrden(
             @RequestBody PostOrderRequest postOrderRequest) throws Exception {
         final Usuario user = UsuarioContext.getUsuario();
         Long userId = user.getIdUsuario();
-        if(!userId.equals(postOrderRequest.getUserIdOrigen())) {
+        log.info("request: {}", postOrderRequest);
+        // swapper es el origen cuando es una donacion
+        if(!userId.equals(postOrderRequest.getUserIdOrigen()) && postOrderRequest.getIdColecta() != null) {
+            throw new Exception("El usuario no tiene permiso para enviar una orden con los datos enviados");
+        }
+        // swapper es el destino cuando es una compra/venta
+        if(!userId.equals(postOrderRequest.getUserIdDestino()) && postOrderRequest.getIdPublicacion() != null) {
             throw new Exception("El usuario no tiene permiso para enviar una orden con los datos enviados");
         }
         log.info(">> POST ORDER");
@@ -83,26 +89,25 @@ public class LogisticaController {
         return ResponseEntity.ok("OK");
     }
 
-    @GetMapping(path = "/costoEnvio", consumes = json, produces = json)
+    @GetMapping(path = "/costoEnvio", produces = json)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ResponseCostoEnvio> obtenerPrecioDeShipping(
-            @RequestParam("peso") Long peso,
-            @RequestParam("codigoPostal") String codigoPostal
+            @RequestParam("peso") Long peso
     ) {
         log.info(">> GET Costo de envio");
-        ResultShippingOptions response = logisticaService.getCostoEnvio(peso, codigoPostal, "ship_pap,ship_pas");
+        final Usuario user = UsuarioContext.getUsuario();
+        ResultShippingOptions response = logisticaService.getCostoEnvio(peso, user, "ship_pap,ship_pas");
         ResponseCostoEnvio costoEnvio = ResponseCostoEnvio.builder()
                 .fechaMaximaEnvio(response.getMaximum_delivery())
                 .precio(response.getPrice())
                 .build();
-        log.info("<< Obteniendo ShippingOptions con respuesta {}", response.toString());
+        log.info("<< Costo de envio recibido: {}", response.getPrice());
         return ResponseEntity.ok(costoEnvio);
     }
 
-    @GetMapping(path = "/ping", consumes = json, produces = json)
+    @GetMapping(path = "/ping", produces = json)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<PingPong> ping(
-    )  {
+    public ResponseEntity<PingPong> ping()  {
         log.info(">> PING");
         PingPong response = logisticaService.pingpong();
         log.info("<< PONG");

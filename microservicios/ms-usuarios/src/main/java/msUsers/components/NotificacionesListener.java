@@ -27,7 +27,7 @@ public class NotificacionesListener {
         Usuario usuario = event.getUsuario();
         Notificacion notificacion = new Notificacion();
         notificacion.setEstadoNotificacion(EstadoNotificacion.NO_LEIDO);
-        notificacion.setIdReferenciaNotificacion(donacion.getIdDonacion());
+        notificacion.setIdReferenciaNotificacion(event.getColecta().getIdColecta());
         notificacion.setTitulo("¡Nueva donación!");
         notificacion.setMensaje("Tenés una nueva donación en la colecta: " + event.getColecta().getTitulo());
         notificacion.setTipoNotificacion(TipoNotificacion.DONACION);
@@ -45,7 +45,7 @@ public class NotificacionesListener {
         Publicacion publicacionOrigen = event.getPublicacionOrigen();
         Notificacion notificacion = new Notificacion();
         notificacion.setEstadoNotificacion(EstadoNotificacion.NO_LEIDO);
-        notificacion.setIdReferenciaNotificacion(trueque.getIdTrueque());
+        notificacion.setIdReferenciaNotificacion(trueque.getPublicacionOrigen().getIdPublicacion());
         notificacion.setTitulo("¡Nueva propuesta de trueque!");
         notificacion.setMensaje("Tenés una nueva propuesta de trueque para tu publicación: " + publicacionOrigen.getTitulo());
         notificacion.setTipoNotificacion(TipoNotificacion.TRUEQUE);
@@ -61,12 +61,12 @@ public class NotificacionesListener {
         Colecta colecta = event.getColecta();
         Donacion donacion = event.getDonacion();
         Usuario usuario = event.getUsuario();
-        String tituloPublicacion = donacion.getProducto().getPublicacion().getTitulo();
+        String tituloPublicacion = donacion.getProducto().getDescripcion();
         Notificacion notificacion = new Notificacion();
         notificacion.setEstadoNotificacion(EstadoNotificacion.NO_LEIDO);
-        notificacion.setIdReferenciaNotificacion(donacion.getIdDonacion());
+        notificacion.setIdReferenciaNotificacion(event.getColecta().getIdColecta());
         notificacion.setTitulo("Cambio de estado en tu donación.");
-        notificacion.setMensaje("La donación " + tituloPublicacion + "que realizaste a la colecta " + colecta.getTitulo()
+        notificacion.setMensaje("La donación " + tituloPublicacion + " que realizaste a la colecta " + colecta.getTitulo()
                 + " cambió estado a " + event.getEstadoDonacion().toString().toLowerCase());
         notificacion.setTipoNotificacion(TipoNotificacion.NUEVO_ESTADO_DONACION);
         notificacion.setFechaNotificacion(LocalDate.now());
@@ -82,7 +82,7 @@ public class NotificacionesListener {
         Usuario usuario = event.getUsuario();
         Notificacion notificacion = new Notificacion();
         notificacion.setEstadoNotificacion(EstadoNotificacion.NO_LEIDO);
-        notificacion.setIdReferenciaNotificacion(trueque.getIdTrueque());
+        notificacion.setIdReferenciaNotificacion(trueque.getPublicacionOrigen().getIdPublicacion());
         notificacion.setTitulo("Cambio de estado en tu trueque.");
         notificacion.setMensaje("El trueque de tu propuesta " + event.getPublicacion().getTitulo() + " cambio de estado a "
                 + event.getEstadoTrueque().toString().toLowerCase());

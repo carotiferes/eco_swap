@@ -6,6 +6,7 @@
 
 /* @import '~maplibre-gl/dist/maplibre-gl.css'; */
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined");
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Rounded");
 @import "~bootstrap-icons/font/bootstrap-icons.css";
 @import "~leaflet/dist/leaflet.css";
 @include mat.core();
@@ -100,7 +101,7 @@ $eco-swap-theme: mat.define-light-theme((
 
 	--success: #5fc32f;
 	--warn: var(--warn-color);
-	--info: #ccb014;
+	--info: #ffd740;
 }
 
 mat-form-field {
