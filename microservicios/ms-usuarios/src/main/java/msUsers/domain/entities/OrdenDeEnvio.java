@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @Table(name = "Ordenes")
 @Builder
 @Data
+@Slf4j
 public class OrdenDeEnvio {
 
     @Id
@@ -34,12 +36,14 @@ public class OrdenDeEnvio {
 
     @NotNull
     private String nombreCalle;
+
     @NotNull
     private String altura;
-    @NotNull
+
     private String piso;
-    @NotNull
+
     private String dpto;
+
     @NotNull
     private String barrio;
     @NotNull

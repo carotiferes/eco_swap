@@ -8,5 +8,6 @@ import lombok.Data;
 public class PostProductosRequest {
 
     private Long productoId;
+    private Long donacionId;
     private Long cantidad;
 }

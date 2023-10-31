@@ -34,7 +34,7 @@ public class LogisticaController {
     private static final String json = "application/json";
 
     @PostMapping(path = "/orden", consumes = json, produces = json)
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public ResponseEntity<ResponseOrdenDeEnvio> crearOrden(
             @RequestBody PostOrderRequest postOrderRequest) throws Exception {
