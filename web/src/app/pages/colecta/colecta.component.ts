@@ -134,6 +134,7 @@ export class ColectaComponent {
 				valorSecundario: stringCaracteristicas,
 				fecha: donacion.fechaDonacion,
 				usuario: {
+					id: donacion.particularDTO.usuarioDTO.idUsuario,
 					imagen: donacion.particularDTO.usuarioDTO.avatar,
 					nombre: donacion.particularDTO.nombre + ' ' + donacion.particularDTO.apellido,
 					puntaje: donacion.particularDTO.puntaje,

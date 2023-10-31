@@ -281,7 +281,10 @@ public class TruequeController {
         CriteriaQuery<Trueque> query = criteriaBuilder.createQuery(Trueque.class);
         Root<Trueque> root = query.from(Trueque.class);
 
-        Predicate predicate = criteriaBuilder.equal(root.get("publicacionPropuesta").get("particular").get("idParticular"), idParticular);
+        Predicate predicate = criteriaBuilder.or(
+                criteriaBuilder.equal(root.get("publicacionPropuesta").get("particular").get("idParticular"), idParticular),
+                criteriaBuilder.equal(root.get("publicacionOrigen").get("particular").get("idParticular"), idParticular)
+        );
 
         query.where(predicate);
 

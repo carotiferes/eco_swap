@@ -102,6 +102,19 @@ export class CardComponent {
 		}) */
 	}
 
+	buttonClicked(card: CardModel, button: any) {
+		if(button.status == 'INFO') {
+			if(card.action == 'list') this.openDialog(ListComponent, card);
+			else if(card.action == 'trueque') this.router.navigate(['publicacion/' + card.idAuxiliar])
+			else if(card.codigo == 'Compra') this.openDialog(EnvioModalComponent, {card}, '70vh', '60vw')
+			else if(card.action == 'select' && card.codigo == 'Donación'){
+				this.clicked(card)
+			}
+		} else {
+			this.changeStatus(card, button.status)
+		}
+	}
+
 	changeStatus(card: CardModel, newStatus: string) {
 		let title = '';
 		let text = '';

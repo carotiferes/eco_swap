@@ -1,5 +1,4 @@
 {
 	"URImsUsuarios": "8080/",
-	"URImsAutenticacion": "8085/",
-	"URImsTransacciones": "8080/"
+	"URImsAutenticacion": "8085/"
 }
