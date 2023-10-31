@@ -18,6 +18,7 @@ import msUsers.domain.requests.logistica.PutOrderRequest;
 import msUsers.domain.responses.logistica.resultResponse.ResultShippingOptions;
 import msUsers.domain.responses.logisticaResponse.ResponseFechasEnvio;
 import msUsers.domain.responses.logisticaResponse.ResponseOrdenDeEnvio;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,14 +43,19 @@ public class LogisticaService {
     @Value("${logistica.auth}")
     private String tokenAuth;
 
+    @Autowired
     private UsuariosRepository usuariosRepository;
+    @Autowired
 
     private ParticularesRepository particularesRepository;
 
+    @Autowired
     private FundacionesRepository fundacionesRepository;
-
+    @Autowired
     private ProductosRepository productosRepository;
+    @Autowired
     private OrdenesRepository ordenesRepository;
+    @Autowired
     private ColectasRepository colectasRepository;
 
 
@@ -259,7 +266,12 @@ public class LogisticaService {
     @Transactional
     private OrdenDeEnvio buildOrder(PostOrderRequest postOrderRequest) throws Exception {
 
-        Usuario usuarioOrigen = usuariosRepository.findById(postOrderRequest.getUserIdOrigen()).get();
+        try {
+
+
+        Optional<Usuario> user = usuariosRepository.findById(postOrderRequest.getUserIdOrigen());
+        Usuario usuarioOrigen = user.get();
+
         Usuario usuarioDestino = usuariosRepository.findById(postOrderRequest.getUserIdDestino()).get();
 
         String nombreOrigen = this.obtenerNombreUser(usuarioOrigen.getIdUsuario(), usuarioOrigen.isSwapper());
@@ -318,6 +330,10 @@ public class LogisticaService {
                 .publicacionId(postOrderRequest.getIdPublicacion())
                 .colectaId(postOrderRequest.getIdColecta())
                 .build();
+        } catch (Exception e) {
+            log.error("ERROR: {}", e.getMessage());
+            throw e;
+        }
 
     }
 
