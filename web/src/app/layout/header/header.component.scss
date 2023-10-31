@@ -109,6 +109,9 @@ mat-toolbar-row div {
 		}
 	}
 }
+.mi-cuenta {
+	display: flex;
+}
 
 #dropdownMenuButton1 {
 	gap: 5px;
@@ -127,4 +130,10 @@ mat-toolbar-row div {
 	top: -15px;
 	right: 0px;
 	color: var(--primary-color) !important;
+}
+
+@media (min-width: 0px) and (max-width: 768px) {
+	.mi-cuenta {
+		flex-direction: column;
+	}
 }

@@ -28,7 +28,8 @@
 		</mat-form-field>
 	</form>
 	<div *ngIf="ordenForm.valid" class="costo-envio">
-		<div>Costo de envío: {{costoEnvio | currency}}</div>
+		<div>Costo de envío:</div>
+		<b style="font-size: 14px;">{{costoEnvio ? (costoEnvio | currency) : '-'}}</b>
 		<button mat-fab extended class="confirm" (click)="calcularEnvio()">Calcular</button>
 	</div>
 	<div class="buttons">
