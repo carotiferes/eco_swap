@@ -14,15 +14,20 @@
 		<mat-form-field>
 			<mat-label>Peso Aproximado del Producto</mat-label>
 			<input matInput formControlName="peso" type="number" class="number-input">
-			<span matSuffix style="margin: 20px;">kg</span>
+			<span matSuffix style="margin: 20px;">gramos</span>
 			<mat-error *ngIf="ordenForm.get('peso')!.hasError('required')">
 				Campo obligatorio
 			</mat-error>
 		</mat-form-field>
 		<mat-form-field>
-			<mat-label>Código Postal</mat-label>
-			<input matInput formControlName="codigoPostal">
-			<mat-error *ngIf="ordenForm.get('codigoPostal')!.hasError('required')">
+			<mat-label>Disponibilidad Horaria</mat-label>
+			<!-- <input matInput formControlName="disponibilidad"> -->
+			<mat-select formControlName="disponibilidad">
+				<mat-option value="9-12"> 9hs a 12hs</mat-option>
+				<mat-option value="13-16"> 13hs a 16hs</mat-option>
+				<mat-option value="17-20"> 17hs a 20hs</mat-option>
+			</mat-select>
+			<mat-error *ngIf="ordenForm.get('disponibilidad')!.hasError('required')">
 				Campo obligatorio
 			</mat-error>
 		</mat-form-field>

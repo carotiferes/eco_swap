@@ -92,11 +92,11 @@ public class LogisticaController {
     @GetMapping(path = "/costoEnvio", produces = json)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ResponseCostoEnvio> obtenerPrecioDeShipping(
-            @RequestParam("peso") Long peso,
-            @RequestParam("codigoPostal") String codigoPostal
+            @RequestParam("peso") Long peso
     ) {
         log.info(">> GET Costo de envio");
-        ResultShippingOptions response = logisticaService.getCostoEnvio(peso, codigoPostal, "ship_pap,ship_pas");
+        final Usuario user = UsuarioContext.getUsuario();
+        ResultShippingOptions response = logisticaService.getCostoEnvio(peso, user, "ship_pap,ship_pas");
         ResponseCostoEnvio costoEnvio = ResponseCostoEnvio.builder()
                 .fechaMaximaEnvio(response.getMaximum_delivery())
                 .precio(response.getPrice())

@@ -22,8 +22,8 @@ export class LogisticaService {
 		return this.backendService.get(URL_NAME, `ms-transacciones/api/logistica/ping`);
 	} */
 
-	getCostoEnvio(peso: number, codigoPostal: string) {
-		return this.backendService.get(URL_NAME, `ms-transacciones/api/logistica/costoEnvio`, {peso, codigoPostal});
+	getCostoEnvio(peso: number) {
+		return this.backendService.get(URL_NAME, `ms-transacciones/api/logistica/costoEnvio`, {peso});
 	}
 
 	crearOrden(body: any) {

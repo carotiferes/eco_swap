@@ -75,6 +75,7 @@ export class RegistroComponent {
 			altura: [{ value: '', disabled: true }, Validators.required],
 			piso: [{ value: '', disabled: true }],
 			departamento: [{ value: '', disabled: true }],
+			codigoPostal: [{ value: '', disabled: true }, Validators.required],
 		})
 
 		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
@@ -156,6 +157,7 @@ export class RegistroComponent {
 						altura: direccion.altura,
 						piso: direccion.piso,
 						departamento: direccion.dpto,
+						codigoPostal: direccion.codigoPostal
 					})
 					this.direccionForm.enable();
 				}).catch(error => console.error(error));
@@ -228,6 +230,7 @@ export class RegistroComponent {
 							altura: this.direccionForm.controls['altura'].value,
 							piso: this.direccionForm.controls['piso'].value,
 							departamento: this.direccionForm.controls['departamento'].value,
+							codigoPostal: this.direccionForm.controls['codigoPostal'].value,
 						}
 					};
 
@@ -469,6 +472,7 @@ export class RegistroComponent {
 			this.direccionForm.controls['altura'].disable()
 			this.direccionForm.controls['piso'].disable()
 			this.direccionForm.controls['departamento'].disable()
+			this.direccionForm.controls['codigoPostal'].disable()
 		}
 		else if (locValue.length >= 3) {
 			const apiUrl = 'https://apis.datos.gob.ar/georef/api/localidades?orden=id&provincia=02&nombre=' + encodeURIComponent(locValue)
@@ -486,6 +490,7 @@ export class RegistroComponent {
 			this.direccionForm.controls['altura'].disable()
 			this.direccionForm.controls['piso'].disable()
 			this.direccionForm.controls['departamento'].disable()
+			this.direccionForm.controls['codigoPostal'].disable()
 		}
 		if (calleInput.length >= 3) {
 			const apiUrl = 'https://apis.datos.gob.ar/georef/api/calles?orden=id&provincia=02&departamento=' + encodeURIComponent(locInput) + '&nombre=' + encodeURIComponent(calleInput)
@@ -504,6 +509,7 @@ export class RegistroComponent {
 			this.direccionForm.controls['altura'].enable()
 			this.direccionForm.controls['piso'].enable()
 			this.direccionForm.controls['departamento'].enable()
+			this.direccionForm.controls['codigoPostal'].enable()
 		}
 	}
 

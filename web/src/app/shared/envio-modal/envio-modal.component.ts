@@ -30,14 +30,14 @@ export class EnvioModalComponent {
 			
 		this.ordenForm = fb.group({
 			peso: ['', Validators.required],
-			codigoPostal: ['', Validators.required]
+			disponibilidad: ['', Validators.required]
 		})
 
 		if(data.cards) this.sendDonaciones = true;
 	}
 
 	calcularEnvio() {
-		this.logisticaService.getCostoEnvio(this.ordenForm.value.peso,this.ordenForm.value.codigoPostal).subscribe({
+		this.logisticaService.getCostoEnvio(this.ordenForm.value.peso).subscribe({
 			next: (envio: any) => {
 				this.costoEnvio = envio.precio;
 			}
@@ -62,30 +62,42 @@ export class EnvioModalComponent {
 			const donaciones: DonacionModel[] = this.data.cards;
 			console.log(donaciones);
 
-			const productosToSend: { productoId: number, cantidad: number }[] = [];
+			const productosToSend: { productoId: number, donacionId: number, cantidad: number }[] = [];
+
+			const titulo: string[] = [];
+
+			for (const donacion of donaciones) {
+				productosToSend.push({
+					productoId: donacion.producto.idProducto,
+					donacionId: donacion.idDonacion,
+					cantidad: donacion.cantidadDonacion
+				})
+
+				if (!titulo.includes(donacion.producto.descripcion)) {
+					titulo.push(donacion.producto.descripcion);
+				}
+			}
 			
-			this.logisticaService.getCostoEnvio(this.ordenForm.value.peso,this.ordenForm.value.codigoPostal).subscribe({
+			this.logisticaService.getCostoEnvio(this.ordenForm.value.peso).subscribe({
 				next: (envio: any) => {
 					const orden = {
-						titulo: this.data.titulo,
+						titulo: titulo.join(', '),
 						userIdDestino: donaciones[0].producto.colectaDTO.fundacionDTO.usuarioDTO.idUsuario,
 						userIdOrigen: donaciones[0].particularDTO.usuarioDTO.idUsuario,
 						idColecta: donaciones[0].producto.colectaDTO.idColecta,
-						listProductos: [
-						
-						],
+						listProductos: productosToSend,
 						costoEnvio: envio.precio
 					}
 					this.enviarOrden(orden);
 				}
 			})
-		} else {
+		} else { // UNA COMPRA
 			this.compraService.getMyCompras().subscribe({
 				next: (res: any) => {
 					const compras = res;
 					const compra = compras.find((item: any) => item.idCompra == this.data.card.idAuxiliar)
 					if(compra) {
-						this.logisticaService.getCostoEnvio(this.ordenForm.value.peso,this.ordenForm.value.codigoPostal).subscribe({
+						this.logisticaService.getCostoEnvio(this.ordenForm.value.peso).subscribe({
 							next: (envio: any) => {
 								const orden = {
 									titulo: this.data.card.titulo,

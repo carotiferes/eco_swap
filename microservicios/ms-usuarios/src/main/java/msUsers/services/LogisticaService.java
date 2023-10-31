@@ -226,9 +226,10 @@ public class LogisticaService {
         return response;
     }
 
-    public ResultShippingOptions getCostoEnvio(Long weight, String zipCode, String types) {
+    public ResultShippingOptions getCostoEnvio(Long weight, Usuario usuario, String types) {
         HttpsURLConnection connection = null;
         try {
+            String zipCode = usuario.getDirecciones().get(0).getCodigoPostal();
             //Create connection
             String uriParameters = "weight=" + weight.toString() + "&to_zip_code=" + zipCode + "&types=" + types;
             String urlString = serviceUrl + "/shipping_options?" + uriParameters;
@@ -321,7 +322,7 @@ public class LogisticaService {
                     .barrio(direccionDestino.getLocalidad())
                     .ciudad("CABA")
                     .telefono(usuarioDestino.getTelefono())
-                    .codigoPostal(String.valueOf(1426)) // TODO: DESHARCODEAR .codigoPostal(direccionDestino.getCodigoPostal())
+                    .codigoPostal(direccionDestino.getCodigoPostal())
                     .esPublicacion(esPublicacion)
                     .piso(direccionDestino.getPiso())
                     .dpto(direccionDestino.getDpto())
