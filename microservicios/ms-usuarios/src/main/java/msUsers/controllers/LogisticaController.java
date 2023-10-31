@@ -40,7 +40,13 @@ public class LogisticaController {
             @RequestBody PostOrderRequest postOrderRequest) throws Exception {
         final Usuario user = UsuarioContext.getUsuario();
         Long userId = user.getIdUsuario();
-        if(!userId.equals(postOrderRequest.getUserIdOrigen())) {
+        log.info("request: {}", postOrderRequest);
+        // swapper es el origen cuando es una donacion
+        if(!userId.equals(postOrderRequest.getUserIdOrigen()) && postOrderRequest.getIdColecta() != null) {
+            throw new Exception("El usuario no tiene permiso para enviar una orden con los datos enviados");
+        }
+        // swapper es el destino cuando es una compra/venta
+        if(!userId.equals(postOrderRequest.getUserIdDestino()) && postOrderRequest.getIdPublicacion() != null) {
             throw new Exception("El usuario no tiene permiso para enviar una orden con los datos enviados");
         }
         log.info(">> POST ORDER");

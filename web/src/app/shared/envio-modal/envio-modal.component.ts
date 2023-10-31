@@ -19,7 +19,7 @@ export class EnvioModalComponent {
 
 	sendDonaciones: boolean = false;
 
-	costoEnvio?: number = 234;
+	costoEnvio?: number ;
 
 	// SE LLAMA DESDE EL card.component.ts
 
@@ -83,12 +83,12 @@ export class EnvioModalComponent {
 			this.compraService.getMyCompras().subscribe({
 				next: (res: any) => {
 					const compras = res;
-					const compra = compras.find((item: any) => item.idCompra == this.data.idAuxiliar)
+					const compra = compras.find((item: any) => item.idCompra == this.data.card.idAuxiliar)
 					if(compra) {
 						this.logisticaService.getCostoEnvio(this.ordenForm.value.peso,this.ordenForm.value.codigoPostal).subscribe({
 							next: (envio: any) => {
 								const orden = {
-									titulo: this.data.titulo,
+									titulo: this.data.card.titulo,
 									userIdDestino: compra.particularCompradorDTO.usuarioDTO.idUsuario,
 									userIdOrigen: compra.publicacionDTO.particularDTO.usuarioDTO.idUsuario,
 									idPublicacion: compra.publicacionDTO.idPublicacion,
@@ -104,11 +104,13 @@ export class EnvioModalComponent {
 	}
 
 	enviarOrden(orden: any) {
-		/* this.logisticaService.crearOrden(orden).subscribe({
+		this.logisticaService.crearOrden(orden).subscribe({
 			next: (res: any) => {
-
+				Swal.fire('¡Excelente!', 'Tu orden se creó con éxito', 'success')
+				console.log(res);
+				
 			}
-		}) */
+		})
 	}
 
 }
