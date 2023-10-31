@@ -218,25 +218,11 @@ public class LogisticaService {
                             .collect(Collectors.toList()
                         )
                 )
-                .fechaParaDepachar(this.crearFechaDespache())
+                .fechaParaDepachar(ordenCreada.getFechaADespachar())
                 .build();
         //GENERAR CARTA DE ENVIO DE SHIPNOW
         log.info("<< ORDEN CREADA: {}", ordenCreada);
         return response;
-    }
-
-    private String crearFechaDespache() {
-        Calendar calendar = Calendar.getInstance();
-        if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY ) {
-            calendar.add(Calendar.DATE, 3);
-        } else if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ) {
-            calendar.add(Calendar.DATE, 2);
-        } else {
-            calendar.add(Calendar.DATE, 1);
-        }
-        LocalDate localDate = LocalDateTime.ofInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId()).toLocalDate();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        return localDate.format(dateTimeFormatter);
     }
 
     public ResultShippingOptions getCostoEnvio(Long weight, String zipCode, String types) {
@@ -342,12 +328,27 @@ public class LogisticaService {
                         .build()))
                 .publicacionId(postOrderRequest.getIdPublicacion())
                 .colectaId(postOrderRequest.getIdColecta())
+                .fechaADespachar(this.crearFechaDespache())
                 .build();
         } catch (Exception e) {
             log.error("ERROR: {}", e.getMessage());
             throw e;
         }
 
+    }
+
+    private String crearFechaDespache() {
+        Calendar calendar = Calendar.getInstance();
+        if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY ) {
+            calendar.add(Calendar.DATE, 3);
+        } else if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ) {
+            calendar.add(Calendar.DATE, 2);
+        } else {
+            calendar.add(Calendar.DATE, 1);
+        }
+        LocalDate localDate = LocalDateTime.ofInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId()).toLocalDate();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return localDate.format(dateTimeFormatter);
     }
 
     private String obtenerNombreUser(Long userId, Boolean isSwapper) {
