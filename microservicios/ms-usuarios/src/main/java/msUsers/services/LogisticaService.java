@@ -30,10 +30,9 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -219,10 +218,25 @@ public class LogisticaService {
                             .collect(Collectors.toList()
                         )
                 )
+                .fechaParaDepachar(this.crearFechaDespache())
                 .build();
         //GENERAR CARTA DE ENVIO DE SHIPNOW
         log.info("<< ORDEN CREADA: {}", ordenCreada);
         return response;
+    }
+
+    private String crearFechaDespache() {
+        Calendar calendar = Calendar.getInstance();
+        if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY ) {
+            calendar.add(Calendar.DATE, 3);
+        } else if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ) {
+            calendar.add(Calendar.DATE, 2);
+        } else {
+            calendar.add(Calendar.DATE, 1);
+        }
+        LocalDate localDate = LocalDateTime.ofInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId()).toLocalDate();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return localDate.format(dateTimeFormatter);
     }
 
     public ResultShippingOptions getCostoEnvio(Long weight, String zipCode, String types) {
