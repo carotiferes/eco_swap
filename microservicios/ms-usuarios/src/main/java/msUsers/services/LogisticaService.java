@@ -264,8 +264,19 @@ public class LogisticaService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return ResultShippingOptions.builder()
+                    .price(3500f)
+                    .maximum_delivery(this.maximumDelivery())
+                    .build();
         }
+    }
+
+    private String maximumDelivery() {
+        LocalDate today = LocalDate.now();
+        LocalDate maximumDelivery = today.plusDays(7);
+        // - Custom Pattern
+        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return maximumDelivery.format(pattern);  //17-02-2022
     }
 
     @Transactional
