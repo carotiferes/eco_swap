@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.client.shipnow.ResponseOrder;
@@ -60,7 +61,6 @@ public class LogisticaService {
 
     @Autowired
     private CriteriaBuilderQueries criteriaBuilderQueries;
-
 
     public PingPong pingpong() {
         HttpsURLConnection connection = null;
@@ -126,19 +126,13 @@ public class LogisticaService {
         return response;
     }
 
-    private Boolean userPuedeHacerOrdenes(Usuario user, OrdenDeEnvio ordenDeEnvio) {
-        return ((user.getIdUsuario() == ordenDeEnvio.getIdUsuarioOrigen() &&
-                ordenDeEnvio.getListaFechaEnvios().get(ordenDeEnvio.getListaFechaEnvios().size() - 1).getEstado().equals(OrdenEstadoEnum.ENVIADO))
-                || (user.getIdUsuario() == ordenDeEnvio.getIdUsuarioDestino() &&
-                ordenDeEnvio.getListaFechaEnvios().get(ordenDeEnvio.getListaFechaEnvios().size() - 1).getEstado().equals(OrdenEstadoEnum.RECIBIDO)));
-    }
-
     @Transactional
     public void actualizarEstadoDeOrdenXOrdenId(String ordenId, PutOrderRequest putOrderRequest, Usuario usuario) throws Exception {
         //FALTA EL TEMA DE LOS OPTIONALS
         log.info(">> Actualizar el estado de OrdenId {} al estado: {}", ordenId, putOrderRequest.getNuevoEstado());
-        OrdenDeEnvio orderAEnviar = ordenesRepository.findById(Long.valueOf(ordenId)).get();
-        if (usuario.getIdUsuario() != 999 || !this.userPuedeHacerOrdenes(usuario, orderAEnviar)) {
+        OrdenDeEnvio orderAEnviar = ordenesRepository.findById(Long.valueOf(ordenId))
+                .orElseThrow(() -> new EntityNotFoundException("No fue encontrada la orden de envio: " + ordenId));
+        if (usuario.getIdUsuario() != 999 || this.userPuedeHacerOrdenes(usuario, orderAEnviar)) {               // TODO: Solo cambié la negación del puedeHacerOrdenes (REVISAR)
             throw new Exception("No se tiene permiso para realizar modificación en la orden de envio.");
         }
         List<FechaEnvios> listadoFechasEnvios = orderAEnviar.getListaFechaEnvios();
@@ -418,5 +412,12 @@ public class LogisticaService {
             return estadoNuevo.equals(OrdenEstadoEnum.CANCELADO.name());
         }
         return false;
+    }
+
+    private Boolean userPuedeHacerOrdenes(Usuario user, OrdenDeEnvio ordenDeEnvio) {
+        return ((user.getIdUsuario() == ordenDeEnvio.getIdUsuarioOrigen() &&
+                ordenDeEnvio.getListaFechaEnvios().get(ordenDeEnvio.getListaFechaEnvios().size() - 1).getEstado().equals(OrdenEstadoEnum.ENVIADO))
+                || (user.getIdUsuario() == ordenDeEnvio.getIdUsuarioDestino() &&
+                ordenDeEnvio.getListaFechaEnvios().get(ordenDeEnvio.getListaFechaEnvios().size() - 1).getEstado().equals(OrdenEstadoEnum.RECIBIDO)));
     }
 }

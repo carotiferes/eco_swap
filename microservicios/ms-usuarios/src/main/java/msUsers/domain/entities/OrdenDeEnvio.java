@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -13,6 +15,8 @@ import java.util.List;
 @Entity
 @Table(name = "Ordenes")
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Slf4j
 public class OrdenDeEnvio {
