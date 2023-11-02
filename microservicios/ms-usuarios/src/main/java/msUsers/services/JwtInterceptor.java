@@ -52,7 +52,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             if (jwtToken == null || !jwtToken.startsWith("Bearer ")) {
                 log.warn("ERROR 401: Acceso no autorizado: " + uri);
                 UnauthorizedAccessResponse unauthorizedAccessResponse = new UnauthorizedAccessResponse(
-                        "ERROR 401: Acceso no autorizado.",
+                        "4011",
                         System.currentTimeMillis(),
                         HttpStatus.UNAUTHORIZED);
 
@@ -79,7 +79,7 @@ public class JwtInterceptor implements HandlerInterceptor {
                 return true;
             } catch (Exception e) {
                 UnauthorizedAccessResponse unauthorizedAccessResponse = new UnauthorizedAccessResponse(
-                        "ERROR 401: Acceso no autorizado: ",
+                        "4011",
                         System.currentTimeMillis(),
                         HttpStatus.UNAUTHORIZED);
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

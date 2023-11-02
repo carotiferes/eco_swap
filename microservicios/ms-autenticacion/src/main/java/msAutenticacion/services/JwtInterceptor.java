@@ -49,11 +49,11 @@ public class JwtInterceptor implements HandlerInterceptor {
             objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
             if (jwtToken == null || !jwtToken.startsWith("Bearer ")) {
-                log.warn("ERROR 401: Acceso no autorizado: " + uri);
+                log.error("ERROR 401: Acceso no autorizado: " + uri);
                 UnauthorizedAccessResponse unauthorizedAccessResponse = new UnauthorizedAccessResponse(
-                        "ERROR 401: Acceso no autorizado.",
+                        "ERROR 401: Acceso no autorizado",
                         System.currentTimeMillis(),
-                        HttpStatus.UNAUTHORIZED);
+                        HttpStatus.FORBIDDEN);
 
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write(objectMapper.writeValueAsString(unauthorizedAccessResponse));
@@ -69,9 +69,9 @@ public class JwtInterceptor implements HandlerInterceptor {
                 return true;
             } catch (Exception e) {
                 UnauthorizedAccessResponse unauthorizedAccessResponse = new UnauthorizedAccessResponse(
-                        "ERROR 401: Acceso no autorizado: ",
+                        "ERROR 401: Acceso no autorizado",
                         System.currentTimeMillis(),
-                        HttpStatus.UNAUTHORIZED);
+                        HttpStatus.FORBIDDEN);
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write(objectMapper.writeValueAsString(unauthorizedAccessResponse));
                 return false;

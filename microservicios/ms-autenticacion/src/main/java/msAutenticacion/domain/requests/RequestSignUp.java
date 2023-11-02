@@ -1,5 +1,6 @@
 package msAutenticacion.domain.requests;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -40,4 +41,9 @@ public class RequestSignUp {
 
     @NotNull
     private RequestDireccion direccion;
+
+    @AssertTrue(message = "Contraseña y confirmar contraseña no son iguales")
+    public boolean contraseniasIguales() {
+        return password.equals(confirmPassword);
+    }
 }
