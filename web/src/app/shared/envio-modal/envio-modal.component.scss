@@ -52,6 +52,10 @@
 	}
 }
 
+.main-data {
+	padding: 0 20px 20px;
+}
+
 @media (min-width: 0px) and (max-width: 576px) {
 	.buttons {
 		flex-direction: column-reverse;

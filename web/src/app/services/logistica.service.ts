@@ -18,9 +18,9 @@ export class LogisticaService {
 		return this.backendService.get(URL_NAME, `ms-transacciones/api/logistica/orden`);
 	}
 
-	/* ping() {
-		return this.backendService.get(URL_NAME, `ms-transacciones/api/logistica/ping`);
-	} */
+	obtenerMisOrdenes(type: 'donaciones' | 'publicaciones') {
+		return this.backendService.get(URL_NAME, `ms-transacciones/api/logistica/myOrdenes`, {type});
+	}
 
 	getCostoEnvio(peso: number) {
 		return this.backendService.get(URL_NAME, `ms-transacciones/api/logistica/costoEnvio`, {peso});

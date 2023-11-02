@@ -1,6 +1,6 @@
 <div id="main-envios">
 	<div style="margin: 20px;">
-		<h2>Configurá los datos de tu producto para el Envío</h2>
+		<h2>{{yaTieneEnvio ? 'Datos de tu envío' : 'Configurá los datos de tu producto para el Envío'}}</h2>
 	</div>
 	<!-- <div style="margin: 25px;">
 		<mat-icon (click)="downloadFile()" matTooltip="Clickeá acá para descargar el tutorial">info</mat-icon>
@@ -9,7 +9,7 @@
 <div style="display: flex; justify-content: center;">
 	<mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
 </div>
-<div *ngIf="!loading">
+<div *ngIf="!loading && !yaTieneEnvio">
 	<form [formGroup]="ordenForm" id="envio-form">
 		<mat-form-field>
 			<mat-label>Peso Aproximado del Producto</mat-label>
@@ -44,5 +44,19 @@
 			<span>CONFIRMAR</span>
 		</button>
 		<mat-spinner diameter="20" *ngIf="loadingSave"></mat-spinner>
+	</div>
+</div>
+
+<div *ngIf="!loading && yaTieneEnvio" class="main-data">
+	<h2>{{yaTieneEnvio.titulo}}</h2>
+	<p>Precio de envío: {{yaTieneEnvio.precioEnvio}}</p>
+	<p>Origen: {{yaTieneEnvio.nombreUserOrigen}}</p>
+	<p>Destino: {{yaTieneEnvio.nombreUserDestino}}</p>
+	<p>Fecha a despachar: {{yaTieneEnvio.fechaADespachar}}</p>
+	<div>
+		Estados:
+		<div *ngFor="let estado of yaTieneEnvio.listaFechaEnvios">
+			{{estado.estado}} - {{estado.fechaEnvio}}
+		</div>
 	</div>
 </div>

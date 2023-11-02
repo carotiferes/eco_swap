@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { CardModel } from 'src/app/models/card.model';
 import { DonacionModel } from 'src/app/models/donacion.model';
 import { ComprasService } from 'src/app/services/compras.service';
 import { LogisticaService } from 'src/app/services/logistica.service';
@@ -18,8 +19,11 @@ export class EnvioModalComponent {
 	ordenForm: FormGroup;
 
 	sendDonaciones: boolean = false;
+	userOrders: any[] = []
 
 	costoEnvio?: number ;
+
+	yaTieneEnvio: any;
 
 	// SE LLAMA DESDE EL card.component.ts
 
@@ -34,6 +38,36 @@ export class EnvioModalComponent {
 		})
 
 		if(data.cards) this.sendDonaciones = true;
+		this.getUserOrders()
+	}
+
+	getUserOrders() {
+		let type: 'donaciones' | 'publicaciones' = 'publicaciones'
+		if(this.sendDonaciones) type = 'donaciones';
+		this.logisticaService.obtenerMisOrdenes(type).subscribe({
+			next: (res: any) => {
+				if(res.length > 0) {
+					this.userOrders = res;
+				}
+				console.log(this.userOrders);
+				if(this.sendDonaciones) {
+					// Get the list of unique idDonacion values from the cards array
+					const uniqueIdDonacionValues = [...new Set(this.data.cards.map((card:any/* DonacionModel | CardModel */) => card.idDonacion || card.id))];
+					console.log(uniqueIdDonacionValues);
+					
+					// Find the orders that match the idDonacion from the cards array
+					const matchingOrders = this.userOrders.find(order => {
+					  return order.productosADonarDeOrdenList.some((producto:any) => {
+						return uniqueIdDonacionValues.includes(producto.idDonacion);
+					  });
+					});
+					if(matchingOrders) this.yaTieneEnvio = matchingOrders;
+
+				} else {
+					this.yaTieneEnvio = this.userOrders.find(order => order.publicacionId == this.data.card.id)
+				}
+			}
+		})
 	}
 
 	calcularEnvio() {
