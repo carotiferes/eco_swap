@@ -1,9 +1,10 @@
-<div class="header" *ngIf="origin == 'modal'">
+<div class="header" *ngIf="origin == 'modal'"  (mouseover)="initChat == 0 ? scrollToBottom() : ''">
 	Chateá con {{elOtroSwapper.nombre}} {{elOtroSwapper.apellido}}
+	<mat-icon style="position: absolute; right: 2rem;" (click)="dialogRef.close()">close</mat-icon>
 </div>
 
 <div style="margin-bottom: 20px; overflow: auto; scrollbar-color: #888 #f1f1f1; scrollbar-width: thin;"
-	#chatContainer id="chatContainer" [class.main-div]="origin == 'modal'"
+	#chatContainer [id]="origin == 'inline' ? 'chatContainer' : 'modal-chat-container'" [class.main-div]="origin == 'modal'" (mouseover)="initChat == 0 ? scrollToBottom() : ''"
 	[style.max-height.px]="origin == 'inline' ? 200 : 300">
 	<div *ngFor="let mensaje of mensajes" class="mensaje"
 		[ngClass]="mensaje.usuarioEmisor.idUsuario == userData.id_user ? 'mio' : 'otro'">
@@ -13,7 +14,7 @@
 	</div>
 </div>
 
-<div style="display: flex;" [class.main-div]="origin == 'modal'"
+<div style="display: flex;" [class.main-div]="origin == 'modal'"  (mouseover)="initChat == 0 ? scrollToBottom() : ''"
 [style.flex-direction]="origin =='inline' ? 'column' : 'row'">
 	<mat-form-field appearance="outline" style="min-width: 210px; width: 100%;" floatLabel="always">
 		<!-- <mat-label>Nuevo Mensaje</mat-label> -->

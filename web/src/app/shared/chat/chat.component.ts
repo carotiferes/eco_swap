@@ -1,5 +1,8 @@
+import { DOCUMENT } from '@angular/common';
 import { Component, EventEmitter, Inject, Input, Optional, Output } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { TruequeModel } from 'src/app/models/trueque.model';
+import { ChatService } from 'src/app/services/chat.service';
 
 @Component({
 	selector: 'app-chat',
@@ -10,29 +13,36 @@ export class ChatComponent {
 	@Input() mensajes: any[] = [];
 	@Input() userData: any;
 	@Input() elOtroSwapper: any; 
-	/* @Input() trueques: any;
-	@Input() userType: any;
-	@Input() publicacion: any; */
+	trueques: TruequeModel[] = []
+	userType: any
+	publicacion: any
 
 	nuevoMensaje: string = '';
 	origin: 'modal' | 'inline' = 'inline';
+	initChat = 0;
 
-	@Output() sendMessageEvent = new EventEmitter<string>();
-
-	constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: any) {
+	constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: any, private chatService: ChatService,
+	@Inject(DOCUMENT) private document: Document, @Optional() public dialogRef: MatDialogRef<ChatComponent>,) {
 		if(data) {
 			this.mensajes = data.mensajes;
 			this.userData = data.userData;
 			this.elOtroSwapper = data.elOtroSwapper;
+			this.trueques = data.trueques;
+			this.userType = data.userType;
+			this.publicacion = data.publicacion;
 			this.origin = 'modal'
 		}
 	}
 
+	scrollToBottom() {
+		const id = origin == 'inline' ? 'chatContainer' : 'modal-chat-container';
+		const elem = this.document.getElementById(id)
+		if(elem) elem.scrollTop = elem.scrollHeight;
+		this.initChat++
+	}
+
 	sendMensaje() {
-		console.log(this.nuevoMensaje);
-		
-		this.sendMessageEvent.emit(this.nuevoMensaje)
-		/* const trueque = this.trueques.find(item => item.publicacionDTOorigen.idPublicacion == this.publicacion.idPublicacion && item.estadoTrueque == 'APROBADO')
+		const trueque = this.trueques.find(item => item.publicacionDTOorigen.idPublicacion == this.publicacion.idPublicacion && item.estadoTrueque == 'APROBADO')
 		if(trueque && trueque.idTrueque) {
 			this.chatService.sendMensaje({
 				idTrueque: trueque.idTrueque,
@@ -50,6 +60,6 @@ export class ChatComponent {
 				}
 			})
 
-		} */
+		}
 	}
 }

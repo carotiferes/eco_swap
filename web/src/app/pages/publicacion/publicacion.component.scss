@@ -17,6 +17,10 @@
 					padding: 10px;
 					display: flex;
 					justify-content: space-between;
+
+					.open-chat {
+						background-color: var(--info);
+					}
 				}
 			}
 

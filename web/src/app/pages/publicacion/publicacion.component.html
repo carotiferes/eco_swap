@@ -18,37 +18,15 @@
 							<mat-icon>question_answer</mat-icon>
 							<span style="margin-left: 10px; display: flex; align-items: center; gap: 10px;">
 								<span>Chat</span>
-								<mat-icon style="color: var(--info)" matTooltip="¡Configurá el intercambio por tu cuenta!">swap_calls</mat-icon>
 							</span>
-							<button mat-mini-fab *ngIf="screenWidth > 576" (click)="openChat()"><mat-icon>open_in_new</mat-icon></button>
+							<button mat-mini-fab *ngIf="screenWidth > 576" (click)="openChat()" class="open-chat"><mat-icon>open_in_new</mat-icon></button>
 							
 						</button>
 					</h2>
 					<div ngbAccordionCollapse>
 						<div ngbAccordionBody>
 							<ng-template>
-								<!-- <div style="margin-bottom: 20px; max-height: 200px; overflow: auto; scrollbar-color: #888 #f1f1f1; scrollbar-width: thin;"
-								#chatContainer id="chatContainer">
-									<div *ngFor="let mensaje of mensajes" class="mensaje"
-									[ngClass]="mensaje.usuarioEmisor.idUsuario == userData.id_user ? 'mio' : 'otro'">
-										<span style="width: 100%;">{{mensaje.mensaje}}</span>
-										<span style="font-size: 10px;">{{mensaje.fechaHoraEnvio | date: 'dd/MM/yyyy'}}</span>
-										<mat-icon class="arrow-globo">arrow_drop_down</mat-icon>
-									</div>
-								</div>
-
-								<div style="display: flex; flex-direction: column;">
-									<mat-form-field appearance="outline" style="min-width: 210px; width: 100%;" floatLabel="always">
-										<!- <mat-label>Nuevo Mensaje</mat-label> ->
-										<textarea matInput [placeholder]="'Enviar mensaje a '+elOtroSwapper.nombre +' '+elOtroSwapper.apellido" [(ngModel)]="nuevoMensaje" style="resize: none;" *ngIf="elOtroSwapper"></textarea>
-										<!- <input matInput formControlName="tipoProducto"> ->
-									</mat-form-field>
-									
-									<button mat-fab extended color="primary" (click)="sendMensaje()">Enviar</button>
-								</div> -->
-									
-								<app-chat [mensajes]="mensajes" [userData]="userData" [elOtroSwapper]="elOtroSwapper"
-								(sendMessageEvent)="sendMensaje($event)"></app-chat>
+								<app-chat [mensajes]="mensajes" [userData]="userData" [elOtroSwapper]="elOtroSwapper"></app-chat> 
 								
 							</ng-template>
 						</div>

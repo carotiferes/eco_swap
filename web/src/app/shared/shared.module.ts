@@ -16,12 +16,12 @@ import { ChatComponent } from './chat/chat.component';
 	declarations: [
 		MapComponent,
 		SpinnerComponent,
-	    CardComponent,
-	    DeckComponent,
-     RatingComponent,
-     ListComponent,
-	 EnvioModalComponent,
-  ChatComponent
+		CardComponent,
+		DeckComponent,
+		RatingComponent,
+		ListComponent,
+		EnvioModalComponent,
+		ChatComponent
 	],
 	imports: [
 		MaterialModule,
@@ -32,7 +32,7 @@ import { ChatComponent } from './chat/chat.component';
 		MapComponent,
 		SpinnerComponent,
 		CardComponent,
-    	DeckComponent,
+		DeckComponent,
 		RatingComponent,
 		ListComponent,
 		EnvioModalComponent,
