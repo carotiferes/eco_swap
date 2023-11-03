@@ -316,6 +316,7 @@ public class UsuarioService {
         nuevaDireccion.setDpto(requestEditProfile.getDireccion().getDepartamento());
         nuevaDireccion.setAltura(requestEditProfile.getDireccion().getAltura());
         nuevaDireccion.setLocalidad(requestEditProfile.getDireccion().getLocalidad());
+        nuevaDireccion.setCodigoPostal(requestEditProfile.getDireccion().getCodigoPostal());
 
         List<Direccion> direcciones = new ArrayList<>();
         direcciones.add(nuevaDireccion);

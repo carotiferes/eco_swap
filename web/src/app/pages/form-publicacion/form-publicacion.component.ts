@@ -5,6 +5,9 @@ import { AuthService } from 'src/app/services/auth.service';
 import { TruequesService } from 'src/app/services/trueques.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import Swal from 'sweetalert2';
+import { CredencialesMpModalComponent } from '../perfil/credenciales-mp-modal/credenciales-mp-modal.component';
+import { MatDialog } from '@angular/material/dialog';
+import { UsuarioModel } from 'src/app/models/usuario.model';
 
 @Component({
   selector: 'app-form-publicacion',
@@ -25,9 +28,10 @@ export class FormPublicacionComponent {
 	focusVenta: boolean = false;
 
 	hasMPCredentials: boolean = false;
+	user?: UsuarioModel;
 
 	constructor(private fb: FormBuilder, private truequeService: TruequesService, private router: Router,
-		private auth: AuthService, private usuarioService: UsuarioService){
+		private auth: AuthService, private usuarioService: UsuarioService, private dialog: MatDialog){
 		this.publicacionForm = fb.group({
 			titulo: ['', Validators.required],
 			descripcion: ['', Validators.required],
@@ -45,6 +49,9 @@ export class FormPublicacionComponent {
 		usuarioService.getUserByID(auth.getUserID()).subscribe({
 			next: (res: any) => {
 				this.hasMPCredentials = !!res && !!res.particularDTO && !!res.particularDTO.accessToken && !!res.particularDTO.publicKey
+				this.user = res;
+				console.log(this.user);
+				
 			}
 		})
 	}
@@ -145,5 +152,20 @@ export class FormPublicacionComponent {
 	allowVenta(event: any) {
 		if(event.checked) this.publicacionForm.controls['precioVenta'].addValidators(Validators.required);
 		else this.publicacionForm.controls['precioVenta'].removeValidators(Validators.required)
+	}
+
+	credencialesMP() {
+		const dialogRef = this.dialog.open(CredencialesMpModalComponent, {
+			maxWidth: '60vw',
+			maxHeight: '60vh',
+			height: '100%',
+			width: '100%',
+			panelClass: 'full-screen-modal',
+			data: {user: this.user, publicKey: this.user?.particularDTO.publicKey, accessToken: this.user?.particularDTO.accessToken}
+		});
+		dialogRef.afterClosed().subscribe((result) => {
+			console.log('closed', result);
+			if(result) this.hasMPCredentials = true
+		})
 	}
 }

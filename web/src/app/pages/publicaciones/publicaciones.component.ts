@@ -38,6 +38,7 @@ export class PublicacionesComponent {
 	filteredPublicacionesCardList: CardModel[] = []
 
 	trueques: TruequeModel[] = [];
+	screenWidth: number;
 
 	constructor(private router: Router, private auth: AuthService, private fb: FormBuilder,
 		private productosService: ProductosService, private showErrorService: ShowErrorService,
@@ -56,7 +57,7 @@ export class PublicacionesComponent {
 			startWith(''),
 			map((localidad: string | null) => (localidad ? this._filterLocalidad(localidad) : this.allLocalidades.slice())),
 		);
-
+		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 	}
 	
 	ngOnInit(): void {

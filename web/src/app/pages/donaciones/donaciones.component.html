@@ -6,8 +6,8 @@
 		[usuarioHeader]="donacion.producto.colectaDTO.fundacionDTO" [buttons]="[{name: 'cancelar', icon: 'close', color: 'warn', status: 'CANCELADA', disabled: donacion.estadoDonacion != 'PENDIENTE'}]"></app-card-donacion>
 	</div> -->
 	<div class="dense-3">
-		<div ngbAccordion #accordion="ngbAccordion">
-			<div ngbAccordionItem="first" #first="ngbAccordionItem" [collapsed]="false">
+		<div ngbAccordion #accordion="ngbAccordion" style="min-width: 255px;">
+			<div ngbAccordionItem="first" #first="ngbAccordionItem" [collapsed]="false" [disabled]="screenWidth > 768">
 				<h2 ngbAccordionHeader>
 					<button ngbAccordionButton class="bg-transparent accordion-header-button">
 						<mat-icon>local_shipping</mat-icon> <span style="margin-left: 10px;">Envío</span>

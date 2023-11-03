@@ -28,10 +28,12 @@ export class DonacionesComponent {
 	colectaParaEnvio?: number;
 
 	userOrders: any[] = [];
+	screenWidth: number;
 
 	constructor(public dialog: MatDialog, private donacionesService: DonacionesService,
 		private showErrorService: ShowErrorService, private logisticaService: LogisticaService) {
 		this.getDonaciones()
+		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 	}
 
 	getDonaciones() {

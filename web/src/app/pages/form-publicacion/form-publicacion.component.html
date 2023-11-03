@@ -63,16 +63,17 @@
 					</mat-form-field>
 				</div>
 
-				<div class="form-col" style="flex-direction: row;">
+				<div class="form-col" style="flex-direction: row; align-items: center;" *ngIf="hasMPCredentials">
 					<mat-checkbox formControlName="finalidadVenta" (change)="allowVenta($event)">
 						<label class="venta-label">
 							Acepta Venta
 						</label>
 					</mat-checkbox>
 					<mat-icon class="material-icons-outlined" style="color: var(--grey-text); margin: 5px;"
-						matTooltip="Si chequeás este campo, además de propuestas de intercambio, te pueden llegar propuestas de compra de tu producto. Para que te puedan comprar, es necesario que configures tus credenciales de Mercado Pago desde tu perfil.">
+						matTooltip="Si chequeás este campo, además de propuestas de intercambio, ¡te pueden llegar propuestas de compra de tu producto!">
 							info
 					</mat-icon>
+					
 					<mat-form-field hidden >
 						<!-- <mat-label>Acepta Venta</mat-label> -->
 						<input matInput type="text">
@@ -80,6 +81,17 @@
 							Campo obligatorio
 						</mat-error> -->
 					</mat-form-field>
+				</div>
+				<div class="form-col" style="flex-direction: row; align-items: center;" *ngIf="!hasMPCredentials">
+					<button mat-fab extended style="background-color: #3fb6e9; color: white; height: fit-content; padding: 5px 20px;"
+						(click)="credencialesMP()">
+						<img src="assets/redes/mercadopago.png" style="width: 40px;">
+						CONFIGURAR CREDENCIALES
+					</button>
+					<mat-icon class="material-icons-outlined" style="color: var(--grey-text); margin: 5px;"
+						matTooltip="¡Configurá tus credenciales para vender este producto!">
+							info
+					</mat-icon>
 				</div>
 
 				<div class="form-col">

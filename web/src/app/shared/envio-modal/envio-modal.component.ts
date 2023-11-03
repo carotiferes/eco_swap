@@ -3,8 +3,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CardModel } from 'src/app/models/card.model';
 import { DonacionModel } from 'src/app/models/donacion.model';
+import { UsuarioModel } from 'src/app/models/usuario.model';
+import { AuthService } from 'src/app/services/auth.service';
 import { ComprasService } from 'src/app/services/compras.service';
 import { LogisticaService } from 'src/app/services/logistica.service';
+import { UsuarioService } from 'src/app/services/usuario.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -24,12 +27,13 @@ export class EnvioModalComponent {
 	costoEnvio?: number ;
 
 	yaTieneEnvio: any;
-
+	user?: UsuarioModel;
 	// SE LLAMA DESDE EL card.component.ts
 
 	constructor(private fb: FormBuilder, public dialogRef: MatDialogRef<EnvioModalComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: any, private logisticaService: LogisticaService,
-		private compraService: ComprasService) {
+		private compraService: ComprasService, private usuarioService: UsuarioService,
+		private auth: AuthService) {
 			console.log(data);
 			
 		this.ordenForm = fb.group({
@@ -65,6 +69,16 @@ export class EnvioModalComponent {
 
 				} else {
 					this.yaTieneEnvio = this.userOrders.find(order => order.publicacionId == this.data.card.id)
+				}
+
+				if(!this.yaTieneEnvio) {
+					this.usuarioService.getUserByID(this.auth.getUserID()).subscribe({
+						next: (res: any) => {
+							this.user = res;
+							console.log(this.user);
+							
+						}
+					})
 				}
 			}
 		})

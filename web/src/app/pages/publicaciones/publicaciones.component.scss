@@ -18,6 +18,8 @@
 					height: 40px;
 					font-size: 14px;
 					padding: 10px;
+					display: flex;
+					justify-content: space-between;
 				}
 			}
 		}
@@ -58,6 +60,12 @@
 :host ::ng-deep .mat-mdc-standard-chip .mdc-evolution-chip__action--primary,
 :host ::ng-deep .mat-mdc-standard-chip .mat-mdc-chip-action-label {
 	overflow: hidden;
+}
+
+@media (min-width: 768px) {
+	.accordion-button::after {
+		display: none;
+	}
 }
 
 @media (min-width: 0px) and (max-width: 768px) {

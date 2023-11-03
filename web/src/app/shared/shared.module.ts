@@ -10,6 +10,7 @@ import { SpinnerComponent } from './spinner/spinner.component';
 import { RatingComponent } from './rating/rating.component';
 import { ListComponent } from './list/list.component';
 import { EnvioModalComponent } from './envio-modal/envio-modal.component';
+import { ChatComponent } from './chat/chat.component';
 
 @NgModule({
 	declarations: [
@@ -19,7 +20,8 @@ import { EnvioModalComponent } from './envio-modal/envio-modal.component';
 	    DeckComponent,
      RatingComponent,
      ListComponent,
-	 EnvioModalComponent
+	 EnvioModalComponent,
+  ChatComponent
 	],
 	imports: [
 		MaterialModule,
@@ -33,7 +35,8 @@ import { EnvioModalComponent } from './envio-modal/envio-modal.component';
     	DeckComponent,
 		RatingComponent,
 		ListComponent,
-		EnvioModalComponent
+		EnvioModalComponent,
+		ChatComponent
 	]
 })
 export class SharedModule { }

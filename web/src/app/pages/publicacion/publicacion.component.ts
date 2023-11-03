@@ -14,6 +14,7 @@ import Swal from 'sweetalert2';
 import { TrocarModalComponent } from './trocar-modal/trocar-modal.component';
 import { ChatService } from 'src/app/services/chat.service';
 import { ParticularModel } from 'src/app/models/particular.model';
+import { ChatComponent } from 'src/app/shared/chat/chat.component';
 
 @Component({
 	selector: 'app-publicacion',
@@ -327,12 +328,14 @@ export class PublicacionComponent implements AfterViewInit {
 		return this.publicacionesToShow.filter(item => item.estadoTrueque == 'APROBADO')
 	}
 
-	sendMensaje() {
+	sendMensaje(message: string) {
+		console.log(message);
+		
 		const trueque = this.trueques.find(item => item.publicacionDTOorigen.idPublicacion == this.publicacion.idPublicacion && item.estadoTrueque == 'APROBADO')
 		if(trueque && trueque.idTrueque) {
 			this.chatService.sendMensaje({
 				idTrueque: trueque.idTrueque,
-				mensaje: this.nuevoMensaje,
+				mensaje: message,
 				usuarioReceptor: this.userType == 'publicacionOrigen' ? trueque.publicacionDTOpropuesta.particularDTO.usuarioDTO.idUsuario : trueque.publicacionDTOorigen.particularDTO.usuarioDTO.idUsuario
 			}).subscribe({
 				next: (res: any) => {
@@ -340,12 +343,29 @@ export class PublicacionComponent implements AfterViewInit {
 					this.chatService.getMyMensajes(trueque.idTrueque).subscribe({
 						next: (res: any) => {
 							this.mensajes = res;
-							this.nuevoMensaje = ''
+							//this.nuevoMensaje = ''
 						}
 					})
 				}
 			})
 
 		}
+	}
+
+	openChat() {
+		const dialogRef = this.dialog.open(ChatComponent, {
+			data: {
+				mensajes: this.mensajes,
+				userData: this.userData,
+				elOtroSwapper: this.elOtroSwapper,
+			},
+			width: '80vw',
+			height: '85vh',
+		});
+	
+		dialogRef.afterClosed().subscribe((result: any) => {
+			console.log('result trocar', result);
+			if(result) this.getTrueques()
+		})
 	}
 }

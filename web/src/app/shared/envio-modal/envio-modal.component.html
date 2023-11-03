@@ -1,6 +1,6 @@
 <div id="main-envios">
 	<div style="margin: 20px;">
-		<h2>{{yaTieneEnvio ? 'Datos de tu envío' : 'Configurá los datos de tu producto para el Envío'}}</h2>
+		<h2>{{yaTieneEnvio ? 'Datos de tu envío para: ' + yaTieneEnvio.titulo : 'Configurá los datos de tu producto para el Envío'}}</h2>
 	</div>
 	<!-- <div style="margin: 25px;">
 		<mat-icon (click)="downloadFile()" matTooltip="Clickeá acá para descargar el tutorial">info</mat-icon>
@@ -32,6 +32,10 @@
 			</mat-error>
 		</mat-form-field>
 	</form>
+	<div *ngIf="user" class="direccion">
+		<span>El envío se calcula utilizando tu dirección:</span>
+		<span><b>{{user.particularDTO.direcciones[0].calle}} {{user.particularDTO.direcciones[0].altura}}, {{user.particularDTO.direcciones[0].localidad}} (CP{{user.particularDTO.direcciones[0].codigoPostal}})</b></span>
+	</div>
 	<div *ngIf="ordenForm.valid" class="costo-envio">
 		<div>Costo de envío:</div>
 		<b style="font-size: 14px;">{{costoEnvio ? (costoEnvio | currency) : '-'}}</b>
@@ -48,15 +52,17 @@
 </div>
 
 <div *ngIf="!loading && yaTieneEnvio" class="main-data">
-	<h2>{{yaTieneEnvio.titulo}}</h2>
-	<p>Precio de envío: {{yaTieneEnvio.precioEnvio}}</p>
-	<p>Origen: {{yaTieneEnvio.nombreUserOrigen}}</p>
-	<p>Destino: {{yaTieneEnvio.nombreUserDestino}}</p>
-	<p>Fecha a despachar: {{yaTieneEnvio.fechaADespachar}}</p>
+	<!-- <h2>{{yaTieneEnvio.titulo}}</h2> -->
+	<p><mat-icon>credit_card</mat-icon>Precio de envío: <b>{{yaTieneEnvio.precioEnvio | currency}}</b></p>
+	<p><mat-icon>place</mat-icon>Origen: <b>{{yaTieneEnvio.nombreUserOrigen}}</b></p>
+	<p><mat-icon>place</mat-icon>Destino: <b>{{yaTieneEnvio.nombreUserDestino}}</b></p>
+	<!-- <p>Fecha a despachar: {{yaTieneEnvio.fechaADespachar}}</p> -->
 	<div>
-		Estados:
-		<div *ngFor="let estado of yaTieneEnvio.listaFechaEnvios">
-			{{estado.estado}} - {{estado.fechaEnvio}}
+		<h3><mat-icon>route</mat-icon>Estados del envío:</h3>
+		<div style="display: flex; flex-direction: column; gap: 10px; margin-left: 25px;">
+			<div *ngFor="let estado of yaTieneEnvio.listaFechaEnvios" class="item">
+				<mat-icon>chevron_right</mat-icon>{{estado.estado}} - {{estado.fechaEnvio}}
+			</div>
 		</div>
 	</div>
 </div>
