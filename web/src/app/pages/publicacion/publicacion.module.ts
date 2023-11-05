@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { PublicacionComponent } from './publicacion.component';
 import { PublicacionRoutingModule } from './publicacion-routing.module';
 import { MaterialModule } from 'src/app/shared/material/material.module';
@@ -21,6 +21,7 @@ import { MainCardPublicacionComponent } from './main-card-publicacion/main-card-
 	SharedModule,
 	MatCardModule
   ],
-  exports: [PublicacionComponent, MainCardPublicacionComponent]
+  exports: [PublicacionComponent, MainCardPublicacionComponent],
+  providers: [CurrencyPipe]
 })
 export class PublicacionModule { }

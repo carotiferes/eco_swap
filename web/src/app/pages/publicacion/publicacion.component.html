@@ -19,14 +19,16 @@
 							<span style="margin-left: 10px; display: flex; align-items: center; gap: 10px;">
 								<span>Chat</span>
 							</span>
-							<button mat-mini-fab *ngIf="screenWidth > 576" (click)="openChat()" class="open-chat"><mat-icon>open_in_new</mat-icon></button>
+							<button mat-mini-fab *ngIf="screenWidth > 576" (click)="openChat()" class="open-chat"><mat-icon>zoom_out_map</mat-icon></button>
 							
 						</button>
 					</h2>
 					<div ngbAccordionCollapse>
 						<div ngbAccordionBody>
 							<ng-template>
-								<app-chat [mensajes]="mensajes" [userData]="userData" [elOtroSwapper]="elOtroSwapper"></app-chat> 
+								<app-chat [mensajes]="mensajes" [userData]="userData" [elOtroSwapper]="elOtroSwapper"
+								[trueques]="trueques" [userType]="userType" [publicacion]="publicacion"
+								(sentMessage)="getMessages($event)"></app-chat> 
 								
 							</ng-template>
 						</div>

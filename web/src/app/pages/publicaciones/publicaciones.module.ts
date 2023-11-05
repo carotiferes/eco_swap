@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { PublicacionesComponent } from './publicaciones.component';
 import { PublicacionesRoutingModule } from './publicaciones-routing.module';
 import { MaterialModule } from 'src/app/shared/material/material.module';
@@ -17,6 +17,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 	HeaderModule,
 	SharedModule
   ],
-  exports: [PublicacionesComponent]
+  exports: [PublicacionesComponent],
+  providers: [CurrencyPipe]
 })
 export class PublicacionesModule { }

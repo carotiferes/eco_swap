@@ -12,7 +12,7 @@
 		}
 	}
 	&.small {
-		height: 380px;
+		height: 480px;
 	}
 
 	* { text-align: center; }
@@ -97,10 +97,17 @@
 
 	
 	.card-body {
-		display: flex;
+		/* display: flex;
 		align-items: center;
 		flex-direction: column;
-		justify-content: space-around;
+		justify-content: space-around; */
+
+		.body-data {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-evenly;
+			height: 100%;
+		}
 
 		.card-title {
 			margin: 0;

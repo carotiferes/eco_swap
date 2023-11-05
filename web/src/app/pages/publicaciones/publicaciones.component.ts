@@ -1,3 +1,4 @@
+import { CurrencyPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -42,7 +43,8 @@ export class PublicacionesComponent {
 
 	constructor(private router: Router, private auth: AuthService, private fb: FormBuilder,
 		private productosService: ProductosService, private showErrorService: ShowErrorService,
-		private truequesService: TruequesService, private comprasService: ComprasService){
+		private truequesService: TruequesService, private comprasService: ComprasService,
+		private currencyPipe: CurrencyPipe){
 
 		this.formFiltros = fb.group({
 			fundacion: [''],
@@ -170,8 +172,8 @@ export class PublicacionesComponent {
 				id: publicacion.idPublicacion,
 				imagen: publicacion.parsedImagenes? publicacion.parsedImagenes[0] : 'no_image',
 				titulo: publicacion.titulo,
-				valorPrincipal: `$${publicacion.valorTruequeMin} - $${publicacion.valorTruequeMax}`,
-				valorSecundario: !!publicacion.particularDTO.accessToken ? (publicacion.precioVenta ? `$${publicacion.precioVenta}` : undefined) : undefined,
+				valorPrincipal: `${this.currencyPipe.transform(publicacion.valorTruequeMin)} - ${this.currencyPipe.transform(publicacion.valorTruequeMax)}`,
+				valorSecundario: !!publicacion.particularDTO.accessToken ? (publicacion.precioVenta ? `${this.currencyPipe.transform(publicacion.precioVenta)}` : undefined) : undefined,
 				fecha: publicacion.fechaPublicacion,
 				usuario: {
 					id: publicacion.particularDTO.usuarioDTO.idUsuario,

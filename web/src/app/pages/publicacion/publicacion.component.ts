@@ -1,4 +1,4 @@
-import { DOCUMENT } from '@angular/common';
+import { CurrencyPipe, DOCUMENT } from '@angular/common';
 import { AfterViewInit, Component, Inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -53,7 +53,7 @@ export class PublicacionComponent implements AfterViewInit {
 		private showErrorService: ShowErrorService, private auth: AuthService,
 		private router: Router, private usuarioService: UsuarioService, public dialog: MatDialog,
 		private comprasService: ComprasService, @Inject(DOCUMENT) private document: Document,
-		private chatService: ChatService) {
+		private chatService: ChatService, private currencyPipe: CurrencyPipe) {
 
 		this.userData = { isSwapper: auth.isUserSwapper(), isLoggedIn: auth.isUserLoggedIn }
 		this.route.paramMap.subscribe(params => {
@@ -167,6 +167,7 @@ export class PublicacionComponent implements AfterViewInit {
 				dialogConfig = {
 					data: {
 						publicacion: this.publicacion,
+						trueques: this.trueques
 					},
 					width: '70vw',
 					height: '80vh',
@@ -180,6 +181,7 @@ export class PublicacionComponent implements AfterViewInit {
 				dialogConfig = {
 					data: {
 						publicacion: this.publicacion,
+						trueques: this.trueques
 					},
 					width: '80vw',
 					height: '85vh',
@@ -263,7 +265,7 @@ export class PublicacionComponent implements AfterViewInit {
 				id: publicacion.idPublicacion,
 				imagen: publicacion.parsedImagenes? publicacion.parsedImagenes[0] : 'no_image',
 				titulo: publicacion.titulo,
-				valorPrincipal: `$${publicacion.valorTruequeMin} - $${publicacion.valorTruequeMax}`,
+				valorPrincipal: `${this.currencyPipe.transform(publicacion.valorTruequeMin)} - ${this.currencyPipe.transform(publicacion.valorTruequeMax)}`,
 				fecha: publicacion.fechaPublicacion,
 				usuario: {
 					id: publicacion.particularDTO.usuarioDTO.idUsuario,
@@ -292,7 +294,7 @@ export class PublicacionComponent implements AfterViewInit {
 				}
 			} else if(publicacion.estadoTrueque == 'PENDIENTE' && publicacion.estadoPublicacion == 'ABIERTA') {
 				// ACTIVOS
-				item.valorSecundario = publicacion.precioVenta ? `$${publicacion.precioVenta}` : undefined
+				item.valorSecundario = publicacion.precioVenta ? `${this.currencyPipe.transform(publicacion.precioVenta)}` : undefined
 				item.buttons = this.getButtonsForCards();
 				auxList2.push(item)
 			} else /* if(publicacion.estadoTrueque != 'PENDIENTE' || publicacion.estadoPublicacion != 'ABIERTA') */ {
@@ -305,7 +307,7 @@ export class PublicacionComponent implements AfterViewInit {
 			id: this.publicacion.idPublicacion,
 			imagen: this.publicacion.parsedImagenes? this.publicacion.parsedImagenes[0] : 'no_image',
 			titulo: this.publicacion.titulo,
-			valorPrincipal: `$${this.publicacion.valorTruequeMin} - $${this.publicacion.valorTruequeMax}`,
+			valorPrincipal: `${this.currencyPipe.transform(this.publicacion.valorTruequeMin)} - ${this.currencyPipe.transform(this.publicacion.valorTruequeMax)}`,
 			fecha: this.publicacion.fechaPublicacion,
 			usuario: {
 				id: this.publicacion.particularDTO.usuarioDTO.idUsuario,
@@ -345,6 +347,14 @@ export class PublicacionComponent implements AfterViewInit {
 		dialogRef.afterClosed().subscribe((result: any) => {
 			console.log('result trocar', result);
 			if(result) this.getTrueques()
+		})
+	}
+
+	getMessages(idTrueque: number) {
+		this.chatService.getMyMensajes(idTrueque).subscribe({
+			next: (res: any) => {
+				this.mensajes = res;
+			}
 		})
 	}
 }

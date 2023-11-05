@@ -13,9 +13,11 @@ export class ChatComponent {
 	@Input() mensajes: any[] = [];
 	@Input() userData: any;
 	@Input() elOtroSwapper: any; 
-	trueques: TruequeModel[] = []
-	userType: any
-	publicacion: any
+	@Input() trueques: TruequeModel[] = []
+	@Input() userType: any
+	@Input() publicacion: any
+
+	@Output() sentMessage = new EventEmitter<any>();
 
 	nuevoMensaje: string = '';
 	origin: 'modal' | 'inline' = 'inline';
@@ -35,7 +37,7 @@ export class ChatComponent {
 	}
 
 	scrollToBottom() {
-		const id = origin == 'inline' ? 'chatContainer' : 'modal-chat-container';
+		const id = this.origin == 'inline' ? 'chatContainer' : 'modal-chat-container';
 		const elem = this.document.getElementById(id)
 		if(elem) elem.scrollTop = elem.scrollHeight;
 		this.initChat++
@@ -51,10 +53,16 @@ export class ChatComponent {
 			}).subscribe({
 				next: (res: any) => {
 					console.log('mensaje enviado:', res);
+					this.sentMessage.emit(trueque.idTrueque)
 					this.chatService.getMyMensajes(trueque.idTrueque).subscribe({
 						next: (res: any) => {
 							this.mensajes = res;
 							this.nuevoMensaje = ''
+							if(this.origin == 'modal') {
+								this.initChat = 0;
+								const elem = document.getElementById('modal-chat-container')
+								if(elem) elem.scrollTop = elem.scrollHeight
+							}
 						}
 					})
 				}

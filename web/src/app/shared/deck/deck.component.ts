@@ -16,6 +16,7 @@ export class DeckComponent {
 	@Output() statusChanged = new EventEmitter<any>();
 	@Output() cardSelected = new EventEmitter<any>();
 	@Output() cardUnselected = new EventEmitter<any>();
+	@Output() modalClosed = new EventEmitter<any>();
 
 	paginatedCardList: CardModel[] = [];
 
@@ -47,5 +48,9 @@ export class DeckComponent {
 
 	cardWasUnselected(event: any){
 		this.cardUnselected.emit(event)
+	}
+
+	modalWasClosed(event: any) {
+		this.modalClosed.emit(event)
 	}
 }

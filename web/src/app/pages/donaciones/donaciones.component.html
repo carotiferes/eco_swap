@@ -40,7 +40,7 @@
 		</div>
 	</div>
 	<div *ngIf="donacionesCardList.length > 0">
-		<app-deck [cardList]="donacionesCardList" app="donaciones"
+		<app-deck [cardList]="donacionesCardList" app="donaciones" (modalClosed)="cardModalClosed($event)"
 		(statusChanged)="getDonaciones()" (cardSelected)="selectCard($event)" (cardUnselected)="unselectCard($event)"></app-deck>
 	</div>
 	<div *ngIf="donacionesCardList.length == 0" style="margin: 10%; text-align: center;">

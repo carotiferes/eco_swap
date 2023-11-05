@@ -238,9 +238,10 @@ export class DonacionesComponent {
 			panelClass: 'full-screen-modal',
 			data: { cards: cardsWithData }
 		});
-		/* dialogRef.afterClosed().subscribe((result) => {
+		dialogRef.afterClosed().subscribe((result) => {
 			console.log('closed', result);
-		}) */
+			if(result) this.getDonaciones()
+		})
 	}
 
 	zoomImage(img: string) {
@@ -265,4 +266,8 @@ export class DonacionesComponent {
 		return this.donacionesService.getImagen(image)
 	}
 
+	
+	cardModalClosed(event: any) {
+		if(event.result) this.cancelSelect()
+	}
 }

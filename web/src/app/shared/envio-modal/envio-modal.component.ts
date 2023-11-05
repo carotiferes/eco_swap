@@ -168,7 +168,7 @@ export class EnvioModalComponent {
 			next: (res: any) => {
 				Swal.fire('¡Excelente!', 'Tu orden se creó con éxito', 'success')
 				console.log(res);
-				
+				this.dialogRef.close(true)
 			}
 		})
 	}
