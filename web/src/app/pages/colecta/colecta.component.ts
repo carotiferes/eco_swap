@@ -47,7 +47,7 @@ export class ColectaComponent {
 			})
 		}
 	}
-	
+
 	ngOnInit(): void {
 		this.getColecta();
 	}
@@ -60,14 +60,7 @@ export class ColectaComponent {
 					this.colecta = colecta;
 					//this.colecta.imagen = this.getImage(this.colecta.imagen);
 
-					this.productoService.getProductosColecta(colecta.idColecta).subscribe({
-						next: (res: any) => {
-							colecta.productos = res;
-						},
-						error: (error) => {
-							console.log('error', error);
-						}
-					})
+
 
 					if(this.auth.isUserLoggedIn){
 						this.getDonaciones();
@@ -105,7 +98,7 @@ export class ColectaComponent {
 			},
 			error: (error) => {
 				console.log('error', error);
-				
+
 			}, complete: () => {
 				this.parseDonaciones();
 				this.loading = false;
@@ -120,7 +113,7 @@ export class ColectaComponent {
 		const auxListCerrada: CardModel[] = [];
 		for (const donacion of this.donacionesToShow) {
 			console.log(donacion);
-			
+
 			let stringCaracteristicas = '';
 			for (const [i, caract] of donacion.caracteristicaDonacion.entries()) {
 				if(i==0) stringCaracteristicas = caract.caracteristica
@@ -160,7 +153,7 @@ export class ColectaComponent {
 			}
 		  });;
 		console.log(this.donacionesAbiertas, this.donacionesCerradas);
-		
+
 	}
 
 	getButtonsForCard(donacion: DonacionModel) {

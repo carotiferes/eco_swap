@@ -3,7 +3,6 @@ package msUsers.services;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -84,6 +83,7 @@ public class JwtInterceptor implements HandlerInterceptor {
                         HttpStatus.UNAUTHORIZED);
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write(objectMapper.writeValueAsString(unauthorizedAccessResponse));
+                log.error("ERROR 401: {}", e.getMessage());
                 return false;
             }
         }
