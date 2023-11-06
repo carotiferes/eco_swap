@@ -41,7 +41,7 @@
 				<div *ngFor="let producto of colecta.productos" class="producto">
 					<!-- {{producto.descripcion}}: {{producto.cantidadRecibida}} -->
 					<div>{{producto.descripcion}}</div>
-					<div>0</div>
+					<div>{{producto.cantidadEnCamino}}</div>
 					<div>{{producto.cantidadRecibida}}</div>
 					<div>{{producto.cantidadSolicitada > 0 ? producto.cantidadSolicitada : 'Sin límite'}}</div>
 				</div>
