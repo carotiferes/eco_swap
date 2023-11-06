@@ -7,13 +7,14 @@ import msUsers.components.events.NuevaPropuestaTruequeEvent;
 import msUsers.components.events.NuevoEstadoDonacionEvent;
 import msUsers.components.events.NuevoEstadoTruequeEvent;
 import msUsers.domain.entities.*;
+import msUsers.domain.entities.enums.EstadoDonacion;
 import msUsers.domain.entities.enums.EstadoNotificacion;
 import msUsers.domain.entities.enums.TipoNotificacion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Component
 @Slf4j
@@ -31,7 +32,7 @@ public class NotificacionesListener {
         notificacion.setTitulo("¡Nueva donación!");
         notificacion.setMensaje("Tenés una nueva donación en la colecta: " + event.getColecta().getTitulo());
         notificacion.setTipoNotificacion(TipoNotificacion.DONACION);
-        notificacion.setFechaNotificacion(LocalDate.now());
+        notificacion.setFechaHoraNotificacion(LocalDateTime.now());
         notificacion.setUsuario(usuario);
         usuario.getNotificaciones().add(notificacion);
         entityManager.merge(usuario);
@@ -49,7 +50,7 @@ public class NotificacionesListener {
         notificacion.setTitulo("¡Nueva propuesta de trueque!");
         notificacion.setMensaje("Tenés una nueva propuesta de trueque para tu publicación: " + publicacionOrigen.getTitulo());
         notificacion.setTipoNotificacion(TipoNotificacion.TRUEQUE);
-        notificacion.setFechaNotificacion(LocalDate.now());
+        notificacion.setFechaHoraNotificacion(LocalDateTime.now());
         notificacion.setUsuario(usuario);
         usuario.getNotificaciones().add(notificacion);
         entityManager.merge(usuario);
@@ -65,11 +66,20 @@ public class NotificacionesListener {
         Notificacion notificacion = new Notificacion();
         notificacion.setEstadoNotificacion(EstadoNotificacion.NO_LEIDO);
         notificacion.setIdReferenciaNotificacion(event.getColecta().getIdColecta());
-        notificacion.setTitulo("Cambio de estado en tu donación.");
-        notificacion.setMensaje("La donación " + tituloPublicacion + " que realizaste a la colecta " + colecta.getTitulo()
-                + " cambió estado a " + event.getEstadoDonacion().toString().toLowerCase());
+
+        if(event.getEstadoDonacion() == EstadoDonacion.EN_ESPERA){
+            notificacion.setTitulo("Cambio de estado en una donación recibida.");
+            notificacion.setMensaje("La donación " + tituloPublicacion + " que recibiste en la colecta " + colecta.getTitulo()
+            + " cambio de estado a " + event.getEstadoDonacion().toString().toLowerCase().replace("_", " "));
+        }
+        else {
+            notificacion.setTitulo("Cambio de estado en tu donación.");
+            notificacion.setMensaje("La donación " + tituloPublicacion + " que realizaste a la colecta " + colecta.getTitulo()
+                    + " cambió estado a " + event.getEstadoDonacion().toString().toLowerCase());
+        }
+
         notificacion.setTipoNotificacion(TipoNotificacion.NUEVO_ESTADO_DONACION);
-        notificacion.setFechaNotificacion(LocalDate.now());
+        notificacion.setFechaHoraNotificacion(LocalDateTime.now());
         notificacion.setUsuario(usuario);
         usuario.getNotificaciones().add(notificacion);
         entityManager.merge(usuario);
@@ -87,7 +97,7 @@ public class NotificacionesListener {
         notificacion.setMensaje("El trueque de tu propuesta " + event.getPublicacion().getTitulo() + " cambio de estado a "
                 + event.getEstadoTrueque().toString().toLowerCase());
         notificacion.setTipoNotificacion(TipoNotificacion.NUEVO_ESTADO_TRUEQUE);
-        notificacion.setFechaNotificacion(LocalDate.now());
+        notificacion.setFechaHoraNotificacion(LocalDateTime.now());
         notificacion.setUsuario(usuario);
         usuario.getNotificaciones().add(notificacion);
         entityManager.merge(usuario);

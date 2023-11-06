@@ -39,7 +39,7 @@ public class Notificacion {
     @Enumerated(value = EnumType.STRING)
     private TipoNotificacion tipoNotificacion;
 
-    private LocalDate fechaNotificacion;
+    private LocalDateTime fechaHoraNotificacion;
 
     public NotificacionDTO toDTO(){
         NotificacionDTO notificacionDTO = new NotificacionDTO();
@@ -50,7 +50,7 @@ public class Notificacion {
         notificacionDTO.setIdReferenciaNotificacion(idReferenciaNotificacion);
         notificacionDTO.setEstadoNotificacion(estadoNotificacion);
         notificacionDTO.setTipoNotificacion(tipoNotificacion);
-        notificacionDTO.setFechaNotificacion(fechaNotificacion);
+        notificacionDTO.setFechaHoraNotificacion(fechaHoraNotificacion);
         return notificacionDTO;
     }
 }

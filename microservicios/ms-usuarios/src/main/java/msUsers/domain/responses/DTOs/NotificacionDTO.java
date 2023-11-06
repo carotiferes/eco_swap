@@ -4,7 +4,7 @@ import lombok.Data;
 import msUsers.domain.entities.enums.EstadoNotificacion;
 import msUsers.domain.entities.enums.TipoNotificacion;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 public class NotificacionDTO {
@@ -15,5 +15,5 @@ public class NotificacionDTO {
     private long idReferenciaNotificacion;
     private EstadoNotificacion estadoNotificacion;
     private TipoNotificacion tipoNotificacion;
-    private LocalDate fechaNotificacion;
+    private LocalDateTime fechaHoraNotificacion;
 }
