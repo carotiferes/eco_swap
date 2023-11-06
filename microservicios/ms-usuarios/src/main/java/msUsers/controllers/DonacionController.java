@@ -105,7 +105,12 @@ public class DonacionController {
             responseUpdateEntity.setStatus(HttpStatus.OK.name());
             responseUpdateEntity.setDescripcion("Se cambio el estado de la donacion de " + anteriorEstado + " a " + request.getNuevoEstado());
 
-            NuevoEstadoDonacionEvent nuevoEstadoDonacionEvent = new NuevoEstadoDonacionEvent(this, donacion, donacion.getProducto().getColecta(), donacion.getParticular().getUsuario(), nuevoEstado);
+            NuevoEstadoDonacionEvent nuevoEstadoDonacionEvent;
+            if(nuevoEstado == EstadoDonacion.EN_ESPERA) 
+                nuevoEstadoDonacionEvent = new NuevoEstadoDonacionEvent(this, donacion, donacion.getProducto().getColecta(), donacion.getProducto().getColecta().getFundacion().getUsuario(), nuevoEstado);
+            else 
+                nuevoEstadoDonacionEvent = new NuevoEstadoDonacionEvent(this, donacion, donacion.getProducto().getColecta(), donacion.getParticular().getUsuario(), nuevoEstado);
+
             applicationEventPublisher.publishEvent(nuevoEstadoDonacionEvent);
             log.info("<< Notificación creada para el usuario: {}", user.getEmail());
 
