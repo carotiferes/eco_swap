@@ -19,7 +19,5 @@ public class RequestNuevaOpinion {
     @Min(value = 0, message = "La valoración mínima permitida es de 0 estrellas.")
     private float valoracion;
 
-    @NotNull(message = "Es necesaria una opinión escrita.")
-    @NotBlank(message = "La descripción de la opinión no puede estar vacía.")
     private String descripcion;
 }

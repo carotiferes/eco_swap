@@ -25,6 +25,7 @@ import msAutenticacion.domain.responses.ResponseUpdateEntity;
 import msAutenticacion.exceptions.*;
 import msAutenticacion.exceptions.events.UsuarioCreadoEvent;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -35,10 +36,7 @@ import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -269,6 +267,7 @@ public class UsuarioService {
                 .puntaje(0)
                 .validado(false)
                 .bloqueado(false)
+                .avatar(String.valueOf(RandomUtils.nextInt(15,26)))
                 .build();
     }
     
@@ -311,6 +310,7 @@ public class UsuarioService {
     private void crearNuevaDireccion(RequestEditProfile requestEditProfile, Usuario user) {
         Direccion nuevaDireccion = new Direccion();
         nuevaDireccion.setUsuario(user);
+        nuevaDireccion.setCodigoPostal(requestEditProfile.getDireccion().getCodigoPostal());
         nuevaDireccion.setCalle(requestEditProfile.getDireccion().getCalle());
         nuevaDireccion.setPiso(requestEditProfile.getDireccion().getPiso());
         nuevaDireccion.setDpto(requestEditProfile.getDireccion().getDepartamento());
