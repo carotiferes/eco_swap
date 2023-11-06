@@ -1,8 +1,10 @@
-<div style="margin: 20px;">
-	<h2>Seleccioná una foto de perfil!</h2>
+<div class="header">
+	<span style="width: 30px;"></span>
+	<span>Elegí tu ávatar</span>
+	<mat-icon (click)="dialogRef.close()" style="margin-left: 10px; cursor: pointer;">close</mat-icon>
 </div>
-<div style="display: flex; justify-content: center;">
-	<mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+<div *ngIf="loading" style="display: flex; justify-content: center; margin-bottom: 60px;">
+	<mat-spinner diameter="20"></mat-spinner>
 </div>
 <div *ngIf="!loading">
 	<div class="image-gallery">

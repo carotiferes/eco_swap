@@ -196,12 +196,14 @@ export class PublicacionesComponent {
 
 	getButtonsForCard(publicacion: PublicacionModel, truequeAprobado: boolean = false) {
 		if(this.origin == 'myPublicaciones') {
-			return [{
+			const list =[{
 				name: !truequeAprobado ? '¿Dónde lo propuse?' : 'Ver trueque',
 				icon: 'info',
 				color: 'primary',
 				status: 'INFO'
-			}];
+			}]
+			if (publicacion.estadoPublicacion == 'ABIERTA') list.push({name: 'Cerrar publicación', icon: 'close', color: 'warn', status: 'CERRADA'});
+			return list;
 		} else if (this.origin == 'myCompras'){
 			return [{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO'}];
 		} else return [];

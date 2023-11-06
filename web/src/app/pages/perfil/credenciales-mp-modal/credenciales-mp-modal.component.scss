@@ -1,8 +1,18 @@
+.header {
+	text-align: center;
+	margin: 20px;
+	padding-bottom: 20px;
+	border-bottom: 1px solid var(--light-grey);
+	font-size: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
 #main-credenciales-mp {
-	width: 100%;
+	margin: 0 10px 15px;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    justify-content: center;
 
 	mat-icon {
 		margin-bottom: 0px;
@@ -29,6 +39,7 @@
 	gap: 10px;
 	justify-content: center;
 	align-items: center;
+	margin: 10px 20px 30px;
 
 	.confirm {
 		background-color: #3fb6e9;

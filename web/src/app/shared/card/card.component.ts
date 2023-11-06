@@ -61,8 +61,9 @@ export class CardComponent {
 				this.router.navigate(['publicacion/' + card.idAuxiliar])
 				break;
 			default:
-				const url = this.app == 'colectas' ? 'colecta/' : (this.app == 'publicaciones' ? 'publicacion/' : 'donacion/')
-				this.router.navigate([url + card.id])
+				const url = this.app == 'colectas' ? 'colecta/' : (this.app == 'publicaciones' ? 'publicacion/' : 'colecta/')
+				const id = this.app == 'colectas' || this.app == 'publicaciones' ? card.id : card.idAuxiliar
+				this.router.navigate([url + id])
 				break;
 		}
 	}
@@ -124,7 +125,7 @@ export class CardComponent {
 		let deny = '';
 		let icon: 'success' | 'warning' = 'warning';
 
-		const palabra = this.app == 'publicaciones' ? 'propuesta de trueque' : 'donación';
+		const palabra = card.codigo ? card.codigo.toLowerCase() : this.app == 'publicaciones' ? 'propuesta de trueque' : 'donación';
 
 		switch (newStatus) {
 			case 'CANCELADO':
@@ -155,6 +156,13 @@ export class CardComponent {
 				cancel = 'No, cancelar';
 				icon = 'warning';
 				break;
+			case 'CERRADA':
+					title = 'Confirmar Cierre';
+					text = '¿Estás seguro/a que querés cerrar esta ' + palabra + '? Se cancelarán todos sus trueques pendientes. Esta acción es irreversible.';
+					deny = 'Sí, confirmar';
+					cancel = 'No, cancelar';
+					icon = 'warning';
+					break;
 			default:
 				title = 'Confirmar Acción';
 				text = 'Cambiar el estado de la ' + palabra + ' es irreversible, ¿Estás seguro/a que querés continuar?';
@@ -176,7 +184,16 @@ export class CardComponent {
 			reverseButtons: true
 		}).then(({ isConfirmed, isDenied }) => {
 			if (isConfirmed || isDenied) {
-				if (this.app == 'publicaciones' && card.idAuxiliar) {
+				if(newStatus == 'CERRADA') {
+					this.truequesService.cerrarPublicacion(card.id).subscribe({
+						next: (res: any) => {
+							//console.log(res);
+							Swal.fire('Se cambió el estado!', 'Se guardó el nuevo estado de la ' + palabra, 'success').then(() => {
+								this.statusChanged.emit()
+							})
+						}
+					})
+				} else if (this.app == 'publicaciones' && card.idAuxiliar) {
 					this.truequesService.cambiarEstadoTrueque(card.idAuxiliar, newStatus).subscribe({
 						next: (res: any) => {
 							//console.log(res);

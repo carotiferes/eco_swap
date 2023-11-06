@@ -94,7 +94,7 @@ export class DonacionesComponent {
 					puntaje: donacion.producto.colectaDTO.fundacionDTO.puntaje,//donacion.particularDTO.puntaje,
 					localidad: donacion.producto.colectaDTO.fundacionDTO.direcciones[0].localidad,//donacion.particularDTO.direcciones[0].localidad
 				},
-				action: 'detail',
+				action: 'access',
 				buttons: this.getButtonsForCard(donacion, matchingOrders),
 				estado: donacion.estadoDonacion,
 				idAuxiliar: donacion.producto.colectaDTO.idColecta

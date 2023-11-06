@@ -174,10 +174,8 @@ export class PerfilComponent {
 
 	selectImage() {
 		const dialogRef = this.dialog.open(ImagesModalComponent, {
-			maxWidth: '80vw',
-			maxHeight: '75vh',
-			height: '100%',
-			width: '100%',
+			minWidth: '50vw',
+			minHeight: '40vw',
 			panelClass: 'full-screen-modal'
 		});
 		dialogRef.afterClosed().subscribe((result) => {
@@ -192,10 +190,8 @@ export class PerfilComponent {
 
 	credencialesMP() {
 		const dialogRef = this.dialog.open(CredencialesMpModalComponent, {
-			maxWidth: '60vw',
-			maxHeight: '60vh',
-			height: '100%',
-			width: '100%',
+			minWidth: '50vw',
+			minHeight: '40vw',
 			panelClass: 'full-screen-modal',
 			data: {user: this.user, publicKey: this.userToShow?.publicKey, accessToken: this.userToShow?.accessToken}
 		});
@@ -207,10 +203,8 @@ export class PerfilComponent {
 
 	changePassword() {
 		const dialogRef = this.dialog.open(ChangePasswordModalComponent, {
-			maxWidth: '50vw',
-			maxHeight: '60vh',
-			height: '100%',
-			width: '100%',
+			minWidth: '50vw',
+			minHeight: '40vw',
 			panelClass: 'full-screen-modal',
 		});
 		dialogRef.afterClosed().subscribe((result) => {
@@ -221,10 +215,8 @@ export class PerfilComponent {
 
 	opinar() {
 		const dialogRef = this.dialog.open(OpinarModalComponent, {
-			maxWidth: '50vw',
-			maxHeight: '60vh',
-			height: '100%',
-			width: '100%',
+			minWidth: '50vw',
+			minHeight: '40vw',
 			panelClass: 'full-screen-modal',
 			data: {usuario: this.user, user: this.userToShow}
 		});

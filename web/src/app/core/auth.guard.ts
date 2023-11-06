@@ -7,7 +7,6 @@ export const AuthGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
 	// Obtiene el servicio AuthService mediante inyección de dependencias
 	const authService = inject(AuthService);
 	const router = inject(Router);
-	console.log('IN AUTH GUARD');
 	
 	const onlyFundacionesURLs = ['mis-colectas', 'form-colecta']
 	const onlySwapperURLs = [
@@ -24,7 +23,6 @@ export const AuthGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
 		mi-perfil, perfil, edit-perfil, reset-password, notificaciones
 	 */
 	const url: string = route.url[0].path;
-	console.log('url', url);
 	
 	if (authService.isUserLoggedIn) {
 		if(authService.getUserID() == 999) {

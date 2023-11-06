@@ -1,3 +1,9 @@
+#all {
+	display: flex;
+	flex-direction: column;
+	gap: 15vh;
+}
+
 .picsum-img-wrapper {
 	img {
 		width: 100%;
@@ -10,7 +16,7 @@
 	flex-wrap: wrap;
 	max-width: 100%;
 	gap: 5%;
-	margin: 15% 2%;
+	//margin: 15% 2%;
 
 	.card {
 		transition: transform 0.2s;
@@ -75,7 +81,7 @@
 }
 
 #valores {
-	margin: 15% 2%;
+	//margin: 15% 2%;
 
 	.content-valores {
 		display: flex;
@@ -99,7 +105,7 @@
 }
 
 #beneficios {
-	margin: 15% 2%;
+	//margin: 15% 2%;
 
 	.beneficios-content {
 		display: flex;
@@ -159,57 +165,11 @@ img.card-img {
 }
 
 #quienes-somos {
-	margin: 15% 2%;
+	margin: auto 15vh;
 
 	img {
 		object-fit: contain;
 	}
-
-	/* .quienes-somos-content {
-		.img-back {
-			width: 100%;
-			opacity: 1;
-			display: block;
-			width: 100%;
-			height: auto;
-			transition: .5s ease;
-			backface-visibility: hidden;
-		}
-
-		.middle {
-			transition: .5s ease;
-			//opacity: 0;
-			position: absolute;
-			top: 20%;
-			left: 3%;
-		}
-
-		/* &:hover *
-		.img-back {
-			filter: brightness(0.5);
-		}
-
-		/* &:hover .middle {
-			opacity: 1;
-		  } *
-
-		.text {
-			//background-color: #4CAF50;
-			color: white;
-			font-size: 16px;
-			padding: 16px 32px;
-			width: 50%;
-		}
-
-		.topleft {
-			position: absolute;
-			top: 10%;
-			left: 5%;
-			//transform: translate(-50%, -50%);
-			font-size: 36px;
-			color: white;
-		}
-	} */
 }
 
 @media (min-width: 0px) and (max-width: 576px) {
@@ -228,24 +188,10 @@ img.card-img {
 	.card-img-overlay h2 {
 		font-size: 30px !important;
 	}
-
-	/* .topleft {
-		font-size: 18px !important;
-	}
-
-	.text {
-		width: 100% !important;
-		font-size: 12px !important;
-	} */
 }
 
 @media (min-width: 577px) and (max-width: 768px) {
 	.card-img-overlay h2 {
 		font-size: 26px !important;
 	}
-
-	/* .text {
-		width: 80% !important;
-		font-size: 14px;
-	} */
 }

@@ -169,8 +169,8 @@ export class PublicacionComponent implements AfterViewInit {
 						publicacion: this.publicacion,
 						trueques: this.trueques
 					},
-					width: '70vw',
-					height: '80vh',
+					minWidth: '70vw',
+					maxHeight: '80vh',
 					position: {
 						top: '50vh',
 						left: '50vw'
@@ -183,8 +183,8 @@ export class PublicacionComponent implements AfterViewInit {
 						publicacion: this.publicacion,
 						trueques: this.trueques
 					},
-					width: '80vw',
-					height: '85vh',
+					minWidth: '80vw',
+					maxHeight: '85vh',
 				}
 			}
 			const dialogRef = this.dialog.open(TrocarModalComponent, dialogConfig);

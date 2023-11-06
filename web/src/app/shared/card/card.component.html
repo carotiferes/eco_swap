@@ -1,4 +1,4 @@
-<div class="card" (click)="clicked(cardData)" *ngIf="cardData" [class.selected-card]="cardData.isSelected"
+<div class="card" (click)="clicked(cardData)" *ngIf="cardData" [class.selected-card]="cardData.isSelected == true"
 	[ngClass]="app == 'publicaciones' && cardData.buttons.length == 0 ? 'small' : 'big'"
 	[class.is-donacion]="cardData.codigo == 'Donación'">
 	<mat-chip class="chip-localidad" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'">

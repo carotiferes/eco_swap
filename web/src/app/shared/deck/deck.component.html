@@ -8,6 +8,6 @@
 	</div>
 	<mat-paginator [hidePageSize]="true" [pageSize]="pageSize" [showFirstLastButtons]="true"
 		[length]="cardList.length" #paginator (page)="changePage($event)"
-		style="border-radius: 15px;" *ngIf="cardList.length > 0">
+		style="border-radius: 15px;" *ngIf="cardList.length > 0" [class.no-label]="smallWidth">
 	</mat-paginator>
 </div>

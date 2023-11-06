@@ -1,7 +1,9 @@
+<div class="header">
+	<span style="width: 30px;"></span>
+	<span style="max-width: 75%;">Opiná sobre {{data.user.nombre}}</span>
+	<mat-icon (click)="dialogRef.close()" style="margin-left: 10px; cursor: pointer;">close</mat-icon>
+</div>
 <div id="main-opinar">
-	<div style="margin: 20px;">
-		<h2>Opiná sobre {{data.user.nombre}}</h2>
-	</div>
 
 	<div class="content">
 		<ngb-rating [(rate)]="valoracion" [max]="5">

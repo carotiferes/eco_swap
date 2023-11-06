@@ -8,7 +8,7 @@ const properties = require('../core/properties.json')
 export class HttpBackEnd {
 
 	constructor(private httpClient: HttpClient) {
-		console.log('ENVIRONMENT', environment);
+		//console.log('ENVIRONMENT', environment);
 		
 	}
 
