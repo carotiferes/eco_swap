@@ -103,8 +103,6 @@ public class OpinionController {
     public ResponseEntity<ResponsePostEntityCreation> createOpinion(@Valid @RequestBody RequestNuevaOpinion requestNuevaOpinion) {
 
         final Usuario userOpinador = UsuarioContext.getUsuario();
-        Optional<Particular> optionalParticular = criteriaBuilderQueries.getParticularPorUsuario(userOpinador.getIdUsuario());
-        Particular particularOpinador = optionalParticular.orElseThrow(() -> new EntityNotFoundException("¡El particular no existe!"));
 
         var usuarioOpinado = this.usuariosRepository.findById(requestNuevaOpinion.getIdUsuarioOpinado()).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrado el usuario: " + requestNuevaOpinion.getIdUsuarioOpinado()));
