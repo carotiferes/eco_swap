@@ -130,7 +130,7 @@ export class ColectaComponent {
 				id: donacion.idDonacion,
 				imagen: donacion.parsedImagenes? donacion.parsedImagenes[0] : 'no_image',
 				titulo: donacion.descripcion,
-				valorPrincipal: `${donacion.cantidadDonacion} unidades de ${donacion.producto.descripcion}`,
+				valorPrincipal: `${donacion.cantidadDonacion} ${donacion.cantidadDonacion == 1 ? 'unidad' : 'unidades'} de ${donacion.producto.descripcion}`,
 				valorSecundario: stringCaracteristicas,
 				fecha: donacion.fechaDonacion,
 				usuario: {
