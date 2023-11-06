@@ -20,6 +20,7 @@ export interface CardModel {
 		icon: string;
 		color: string;
 		status: string;
+		disabled?: boolean;
 	}[];
 	action: 'select' | 'access' | 'detail' | 'list' | 'trueque';
 	disabled?: boolean;

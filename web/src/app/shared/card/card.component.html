@@ -30,12 +30,15 @@
 
 	<div class="buttons" *ngIf="cardData.buttons.length > 0">
 		<button *ngFor="let button of cardData.buttons" mat-mini-fab [color]="button.color"
-			[disabled]="(button.status != 'RECIBIDO' && button.status != 'RECIBIDA') ? (cardData.estado != 'PENDIENTE' && button.status != 'INFO')  : (cardData.estado != 'APROBADO' && cardData.estado != 'APROBADA')"
 			[matTooltip]="button.name" matTooltipPosition="above" [style]="button.color == 'info' ? 'background-color: var(--info)' :''"
 			(click)="buttonClicked(cardData, button); $event.stopPropagation()">
 			<mat-icon>{{button.icon}}</mat-icon>
 		</button>
-	</div>
+	</div> <!-- (button.status != 'RECIBIDO' && button.status != 'RECIBIDA') ? (cardData.estado != 'PENDIENTE' && button.status != 'INFO' && button.status != 'EN_ESPERA') : (cardData.estado != 'APROBADO' && cardData.estado != 'APROBADA') -->
+	<span *ngIf="cardData.estado == 'EN_ESPERA' && isSwapper" class="llevar-donacion" >
+		¡Llevá tu donación!
+		<mat-icon matTooltip="Cuando entregues la donación, la fundación podrá marcarla como RECIBIDA." class="material-icons-outlined">info</mat-icon>
+	</span>
 
 	<div class="user-data" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'">
 		<img class="user-img" [src]="'assets/perfiles/perfiles-'+cardData.usuario.imagen+'.jpg'">

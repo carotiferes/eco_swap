@@ -150,7 +150,15 @@ export class ColectaComponent {
 		}
 
 		this.donacionesAbiertas = auxListAbierta;
-		this.donacionesCerradas = auxListCerrada;
+		this.donacionesCerradas = auxListCerrada.sort((a, b) => {
+			if (a.estado === 'EN_ESPERA' && b.estado !== 'EN_ESPERA') {
+			  return -1; // 'a' comes before 'b'
+			} else if (a.estado !== 'EN_ESPERA' && b.estado === 'EN_ESPERA') {
+			  return 1; // 'b' comes before 'a'
+			} else {
+			  return 0; // No change in order
+			}
+		  });;
 		console.log(this.donacionesAbiertas, this.donacionesCerradas);
 		
 	}
@@ -164,9 +172,15 @@ export class ColectaComponent {
 					{name: 'RECHAZAR', icon: 'close', color: 'warn', status: 'RECHAZADA'},
 				]
 			}
+		}
+		else if (donacion.estadoDonacion == 'EN_ESPERA' && !this.userData.isSwapper) {
+			return [{name: 'RECIBIDO', icon: 'done_all', color: 'primary', status: 'RECIBIDA'}]
 		} else if(donacion.estadoDonacion == 'APROBADA') {
-			if(this.userData.isSwapper) return [{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO'}]
-			else return [{name: 'RECIBIDO', icon: 'done_all', color: 'primary', status: 'RECIBIDA'}]
+			if(this.userData.isSwapper) return [
+				{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO'},
+				{name: 'Llevar en persona', icon: 'directions_walk', color: 'info', status: 'EN_ESPERA'}
+			]
+			else return []
 		} else return [];
 	}
 

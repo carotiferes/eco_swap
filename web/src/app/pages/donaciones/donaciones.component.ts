@@ -95,9 +95,7 @@ export class DonacionesComponent {
 					localidad: donacion.producto.colectaDTO.fundacionDTO.direcciones[0].localidad,//donacion.particularDTO.direcciones[0].localidad
 				},
 				action: 'detail',
-				buttons: donacion.estadoDonacion == 'APROBADA' ? 
-				(matchingOrders ? [{ name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO' }] : []) : 
-				[{ name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADA' }],
+				buttons: this.getButtonsForCard(donacion, matchingOrders),
 				estado: donacion.estadoDonacion,
 				idAuxiliar: donacion.producto.colectaDTO.idColecta
 			}
@@ -105,6 +103,17 @@ export class DonacionesComponent {
 			this.loading = false;
 		}
 		this.donacionesCardList = auxDonaciones;
+	}
+
+	getButtonsForCard(donacion: DonacionModel, matchingOrders: boolean) {
+		if(donacion.estadoDonacion == 'APROBADA') {
+			if(matchingOrders) return [{ name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO' }]
+			else return [
+				{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO'},
+				{name: 'Llevar en persona', icon: 'directions_walk', color: 'info', status: 'EN_ESPERA'}
+			]
+		} else if (donacion.estadoDonacion != 'EN_ESPERA') return [{ name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADA' }];
+		else return [];
 	}
 
 	selectDonaciones() {
