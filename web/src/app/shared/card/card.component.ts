@@ -28,18 +28,22 @@ export class CardComponent {
 	iconMap: { [key: string]: string } = {
 		'APROBADO': 'verified', 'APROBADA': 'verified',
 		'RECIBIDO': 'add_task', 'RECIBIDA': 'add_task',
-		'PENDIENTE': 'pending',
+		'PENDIENTE': 'pending', 'EN_ESPERA': 'schedule',
 		'ABIERTA': 'lock_open', 'CERRADA': 'lock'
 	};
 	colorMap: { [key: string]: string } = {
 		'APROBADO': 'green', 'APROBADA': 'green',
 		'RECIBIDO': 'green', 'RECIBIDA': 'green',
 		'PENDIENTE': 'purple',
-		'ABIERTA': 'green',
+		'ABIERTA': 'green', 'EN_ESPERA': 'purple'
 	};
 
+	isSwapper: boolean = false;
+
 	constructor(private truequesService: TruequesService, private router: Router,
-		public dialog: MatDialog, private auth: AuthService, private donacionesService: DonacionesService) { }
+		public dialog: MatDialog, private auth: AuthService, private donacionesService: DonacionesService) {
+			this.isSwapper = auth.isUserSwapper()
+		}
 
 	clicked(card: CardModel) {
 		switch (card.action) {
@@ -141,6 +145,13 @@ export class CardComponent {
 				title = 'Confirmar Rechazo';
 				text = '¿Estás seguro/a que querés rechazar esta ' + palabra + '? La acción es irreversible.';
 				deny = 'Sí, rechazar';
+				cancel = 'No, cancelar';
+				icon = 'warning';
+				break;
+			case 'EN_ESPERA':
+				title = 'Confirmar Envío en Persona';
+				text = 'Esto significa que vos tenés que llevar la donación a la fundación. Podés ver la dirección ingresando a su perfil.';
+				deny = 'Sí, confirmar';
 				cancel = 'No, cancelar';
 				icon = 'warning';
 				break;

@@ -6,7 +6,7 @@
 	max-width: 515px !important;
 	
 	&.big {
-		height: 480px;
+		height: 500px;
 		h2 {
 			font-size: 18px !important;
 		}
@@ -200,6 +200,16 @@
 			width: 100%;
 		} */
 
+	}
+
+	.llevar-donacion {
+		gap: 10px;
+		background: var(--info);
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 5px;
 	}
 }
 

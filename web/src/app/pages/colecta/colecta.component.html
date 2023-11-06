@@ -9,7 +9,7 @@
 
 	<div *ngIf="!loading">
 		<h3 style="margin: 20px 0 0 5px; font-weight: bold;">
-			{{this.userData.isSwapper ? 'Mi donación' : 'Donaciones Pendientes'}}
+			{{this.userData.isSwapper ? 'Mis donaciones Pendientes' : 'Donaciones Pendientes'}}
 		</h3>
 		<div *ngIf="donacionesAbiertas.length == 0 && !loading" style="text-align: center;">
 			Esta colecta no tiene nuevas donaciones aún!
@@ -28,7 +28,8 @@
 			Esta colecta no tiene donaciones cerradas aún!
 		</div>
 		<div *ngIf="donacionesCerradas.length > 0">
-			<app-deck [cardList]="donacionesCerradas" app="donaciones" [fullScreenWidth]="true"></app-deck>
+			<app-deck [cardList]="donacionesCerradas" app="donaciones" [fullScreenWidth]="true"
+			(statusChanged)="getDonaciones()" (modalClosed)="cardModalClosed($event)"></app-deck>
 		</div>
 	</div>
 </div>
