@@ -15,6 +15,12 @@
 					height: 40px;
 					font-size: 14px;
 					padding: 10px;
+					display: flex;
+					justify-content: space-between;
+
+					.open-chat {
+						background-color: var(--info);
+					}
 				}
 			}
 
@@ -161,3 +167,10 @@
 		grid-template-columns: 1fr !important;
 	}
 }
+
+@media (min-width: 768px) {
+	.accordion-button::after {
+		display: none;
+	}
+}
+

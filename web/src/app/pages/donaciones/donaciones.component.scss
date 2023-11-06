@@ -68,4 +68,8 @@
 		height: fit-content;
 	}
 }
-
+@media (min-width: 768px) {
+	.accordion-button::after {
+		display: none;
+	}
+}

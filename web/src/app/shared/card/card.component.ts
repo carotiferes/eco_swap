@@ -23,6 +23,7 @@ export class CardComponent {
 	@Output() statusChanged = new EventEmitter<any>();
 	@Output() cardSelected = new EventEmitter<any>();
 	@Output() cardUnselected = new EventEmitter<any>();
+	@Output() modalClosed = new EventEmitter<any>();
 
 	iconMap: { [key: string]: string } = {
 		'APROBADO': 'verified', 'APROBADA': 'verified',
@@ -83,11 +84,6 @@ export class CardComponent {
 		}
 	}
 
-	chipClick(card: CardModel) {
-		if(card.action == 'list') this.openDialog(ListComponent, card);
-		else if(card.codigo == 'Compra') this.openDialog(EnvioModalComponent, {card}, '70vh', '60vw')
-		//else if(card.action == 'trueque') this.router.navigate(['publicacion/' + card.idAuxiliar])
-	}
 
 	openDialog(component: any, data: any, height: string = '60vh', width: string = '80vw') {
 		const dialogRef = this.dialog.open(component, {
@@ -97,16 +93,17 @@ export class CardComponent {
 			panelClass: 'full-screen-modal',
 			data
 		});
-		/* dialogRef.afterClosed().subscribe((result) => {
-			console.log('closed', result);
-		}) */
+		dialogRef.afterClosed().subscribe((result) => {
+			this.modalClosed.emit({result, componente: component.name})
+		})
 	}
 
 	buttonClicked(card: CardModel, button: any) {
 		if(button.status == 'INFO') {
 			if(card.action == 'list') this.openDialog(ListComponent, card);
 			else if(card.action == 'trueque') this.router.navigate(['publicacion/' + card.idAuxiliar])
-			else if(card.codigo == 'Compra') this.openDialog(EnvioModalComponent, {card}, '70vh', '60vw')
+			else if(card.codigo == 'Compra' || this.app == 'donaciones' && button.name == 'Configurar envío') this.openDialog(EnvioModalComponent, {card}, '70vh', '60vw')
+			else if(button.name == 'Ver envío') this.openDialog(EnvioModalComponent, {cards: [card]}, '70vh', '60vw')
 			else if(card.action == 'select' && card.codigo == 'Donación'){
 				this.clicked(card)
 			}

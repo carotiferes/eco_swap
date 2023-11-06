@@ -40,11 +40,21 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 
 				} else { // server side error
 					error = this.handleBackendError(error, err);
-					console.log('Server error with code: ' + JSON.stringify(err));
-					if(err.status >= 500)
+					console.log('Server error with code: ', err, err.error.descripcion);
+					if(err.error.descripcion == '4011') {
+						console.log('token vencido');
+						this.showErrorService.show('Error!', 'Se venció tu token de acceso, es necesario que vuelvas a iniciar sesión!')
+						this.authService.logout();
+					}
+					else if(err.status >= 500)
 						this.showErrorService.show('Error!', 'Ocurrió un error con el servidor. Por favor volvé a intentar más tarde.')
 					else if(err.status >= 400)
-						this.showErrorService.show('Error!', err.error.descripcion || 'Ha ocurrido un error. Por favor volvé a intentar más tarde.')
+						if(err.status == 401) {
+							this.showErrorService.show('Error!', 'Para acceder, por favor volvé a iniciar sesión!')
+
+							this.authService.logout();
+						}
+						else this.showErrorService.show('Error!', err.error.descripcion || 'Ha ocurrido un error. Por favor volvé a intentar más tarde.')
 					else if(err.status == 0)
 						this.showErrorService.show('Error!', 'Ocurrió un error con el servidor. Por favor volvé a intentar más tarde.')
 				}

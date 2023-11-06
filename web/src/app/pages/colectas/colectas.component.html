@@ -2,11 +2,11 @@
 
 <div id="main-donaciones" class="app-main-div">
 	<div class="dense-3">
-		<div ngbAccordion *ngIf="!isMyColectas" #accordion="ngbAccordion">
-			<div ngbAccordionItem="first" #first="ngbAccordionItem" [collapsed]="false">
+		<div ngbAccordion *ngIf="!isMyColectas" #accordion="ngbAccordion" style="min-width: 255px;">
+			<div ngbAccordionItem="first" #first="ngbAccordionItem" [collapsed]="false" [disabled]="screenWidth > 768">
 				<h2 ngbAccordionHeader>
 					<button ngbAccordionButton class="bg-transparent accordion-header-button">
-						<mat-icon>tune</mat-icon> <span style="margin-left: 10px;">Filtros</span>
+						<mat-icon>tune</mat-icon> <span style="margin-left: 10px;">Filtros</span><span style="width: 20px;"></span>
 					</button>
 				</h2>
 				<div ngbAccordionCollapse>

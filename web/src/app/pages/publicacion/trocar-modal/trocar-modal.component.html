@@ -14,7 +14,7 @@
 			(cardSelected)="selectCard($event)" [fixedPageSize]="1" [smallWidth]="true"></app-deck>
 		</div>
 	</div>
-	<div *ngIf="publicacionesCardList.length == 0">No tenés publicaciones aún! Creá una para poder hacer intercambios</div>
+	<div *ngIf="publicacionesCardList.length == 0" style="padding: 20px; text-align: center;">No tenés publicaciones para trocar con este producto! Creá una para poder hacer intercambios</div>
 </div>
 <div id="trocar-buttons">
 	<button mat-fab extended color="light" (click)="close()">CANCELAR</button>

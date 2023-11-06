@@ -1,4 +1,4 @@
-import { DOCUMENT } from '@angular/common';
+import { CurrencyPipe, DOCUMENT } from '@angular/common';
 import { AfterViewInit, Component, Inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,6 +14,7 @@ import Swal from 'sweetalert2';
 import { TrocarModalComponent } from './trocar-modal/trocar-modal.component';
 import { ChatService } from 'src/app/services/chat.service';
 import { ParticularModel } from 'src/app/models/particular.model';
+import { ChatComponent } from 'src/app/shared/chat/chat.component';
 
 @Component({
 	selector: 'app-publicacion',
@@ -52,7 +53,7 @@ export class PublicacionComponent implements AfterViewInit {
 		private showErrorService: ShowErrorService, private auth: AuthService,
 		private router: Router, private usuarioService: UsuarioService, public dialog: MatDialog,
 		private comprasService: ComprasService, @Inject(DOCUMENT) private document: Document,
-		private chatService: ChatService) {
+		private chatService: ChatService, private currencyPipe: CurrencyPipe) {
 
 		this.userData = { isSwapper: auth.isUserSwapper(), isLoggedIn: auth.isUserLoggedIn }
 		this.route.paramMap.subscribe(params => {
@@ -166,6 +167,7 @@ export class PublicacionComponent implements AfterViewInit {
 				dialogConfig = {
 					data: {
 						publicacion: this.publicacion,
+						trueques: this.trueques
 					},
 					width: '70vw',
 					height: '80vh',
@@ -179,6 +181,7 @@ export class PublicacionComponent implements AfterViewInit {
 				dialogConfig = {
 					data: {
 						publicacion: this.publicacion,
+						trueques: this.trueques
 					},
 					width: '80vw',
 					height: '85vh',
@@ -262,7 +265,7 @@ export class PublicacionComponent implements AfterViewInit {
 				id: publicacion.idPublicacion,
 				imagen: publicacion.parsedImagenes? publicacion.parsedImagenes[0] : 'no_image',
 				titulo: publicacion.titulo,
-				valorPrincipal: `$${publicacion.valorTruequeMin} - $${publicacion.valorTruequeMax}`,
+				valorPrincipal: `${this.currencyPipe.transform(publicacion.valorTruequeMin)} - ${this.currencyPipe.transform(publicacion.valorTruequeMax)}`,
 				fecha: publicacion.fechaPublicacion,
 				usuario: {
 					id: publicacion.particularDTO.usuarioDTO.idUsuario,
@@ -291,7 +294,7 @@ export class PublicacionComponent implements AfterViewInit {
 				}
 			} else if(publicacion.estadoTrueque == 'PENDIENTE' && publicacion.estadoPublicacion == 'ABIERTA') {
 				// ACTIVOS
-				item.valorSecundario = publicacion.precioVenta ? `$${publicacion.precioVenta}` : undefined
+				item.valorSecundario = publicacion.precioVenta ? `${this.currencyPipe.transform(publicacion.precioVenta)}` : undefined
 				item.buttons = this.getButtonsForCards();
 				auxList2.push(item)
 			} else /* if(publicacion.estadoTrueque != 'PENDIENTE' || publicacion.estadoPublicacion != 'ABIERTA') */ {
@@ -304,7 +307,7 @@ export class PublicacionComponent implements AfterViewInit {
 			id: this.publicacion.idPublicacion,
 			imagen: this.publicacion.parsedImagenes? this.publicacion.parsedImagenes[0] : 'no_image',
 			titulo: this.publicacion.titulo,
-			valorPrincipal: `$${this.publicacion.valorTruequeMin} - $${this.publicacion.valorTruequeMax}`,
+			valorPrincipal: `${this.currencyPipe.transform(this.publicacion.valorTruequeMin)} - ${this.currencyPipe.transform(this.publicacion.valorTruequeMax)}`,
 			fecha: this.publicacion.fechaPublicacion,
 			usuario: {
 				id: this.publicacion.particularDTO.usuarioDTO.idUsuario,
@@ -327,25 +330,31 @@ export class PublicacionComponent implements AfterViewInit {
 		return this.publicacionesToShow.filter(item => item.estadoTrueque == 'APROBADO')
 	}
 
-	sendMensaje() {
-		const trueque = this.trueques.find(item => item.publicacionDTOorigen.idPublicacion == this.publicacion.idPublicacion && item.estadoTrueque == 'APROBADO')
-		if(trueque && trueque.idTrueque) {
-			this.chatService.sendMensaje({
-				idTrueque: trueque.idTrueque,
-				mensaje: this.nuevoMensaje,
-				usuarioReceptor: this.userType == 'publicacionOrigen' ? trueque.publicacionDTOpropuesta.particularDTO.usuarioDTO.idUsuario : trueque.publicacionDTOorigen.particularDTO.usuarioDTO.idUsuario
-			}).subscribe({
-				next: (res: any) => {
-					console.log('mensaje enviado:', res);
-					this.chatService.getMyMensajes(trueque.idTrueque).subscribe({
-						next: (res: any) => {
-							this.mensajes = res;
-							this.nuevoMensaje = ''
-						}
-					})
-				}
-			})
 
-		}
+	openChat() {
+		const dialogRef = this.dialog.open(ChatComponent, {
+			data: {
+				mensajes: this.mensajes,
+				userData: this.userData,
+				elOtroSwapper: this.elOtroSwapper,
+				trueques: this.trueques,
+				userType: this.userType,
+				publicacion: this.publicacion,
+			},
+			height: '85vh',
+		});
+	
+		dialogRef.afterClosed().subscribe((result: any) => {
+			console.log('result trocar', result);
+			if(result) this.getTrueques()
+		})
+	}
+
+	getMessages(idTrueque: number) {
+		this.chatService.getMyMensajes(idTrueque).subscribe({
+			next: (res: any) => {
+				this.mensajes = res;
+			}
+		})
 	}
 }

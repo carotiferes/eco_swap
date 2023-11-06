@@ -1,0 +1,80 @@
+.header {
+	text-align: center;
+    margin: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--light-grey);
+}
+
+#chatContainer {
+	scrollbar-color: #888 #f1f1f1; // Firefox scrollbar styling
+	scrollbar-width: thin;
+}
+
+	::-webkit-scrollbar {
+		width: 5px; // width of the vertical scrollbar
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: #888; // color of the scrollbar thumb
+		border-radius: 5px;
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		background: #555; // color of the scrollbar thumb on hover
+	}
+
+	::-webkit-scrollbar-track {
+		background: #f1f1f1; // color of the track
+		border-radius: 5px;
+	}
+
+#chatContainer {
+	scroll-behavior: smooth;
+}
+
+.main-div {
+	margin: 10px 20px;
+	gap: 20px;
+}
+
+.mensaje {
+	padding: 10px;
+	border-radius: 15px;
+	//width: 90%;
+	position: relative;
+	margin: 10px 5px 25px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+
+	&.mio {
+		background: var(--primary-color);
+
+		.arrow-globo {
+			right: 0px;
+			bottom: -25px;
+			color: var(--primary-color);
+		}
+	}
+
+	&.otro {
+		background-color: var(--light-grey);
+
+		* {
+			text-align: left;
+		}
+
+		.arrow-globo {
+			left: 0px;
+			bottom: -25px;
+			color: var(--light-grey);
+		}
+	}
+
+	.arrow-globo {
+		position: absolute;
+		font-size: 45px;
+		width: 45px;
+		height: 45px;
+	}
+}

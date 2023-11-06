@@ -17,7 +17,8 @@
 			</mat-select>
 		</mat-form-field>
 
-		<button mat-fab extended (click)="enviar();ordenForm.markAllAsTouched(); ordenForm.valid" [disabled]="!ordenForm.valid">
+		<button mat-fab extended (click)="enviar();ordenForm.markAllAsTouched(); ordenForm.valid"
+		[disabled]="!ordenForm.valid || !ordenForm.get('idOrden')!.value || !ordenForm.get('nuevoEstado')!.value">
 			ENVIAR
 		</button>
 	</form>

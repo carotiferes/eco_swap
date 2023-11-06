@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.requests.logistica.PostProductosRequest;
 
@@ -15,6 +13,8 @@ import msUsers.domain.requests.logistica.PostProductosRequest;
 @Builder
 @Table(name = "ProductosADonar")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idProducto")
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProductosADonarDeOrden {
 
     @Id

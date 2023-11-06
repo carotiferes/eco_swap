@@ -28,8 +28,8 @@
 					<div (click)="access(item)" style="min-height: 70px; display: flex; align-items: center;">
 						<p>{{item.fechaNotificacion | date: 'dd/MM/yyyy'}}</p>
 					</div>
-					<div>
-						<mat-checkbox (change)="selectNotification($event, item);" [disabled]="item.estadoNotificacion == 'LEIDO'"
+					<div *ngIf="item.estadoNotificacion == 'NO_LEIDO'">
+						<mat-checkbox (change)="selectNotification($event, item);"
 						[color]="item.tipoNotificacion == 'TRUEQUE' || item.tipoNotificacion == 'NUEVO_ESTADO_TRUEQUE' ? 'primary' : 'secondary' "></mat-checkbox>
 					</div>
 				</div>

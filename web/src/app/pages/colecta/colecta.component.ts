@@ -165,12 +165,17 @@ export class ColectaComponent {
 				]
 			}
 		} else if(donacion.estadoDonacion == 'APROBADA') {
-			return [{name: 'RECIBIDO', icon: 'done_all', color: 'primary', status: 'RECIBIDA'}]
+			if(this.userData.isSwapper) return [{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO'}]
+			else return [{name: 'RECIBIDO', icon: 'done_all', color: 'primary', status: 'RECIBIDA'}]
 		} else return [];
 	}
 
 	isArray(item:any){
 		return item.constructor === Array;
+	}
+
+	cardModalClosed(event: any) {
+		if(event.result) this.getDonaciones()
 	}
 
 }

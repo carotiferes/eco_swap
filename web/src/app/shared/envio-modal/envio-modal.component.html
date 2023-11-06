@@ -1,6 +1,6 @@
 <div id="main-envios">
 	<div style="margin: 20px;">
-		<h2>Configurá los datos de tu producto para el Envío</h2>
+		<h2>{{yaTieneEnvio ? 'Datos de tu envío para: ' + yaTieneEnvio.titulo : 'Configurá los datos de tu producto para el Envío'}}</h2>
 	</div>
 	<!-- <div style="margin: 25px;">
 		<mat-icon (click)="downloadFile()" matTooltip="Clickeá acá para descargar el tutorial">info</mat-icon>
@@ -9,7 +9,7 @@
 <div style="display: flex; justify-content: center;">
 	<mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
 </div>
-<div *ngIf="!loading">
+<div *ngIf="!loading && !yaTieneEnvio">
 	<form [formGroup]="ordenForm" id="envio-form">
 		<mat-form-field>
 			<mat-label>Peso Aproximado del Producto</mat-label>
@@ -32,6 +32,10 @@
 			</mat-error>
 		</mat-form-field>
 	</form>
+	<div *ngIf="user" class="direccion">
+		<span>El envío se calcula utilizando tu dirección:</span>
+		<span><b>{{user.particularDTO.direcciones[0].calle}} {{user.particularDTO.direcciones[0].altura}}, {{user.particularDTO.direcciones[0].localidad}} (CP{{user.particularDTO.direcciones[0].codigoPostal}})</b></span>
+	</div>
 	<div *ngIf="ordenForm.valid" class="costo-envio">
 		<div>Costo de envío:</div>
 		<b style="font-size: 14px;">{{costoEnvio ? (costoEnvio | currency) : '-'}}</b>
@@ -44,5 +48,21 @@
 			<span>CONFIRMAR</span>
 		</button>
 		<mat-spinner diameter="20" *ngIf="loadingSave"></mat-spinner>
+	</div>
+</div>
+
+<div *ngIf="!loading && yaTieneEnvio" class="main-data">
+	<!-- <h2>{{yaTieneEnvio.titulo}}</h2> -->
+	<p><mat-icon>credit_card</mat-icon>Precio de envío: <b>{{yaTieneEnvio.precioEnvio | currency}}</b></p>
+	<p><mat-icon>place</mat-icon>Origen: <b>{{yaTieneEnvio.nombreUserOrigen}}</b></p>
+	<p><mat-icon>place</mat-icon>Destino: <b>{{yaTieneEnvio.nombreUserDestino}}</b></p>
+	<!-- <p>Fecha a despachar: {{yaTieneEnvio.fechaADespachar}}</p> -->
+	<div>
+		<h3><mat-icon>route</mat-icon>Estados del envío:</h3>
+		<div style="display: flex; flex-direction: column; gap: 10px; margin-left: 25px;">
+			<div *ngFor="let estado of yaTieneEnvio.listaFechaEnvios" class="item">
+				<mat-icon>chevron_right</mat-icon>{{estado.estado}} - {{estado.fechaEnvio}}
+			</div>
+		</div>
 	</div>
 </div>

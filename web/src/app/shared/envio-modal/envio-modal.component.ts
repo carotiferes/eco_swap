@@ -1,9 +1,13 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { CardModel } from 'src/app/models/card.model';
 import { DonacionModel } from 'src/app/models/donacion.model';
+import { UsuarioModel } from 'src/app/models/usuario.model';
+import { AuthService } from 'src/app/services/auth.service';
 import { ComprasService } from 'src/app/services/compras.service';
 import { LogisticaService } from 'src/app/services/logistica.service';
+import { UsuarioService } from 'src/app/services/usuario.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -18,14 +22,18 @@ export class EnvioModalComponent {
 	ordenForm: FormGroup;
 
 	sendDonaciones: boolean = false;
+	userOrders: any[] = []
 
 	costoEnvio?: number ;
 
+	yaTieneEnvio: any;
+	user?: UsuarioModel;
 	// SE LLAMA DESDE EL card.component.ts
 
 	constructor(private fb: FormBuilder, public dialogRef: MatDialogRef<EnvioModalComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: any, private logisticaService: LogisticaService,
-		private compraService: ComprasService) {
+		private compraService: ComprasService, private usuarioService: UsuarioService,
+		private auth: AuthService) {
 			console.log(data);
 			
 		this.ordenForm = fb.group({
@@ -34,6 +42,46 @@ export class EnvioModalComponent {
 		})
 
 		if(data.cards) this.sendDonaciones = true;
+		this.getUserOrders()
+	}
+
+	getUserOrders() {
+		let type: 'donaciones' | 'publicaciones' = 'publicaciones'
+		if(this.sendDonaciones) type = 'donaciones';
+		this.logisticaService.obtenerMisOrdenes(type).subscribe({
+			next: (res: any) => {
+				if(res.length > 0) {
+					this.userOrders = res;
+				}
+				console.log(this.userOrders);
+				if(this.sendDonaciones) {
+					// Get the list of unique idDonacion values from the cards array
+					const uniqueIdDonacionValues = [...new Set(this.data.cards.map((card:any/* DonacionModel | CardModel */) => card.idDonacion || card.id))];
+					console.log(uniqueIdDonacionValues);
+					
+					// Find the orders that match the idDonacion from the cards array
+					const matchingOrders = this.userOrders.find(order => {
+					  return order.productosADonarDeOrdenList.some((producto:any) => {
+						return uniqueIdDonacionValues.includes(producto.idDonacion);
+					  });
+					});
+					if(matchingOrders) this.yaTieneEnvio = matchingOrders;
+
+				} else {
+					this.yaTieneEnvio = this.userOrders.find(order => order.publicacionId == this.data.card.id)
+				}
+
+				if(!this.yaTieneEnvio) {
+					this.usuarioService.getUserByID(this.auth.getUserID()).subscribe({
+						next: (res: any) => {
+							this.user = res;
+							console.log(this.user);
+							
+						}
+					})
+				}
+			}
+		})
 	}
 
 	calcularEnvio() {
@@ -120,7 +168,7 @@ export class EnvioModalComponent {
 			next: (res: any) => {
 				Swal.fire('¡Excelente!', 'Tu orden se creó con éxito', 'success')
 				console.log(res);
-				
+				this.dialogRef.close(true)
 			}
 		})
 	}

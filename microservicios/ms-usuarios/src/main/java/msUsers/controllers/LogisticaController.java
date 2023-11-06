@@ -9,6 +9,7 @@ import msUsers.domain.logistica.PingPong;
 import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.requests.logistica.PostOrderRequest;
 import msUsers.domain.requests.logistica.PutOrderRequest;
+import msUsers.domain.responses.ResponseUpdateEntity;
 import msUsers.domain.responses.logistica.resultResponse.ResultShippingOptions;
 import msUsers.domain.responses.logisticaResponse.ResponseCostoEnvio;
 import msUsers.domain.responses.logisticaResponse.ResponseOrdenDeEnvio;
@@ -66,6 +67,20 @@ public class LogisticaController {
         return ResponseEntity.ok(order);
     }
 
+    @GetMapping(path = "/myOrdenes", produces = json)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<OrdenDeEnvio>> obtenerMisOrdenes(
+            @RequestParam("type") String type
+    ) {
+        log.info("parametro type: {}", type);
+        final Usuario user = UsuarioContext.getUsuario();
+        String userId = String.valueOf(user.getIdUsuario());
+        log.info(">> GET ORDER PARA EXTERNAL_REFERENCE: {}", userId);
+        List<OrdenDeEnvio> ordenes = logisticaService.obtenerMisOrdenes(userId, type);
+        log.info("<< ORDENES OBTENIDAS PARA {} con la cantidad de {} ordenes", userId, ordenes.size());
+        return ResponseEntity.ok(ordenes);
+    }
+
     @GetMapping(path = "/orden/{orderId}", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<OrdenDeEnvio> obtenerOrdenesSegunOrderId(
@@ -78,7 +93,7 @@ public class LogisticaController {
 
     @PutMapping(path = "/orden/{orderId}", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> actualizarOrdenDeCompra(
+    public ResponseEntity<ResponseUpdateEntity> actualizarOrdenDeCompra(
             @PathVariable(value = "orderId", required = true)  String orderId,
             @RequestBody PutOrderRequest putOrderRequest) throws Exception {
         log.info(">> PUT ORDER  {} PARA ACTUALIZAR A NUEVO ESTADO: {}", orderId, putOrderRequest.getNuevoEstado());
@@ -86,7 +101,11 @@ public class LogisticaController {
 
         logisticaService.actualizarEstadoDeOrdenXOrdenId(orderId, putOrderRequest, user);
         log.info("<< ORDEN {} ACTUALIZADA CON NUEVO ESTATUS PARA {}", orderId, putOrderRequest.getNuevoEstado());
-        return ResponseEntity.ok("OK");
+        ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
+        responseUpdateEntity.setStatus(HttpStatus.OK.name());
+        responseUpdateEntity.setDescripcion("Se cambio el estado de la orden a " + putOrderRequest.getNuevoEstado());
+
+        return ResponseEntity.ok(responseUpdateEntity);
     }
 
     @GetMapping(path = "/costoEnvio", produces = json)

@@ -126,6 +126,21 @@ public class LogisticaService {
         return response;
     }
 
+    public List<OrdenDeEnvio> obtenerMisOrdenes(String userId, String type) {
+        log.info(">> OBTENER ORDENES DE: {}", userId);
+        List<OrdenDeEnvio> listOrdenesObtenidas;
+
+        if(Objects.equals(type, "donaciones")) {
+            log.info("donaciones del user origen: {}", userId);
+            listOrdenesObtenidas = this.ordenesRepository.findByIdUsuarioOrigen(Long.valueOf(userId));
+        } else {
+            log.info("publicaciones del user destino: {}", userId);
+            listOrdenesObtenidas = this.ordenesRepository.findByIdUsuarioDestino(Long.valueOf(userId));
+        }
+        log.info("<< Orden de envio obtenida: {}", listOrdenesObtenidas);
+        return listOrdenesObtenidas;
+    }
+
     @Transactional
     public void actualizarEstadoDeOrdenXOrdenId(String ordenId, PutOrderRequest putOrderRequest, Usuario usuario) throws Exception {
         //FALTA EL TEMA DE LOS OPTIONALS

@@ -43,7 +43,7 @@ export class CredencialesMpModalComponent {
 				console.log(res);
 				this.loadingSave = false;
 				Swal.fire('¡Genial!', 'Se guardaron tus credenciales, ya podés vender productos!', 'success').then(() => {
-					this.dialogRef.close()
+					this.dialogRef.close(true)
 				})
 			}, error: () => this.loadingSave = false
 		})

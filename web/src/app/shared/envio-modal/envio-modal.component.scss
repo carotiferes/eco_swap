@@ -51,6 +51,22 @@
 		}
 	}
 }
+.direccion {
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+    text-align: center;
+}
+
+.main-data {
+	padding: 0 20px 20px;
+
+	p, h3, .item {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+}
 
 @media (min-width: 0px) and (max-width: 576px) {
 	.buttons {
