@@ -6,13 +6,13 @@
 	max-width: 515px !important;
 	
 	&.big {
-		height: 500px;
+		height: 500px !important;
 		h2 {
 			font-size: 18px !important;
 		}
 	}
 	&.small {
-		height: 480px;
+		height: 480px !important;
 	}
 
 	* { text-align: center; }

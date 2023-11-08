@@ -6,6 +6,7 @@ import { ColectaModel } from 'src/app/models/colecta.model';
 import { DonacionModel } from 'src/app/models/donacion.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
+import { LogisticaService } from 'src/app/services/logistica.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { ShowErrorService } from 'src/app/services/show-error.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
@@ -29,10 +30,12 @@ export class ColectaComponent {
 	donacionesAbiertas: CardModel[] = [];
 	donacionesCerradas: CardModel[] = [];
 
+	userOrders: any[] = [];
+
 	constructor(private route: ActivatedRoute, private router: Router, private auth: AuthService,
 		private donacionesService: DonacionesService, private showErrorService: ShowErrorService,
 		private productoService: ProductosService, private usuarioService: UsuarioService,
-		public dialog: MatDialog){
+		public dialog: MatDialog, private logisticaService: LogisticaService){
 		route.paramMap.subscribe(params => {
 			console.log(params);
 			this.id_colecta = params.get('id_colecta') || '';
@@ -58,10 +61,6 @@ export class ColectaComponent {
 				if (colecta) {
 					//console.log(colecta);
 					this.colecta = colecta;
-					//this.colecta.imagen = this.getImage(this.colecta.imagen);
-
-
-
 					if(this.auth.isUserLoggedIn){
 						this.getDonaciones();
 					} else this.loading = false;
@@ -76,32 +75,36 @@ export class ColectaComponent {
 
 	getDonaciones() {
 		this.loading = true;
-		this.donacionesService.getDonacionesColecta(this.colecta.idColecta).subscribe({
-			next: (donaciones: any) => {
-				console.log(donaciones);
-				this.donaciones = donaciones;
-				this.donaciones.map(donacion => {
-					if(donacion.imagenes) donacion.parsedImagenes = donacion.imagenes.split('|')
-				})
-
-				//TODO: REVISAR CUANDO MUESTRA DONACIONES
-				if (this.userData.isSwapper && this.userInfo) {
-					this.donacionesToShow = this.donaciones.filter(item => item.particularDTO.idParticular == this.userInfo.particularDTO.idParticular)
-					//this.showDonaciones = true;
-				} else if(this.userData) { // TODO: IF colecta.id_fundacion == userData.id_fundacion --> show donaciones
-					this.donacionesToShow = donaciones;
-					//this.showDonaciones = true;
+		this.logisticaService.obtenerMisOrdenes('donaciones').subscribe({
+			next: (res: any) => {
+				if (res.length > 0) {
+					this.userOrders = res;
 				}
-				this.donacionesToShow.map(item => {
-					item.parsedImagenes = item.imagenes.split('|')
+				this.donacionesService.getDonacionesColecta(this.colecta.idColecta).subscribe({
+					next: (donaciones: any) => {
+						console.log(donaciones);
+						this.donaciones = donaciones;
+						this.donaciones.map(donacion => {
+							if(donacion.imagenes) donacion.parsedImagenes = donacion.imagenes.split('|')
+						})
+		
+						if (this.userData.isSwapper && this.userInfo) {
+							this.donacionesToShow = this.donaciones.filter(item => item.particularDTO.idParticular == this.userInfo.particularDTO.idParticular)
+						} else if(this.userData) { // TODO: IF colecta.id_fundacion == userData.id_fundacion --> show donaciones
+							this.donacionesToShow = donaciones;
+						}
+						this.donacionesToShow.map(item => {
+							item.parsedImagenes = item.imagenes.split('|')
+						})
+					},
+					error: (error) => {
+						console.log('error', error);
+		
+					}, complete: () => {
+						this.parseDonaciones();
+						this.loading = false;
+					}
 				})
-			},
-			error: (error) => {
-				console.log('error', error);
-
-			}, complete: () => {
-				this.parseDonaciones();
-				this.loading = false;
 			}
 		})
 	}
@@ -119,6 +122,13 @@ export class ColectaComponent {
 				if(i==0) stringCaracteristicas = caract.caracteristica
 				else stringCaracteristicas += ' - '+caract.caracteristica
 			}
+
+			const matchingOrders = this.userOrders.some(order => {
+				return order.productosADonarDeOrdenList.some((producto: any) => {
+					return producto.idDonacion == donacion.idDonacion;
+				});
+			});
+
 			const item: CardModel = {
 				id: donacion.idDonacion,
 				imagen: donacion.parsedImagenes? donacion.parsedImagenes[0] : 'no_image',
@@ -134,9 +144,10 @@ export class ColectaComponent {
 					localidad: donacion.particularDTO.direcciones[0].localidad
 				},
 				action: 'detail',
-				buttons: this.getButtonsForCard(donacion),
-				estado: donacion.estadoDonacion,
-				idAuxiliar: this.colecta.idColecta
+				buttons: this.getButtonsForCard(donacion, matchingOrders),
+				estado: donacion.estadoDonacion.replace('_',' '),
+				idAuxiliar: this.colecta.idColecta,
+				codigo: 'Donación'
 			}
 			if(donacion.estadoDonacion == 'PENDIENTE') auxListAbierta.push(item)//this.donacionesAbiertas.push(item)
 			else auxListCerrada.push(item)//this.donacionesCerradas.push(item)
@@ -156,7 +167,7 @@ export class ColectaComponent {
 
 	}
 
-	getButtonsForCard(donacion: DonacionModel) {
+	getButtonsForCard(donacion: DonacionModel, matchingOrders: boolean) {
 		if(donacion.estadoDonacion == 'PENDIENTE') {
 			if(this.userData.isSwapper) return [{name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADA'}]
 			else {
@@ -167,12 +178,14 @@ export class ColectaComponent {
 			}
 		}
 		else if (donacion.estadoDonacion == 'EN_ESPERA' && !this.userData.isSwapper) {
-			return [{name: 'RECIBIDO', icon: 'done_all', color: 'primary', status: 'RECIBIDA'}]
+			return [{name: 'DONACIÓN RECIBIDA', icon: 'done_all', color: 'primary', status: 'RECIBIDA'}]
 		} else if(donacion.estadoDonacion == 'APROBADA') {
-			if(this.userData.isSwapper) return [
+			if(this.userData.isSwapper && !matchingOrders) return [
 				{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO'},
 				{name: 'Llevar en persona', icon: 'directions_walk', color: 'info', status: 'EN_ESPERA'}
 			]
+			else if (this.userData.isSwapper && matchingOrders)
+				return [{name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO'}]
 			else return []
 		} else return [];
 	}

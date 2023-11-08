@@ -4,10 +4,10 @@
 	<app-spinner [loading]="loading"></app-spinner>
 
 	<div *ngIf="!loading">
-		<div *ngIf="truequeAceptado.length == 0">
+		<div *ngIf="truequeAceptado.length == 0 && userCompras">
 			<!-- <div> [class]="userData.isLoggedIn && truequeAceptado.length == 1 ? 'col-sm-12 col-md-8' : ''" -->
 			<app-main-card-publicacion [publicacion]="publicacion" [userData]="userData" [userType]="userType"
-			(intercambiarEvent)="intercambiar()" (comprarEvent)="comprar()"></app-main-card-publicacion>
+			(intercambiarEvent)="intercambiar()" (comprarEvent)="comprar()" [compras]="userCompras"></app-main-card-publicacion>
 			<!-- </div> -->
 		</div>
 		<div *ngIf="userData.isLoggedIn && truequeAceptado.length == 1 && mainPublicacionCard" class="main-row">

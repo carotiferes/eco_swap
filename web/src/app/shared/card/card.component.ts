@@ -28,14 +28,14 @@ export class CardComponent {
 	iconMap: { [key: string]: string } = {
 		'APROBADO': 'verified', 'APROBADA': 'verified',
 		'RECIBIDO': 'add_task', 'RECIBIDA': 'add_task',
-		'PENDIENTE': 'pending', 'EN_ESPERA': 'schedule',
+		'PENDIENTE': 'pending', 'EN ESPERA': 'schedule', 'EN ENVIO': 'schedule',
 		'ABIERTA': 'lock_open', 'CERRADA': 'lock'
 	};
 	colorMap: { [key: string]: string } = {
 		'APROBADO': 'green', 'APROBADA': 'green',
 		'RECIBIDO': 'green', 'RECIBIDA': 'green',
-		'PENDIENTE': 'purple',
-		'ABIERTA': 'green', 'EN_ESPERA': 'purple'
+		'PENDIENTE': 'purple','EN ENVIO': 'purple',
+		'ABIERTA': 'green', 'EN ESPERA': 'purple'
 	};
 
 	isSwapper: boolean = false;

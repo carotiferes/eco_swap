@@ -1,10 +1,14 @@
-<div id="main-envios">
+<!-- <div id="main-envios">
 	<div style="margin: 20px;">
 		<h2>{{yaTieneEnvio ? 'Datos de tu envío para: ' + yaTieneEnvio.titulo : 'Configurá los datos de tu producto para el Envío'}}</h2>
 	</div>
-	<!-- <div style="margin: 25px;">
-		<mat-icon (click)="downloadFile()" matTooltip="Clickeá acá para descargar el tutorial">info</mat-icon>
-	</div> -->
+</div> -->
+<div class="header">
+	<span style="width: 30px;"></span>
+	<span *ngIf="yaTieneEnvio">Datos de tu envío para: <br> {{yaTieneEnvio.titulo}}</span>
+	<span *ngIf="!yaTieneEnvio">Configurá el envío de tu producto</span>
+	<!-- <span>{{yaTieneEnvio ? 'Datos de tu envío para: ' + yaTieneEnvio.titulo : 'Configurá los datos de tu producto para el Envío'}}</span> -->
+	<mat-icon (click)="dialogRef.close()" style="margin-left: 10px; cursor: pointer;">close</mat-icon>
 </div>
 <div style="display: flex; justify-content: center;">
 	<mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
@@ -19,18 +23,24 @@
 				Campo obligatorio
 			</mat-error>
 		</mat-form-field>
-		<mat-form-field>
-			<mat-label>Disponibilidad Horaria</mat-label>
-			<!-- <input matInput formControlName="disponibilidad"> -->
-			<mat-select formControlName="disponibilidad">
-				<mat-option value="9-12"> 9hs a 12hs</mat-option>
-				<mat-option value="13-16"> 13hs a 16hs</mat-option>
-				<mat-option value="17-20"> 17hs a 20hs</mat-option>
-			</mat-select>
-			<mat-error *ngIf="ordenForm.get('disponibilidad')!.hasError('required')">
-				Campo obligatorio
-			</mat-error>
-		</mat-form-field>
+		<div style="width: 70%; display: flex; justify-content: center;">
+			<mat-form-field>
+				<mat-label>Disponibilidad Horaria</mat-label>
+				<!-- <input matInput formControlName="disponibilidad"> -->
+				<mat-select formControlName="disponibilidad">
+					<mat-option value="9-12"> 9hs a 12hs</mat-option>
+					<mat-option value="13-16"> 13hs a 16hs</mat-option>
+					<mat-option value="17-20"> 17hs a 20hs</mat-option>
+				</mat-select>
+				<mat-error *ngIf="ordenForm.get('disponibilidad')!.hasError('required')">
+					Campo obligatorio
+				</mat-error>
+			</mat-form-field>
+			<span class="material-icons-outlined" style="margin-top: 15px; margin-left: 15px; cursor: default;" *ngIf="type == 'compra'"
+			matTooltip="Shipnow buscará el producto en los próximos 2 días y luego te lo llevará." matTooltipPosition="right">info</span>
+			<span class="material-icons-outlined" style="margin-top: 15px; margin-left: 15px; cursor: default;" *ngIf="type != 'compra'"
+			matTooltip="Shipnow buscará tu donación en los próximos 2 días." matTooltipPosition="right">info</span>
+		</div>
 	</form>
 	<div *ngIf="user" class="direccion">
 		<span>El envío se calcula utilizando tu dirección:</span>
@@ -38,7 +48,8 @@
 	</div>
 	<div *ngIf="ordenForm.valid" class="costo-envio">
 		<div>Costo de envío:</div>
-		<b style="font-size: 14px;">{{costoEnvio ? (costoEnvio | currency) : '-'}}</b>
+		<b style="font-size: 14px;" *ngIf="!loadingCosto">{{costoEnvio ? (costoEnvio | currency) : '-'}}</b>
+		<mat-spinner diameter="20" *ngIf="loadingCosto" color="secondary"></mat-spinner>
 		<button mat-fab extended class="confirm" (click)="calcularEnvio()">Calcular</button>
 	</div>
 	<div class="buttons">
@@ -53,6 +64,7 @@
 
 <div *ngIf="!loading && yaTieneEnvio" class="main-data">
 	<!-- <h2>{{yaTieneEnvio.titulo}}</h2> -->
+	<p><mat-icon>numbers</mat-icon>Número de órden: <b>{{yaTieneEnvio.idOrden}}</b></p>
 	<p><mat-icon>credit_card</mat-icon>Precio de envío: <b>{{yaTieneEnvio.precioEnvio | currency}}</b></p>
 	<p><mat-icon>place</mat-icon>Origen: <b>{{yaTieneEnvio.nombreUserOrigen}}</b></p>
 	<p><mat-icon>place</mat-icon>Destino: <b>{{yaTieneEnvio.nombreUserDestino}}</b></p>

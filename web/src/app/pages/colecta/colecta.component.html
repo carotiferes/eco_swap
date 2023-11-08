@@ -16,7 +16,7 @@
 		</div>
 		<div *ngIf="donacionesAbiertas.length > 0">
 			<app-deck [cardList]="donacionesAbiertas" app="donaciones" [fullScreenWidth]="true"
-			(statusChanged)="getDonaciones()" (modalClosed)="cardModalClosed($event)"></app-deck>
+			(statusChanged)="getColecta()" (modalClosed)="cardModalClosed($event)"></app-deck>
 		</div>
 	</div>
 
@@ -29,7 +29,7 @@
 		</div>
 		<div *ngIf="donacionesCerradas.length > 0">
 			<app-deck [cardList]="donacionesCerradas" app="donaciones" [fullScreenWidth]="true"
-			(statusChanged)="getDonaciones()" (modalClosed)="cardModalClosed($event)"></app-deck>
+			(statusChanged)="getColecta()" (modalClosed)="cardModalClosed($event)"></app-deck>
 		</div>
 	</div>
 </div>

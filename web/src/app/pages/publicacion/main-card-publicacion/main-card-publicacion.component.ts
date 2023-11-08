@@ -15,6 +15,7 @@ export class MainCardPublicacionComponent {
 	@Input() publicacion?: PublicacionModel;
 	@Input() userData: any;
 	@Input() userType: 'notLoggedIn' | 'publicacionOrigen' | 'publicacionPropuesta' = 'notLoggedIn';
+	@Input() compras: any;
 
 	@Output() intercambiarEvent = new EventEmitter<any>();
 	@Output() comprarEvent = new EventEmitter<any>();

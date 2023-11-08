@@ -10,6 +10,7 @@ import { PublicacionModel } from 'src/app/models/publicacion.model';
 import { TruequeModel } from 'src/app/models/trueque.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { ComprasService } from 'src/app/services/compras.service';
+import { LogisticaService } from 'src/app/services/logistica.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { ShowErrorService } from 'src/app/services/show-error.service';
 import { TruequesService } from 'src/app/services/trueques.service';
@@ -41,10 +42,12 @@ export class PublicacionesComponent {
 	trueques: TruequeModel[] = [];
 	screenWidth: number;
 
+	userOrders: any[] = [];
+
 	constructor(private router: Router, private auth: AuthService, private fb: FormBuilder,
 		private productosService: ProductosService, private showErrorService: ShowErrorService,
 		private truequesService: TruequesService, private comprasService: ComprasService,
-		private currencyPipe: CurrencyPipe){
+		private currencyPipe: CurrencyPipe, private logisticaService: LogisticaService){
 
 		this.formFiltros = fb.group({
 			fundacion: [''],
@@ -134,19 +137,26 @@ export class PublicacionesComponent {
 				}, error: ()=> this.loading = false
 			})
 		} else { // myCompras
-			this.comprasService.getMyCompras().subscribe({
-				next: (data: any) => {
-					console.log(data);
-					for (const publicacion of data) {
-						publicacion.publicacionDTO.idCompra = publicacion.idCompra;
-						publicacion.publicacionDTO.estadoCompra = publicacion.estadoCompra;
-						this.publicacionesToShow.push(publicacion.publicacionDTO);
+			this.logisticaService.obtenerMisOrdenes('publicaciones').subscribe({
+				next: (res: any) => {
+					if (res.length > 0) {
+						this.userOrders = res;
 					}
-					this.publicacionesToShow.map(item => {
-						item.parsedImagenes = item.imagenes.split('|')
+					this.comprasService.getMyCompras().subscribe({
+						next: (data: any) => {
+							console.log(data);
+							for (const publicacion of data) {
+								publicacion.publicacionDTO.idCompra = publicacion.idCompra;
+								publicacion.publicacionDTO.estadoCompra = publicacion.estadoCompra;
+								this.publicacionesToShow.push(publicacion.publicacionDTO);
+							}
+							this.publicacionesToShow.map(item => {
+								item.parsedImagenes = item.imagenes.split('|')
+							})
+						}, complete: () => this.generateCardList(),
+						error: ()=> this.loading = false
 					})
-				}, complete: () => this.generateCardList(),
-				error: ()=> this.loading = false
+				}
 			})
 		}
 	}
@@ -168,6 +178,8 @@ export class PublicacionesComponent {
 				}
 			}
 
+			const matchingOrders = this.userOrders.some(order => order.publicacionId == publicacion.idPublicacion);
+
 			auxList.push({
 				id: publicacion.idPublicacion,
 				imagen: publicacion.parsedImagenes? publicacion.parsedImagenes[0] : 'no_image',
@@ -184,7 +196,7 @@ export class PublicacionesComponent {
 				},
 				action: !!idPublicacionOrigen || !!idPublicacionPropuesta ? 'trueque' : this.origin == 'myPublicaciones' ? 'list' : 'access',
 				idAuxiliar: !!idPublicacionOrigen ? idPublicacionOrigen : !!idPublicacionPropuesta ? publicacion.idPublicacion : publicacion.idCompra ? publicacion.idCompra : undefined,
-				buttons: this.getButtonsForCard(publicacion, !!idPublicacionOrigen || !!idPublicacionPropuesta),
+				buttons: this.getButtonsForCard(publicacion, !!idPublicacionOrigen || !!idPublicacionPropuesta, matchingOrders),
 				estado: this.origin == 'myPublicaciones' ? publicacion.estadoPublicacion : publicacion.estadoCompra ? publicacion.estadoCompra : undefined,
 				codigo: publicacion.idCompra ? 'Compra' : 'Publicación'
 			})
@@ -194,7 +206,7 @@ export class PublicacionesComponent {
 		this.loading = false;
 	}
 
-	getButtonsForCard(publicacion: PublicacionModel, truequeAprobado: boolean = false) {
+	getButtonsForCard(publicacion: PublicacionModel, truequeAprobado: boolean = false, matchingOrders: boolean = false) {
 		if(this.origin == 'myPublicaciones') {
 			const list =[{
 				name: !truequeAprobado ? '¿Dónde lo propuse?' : 'Ver trueque',
@@ -205,7 +217,8 @@ export class PublicacionesComponent {
 			if (publicacion.estadoPublicacion == 'ABIERTA') list.push({name: 'Cerrar publicación', icon: 'close', color: 'warn', status: 'CERRADA'});
 			return list;
 		} else if (this.origin == 'myCompras'){
-			return [{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO'}];
+			if(matchingOrders) return [{name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO'}];
+			else return [{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO'}];
 		} else return [];
 	}
 

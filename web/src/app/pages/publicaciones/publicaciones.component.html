@@ -3,11 +3,14 @@
 
 <div id="main-publicaciones" class="app-main-div">
 	<div class="dense-3">
-		<div ngbAccordion *ngIf="origin != 'myCompras'" #accordion="ngbAccordion" style="min-width: 255px;">
+		<div ngbAccordion #accordion="ngbAccordion" style="min-width: 255px;">
 			<div ngbAccordionItem="first" #first="ngbAccordionItem" [collapsed]="false" [disabled]="screenWidth > 768">
 				<h2 ngbAccordionHeader>
-					<button ngbAccordionButton class="bg-transparent accordion-header-button">
+					<button ngbAccordionButton class="bg-transparent accordion-header-button" *ngIf="origin != 'myCompras'">
 						<mat-icon>tune</mat-icon> <span style="margin-left: 10px;">Filtros</span><span style="width: 20px;"></span>
+					</button>
+					<button ngbAccordionButton class="bg-transparent accordion-header-button" *ngIf="origin == 'myCompras'">
+						<mat-icon>report_problem</mat-icon> <span style="margin-left: 10px;">¡No veo mi compra!</span><span style="width: 20px;"></span>
 					</button>
 				</h2>
 				<div ngbAccordionCollapse>
@@ -57,7 +60,15 @@
 									<mat-radio-button value="closed">Cerradas</mat-radio-button>
 								</mat-radio-group>
 							</div>
+							<div *ngIf="origin == 'myCompras'">
+								<p>Si hiciste una compra y no la ves acá, probá seguir los siguientes pasos:</p>
+								<p>1. Actualizá esta página.</p>
+								<p>2. Verificá que hayas pagado correctamente desde tu cuenta de Mercado Pago.</p>
+								<p>3. Esperá 48hs desde que pagaste, el pago puede demorar ese tiempo.</p>
+								<p>4. Si ya pagaste y no pasaron 48hs, comunicate con nosotros a ecoswapp@gmail.com</p>
+							</div>
 						</ng-template>
+						
 					</div>
 				</div>
 			</div>
@@ -69,7 +80,7 @@
 		<app-deck *ngIf="filteredPublicacionesCardList.length > 0 && !loading" [cardList]="filteredPublicacionesCardList" app="publicaciones"
 			(statusChanged)="filtrarPublicaciones()"></app-deck>
 	</div>
-	<div class="floating-button-container">
+	<div class="floating-button-container" *ngIf="origin != 'myCompras'">
 		<button mat-fab color="primary" aria-label="Agregar Publicación" (click)="addPublicacion()"
 			matTooltip="Agregar Publicación" matTooltipPosition="before">
 			<mat-icon>add</mat-icon>

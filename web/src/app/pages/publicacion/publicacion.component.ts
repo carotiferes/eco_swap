@@ -40,6 +40,8 @@ export class PublicacionComponent implements AfterViewInit {
 	truequesActivos: CardModel[] = [];
 	mainPublicacionCard?: CardModel;
 
+	userCompras: any[] = [];
+
 	init: number = 0;
 	screenWidth: number;
 
@@ -153,6 +155,12 @@ export class PublicacionComponent implements AfterViewInit {
 					this.publicacionesToShow.map(item => {
 						item.parsedImagenes = item.imagenes.split('|')
 					})
+					/* TODO: MOSTRAR SI LA PUBLIC ESTA VENDIDA
+					this.comprasService.getMyCompras().subscribe({
+						next: (compras: any) => {
+							const userCompras = compras || [];
+						}
+					}) */
 					this.parsePublicaciones();
 					this.loading = false;
 				}
@@ -247,7 +255,6 @@ export class PublicacionComponent implements AfterViewInit {
 			return [
 				{name: 'ACEPTAR', icon: 'check', color: 'primary', status: 'APROBADO'},
 				{name: 'RECHAZAR', icon: 'close', color: 'warn', status: 'RECHAZADO'},
-				{name: 'RECIBIDO', icon: 'done_all', color: 'primary', status: 'RECIBIDO'},
 			];
 		} else return [];
 	}
@@ -282,6 +289,7 @@ export class PublicacionComponent implements AfterViewInit {
 
 			if(publicacion.estadoTrueque == 'APROBADO') {
 				// ACEPTADO
+				item.buttons = this.userType == 'publicacionOrigen' ? [{name: 'RECIBIDO', icon: 'done_all', color: 'primary', status: 'RECIBIDA'}] : [],
 				auxList1.push(item)
 				const trueque = this.trueques.find(item => item.publicacionDTOpropuesta.idPublicacion == publicacion.idPublicacion && item.estadoTrueque == 'APROBADO')
 				if(trueque) {
@@ -317,8 +325,8 @@ export class PublicacionComponent implements AfterViewInit {
 				localidad: this.publicacion.particularDTO.direcciones[0].localidad
 			},
 			action: 'detail',
-			buttons: [],
-			estado: this.publicacion.estadoPublicacion,
+			buttons: this.userType == 'publicacionPropuesta' ? [{name: 'RECIBIDO', icon: 'done_all', color: 'primary', status: 'RECIBIDA'}] : [],
+			estado: this.userType == 'publicacionOrigen' ? this.publicacion.estadoPublicacion : undefined,
 			idAuxiliar: this.trueques.find(item => item.publicacionDTOpropuesta.idPublicacion == this.publicacion.idPublicacion)?.idTrueque
 		}
 		this.truequeAceptado = auxList1;
@@ -341,12 +349,14 @@ export class PublicacionComponent implements AfterViewInit {
 				userType: this.userType,
 				publicacion: this.publicacion,
 			},
-			height: '85vh',
+			minHeight: '50vh',
+			minWidth: '50vw',
 		});
 	
 		dialogRef.afterClosed().subscribe((result: any) => {
-			console.log('result trocar', result);
-			if(result) this.getTrueques()
+			console.log('result chat', result);
+			const trueque = this.trueques.find(item => item.publicacionDTOorigen.idPublicacion == this.publicacion.idPublicacion && item.estadoTrueque == 'APROBADO')
+			if(trueque) this.getMessages(trueque.idTrueque);
 		})
 	}
 
