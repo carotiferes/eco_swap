@@ -75,7 +75,7 @@ public class ChatHandler extends TextWebSocketHandler {
         mensaje.setUsuarioEmisor(usuarioEmisor);
         mensaje.setUsuarioReceptor(usuarioReceptor);
         mensaje.setMensaje(requestMensajeChat.getMensaje());
-        mensaje.setFechaHoraEnvio(LocalDateTime.now());
+        mensaje.setFechaHoraEnvio(requestMensajeChat.getFechaHoraEnvio());
         mensaje.setTrueque(trueque);
 
         this.chatService.guardarMensaje(mensaje);

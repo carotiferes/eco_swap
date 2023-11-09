@@ -3,6 +3,7 @@ import { Component, EventEmitter, Inject, Input, Optional, Output } from '@angul
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TruequeModel } from 'src/app/models/trueque.model';
 import { ChatService } from 'src/app/services/chat.service';
+import { WebSocketService } from 'src/app/services/webSocket.service';
 
 @Component({
 	selector: 'app-chat',
@@ -24,7 +25,8 @@ export class ChatComponent {
 	initChat = 0;
 
 	constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: any, private chatService: ChatService,
-	@Inject(DOCUMENT) private document: Document, @Optional() public dialogRef: MatDialogRef<ChatComponent>,) {
+	@Inject(DOCUMENT) private document: Document, @Optional() public dialogRef: MatDialogRef<ChatComponent>,
+	private websocketService: WebSocketService) {
 		if(data) {
 			this.mensajes = data.mensajes;
 			this.userData = data.userData;
@@ -34,6 +36,20 @@ export class ChatComponent {
 			this.publicacion = data.publicacion;
 			this.origin = 'modal'
 		}
+
+		websocketService.connect().subscribe({
+			next: (message) => {
+				console.log('message subscription', message);
+				this.mensajes.push(message);
+			},
+			error: (error) => {
+			  console.error('WebSocket error:', error);
+			}
+		});
+	}
+
+	ngOnDestroy() {
+		this.websocketService.close();
 	}
 
 	scrollToBottom() {
@@ -44,6 +60,21 @@ export class ChatComponent {
 	}
 
 	sendMensaje() {
+		console.log('nuevo mensaje',this.nuevoMensaje);
+		
+		const trueque = this.trueques.find(item => item.publicacionDTOorigen.idPublicacion == this.publicacion.idPublicacion && item.estadoTrueque == 'APROBADO')
+		
+		if(trueque && trueque.idTrueque) {
+			this.websocketService.sendMessage({
+				idTrueque: trueque.idTrueque,
+				mensaje: this.nuevoMensaje,
+				usuarioReceptor: this.userType == 'publicacionOrigen' ? trueque.publicacionDTOpropuesta.particularDTO.usuarioDTO.idUsuario : trueque.publicacionDTOorigen.particularDTO.usuarioDTO.idUsuario,
+				fechaHoraEnvio: new Date()//(new Date()).toISOString().replace('T', ' ').replace('Z', ' ')
+			});
+		}
+	}
+
+	/* sendMensaje() {
 		const trueque = this.trueques.find(item => item.publicacionDTOorigen.idPublicacion == this.publicacion.idPublicacion && item.estadoTrueque == 'APROBADO')
 		if(trueque && trueque.idTrueque) {
 			this.chatService.sendMensaje({
@@ -69,5 +100,5 @@ export class ChatComponent {
 			})
 
 		}
-	}
+	} */
 }

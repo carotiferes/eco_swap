@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -18,8 +20,9 @@ public class RequestMensajeChat {
     public static RequestMensajeChat create(
             @JsonProperty("idTrueque") Long idTrueque,
             @JsonProperty("mensaje") String mensaje,
+            @JsonProperty("fechaHoraEnvio") LocalDateTime fechaHoraEnvio,
             @JsonProperty("usuarioReceptor") Long usuarioReceptor) {
-        return new RequestMensajeChat(idTrueque, mensaje, usuarioReceptor);
+        return new RequestMensajeChat(idTrueque, mensaje, usuarioReceptor, fechaHoraEnvio);
     }
 
     @NotNull(message = "Un mensaje debe estar asociado a un trueque.")
@@ -29,4 +32,6 @@ public class RequestMensajeChat {
     private String mensaje;
     @NotNull(message = "El mensaje debe ser recibido por usuario válido.")
     private Long usuarioReceptor;
+    @NotNull(message = "El mensaje debe tener una fecha.")
+    private LocalDateTime fechaHoraEnvio;
 }
