@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { NgbRatingModule } from '@ng-bootstrap/ng-bootstrap';
 import { CardComponent } from './card/card.component';
 import { DeckComponent } from './deck/deck.component';
@@ -37,6 +37,7 @@ import { ChatComponent } from './chat/chat.component';
 		ListComponent,
 		EnvioModalComponent,
 		ChatComponent
-	]
+	],
+	providers: [DatePipe]
 })
 export class SharedModule { }

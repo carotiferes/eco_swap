@@ -104,12 +104,15 @@ export class CardComponent {
 	}
 
 	buttonClicked(card: CardModel, button: any) {
-		if(button.status == 'INFO') {
-			if(card.action == 'list') this.openDialog(ListComponent, card);
-			else if(card.action == 'trueque') this.router.navigate(['publicacion/' + card.idAuxiliar])
-			else if(card.codigo == 'Compra' || this.app == 'donaciones' && button.name == 'Configurar envío') this.openDialog(EnvioModalComponent, {card}, '70vh', '60vw')
-			else if(button.name == 'Ver envío') this.openDialog(EnvioModalComponent, {cards: [card]}, '70vh', '60vw')
-			else if(card.action == 'select' && card.codigo == 'Donación'){
+		if (button.status == 'INFO') {
+			if (card.action == 'list') this.openDialog(ListComponent, card);
+			else if (card.action == 'trueque') this.router.navigate(['publicacion/' + card.idAuxiliar])
+			else if (card.codigo == 'Compra' || this.app == 'donaciones' && button.name == 'Configurar envío') {
+				this.openDialog(EnvioModalComponent, { card }, '70vh', '60vw')
+				return;
+			}
+			else if (button.name == 'Ver envío') this.openDialog(EnvioModalComponent, { cards: [card] }, '70vh', '60vw')
+			else if (card.action == 'select' && card.codigo == 'Donación') {
 				this.clicked(card)
 			}
 		} else {

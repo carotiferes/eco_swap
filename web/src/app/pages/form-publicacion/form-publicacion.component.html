@@ -62,6 +62,20 @@
 						</mat-error>
 					</mat-form-field>
 				</div>
+				
+				<div class="form-col">
+					<mat-form-field>
+						<mat-label>Tipo del Producto</mat-label>
+						<mat-select formControlName="tipoProducto" panelClass="example-panel">
+							<mat-option *ngFor="let tipo of tipos_productos" [value]="tipo.nombre">
+								{{tipo.descripcion}}
+							</mat-option>
+						</mat-select>
+						<mat-error *ngIf="publicacionForm.get('tipoProducto')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
+				</div>
 
 				<div class="form-col" style="flex-direction: row; align-items: center;" *ngIf="hasMPCredentials">
 					<mat-checkbox formControlName="finalidadVenta" (change)="allowVenta($event)">
@@ -101,6 +115,17 @@
 						(focus)="focusVenta = true" (focusout)="!publicacionForm.get('precioVenta')!.value ? focusVenta = false : ''">
 						<span matTextPrefix *ngIf="focusVenta">$&nbsp;</span>
 						<mat-error *ngIf="publicacionForm.get('precioVenta')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+					</mat-form-field>
+				</div>
+
+				<div class="form-col">
+					<mat-form-field *ngIf="publicacionForm.get('finalidadVenta')?.value">
+						<mat-label>Peso Aproximado del Producto</mat-label>
+						<input matInput formControlName="peso" type="number" class="number-input">
+						<span matSuffix style="margin: 20px;">gramos</span>
+						<mat-error *ngIf="publicacionForm.get('peso')!.hasError('required')">
 							Campo obligatorio
 						</mat-error>
 					</mat-form-field>

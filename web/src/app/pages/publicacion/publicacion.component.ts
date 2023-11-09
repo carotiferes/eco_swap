@@ -326,7 +326,7 @@ export class PublicacionComponent implements AfterViewInit {
 			},
 			action: 'detail',
 			buttons: this.userType == 'publicacionPropuesta' ? [{name: 'RECIBIDO', icon: 'done_all', color: 'primary', status: 'RECIBIDA'}] : [],
-			estado: this.userType == 'publicacionOrigen' ? this.publicacion.estadoPublicacion : undefined,
+			estado: this.publicacion.estadoPublicacion,
 			idAuxiliar: this.trueques.find(item => item.publicacionDTOpropuesta.idPublicacion == this.publicacion.idPublicacion)?.idTrueque
 		}
 		this.truequeAceptado = auxList1;

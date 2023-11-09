@@ -12,7 +12,12 @@ export class AdminLogisticaComponent {
 
 	ordenForm: FormGroup;
 
-	estados: string[] = ['CANCELADO', 'ENVIADO', 'POR_DESPACHAR', 'RECIBIDO'];
+	estados: {name: string, value: string}[] = [
+		{name: 'Cancelado', value: 'CANCELADO'},
+		{name: 'Enviado', value: 'ENVIADO'},
+		{name: 'Por Despachar', value: 'POR_DESPACHAR'},
+		{name: 'Recibido', value: 'RECIBIDO'}
+	];
 
 	constructor(private fb: FormBuilder, private logisticaServie: LogisticaService) {
 		this.ordenForm = fb.group({

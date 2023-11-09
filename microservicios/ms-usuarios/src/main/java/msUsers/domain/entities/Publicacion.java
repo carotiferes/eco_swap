@@ -52,6 +52,8 @@ public class Publicacion {
 
     private String imagenes;
 
+    private Double peso;
+
     public PublicacionDTO toDTO() {
         PublicacionDTO publicacionDTO = new PublicacionDTO();
         publicacionDTO.setIdPublicacion(idPublicacion);
@@ -66,6 +68,7 @@ public class Publicacion {
         publicacionDTO.setValorTruequeMax(valorTruequeMax);
         publicacionDTO.setValorTruequeMin(valorTruequeMin);
         publicacionDTO.setCaracteristicaProducto(caracteristicaProducto);
+        publicacionDTO.setPeso(peso);
         return publicacionDTO;
     }
 

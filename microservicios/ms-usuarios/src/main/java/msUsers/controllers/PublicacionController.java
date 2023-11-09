@@ -70,6 +70,8 @@ public class PublicacionController {
         publicacion.setValorTruequeMax(requestPublicacion.getValorTruequeMax());
         publicacion.setValorTruequeMin(requestPublicacion.getValorTruequeMin());
         publicacion.setDescripcion(requestPublicacion.getDescripcion());
+        publicacion.setPeso(requestPublicacion.getPeso());
+        publicacion.setTipoPublicacion(requestPublicacion.getTipoPublicacion());
 
         List<CaracteristicaProducto> listaCaracteristicas = requestPublicacion.getCaracteristicasProducto()
                 .stream()
