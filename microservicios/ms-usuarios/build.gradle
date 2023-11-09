@@ -58,6 +58,14 @@ dependencies {
 
 // https://mvnrepository.com/artifact/org.json/json
 	implementation 'org.json:json:20230618'
+
+	// https://mvnrepository.com/artifact/org.springframework/spring-websocket
+	implementation 'org.springframework:spring-websocket:6.0.13'
+
+	// https://mvnrepository.com/artifact/org.springframework/spring-messaging
+	implementation 'org.springframework:spring-messaging:6.0.13'
+
+
 }
 
 tasks.named('test') {

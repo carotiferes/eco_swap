@@ -24,6 +24,7 @@ import msUsers.exceptions.ChatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@Controller
 @RequestMapping("/api")
 @Slf4j
 public class MensajeChatController {
@@ -63,38 +65,8 @@ public class MensajeChatController {
         List<MensajeChat> conversacion = entityManager.createQuery(query).getResultList();
         List<MensajeChatDTO> conversacionDTO = conversacion.stream().map(MensajeChat::toDTO).sorted(Comparator.comparing(MensajeChatDTO::getFechaHoraEnvio)).collect(Collectors.toList());
 
-        log.info("<< Se retorna la conversación del trueque {}. Total de mensajes: {}", idTrueque, conversacion.size());
+        log.info("<< Se retorna la conversacion del trueque {}. Total de mensajes: {}", idTrueque, conversacion.size());
         return ResponseEntity.ok(conversacionDTO);
-    }
-
-    @PostMapping(path = "/chat", consumes = json, produces = json)
-    @ResponseStatus(HttpStatus.CREATED)
-    @Transactional
-    public ResponseEntity<ResponsePostEntityCreation> enviarMensajeConversacion(@RequestBody @Valid RequestMensajeChat requestMensajeChat) {
-
-        Usuario usuarioEmisor = UsuarioContext.getUsuario();
-        final var usuarioReceptor = this.usuariosRepository.findById(requestMensajeChat.getUsuarioReceptor()).
-                orElseThrow(() -> new EntityNotFoundException("No fue encontrado el usuario: " + requestMensajeChat.getUsuarioReceptor()));
-        final var trueque = this.truequesRepository.findById(requestMensajeChat.getIdTrueque()).
-                orElseThrow(() -> new EntityNotFoundException("No fue encontrado el trueque: " + requestMensajeChat.getIdTrueque()));
-
-        if(!(trueque.getEstadoTrueque() == EstadoTrueque.APROBADO))
-            throw new ChatException("El trueque no está aprobado. No se puede iniciar una conversación hasta que no cambie de estado.");
-
-        MensajeChat mensaje = new MensajeChat();
-        mensaje.setMensaje(requestMensajeChat.getMensaje());
-        mensaje.setTrueque(trueque);
-        mensaje.setFechaHoraEnvio(LocalDateTime.now());
-        mensaje.setUsuarioEmisor(usuarioEmisor);
-        mensaje.setUsuarioReceptor(usuarioReceptor);
-        var enttiy = this.mensajesChatRepository.save(mensaje);
-
-        ResponsePostEntityCreation responsePostEntityCreation = new ResponsePostEntityCreation();
-        responsePostEntityCreation.setStatus(HttpStatus.OK.name());
-        responsePostEntityCreation.setId(enttiy.getId());
-        responsePostEntityCreation.setDescripcion("Mensaje enviado correctamente.");
-
-        return ResponseEntity.ok(responsePostEntityCreation);
     }
 
 }
