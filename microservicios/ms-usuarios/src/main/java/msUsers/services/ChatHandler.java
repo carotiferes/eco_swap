@@ -1,13 +1,13 @@
 package msUsers.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.entities.MensajeChat;
 import msUsers.domain.entities.Trueque;
 import msUsers.domain.entities.Usuario;
-import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.repositories.MensajesChatRepository;
 import msUsers.domain.repositories.TruequesRepository;
 import msUsers.domain.repositories.UsuariosRepository;
@@ -19,7 +19,6 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import java.time.LocalDateTime;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
@@ -63,6 +62,7 @@ public class ChatHandler extends TextWebSocketHandler {
                 .orElseThrow(() -> new EntityNotFoundException("¡No se encontró el usuario: " + idUsuarioEmisor));
 
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
         RequestMensajeChat requestMensajeChat = objectMapper.readValue(message.getPayload(), RequestMensajeChat.class);
 
         log.info("Guardando el mensaje {} del usuario {}", requestMensajeChat.getMensaje(), usuarioEmisor.getUsername());
