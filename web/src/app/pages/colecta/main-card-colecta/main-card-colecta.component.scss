@@ -70,6 +70,13 @@ mat-card {
 			grid-template-columns: 1fr 1fr 1fr 1fr;
 			justify-items: center;
 			margin-bottom: 10px;
+			align-items: center;
+			border-bottom: 1px solid var(--light-grey);
+    		padding-bottom: 10px;
+
+			div {
+				text-align: center;
+			}
 
 			span {
 				cursor: default;

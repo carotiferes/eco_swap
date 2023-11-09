@@ -1,4 +1,4 @@
-<div class="card" (click)="clicked(cardData)" *ngIf="cardData" [class.selected-card]="cardData.isSelected"
+<div class="card" (click)="clicked(cardData)" *ngIf="cardData" [class.selected-card]="cardData.isSelected == true"
 	[ngClass]="app == 'publicaciones' && cardData.buttons.length == 0 ? 'small' : 'big'"
 	[class.is-donacion]="cardData.codigo == 'Donación'">
 	<mat-chip class="chip-localidad" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'">
@@ -37,7 +37,20 @@
 	</div> <!-- (button.status != 'RECIBIDO' && button.status != 'RECIBIDA') ? (cardData.estado != 'PENDIENTE' && button.status != 'INFO' && button.status != 'EN_ESPERA') : (cardData.estado != 'APROBADO' && cardData.estado != 'APROBADA') -->
 	<span *ngIf="cardData.estado == 'EN_ESPERA' && isSwapper" class="llevar-donacion" >
 		¡Llevá tu donación!
-		<mat-icon matTooltip="Cuando entregues la donación, la fundación podrá marcarla como RECIBIDA." class="material-icons-outlined">info</mat-icon>
+		<span class="material-icons-outlined" matTooltip="Cuando entregues la donación, la fundación podrá marcarla como RECIBIDA." >info</span>
+	</span>
+	<span *ngIf="cardData.estado == 'EN_ENVIO' && !isSwapper" class="llevar-donacion" >
+		¡En envío!
+		<span class="material-icons-outlined" matTooltip="La donación está en proceso de envío.">info</span>
+	</span>
+	<!-- NO PORQUE VA A TENER EL BOTON DE RECIBIDO
+		<span *ngIf="cardData.estado == 'EN_ESPERA' && !isSwapper" class="llevar-donacion" >
+		¡En envío!
+		<span class="material-icons-outlined" matTooltip="El swapper llevará la donación a la fundación.">info</span>
+	</span> -->
+	<span *ngIf="cardData.estado == 'APROBADA' && cardData.codigo == 'Donación' && !isSwapper" class="llevar-donacion" >
+		¡En envío!
+		<span class="material-icons-outlined" matTooltip="El swapper debe configurar el envío. Te avisaremos cuando lo haga." >info</span>
 	</span>
 
 	<div class="user-data" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'">

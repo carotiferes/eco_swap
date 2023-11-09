@@ -84,7 +84,7 @@ export class DonacionesComponent {
 				id: donacion.idDonacion,
 				imagen: donacion.parsedImagenes ? donacion.parsedImagenes[0] : 'no_image',
 				titulo: donacion.descripcion,
-				valorPrincipal: `${donacion.cantidadDonacion} unidades de ${donacion.producto.descripcion}`,
+				valorPrincipal: `${donacion.cantidadDonacion} ${donacion.cantidadDonacion == 1 ? 'unidad' : 'unidades'} de ${donacion.producto.descripcion}`,
 				valorSecundario: stringCaracteristicas,
 				fecha: donacion.fechaDonacion,
 				usuario: {
@@ -94,9 +94,9 @@ export class DonacionesComponent {
 					puntaje: donacion.producto.colectaDTO.fundacionDTO.puntaje,//donacion.particularDTO.puntaje,
 					localidad: donacion.producto.colectaDTO.fundacionDTO.direcciones[0].localidad,//donacion.particularDTO.direcciones[0].localidad
 				},
-				action: 'detail',
+				action: 'access',
 				buttons: this.getButtonsForCard(donacion, matchingOrders),
-				estado: donacion.estadoDonacion,
+				estado: donacion.estadoDonacion.replace('_',' '),
 				idAuxiliar: donacion.producto.colectaDTO.idColecta
 			}
 			auxDonaciones.push(item)
@@ -112,7 +112,7 @@ export class DonacionesComponent {
 				{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO'},
 				{name: 'Llevar en persona', icon: 'directions_walk', color: 'info', status: 'EN_ESPERA'}
 			]
-		} else if (donacion.estadoDonacion != 'EN_ESPERA') return [{ name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADA' }];
+		} else if (donacion.estadoDonacion != 'EN_ESPERA' && donacion.estadoDonacion != 'EN_ENVIO') return [{ name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADA' }];
 		else return [];
 	}
 

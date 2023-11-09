@@ -25,8 +25,6 @@ export class HomeComponent {
 			this.images.push(`assets/${this.folder}/0${index}.jpg`)
 		}
 		this.userData = {isLoggedIn: auth.isUserLoggedIn, isSwapper: auth.isUserSwapper()}
-		console.log(this.userData);
-		
 	}
 
 	goTo(page: string, restrict: boolean = false) {

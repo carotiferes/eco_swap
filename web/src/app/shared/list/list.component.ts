@@ -11,6 +11,7 @@ import { TruequesService } from 'src/app/services/trueques.service';
 export class ListComponent {
 	@Input() list: {id: string, title: string, description: string, img?: string, estado: string}[] = []
 	paginatedList: {id: string, title: string, description: string, img?: string, estado: string}[] = []
+	@Input() title: string = 'Propuestas';
 
 	hoveredItem: any;
 	pageSize = 10;
