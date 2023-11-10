@@ -2,6 +2,7 @@ package msUsers.domain.responses.DTOs;
 
 import lombok.Data;
 import msUsers.domain.entities.enums.EstadoCompra;
+import msUsers.domain.entities.enums.EstadoEnvio;
 
 import java.time.ZonedDateTime;
 
@@ -13,5 +14,6 @@ public class CompraDTO {
     private String idPaymentMercadoPago;
     private String idPreferenceMercadoPago;
     private EstadoCompra estadoCompra;
+    private EstadoEnvio estadoEnvio;
     private ZonedDateTime dateApproved;
 }

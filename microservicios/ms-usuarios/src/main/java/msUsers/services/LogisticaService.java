@@ -7,9 +7,12 @@ import com.google.gson.JsonObject;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.*;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.client.shipnow.ResponseOrder;
 import msUsers.domain.entities.*;
+import msUsers.domain.entities.enums.EstadoDonacion;
+import msUsers.domain.entities.enums.EstadoEnvio;
 import msUsers.domain.logistica.Order;
 import msUsers.domain.logistica.PingPong;
 import msUsers.domain.logistica.enums.OrdenEstadoEnum;
@@ -47,9 +50,9 @@ public class LogisticaService {
     @Autowired
     private UsuariosRepository usuariosRepository;
     @Autowired
-
     private ParticularesRepository particularesRepository;
-
+    @Autowired
+    private PublicacionesRepository publicacionesRepository;
     @Autowired
     private FundacionesRepository fundacionesRepository;
     @Autowired
@@ -58,9 +61,10 @@ public class LogisticaService {
     private OrdenesRepository ordenesRepository;
     @Autowired
     private ColectasRepository colectasRepository;
-
     @Autowired
     private CriteriaBuilderQueries criteriaBuilderQueries;
+    @Autowired
+    private EntityManager entityManager;
 
     public PingPong pingpong() {
         HttpsURLConnection connection = null;
@@ -153,35 +157,24 @@ public class LogisticaService {
         List<FechaEnvios> listadoFechasEnvios = orderAEnviar.getListaFechaEnvios();
         FechaEnvios ultimoEstado = listadoFechasEnvios.get(listadoFechasEnvios.isEmpty() ? 0 : listadoFechasEnvios.size() - 1);
         log.info(">> Cambio de estado de orden {} desde actual {} al nuevo {}", ordenId, ultimoEstado.getEstado().name(), putOrderRequest.getNuevoEstado());
-        if (this.cancelarEnvio(putOrderRequest.getNuevoEstado(), ultimoEstado.getEstado().name())) {
-            //QUITAR LO RECIBIDO DEL PRODUCTO
-            List<ProductosADonarDeOrden> listaProductos = orderAEnviar.getProductosADonarDeOrdenList();
-            for (ProductosADonarDeOrden productoDeOrden : listaProductos) {
-                Producto producto = productosRepository.findById(productoDeOrden.getIdProducto()).get();
-                producto.setCantidadRecibida((int) (producto.getCantidadRecibida() - productoDeOrden.getCantidad()));
-                productosRepository.save(producto);
-            }
-            //CAMBIAR LA DIRECCIÓN A DONDE ENVIAR
-            /*
-            Usuario usuarioOrigen = usuariosRepository.getReferenceById(orderAEnviar.getIdUsuarioOrigen());
-            Direccion direccionOrigen = usuarioOrigen.getDirecciones().get(0);
-            orderAEnviar.setCodigoPostal(direccionOrigen.getCodigoPostal());
-            orderAEnviar.setDpto(direccionOrigen.getDpto());
-            orderAEnviar.setAltura(direccionOrigen.getAltura());
-            orderAEnviar.setNombreCalle(direccionOrigen.getCalle());
-            orderAEnviar.setPiso(direccionOrigen.getPiso());
-            String nombreDestino = orderAEnviar.getNombreUserDestino();
-            orderAEnviar.setNombreUserDestino(orderAEnviar.getNombreUserOrigen());
-            orderAEnviar.setNombreUserOrigen(nombreDestino);
-            //SI USAMOS EL TEMA DE TICKETS DE JASPER, LO USAREMOS AQUI
 
-             */
-        }
+        boolean esPublicacion = orderAEnviar.getEsPublicacion();
 
         LocalDate today = LocalDate.now();
         // - Custom Pattern
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String formattedDate = today.format(pattern);  //17-02-2022
+
+        if(esPublicacion){
+            Publicacion publicacion = publicacionesRepository.findById(orderAEnviar.getPublicacionId())
+                    .orElseThrow(() -> new EntityNotFoundException("No fue encontrada la publicación: " + ordenId));
+            publicacion.setEstadoEnvio(EstadoEnvio.valueOf(putOrderRequest.getNuevoEstado()));
+            entityManager.merge(publicacion);
+        }
+        else{
+            orderAEnviar.getProductosADonarDeOrdenList().forEach(p -> setDonacionEstadoDonacion(EstadoDonacion.EN_ENVIO, p.getIdDonacion()));
+            entityManager.merge(orderAEnviar);
+        }
 
         FechaEnvios nuevaFechaEnvio = FechaEnvios.builder()
                 .fechaEnvio(formattedDate)
@@ -305,29 +298,6 @@ public class LogisticaService {
             Direccion direccionDestino = usuarioDestino.getDirecciones().get(0);
             List<PostProductosRequest> requestList = postOrderRequest.getListProductos();
 
-            /*if (postOrderRequest.getIdColecta() != null) {
-                Colecta colecta = colectasRepository.findById(postOrderRequest.getIdColecta()).get();
-
-                //FILTRAMOS LOS PRODUCTOS QUE SI VAMOS A CONSIDERAR PARA RESTAR
-                List<Producto> productosADonar = colecta.getProductos()
-                        .stream()
-                        .filter(x -> requestList.stream().anyMatch(xxx -> xxx.getProductoId() == x.getIdProducto()))
-                        .toList();
-                for (Producto producto : productosADonar) {
-                    Long cantidad = requestList.stream()
-                            .filter(x -> x.getProductoId() == producto.getIdProducto())
-                            .map(PostProductosRequest::getCantidad)
-                            .toList()
-                            .get(0);
-                    if (cantidad > (producto.getCantidadSolicitada() - producto.getCantidadRecibida())) {
-                        log.error("La intención de orden no es correcta");
-                        throw new Exception("La cantidad a pedir es mayor que la cantidad solicitada restante");
-                    }
-                    producto.setCantidadRecibida((int) (producto.getCantidadRecibida() + cantidad));
-
-                    productosRepository.save(producto);
-                }
-            }*/
             LocalDate today = LocalDate.now();
             // - Custom Pattern
             DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -363,8 +333,12 @@ public class LogisticaService {
                 listaProductosAEnviar.forEach(p -> p.setOrdenDeEnvio(orden));
                 orden.setProductosADonarDeOrdenList(listaProductosAEnviar);
                 orden.setColectaId(postOrderRequest.getIdColecta());
+                listaProductosAEnviar.forEach(p -> setDonacionEstadoDonacion(EstadoDonacion.EN_ENVIO, p.getIdDonacion()));
             } else{
+                final var publicacion = this.publicacionesRepository.findById(postOrderRequest.getIdPublicacion()).
+                        orElseThrow(() -> new EntityNotFoundException("No fue encontrada la publicacion: " + postOrderRequest.getIdPublicacion()));
                 orden.setPublicacionId(postOrderRequest.getIdPublicacion());
+                publicacion.setEstadoEnvio(EstadoEnvio.EN_ENVIO);
             }
 
             return orden;
@@ -434,5 +408,22 @@ public class LogisticaService {
                 ordenDeEnvio.getListaFechaEnvios().get(ordenDeEnvio.getListaFechaEnvios().size() - 1).getEstado().equals(OrdenEstadoEnum.ENVIADO))
                 || (user.getIdUsuario() == ordenDeEnvio.getIdUsuarioDestino() &&
                 ordenDeEnvio.getListaFechaEnvios().get(ordenDeEnvio.getListaFechaEnvios().size() - 1).getEstado().equals(OrdenEstadoEnum.RECIBIDO)));
+    }
+
+    private void setDonacionEstadoDonacion(EstadoDonacion estadoDonacion, Long idDonacion) {
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Donacion> query = cb.createQuery(Donacion.class);
+        Root<Donacion> from = query.from(Donacion.class);
+        Predicate predicate = cb.conjunction();
+
+        predicate = cb.and(predicate, cb.equal(from.get("idDonacion"), idDonacion));
+
+        query.where(predicate);
+
+        Donacion donacion = entityManager.createQuery(query).getSingleResult();
+        donacion.setEstadoDonacion(estadoDonacion);
+        entityManager.merge(donacion);
+
     }
 }

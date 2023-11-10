@@ -6,6 +6,7 @@ import jakarta.persistence.criteria.*;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.entities.*;
+import msUsers.domain.entities.enums.EstadoEnvio;
 import msUsers.domain.entities.enums.EstadoPublicacion;
 import msUsers.domain.entities.enums.EstadoTrueque;
 import msUsers.domain.entities.enums.TipoPublicacion;
@@ -211,6 +212,26 @@ public class PublicacionController {
         responseUpdateEntity.setDescripcion("Publicacion y trueques relacionados cerrados exitósamente");
         responseUpdateEntity.setStatus(HttpStatus.OK.name());
         log.info("<< Publicacion cerrada");
+
+        return ResponseEntity.ok(responseUpdateEntity);
+    }
+
+    @PatchMapping(path = "/publicacion/{id_publicacion}/recibido", produces = json)
+    @ResponseStatus(HttpStatus.OK)
+    @Transactional
+    public ResponseEntity<ResponseUpdateEntity> marcarRecibidoPublicacion(@PathVariable("id_publicacion") Long idPublicacion) {
+        log.info(">> Se va a marcar como recibida la publicacion: {}", idPublicacion);
+
+        final var publicacion = this.publicacionesRepository.findById(idPublicacion).
+                orElseThrow(() -> new EntityNotFoundException("No fue encontrada la publicacion: " + idPublicacion));
+
+        publicacion.setEstadoEnvio(EstadoEnvio.RECIBIDA);
+        entityManager.merge(publicacion);
+
+        ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
+        responseUpdateEntity.setDescripcion("Publicación marcada como recibida exitosamente.");
+        responseUpdateEntity.setStatus(HttpStatus.OK.name());
+        log.info("<< Publicacion marcada como recibida.");
 
         return ResponseEntity.ok(responseUpdateEntity);
     }

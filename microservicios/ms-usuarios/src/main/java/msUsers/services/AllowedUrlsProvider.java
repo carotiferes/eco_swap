@@ -36,7 +36,6 @@ public class AllowedUrlsProvider {
                 "/ms-users/api/webhook",
                 // LOGISTICA
                 "/ms-transacciones/api/logistica/ping",
-                "/ms-transacciones/api/logistica/costoEnvio",
                 // CHAT
                 "/chat",
                 // ERROR

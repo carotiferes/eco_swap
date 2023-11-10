@@ -3,6 +3,7 @@ package msUsers.domain.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import msUsers.domain.entities.enums.EstadoEnvio;
 import msUsers.domain.entities.enums.EstadoPublicacion;
 import msUsers.domain.entities.enums.TipoProducto;
 import msUsers.domain.entities.enums.TipoPublicacion;
@@ -50,6 +51,9 @@ public class Publicacion {
     @Enumerated(EnumType.STRING)
     private TipoProducto tipoProducto;
 
+    @Enumerated(EnumType.STRING)
+    private EstadoEnvio estadoEnvio;
+
     private String imagenes;
 
     private Double peso;
@@ -64,6 +68,7 @@ public class Publicacion {
         publicacionDTO.setDescripcion(descripcion);
         publicacionDTO.setTipoPublicacion(tipoPublicacion);
         publicacionDTO.setEstadoPublicacion(estadoPublicacion);
+        publicacionDTO.setEstadoEnvio(estadoEnvio);
         publicacionDTO.setPrecioVenta(precioVenta);
         publicacionDTO.setValorTruequeMax(valorTruequeMax);
         publicacionDTO.setValorTruequeMin(valorTruequeMin);

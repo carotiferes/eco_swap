@@ -6,6 +6,7 @@ import lombok.Data;
 import msUsers.domain.entities.CaracteristicaProducto;
 import msUsers.domain.entities.Particular;
 import msUsers.domain.entities.Producto;
+import msUsers.domain.entities.enums.EstadoEnvio;
 import msUsers.domain.entities.enums.EstadoPublicacion;
 import msUsers.domain.entities.enums.TipoPublicacion;
 
@@ -19,6 +20,7 @@ public class PublicacionDTO {
     private String titulo;
     private String descripcion;
     private EstadoPublicacion estadoPublicacion;
+    private EstadoEnvio estadoEnvio;
     private TipoPublicacion tipoPublicacion;
     private LocalDate fechaPublicacion;
     private Double precioVenta;
