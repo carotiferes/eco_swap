@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import msUsers.domain.logistica.enums.OrdenEstadoEnum;
+import msUsers.domain.responses.DTOs.FechaEnviosDTO;
+import msUsers.domain.responses.DTOs.OrdenDeEnvioDTO;
 import msUsers.domain.responses.logisticaResponse.EnumEstadoOrden;
 import msUsers.domain.responses.logisticaResponse.ResponseFechasEnvio;
 
@@ -32,5 +34,13 @@ public class FechaEnvios {
                 .fecha(dataFechaEnvio.getFechaEnvio())
                 .estado(dataFechaEnvio.getEstado().name())
                 .build();
+    }
+
+    public FechaEnviosDTO toDTO() {
+        FechaEnviosDTO fechaEnviosDTO = new FechaEnviosDTO();
+        fechaEnviosDTO.setIdOrden(idOrden);
+        fechaEnviosDTO.setFechaEnvio(fechaEnvio);
+        fechaEnviosDTO.setEstado(estado);
+        return fechaEnviosDTO;
     }
 }

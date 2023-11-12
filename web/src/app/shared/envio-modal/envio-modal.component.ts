@@ -3,6 +3,7 @@ import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DonacionModel } from 'src/app/models/donacion.model';
+import { OrdenModel } from 'src/app/models/orden.model';
 import { UsuarioModel } from 'src/app/models/usuario.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { ComprasService } from 'src/app/services/compras.service';
@@ -18,11 +19,11 @@ import Swal from 'sweetalert2';
 })
 export class EnvioModalComponent {
 
-	loading: boolean = false;
+	loading: boolean = true;
 	loadingSave: boolean = false;
 	ordenForm: FormGroup;
 
-	userOrders: any[] = []
+	userOrders: OrdenModel[] = []
 
 	costoEnvio?: number;
 
@@ -30,6 +31,8 @@ export class EnvioModalComponent {
 	user?: UsuarioModel;
 	loadingCosto: boolean = false;
 	type: 'compra' | 'unaDonacion' | 'variasDonaciones' = 'compra';
+
+	compra: any;
 
 	// SE LLAMA DESDE EL card.component.ts
 
@@ -71,7 +74,17 @@ export class EnvioModalComponent {
 					if (matchingOrders) this.yaTieneEnvio = matchingOrders;
 
 				} else {
-					this.yaTieneEnvio = this.userOrders.find(order => order.publicacionId == this.data.card.id)
+					this.compraService.getMyCompras().subscribe({
+						next: (res: any) => {
+							const compras = res;
+							const compra = compras.find((item: any) => item.idCompra == this.data.card.idAuxiliar)
+							if(compra) {
+								this.compra = compra;
+								this.ordenForm.controls['peso'].setValue(compra.publicacionDTO.peso)
+							}
+							this.yaTieneEnvio = this.userOrders.find(order => order.publicacionId == this.data.card.id)
+						}
+					})
 				}
 
 				if (!this.yaTieneEnvio) {
@@ -79,10 +92,10 @@ export class EnvioModalComponent {
 						next: (res: any) => {
 							this.user = res;
 							console.log(this.user);
-
+							this.loading = false;
 						}
 					})
-				}
+				} else this.loading = false;
 			}
 		})
 	}
@@ -125,26 +138,20 @@ export class EnvioModalComponent {
 				}
 			})
 		} else { // UNA COMPRA
-			this.compraService.getMyCompras().subscribe({
-				next: (res: any) => {
-					const compras = res;
-					const compra = compras.find((item: any) => item.idCompra == this.data.card.idAuxiliar)
-					if (compra) {
-						this.logisticaService.getCostoEnvio(this.ordenForm.value.peso).subscribe({
-							next: (envio: any) => {
-								const orden = {
-									titulo: this.data.card.titulo,
-									userIdDestino: compra.particularCompradorDTO.usuarioDTO.idUsuario,
-									userIdOrigen: compra.publicacionDTO.particularDTO.usuarioDTO.idUsuario,
-									idPublicacion: compra.publicacionDTO.idPublicacion,
-									costoEnvio: envio.precio
-								}
-								this.enviarOrden(orden);
-							}
-						})
+			if (this.compra) {
+				this.logisticaService.getCostoEnvio(this.ordenForm.value.peso).subscribe({
+					next: (envio: any) => {
+						const orden = {
+							titulo: this.data.card.titulo,
+							userIdDestino: this.compra.particularCompradorDTO.usuarioDTO.idUsuario,
+							userIdOrigen: this.compra.publicacionDTO.particularDTO.usuarioDTO.idUsuario,
+							idPublicacion: this.compra.publicacionDTO.idPublicacion,
+							costoEnvio: envio.precio
+						}
+						this.enviarOrden(orden);
 					}
-				}
-			})
+				})
+			}
 		}
 	}
 

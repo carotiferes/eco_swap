@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.requests.logistica.PostProductosRequest;
+import msUsers.domain.responses.DTOs.FechaEnviosDTO;
+import msUsers.domain.responses.DTOs.ProductosADonarDeOrdenDTO;
 
 @Entity
 @Data
@@ -42,5 +44,15 @@ public class ProductosADonarDeOrden {
                 .cantidad(producto.getCantidad())
                 .idDonacion(producto.getDonacionId())
                 .build();
+    }
+
+    public ProductosADonarDeOrdenDTO toDTO() {
+        ProductosADonarDeOrdenDTO productosADonarDeOrdenDTO = new ProductosADonarDeOrdenDTO();
+        productosADonarDeOrdenDTO.setIdProductoADonar(idProductoADonar);
+        productosADonarDeOrdenDTO.setIdOrden(ordenDeEnvio.getIdOrden());
+        productosADonarDeOrdenDTO.setIdProducto(idProducto);
+        productosADonarDeOrdenDTO.setIdDonacion(idDonacion);
+        productosADonarDeOrdenDTO.setCantidad(cantidad);
+        return productosADonarDeOrdenDTO;
     }
 }

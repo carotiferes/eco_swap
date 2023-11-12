@@ -166,14 +166,25 @@ public class LogisticaService {
         String formattedDate = today.format(pattern);  //17-02-2022
 
         if(esPublicacion){
-            Publicacion publicacion = publicacionesRepository.findById(orderAEnviar.getPublicacionId())
-                    .orElseThrow(() -> new EntityNotFoundException("No fue encontrada la publicación: " + ordenId));
-            publicacion.setEstadoEnvio(EstadoEnvio.valueOf(putOrderRequest.getNuevoEstado()));
-            entityManager.merge(publicacion);
+
+            String estado = putOrderRequest.getNuevoEstado();
+            EstadoEnvio estadoEnvio;
+            if(Objects.equals(estado, "RECIBIDO")) {
+                estadoEnvio = EstadoEnvio.valueOf("RECIBIDA");
+                Publicacion publicacion = publicacionesRepository.findById(orderAEnviar.getPublicacionId())
+                        .orElseThrow(() -> new EntityNotFoundException("No fue encontrada la publicación: " + ordenId));
+                publicacion.setEstadoEnvio(estadoEnvio);
+                entityManager.merge(publicacion);
+            }
         }
         else{
-            orderAEnviar.getProductosADonarDeOrdenList().forEach(p -> setDonacionEstadoDonacion(EstadoDonacion.EN_ENVIO, p.getIdDonacion()));
-            entityManager.merge(orderAEnviar);
+            String estado = putOrderRequest.getNuevoEstado();
+            EstadoDonacion estadoDonacion;
+            if(Objects.equals(estado, "RECIBIDO")) {
+                estadoDonacion = EstadoDonacion.valueOf("RECIBIDA");
+                orderAEnviar.getProductosADonarDeOrdenList().forEach(p -> setDonacionEstadoDonacion(estadoDonacion, p.getIdDonacion()));
+                entityManager.merge(orderAEnviar);
+            } //else orderAEnviar.getProductosADonarDeOrdenList().forEach(p -> setDonacionEstadoDonacion(EstadoDonacion.valueOf(putOrderRequest.getNuevoEstado()), p.getIdDonacion()));
         }
 
         FechaEnvios nuevaFechaEnvio = FechaEnvios.builder()

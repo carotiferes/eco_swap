@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CardModel } from 'src/app/models/card.model';
 import { ColectaModel } from 'src/app/models/colecta.model';
 import { DonacionModel } from 'src/app/models/donacion.model';
+import { OrdenModel } from 'src/app/models/orden.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import { LogisticaService } from 'src/app/services/logistica.service';
@@ -30,7 +31,7 @@ export class ColectaComponent {
 	donacionesAbiertas: CardModel[] = [];
 	donacionesCerradas: CardModel[] = [];
 
-	userOrders: any[] = [];
+	userOrders: OrdenModel[] = [];
 
 	constructor(private route: ActivatedRoute, private router: Router, private auth: AuthService,
 		private donacionesService: DonacionesService, private showErrorService: ShowErrorService,

@@ -42,7 +42,7 @@ export class DeckComponent {
 	}
 
 	cardWasSelected(event: any){
-		this.cardList.map(item => { if(item.id != event) item.isSelected = false })
+		if(this.app != 'donaciones') this.cardList.map(item => { if(item.id != event) item.isSelected = false })
 		this.cardSelected.emit(event)
 	}
 

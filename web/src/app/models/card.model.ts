@@ -27,4 +27,5 @@ export interface CardModel {
 	idAuxiliar?: number;
 	codigo?: string;
 	isSelected?: boolean;
+	estadoAux?: string;
 }

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CardModel } from 'src/app/models/card.model';
 import { DonacionModel } from 'src/app/models/donacion.model';
+import { OrdenModel } from 'src/app/models/orden.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import { LogisticaService } from 'src/app/services/logistica.service';
@@ -27,7 +28,7 @@ export class DonacionesComponent {
 
 	colectaParaEnvio?: number;
 
-	userOrders: any[] = [];
+	userOrders: OrdenModel[] = [];
 	screenWidth: number;
 
 	constructor(public dialog: MatDialog, private donacionesService: DonacionesService,
@@ -112,7 +113,8 @@ export class DonacionesComponent {
 				{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO'},
 				{name: 'Llevar en persona', icon: 'directions_walk', color: 'info', status: 'EN_ESPERA'}
 			]
-		} else if (donacion.estadoDonacion != 'EN_ESPERA' && donacion.estadoDonacion != 'EN_ENVIO') return [{ name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADA' }];
+		} else if (donacion.estadoDonacion != 'EN_ESPERA' && donacion.estadoDonacion != 'EN_ENVIO' && donacion.estadoDonacion != 'RECIBIDA')
+			return [{ name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADA' }];
 		else return [];
 	}
 
@@ -155,7 +157,7 @@ export class DonacionesComponent {
 
 		if (donacionSeleccionada) {
 			if (this.selectedCards.length == 0) { // first one selected
-				this.colectaParaEnvio = donacionSeleccionada?.idAuxiliar;
+				this.colectaParaEnvio = donacionSeleccionada.idAuxiliar;
 				this.donacionesCardList.map(item => { if (item.id == cardID) item.isSelected = true })
 				this.selectedCards.push(donacionSeleccionada)
 				const auxDonaciones = this.donacionesCardList;
@@ -164,7 +166,7 @@ export class DonacionesComponent {
 						donacion.action = 'detail';
 						donacion.codigo = undefined;
 						donacion.buttons = [];
-					} else if (this.selectedCards.includes(donacionSeleccionada)) {
+					} else if (this.selectedCards.includes(donacionSeleccionada) && donacion.id == donacionSeleccionada.id) {
 						donacion.buttons = [{ name: 'Quitar', icon: 'remove', color: 'info', status: 'INFO' }]
 					}
 				});
@@ -172,6 +174,14 @@ export class DonacionesComponent {
 			} else {
 				if (this.colectaParaEnvio != donacionSeleccionada.idAuxiliar) {
 					Swal.fire('¡Colecta distinta!', 'No podés seleccionar distintas colectas para un mismo envío', 'warning')
+				} else {
+					this.selectedCards.push(donacionSeleccionada)
+					this.donacionesCardList.map(donacion => {
+						if(donacion.id == donacionSeleccionada.id) {
+							donacion.buttons = [{ name: 'Quitar', icon: 'remove', color: 'info', status: 'INFO' }]
+						}
+					})
+
 				}
 			}
 
@@ -196,7 +206,7 @@ export class DonacionesComponent {
 						});
 					});
 					//if(matchingOrders.length > 0) this.yaTieneEnvio = matchingOrders;
-					if (donacion.estado == 'APROBADA' && matchingOrders.length == 0) {
+					if (donacion.estado == 'APROBADA' && !matchingOrders) {
 						donacion.action = 'select';
 						donacion.codigo = 'Donación';
 						donacion.buttons = [{ name: 'Agregar', icon: 'add', color: 'info', status: 'INFO' }]
@@ -211,6 +221,13 @@ export class DonacionesComponent {
 			} else {
 				const aux = this.selectedCards.filter(item => item.id != cardID)
 				this.selectedCards = aux;
+				this.donacionesCardList.map(donacion => {
+					if(donacion.id == cardID) {
+						donacion.action = 'select';
+						donacion.codigo = 'Donación';
+						donacion.buttons = [{ name: 'Agregar', icon: 'add', color: 'info', status: 'INFO' }]
+					}
+				})
 			}
 		}
 		this.donacionesCardList.map(item => { if (item.id == cardID) item.isSelected = false })

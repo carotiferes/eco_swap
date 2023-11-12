@@ -6,9 +6,9 @@
 	</mat-chip>
 	<div style="position: absolute; top: 10px; left: 10px;">
 		<span *ngIf="cardData.estado" class="material-icons-outlined result-icon"
-			[ngClass]="colorMap[cardData.estado] || 'red'" [matTooltip]=" cardData.codigo ? cardData.codigo+' '+cardData.estado :
+			[ngClass]="cardData.codigo != 'Venta' ? colorMap[cardData.estado] || 'red' : 'green'" [matTooltip]=" cardData.codigo && cardData.codigo == 'Venta' ? 'COMPRADO' : cardData.codigo ? cardData.codigo+' '+cardData.estado :
 			app == 'donaciones' ? 'Donación '+ cardData.estado : 'Trueque '+ cardData.estado">
-			{{ iconMap[cardData.estado] || 'dangerous' }}
+			{{ cardData.codigo != 'Venta' ? iconMap[cardData.estado] || 'pending' : 'shopping_cart' }}
 		</span>
 	</div>
 	<div class="img-div" style="display: flex; justify-content: center;">
@@ -34,12 +34,16 @@
 			(click)="buttonClicked(cardData, button); $event.stopPropagation()">
 			<mat-icon>{{button.icon}}</mat-icon>
 		</button>
+		<!-- <button *ngIf="cardData.estado == 'RECIBIDO' || cardData.estado == 'RECIBIDA'">
+				OPINAR
+		</button> -->
 	</div> <!-- (button.status != 'RECIBIDO' && button.status != 'RECIBIDA') ? (cardData.estado != 'PENDIENTE' && button.status != 'INFO' && button.status != 'EN_ESPERA') : (cardData.estado != 'APROBADO' && cardData.estado != 'APROBADA') -->
-	<span *ngIf="cardData.estado == 'EN_ESPERA' && isSwapper" class="llevar-donacion" >
+
+	<span *ngIf="cardData.estado == 'EN ESPERA' && isSwapper" class="llevar-donacion" >
 		¡Llevá tu donación!
 		<span class="material-icons-outlined" matTooltip="Cuando entregues la donación, la fundación podrá marcarla como RECIBIDA." >info</span>
 	</span>
-	<span *ngIf="cardData.estado == 'EN_ENVIO' && !isSwapper" class="llevar-donacion" >
+	<span *ngIf="cardData.estado == 'EN ENVIO' && !isSwapper" class="llevar-donacion" >
 		¡En envío!
 		<span class="material-icons-outlined" matTooltip="La donación está en proceso de envío.">info</span>
 	</span>
@@ -51,6 +55,17 @@
 	<span *ngIf="cardData.estado == 'APROBADA' && cardData.codigo == 'Donación' && !isSwapper" class="llevar-donacion" >
 		¡En envío!
 		<span class="material-icons-outlined" matTooltip="El swapper debe configurar el envío. Te avisaremos cuando lo haga." >info</span>
+	</span>
+
+	<span *ngIf="!!cardData.estadoAux && cardData.estadoAux != 'RECIBIDA' && cardData.codigo == 'Venta'" class="llevar-donacion" >
+		¡En envío!
+		<span class="material-icons-outlined"
+		[matTooltip]="cardData.estadoAux == 'POR_CONFIGURAR' ? 'El swapper debe configurar el envío. Te avisaremos cuando lo haga.' : 'El envío está activo. Shipnow buscará tu producto en los próximos 2 días habiles, en el horario que configuraste.'" >info</span>
+	</span>
+
+	<span *ngIf="!!cardData.estadoAux && cardData.estadoAux == 'RECIBIDA'" class="llevar-donacion" >
+		<span class="material-icons-outlined">done_all</span>
+		¡Producto recibido!
 	</span>
 
 	<div class="user-data" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'">

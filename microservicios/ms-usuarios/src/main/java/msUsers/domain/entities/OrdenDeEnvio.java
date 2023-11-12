@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import msUsers.domain.responses.DTOs.OrdenDeEnvioDTO;
+import msUsers.domain.responses.DTOs.ParticularDTO;
 
 import java.util.List;
 
@@ -76,4 +78,30 @@ public class OrdenDeEnvio {
 
     private String fechaADespachar;
 
+    public OrdenDeEnvioDTO toDTO() {
+        OrdenDeEnvioDTO ordenDeEnvioDTO = new OrdenDeEnvioDTO();
+        ordenDeEnvioDTO.setIdOrden(idOrden);
+        ordenDeEnvioDTO.setDescripcion(descripcion);
+        ordenDeEnvioDTO.setTitulo(titulo);
+        ordenDeEnvioDTO.setAltura(altura);
+        ordenDeEnvioDTO.setCiudad(ciudad);
+        ordenDeEnvioDTO.setBarrio(barrio);
+        ordenDeEnvioDTO.setNombreCalle(nombreCalle);
+        ordenDeEnvioDTO.setNombreUserOrigen(nombreUserOrigen);
+        ordenDeEnvioDTO.setNombreUserDestino(nombreUserDestino);
+        ordenDeEnvioDTO.setDpto(dpto);
+        ordenDeEnvioDTO.setPiso(piso);
+        ordenDeEnvioDTO.setTelefono(telefono);
+        ordenDeEnvioDTO.setCodigoPostal(codigoPostal);
+        ordenDeEnvioDTO.setColectaId(colectaId);
+        ordenDeEnvioDTO.setPublicacionId(publicacionId);
+        ordenDeEnvioDTO.setPrecioEnvio(precioEnvio);
+        ordenDeEnvioDTO.setEsPublicacion(esPublicacion);
+        ordenDeEnvioDTO.setFechaADespachar(fechaADespachar);
+        ordenDeEnvioDTO.setIdUsuarioDestino(idUsuarioDestino);
+        ordenDeEnvioDTO.setIdUsuarioOrigen(idUsuarioOrigen);
+        ordenDeEnvioDTO.setListaFechaEnvios(listaFechaEnvios.stream().map(FechaEnvios::toDTO).toList());
+        ordenDeEnvioDTO.setProductosADonarDeOrdenList(productosADonarDeOrdenList.stream().map(ProductosADonarDeOrden::toDTO).toList());
+        return ordenDeEnvioDTO;
+    }
 }

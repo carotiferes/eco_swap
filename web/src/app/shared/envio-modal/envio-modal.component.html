@@ -11,11 +11,14 @@
 	<mat-icon (click)="dialogRef.close()" style="margin-left: 10px; cursor: pointer;">close</mat-icon>
 </div>
 <div style="display: flex; justify-content: center;">
-	<mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+	<mat-spinner *ngIf="loading" diameter="20" style="margin-bottom: 60px;"></mat-spinner>
 </div>
 <div *ngIf="!loading && !yaTieneEnvio">
+	<div *ngIf="this.type == 'compra' && compra" style="margin: 0 20px 20px; text-align: center;">
+		El peso de este producto es: <b>{{compra.publicacionDTO.peso}} gramos</b>
+	</div>
 	<form [formGroup]="ordenForm" id="envio-form">
-		<mat-form-field>
+		<mat-form-field *ngIf="this.type != 'compra'">
 			<mat-label>Peso Aproximado del Producto</mat-label>
 			<input matInput formControlName="peso" type="number" class="number-input">
 			<span matSuffix style="margin: 20px;">gramos</span>

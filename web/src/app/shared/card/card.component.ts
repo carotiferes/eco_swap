@@ -9,6 +9,7 @@ import { TruequesService } from 'src/app/services/trueques.service';
 import Swal from 'sweetalert2';
 import { ListComponent } from '../list/list.component';
 import { EnvioModalComponent } from 'src/app/shared/envio-modal/envio-modal.component';
+import { ColectaModel } from 'src/app/models/colecta.model';
 
 @Component({
 	selector: 'app-card',
@@ -105,8 +106,7 @@ export class CardComponent {
 
 	buttonClicked(card: CardModel, button: any) {
 		if (button.status == 'INFO') {
-			if (card.action == 'list') this.openDialog(ListComponent, card);
-			else if (card.action == 'trueque') this.router.navigate(['publicacion/' + card.idAuxiliar])
+			if (card.action == 'trueque') this.router.navigate(['publicacion/' + card.idAuxiliar])
 			else if (card.codigo == 'Compra' || this.app == 'donaciones' && button.name == 'Configurar envío') {
 				this.openDialog(EnvioModalComponent, { card }, '70vh', '60vw')
 				return;
@@ -115,6 +115,7 @@ export class CardComponent {
 			else if (card.action == 'select' && card.codigo == 'Donación') {
 				this.clicked(card)
 			}
+			else if (card.action == 'list') this.openDialog(ListComponent, card);
 		} else {
 			this.changeStatus(card, button.status)
 		}
@@ -137,6 +138,7 @@ export class CardComponent {
 				deny = 'Sí, cancelar';
 				cancel = 'No, mantener';
 				icon = 'warning';
+				this.fireSwal(title, text, confirm, cancel, deny, icon, card, newStatus, palabra)
 				break;
 			case 'ACEPTADO':
 				title = 'Confirmar Aprobación';
@@ -144,6 +146,7 @@ export class CardComponent {
 				confirm = 'Sí, aceptar';
 				cancel = 'No, cancelar';
 				icon = 'warning';
+				this.fireSwal(title, text, confirm, cancel, deny, icon, card, newStatus, palabra)
 				break;
 			case 'RECHAZADO':
 				title = 'Confirmar Rechazo';
@@ -151,13 +154,26 @@ export class CardComponent {
 				deny = 'Sí, rechazar';
 				cancel = 'No, cancelar';
 				icon = 'warning';
+				this.fireSwal(title, text, confirm, cancel, deny, icon, card, newStatus, palabra)
 				break;
 			case 'EN_ESPERA':
-				title = 'Confirmar Envío en Persona';
-				text = 'Esto significa que vos tenés que llevar la donación a la fundación. Podés ver la dirección ingresando a su perfil.';
-				deny = 'Sí, confirmar';
-				cancel = 'No, cancelar';
-				icon = 'warning';
+				this.donacionesService.getColecta(card.idAuxiliar).subscribe({
+					next: (res: any) => {
+						console.log('RESSS',res);
+						console.log('after subscribe');
+						const colecta: ColectaModel = res;
+						
+						title = 'Confirmar Envío en Persona';
+						text = `Esto significa que vos tenés que llevar la donación a la fundación. La dirección es 
+						${colecta.fundacionDTO.direcciones[0].calle} ${colecta.fundacionDTO.direcciones[0].altura} ${colecta.fundacionDTO.direcciones[0].piso || ''} ${colecta.fundacionDTO.direcciones[0].departamento || ''}
+						(${colecta.fundacionDTO.direcciones[0].localidad})
+						`
+						deny = 'Sí, confirmar';
+						cancel = 'No, cancelar';
+						icon = 'warning';
+						this.fireSwal(title, text, confirm, cancel, deny, icon, card, newStatus, palabra)
+					}
+				})
 				break;
 			case 'CERRADA':
 					title = 'Confirmar Cierre';
@@ -165,6 +181,7 @@ export class CardComponent {
 					deny = 'Sí, confirmar';
 					cancel = 'No, cancelar';
 					icon = 'warning';
+					this.fireSwal(title, text, confirm, cancel, deny, icon, card, newStatus, palabra)
 					break;
 			default:
 				title = 'Confirmar Acción';
@@ -172,8 +189,13 @@ export class CardComponent {
 				confirm = 'Sí, continuar';
 				cancel = 'No, cancelar';
 				icon = 'warning';
+				this.fireSwal(title, text, confirm, cancel, deny, icon, card, newStatus, palabra)
 				break;
 		}
+	}
+
+	fireSwal(title: string, text: string, confirm: string, cancel: string,
+		deny: string, icon: 'success' | 'warning', card: CardModel, newStatus: string, palabra: string) {
 		Swal.fire({
 			title,
 			text,

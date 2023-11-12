@@ -16,6 +16,7 @@ import msUsers.domain.entities.Compra;
 import msUsers.domain.entities.Particular;
 import msUsers.domain.entities.Usuario;
 import msUsers.domain.entities.enums.EstadoCompra;
+import msUsers.domain.entities.enums.EstadoEnvio;
 import msUsers.domain.entities.enums.EstadoPublicacion;
 import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.repositories.ComprasRepository;
@@ -81,12 +82,15 @@ public class MercadoPagoController {
 
         // Creamos la compra
         if(publicacion.getCompras().stream().noneMatch(compra -> compra.getEstadoCompra() == EstadoCompra.APROBADA)) {
-            if(publicacion.getEstadoPublicacion() == EstadoPublicacion.CERRADA) {
+            if(publicacion.getEstadoPublicacion() != EstadoPublicacion.CERRADA) {
                 Compra compra = new Compra();
                 compra.setPublicacion(publicacion);
                 compra.setParticularComprador(particular);
                 compra.setEstadoCompra(EstadoCompra.PENDIENTE);
                 var entity = this.comprasRepository.save(compra);
+
+                publicacion.setEstadoEnvio(EstadoEnvio.POR_CONFIGURAR);
+                publicacionesRepository.save(publicacion);
 
                 // MP
                 MercadoPagoConfig.setAccessToken(globalAccessToken);

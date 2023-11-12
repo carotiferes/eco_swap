@@ -332,6 +332,8 @@ export class PublicacionComponent implements AfterViewInit {
 		this.truequeAceptado = auxList1;
 		this.truequesActivos = auxList2;
 		this.historialTrueques = auxList3;
+
+		if(this.truequeAceptado.length > 0 && this.userType == 'publicacionPropuesta') this.mainPublicacionCard.estado = undefined;
 	}
 
 	hasApprovedTrueque() {

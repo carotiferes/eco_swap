@@ -9,6 +9,7 @@ import msUsers.domain.logistica.PingPong;
 import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.requests.logistica.PostOrderRequest;
 import msUsers.domain.requests.logistica.PutOrderRequest;
+import msUsers.domain.responses.DTOs.OrdenDeEnvioDTO;
 import msUsers.domain.responses.ResponseUpdateEntity;
 import msUsers.domain.responses.logistica.resultResponse.ResultShippingOptions;
 import msUsers.domain.responses.logisticaResponse.ResponseCostoEnvio;
@@ -69,7 +70,7 @@ public class LogisticaController {
 
     @GetMapping(path = "/myOrdenes", produces = json)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<OrdenDeEnvio>> obtenerMisOrdenes(
+    public ResponseEntity<List<OrdenDeEnvioDTO>> obtenerMisOrdenes(
             @RequestParam("type") String type
     ) {
         log.info("parametro type: {}", type);
@@ -78,7 +79,7 @@ public class LogisticaController {
         log.info(">> GET ORDER PARA EXTERNAL_REFERENCE: {}", userId);
         List<OrdenDeEnvio> ordenes = logisticaService.obtenerMisOrdenes(userId, type);
         log.info("<< ORDENES OBTENIDAS PARA {} con la cantidad de {} ordenes", userId, ordenes.size());
-        return ResponseEntity.ok(ordenes);
+        return ResponseEntity.ok(ordenes.stream().map(OrdenDeEnvio::toDTO).toList());
     }
 
     @GetMapping(path = "/orden/{orderId}", consumes = json, produces = json)

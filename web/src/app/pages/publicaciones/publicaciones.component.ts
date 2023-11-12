@@ -6,6 +6,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { Router } from '@angular/router';
 import { Observable, map, startWith } from 'rxjs';
 import { CardModel } from 'src/app/models/card.model';
+import { OrdenModel } from 'src/app/models/orden.model';
 import { PublicacionModel } from 'src/app/models/publicacion.model';
 import { TruequeModel } from 'src/app/models/trueque.model';
 import { AuthService } from 'src/app/services/auth.service';
@@ -42,7 +43,7 @@ export class PublicacionesComponent {
 	trueques: TruequeModel[] = [];
 	screenWidth: number;
 
-	userOrders: any[] = [];
+	userOrders: OrdenModel[] = [];
 
 	constructor(private router: Router, private auth: AuthService, private fb: FormBuilder,
 		private productosService: ProductosService, private showErrorService: ShowErrorService,
@@ -198,7 +199,8 @@ export class PublicacionesComponent {
 				idAuxiliar: !!idPublicacionOrigen ? idPublicacionOrigen : !!idPublicacionPropuesta ? publicacion.idPublicacion : publicacion.idCompra ? publicacion.idCompra : undefined,
 				buttons: this.getButtonsForCard(publicacion, !!idPublicacionOrigen || !!idPublicacionPropuesta, matchingOrders),
 				estado: this.origin == 'myPublicaciones' ? publicacion.estadoPublicacion : publicacion.estadoCompra ? publicacion.estadoCompra : undefined,
-				codigo: publicacion.idCompra ? 'Compra' : 'Publicación'
+				codigo: publicacion.idCompra ? 'Compra' : !!publicacion.estadoEnvio ? 'Venta' : 'Publicación',
+				estadoAux: publicacion.estadoEnvio
 			})
 		}
 		this.publicacionesCardList = auxList;
@@ -207,7 +209,7 @@ export class PublicacionesComponent {
 	}
 
 	getButtonsForCard(publicacion: PublicacionModel, truequeAprobado: boolean = false, matchingOrders: boolean = false) {
-		if(this.origin == 'myPublicaciones') {
+		if(this.origin == 'myPublicaciones' && !publicacion.idCompra && !publicacion.estadoEnvio) {
 			const list =[{
 				name: !truequeAprobado ? '¿Dónde lo propuse?' : 'Ver trueque',
 				icon: 'info',
@@ -216,8 +218,14 @@ export class PublicacionesComponent {
 			}]
 			if (publicacion.estadoPublicacion == 'ABIERTA') list.push({name: 'Cerrar publicación', icon: 'close', color: 'warn', status: 'CERRADA'});
 			return list;
-		} else if (this.origin == 'myCompras'){
-			if(matchingOrders) return [{name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO'}];
+		} /* else if(this.origin == 'myPublicaciones' && publicacion.estadoEnvio) {
+			if(publicacion.estadoEnvio == 'EN_ENVIO') return [{name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO'}];
+			else return []
+		} */ 
+		else if (this.origin == 'myCompras'){
+			console.log(publicacion);
+			if(publicacion.estadoEnvio == 'RECIBIDA') return [];
+			else if(matchingOrders) return [{name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO'}];
 			else return [{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO'}];
 		} else return [];
 	}
