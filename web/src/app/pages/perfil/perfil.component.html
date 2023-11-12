@@ -68,7 +68,7 @@
 						<div>({{opiniones.length || 0}} {{opiniones.length == 1 ? 'opinión' :
 							'opiniones'}})</div>
 					</div>
-					<div class="div-opinar" *ngIf="!myProfile">
+					<div class="div-opinar" *ngIf="!myProfile && puedeOpinar">
 						<button mat-fab extended (click)="opinar()">OPINAR</button>
 					</div>
 				</div>

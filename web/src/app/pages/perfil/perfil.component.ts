@@ -47,6 +47,8 @@ export class PerfilComponent {
 
 	refreshHeader: number = 0;
 
+	puedeOpinar = false;
+
 	constructor(private auth: AuthService, private usuarioService: UsuarioService,
 		public router: Router, private particularService: ParticularesService,
 		public dialog: MatDialog, private opinionesService: OpinionesService) {
@@ -56,6 +58,7 @@ export class PerfilComponent {
 		if (url != '/mi-perfil' && id_user != this.auth.getUserID()) { // PERFIL DE OTRO USUARIO
 			this.myProfile = false;
 			this.getUserInformation(id_user);
+			this.checkPuedeOpinar(id_user);
 			this.getOpiniones(id_user)
 		} else { // MI PERFIL
 			this.userData = { isSwapper: auth.isUserSwapper(), id: this.auth.getUserID() }
@@ -110,6 +113,15 @@ export class PerfilComponent {
 					publicKey: particular.publicKey
 				}
 			}
+		})
+	}
+
+	checkPuedeOpinar(id_user: string) {
+		this.opinionesService.puedeOpinar(Number(id_user)).subscribe({
+			next: (res: any) => {
+				if(res.status == 'OK') this.puedeOpinar = true;
+			},
+			error: (error: any) => console.log(error)
 		})
 	}
 
