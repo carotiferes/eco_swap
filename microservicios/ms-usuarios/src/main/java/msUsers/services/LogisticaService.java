@@ -4,18 +4,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.criteria.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.client.shipnow.ResponseOrder;
 import msUsers.domain.entities.*;
 import msUsers.domain.entities.enums.EstadoDonacion;
-import msUsers.domain.entities.enums.EstadoEnvio;
 import msUsers.domain.logistica.Order;
 import msUsers.domain.logistica.PingPong;
-import msUsers.domain.logistica.enums.OrdenEstadoEnum;
+import msUsers.domain.logistica.enums.EstadoEnvio;
 import msUsers.domain.repositories.*;
 import msUsers.domain.requests.logistica.PostOrderRequest;
 import msUsers.domain.requests.logistica.PostProductosRequest;
@@ -29,12 +30,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -169,36 +174,33 @@ public class LogisticaService {
 
             String estado = putOrderRequest.getNuevoEstado();
             EstadoEnvio estadoEnvio;
-            if(Objects.equals(estado, "RECIBIDO")) {
-                estadoEnvio = EstadoEnvio.valueOf("RECIBIDA");
-                Publicacion publicacion = publicacionesRepository.findById(orderAEnviar.getPublicacionId())
-                        .orElseThrow(() -> new EntityNotFoundException("No fue encontrada la publicación: " + ordenId));
-                publicacion.setEstadoEnvio(estadoEnvio);
-                entityManager.merge(publicacion);
-            }
+            estadoEnvio = EstadoEnvio.valueOf(estado);
+            Publicacion publicacion = publicacionesRepository.findById(orderAEnviar.getPublicacionId())
+                    .orElseThrow(() -> new EntityNotFoundException("No fue encontrada la publicación: " + ordenId));
+            publicacion.setEstadoEnvio(estadoEnvio);
+            entityManager.merge(publicacion);
+
         }
         else{
             String estado = putOrderRequest.getNuevoEstado();
-            EstadoDonacion estadoDonacion;
-            if(Objects.equals(estado, "RECIBIDO")) {
-                estadoDonacion = EstadoDonacion.valueOf("RECIBIDA");
-                orderAEnviar.getProductosADonarDeOrdenList().forEach(p -> setDonacionEstadoDonacion(estadoDonacion, p.getIdDonacion()));
-                entityManager.merge(orderAEnviar);
-            } //else orderAEnviar.getProductosADonarDeOrdenList().forEach(p -> setDonacionEstadoDonacion(EstadoDonacion.valueOf(putOrderRequest.getNuevoEstado()), p.getIdDonacion()));
-        }
+            EstadoEnvio estadoEnvio;
+            estadoEnvio = EstadoEnvio.valueOf(estado);
+            orderAEnviar.getProductosADonarDeOrdenList().forEach(p -> setDonacionEstadoEnvio(estadoEnvio, p.getIdDonacion()));
+            entityManager.merge(orderAEnviar);
+        } //else orderAEnviar.getProductosADonarDeOrdenList().forEach(p -> setDonacionEstadoDonacion(EstadoDonacion.valueOf(putOrderRequest.getNuevoEstado()), p.getIdDonacion()));
 
-        FechaEnvios nuevaFechaEnvio = FechaEnvios.builder()
-                .fechaEnvio(formattedDate)
-                .estado(OrdenEstadoEnum.valueOf(putOrderRequest.getNuevoEstado()))
-                .build();
+    FechaEnvios nuevaFechaEnvio = FechaEnvios.builder()
+            .fechaEnvio(formattedDate)
+            .estado(EstadoEnvio.valueOf(putOrderRequest.getNuevoEstado()))
+            .build();
 
-        List<FechaEnvios> listadoFechasEnviosNuevo = orderAEnviar.getListaFechaEnvios();
-        listadoFechasEnviosNuevo.add(nuevaFechaEnvio);
-        orderAEnviar.setListaFechaEnvios(listadoFechasEnviosNuevo);
-        ordenesRepository.save(orderAEnviar);
-        log.info("<< Actualizacion de orden finalizada");
+    List<FechaEnvios> listadoFechasEnviosNuevo = orderAEnviar.getListaFechaEnvios();
+    listadoFechasEnviosNuevo.add(nuevaFechaEnvio);
+    orderAEnviar.setListaFechaEnvios(listadoFechasEnviosNuevo);
+    ordenesRepository.save(orderAEnviar);
+    log.info("<< Actualizacion de orden finalizada");
 
-    }
+}
 
     public OrdenDeEnvio obtenerDetallesDeOrdenXOrdenId(Long ordenId) throws Exception {
         log.info(">> Obtener Detalles de ORDEN dado a OrdenId: {}", ordenId);
@@ -333,7 +335,7 @@ public class LogisticaService {
                     .titulo(postOrderRequest.getTitulo())
                     .precioEnvio(postOrderRequest.getCostoEnvio())
                     .listaFechaEnvios(List.of(FechaEnvios.builder()
-                            .estado(OrdenEstadoEnum.POR_DESPACHAR)
+                            .estado(EstadoEnvio.POR_DESPACHAR)
                             .fechaEnvio(formattedDate)
                             .build()))
                     .fechaADespachar(this.crearFechaDespache())
@@ -344,12 +346,12 @@ public class LogisticaService {
                 listaProductosAEnviar.forEach(p -> p.setOrdenDeEnvio(orden));
                 orden.setProductosADonarDeOrdenList(listaProductosAEnviar);
                 orden.setColectaId(postOrderRequest.getIdColecta());
-                listaProductosAEnviar.forEach(p -> setDonacionEstadoDonacion(EstadoDonacion.EN_ENVIO, p.getIdDonacion()));
+                listaProductosAEnviar.forEach(p -> setDonacionEstadoEnvio(EstadoEnvio.POR_DESPACHAR, p.getIdDonacion()));
             } else{
                 final var publicacion = this.publicacionesRepository.findById(postOrderRequest.getIdPublicacion()).
                         orElseThrow(() -> new EntityNotFoundException("No fue encontrada la publicacion: " + postOrderRequest.getIdPublicacion()));
                 orden.setPublicacionId(postOrderRequest.getIdPublicacion());
-                publicacion.setEstadoEnvio(EstadoEnvio.EN_ENVIO);
+                publicacion.setEstadoEnvio(EstadoEnvio.POR_DESPACHAR);
             }
 
             return orden;
@@ -405,23 +407,23 @@ public class LogisticaService {
     }
 
     private Boolean cancelarEnvio(String estadoNuevo, String estadoDeOrden) {
-        if (estadoDeOrden.equals(OrdenEstadoEnum.POR_DESPACHAR.name()) ||
-                estadoDeOrden.equals(OrdenEstadoEnum.ENVIADO.name()) ||
-                estadoDeOrden.equals(OrdenEstadoEnum.RECIBIDO.name())
+        if (estadoDeOrden.equals(EstadoEnvio.POR_DESPACHAR.name()) ||
+                estadoDeOrden.equals(EstadoEnvio.ENVIADO.name()) ||
+                estadoDeOrden.equals(EstadoEnvio.RECIBIDO.name())
         ) {
-            return estadoNuevo.equals(OrdenEstadoEnum.CANCELADO.name());
+            return estadoNuevo.equals(EstadoEnvio.CANCELADO.name());
         }
         return false;
     }
 
     private Boolean userPuedeHacerOrdenes(Usuario user, OrdenDeEnvio ordenDeEnvio) {
         return ((user.getIdUsuario() == ordenDeEnvio.getIdUsuarioOrigen() &&
-                ordenDeEnvio.getListaFechaEnvios().get(ordenDeEnvio.getListaFechaEnvios().size() - 1).getEstado().equals(OrdenEstadoEnum.ENVIADO))
+                ordenDeEnvio.getListaFechaEnvios().get(ordenDeEnvio.getListaFechaEnvios().size() - 1).getEstado().equals(EstadoEnvio.ENVIADO))
                 || (user.getIdUsuario() == ordenDeEnvio.getIdUsuarioDestino() &&
-                ordenDeEnvio.getListaFechaEnvios().get(ordenDeEnvio.getListaFechaEnvios().size() - 1).getEstado().equals(OrdenEstadoEnum.RECIBIDO)));
+                ordenDeEnvio.getListaFechaEnvios().get(ordenDeEnvio.getListaFechaEnvios().size() - 1).getEstado().equals(EstadoEnvio.RECIBIDO)));
     }
 
-    private void setDonacionEstadoDonacion(EstadoDonacion estadoDonacion, Long idDonacion) {
+    private void setDonacionEstadoEnvio(EstadoEnvio estadoEnvio, Long idDonacion) {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Donacion> query = cb.createQuery(Donacion.class);
@@ -433,7 +435,7 @@ public class LogisticaService {
         query.where(predicate);
 
         Donacion donacion = entityManager.createQuery(query).getSingleResult();
-        donacion.setEstadoDonacion(estadoDonacion);
+        donacion.setEstadoEnvio(estadoEnvio);
         entityManager.merge(donacion);
 
     }

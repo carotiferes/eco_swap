@@ -8,6 +8,7 @@ import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.entities.Donacion;
 import msUsers.domain.entities.enums.EstadoDonacion;
+import msUsers.domain.logistica.enums.EstadoEnvio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -61,7 +62,9 @@ public class DonacionService {
 
         predicate = cb.and(predicate, cb.or(
                 cb.equal(from.get("estadoDonacion"), EstadoDonacion.EN_ESPERA),
-                cb.equal(from.get("estadoDonacion"), EstadoDonacion.EN_ENVIO)
+                cb.equal(from.get("estadoEnvio"), EstadoEnvio.POR_CONFIGURAR),
+                cb.equal(from.get("estadoEnvio"), EstadoEnvio.ENVIADO),
+                cb.equal(from.get("estadoEnvio"), EstadoEnvio.POR_DESPACHAR)
         ));
 
         query.where(predicate);

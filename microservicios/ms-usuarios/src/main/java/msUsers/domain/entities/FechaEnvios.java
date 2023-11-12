@@ -6,10 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import msUsers.domain.logistica.enums.OrdenEstadoEnum;
+import msUsers.domain.logistica.enums.EstadoEnvio;
 import msUsers.domain.responses.DTOs.FechaEnviosDTO;
-import msUsers.domain.responses.DTOs.OrdenDeEnvioDTO;
-import msUsers.domain.responses.logisticaResponse.EnumEstadoOrden;
 import msUsers.domain.responses.logisticaResponse.ResponseFechasEnvio;
 
 @Entity
@@ -26,7 +24,7 @@ public class FechaEnvios {
     @NotNull
     private String fechaEnvio;
     @Enumerated(EnumType.STRING)
-    private OrdenEstadoEnum estado;
+    private EstadoEnvio estado;
 
     public static ResponseFechasEnvio crearFechaEnvioResponse(FechaEnvios dataFechaEnvio) {
         return ResponseFechasEnvio

@@ -3,10 +3,10 @@ package msUsers.domain.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import msUsers.domain.entities.enums.EstadoEnvio;
 import msUsers.domain.entities.enums.EstadoPublicacion;
 import msUsers.domain.entities.enums.TipoProducto;
 import msUsers.domain.entities.enums.TipoPublicacion;
+import msUsers.domain.logistica.enums.EstadoEnvio;
 import msUsers.domain.responses.DTOs.PublicacionDTO;
 
 import java.time.LocalDate;

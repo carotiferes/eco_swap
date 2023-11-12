@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import msUsers.converters.ZonedDateTimeConverter;
 import msUsers.domain.entities.enums.EstadoCompra;
-import msUsers.domain.entities.enums.EstadoEnvio;
+import msUsers.domain.logistica.enums.EstadoEnvio;
 import msUsers.domain.responses.DTOs.CompraDTO;
 
 import java.time.ZonedDateTime;

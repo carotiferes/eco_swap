@@ -2,7 +2,7 @@ package msUsers.domain.responses.DTOs;
 
 import lombok.Data;
 import msUsers.domain.entities.enums.EstadoCompra;
-import msUsers.domain.entities.enums.EstadoEnvio;
+import msUsers.domain.logistica.enums.EstadoEnvio;
 
 import java.time.ZonedDateTime;
 

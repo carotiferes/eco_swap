@@ -6,10 +6,10 @@ import jakarta.persistence.criteria.*;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.entities.*;
-import msUsers.domain.entities.enums.EstadoEnvio;
 import msUsers.domain.entities.enums.EstadoPublicacion;
 import msUsers.domain.entities.enums.EstadoTrueque;
 import msUsers.domain.entities.enums.TipoPublicacion;
+import msUsers.domain.logistica.enums.EstadoEnvio;
 import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.repositories.ParticularesRepository;
 import msUsers.domain.repositories.PublicacionesRepository;
@@ -225,7 +225,7 @@ public class PublicacionController {
         final var publicacion = this.publicacionesRepository.findById(idPublicacion).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrada la publicacion: " + idPublicacion));
 
-        publicacion.setEstadoEnvio(EstadoEnvio.RECIBIDA);
+        publicacion.setEstadoEnvio(EstadoEnvio.RECIBIDO);
         entityManager.merge(publicacion);
 
         ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
