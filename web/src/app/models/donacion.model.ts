@@ -12,5 +12,6 @@ export interface DonacionModel {
 	imagenes: any,
 	parsedImagenes: string[],
 	nombreProducto?: string,
-	fechaDonacion: Date
+	fechaDonacion: Date,
+	estadoEnvio: string
 }

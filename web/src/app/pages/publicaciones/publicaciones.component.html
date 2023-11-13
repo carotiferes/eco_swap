@@ -78,7 +78,7 @@
 		<app-spinner [loading]="loading"></app-spinner>
 		<div *ngIf="filteredPublicacionesCardList.length==0 && !loading" style="text-align: center;">No hay publicaciones para mostrar</div>
 		<app-deck *ngIf="filteredPublicacionesCardList.length > 0 && !loading" [cardList]="filteredPublicacionesCardList" app="publicaciones"
-			(statusChanged)="$event.result ? filtrarPublicaciones() : ''" (modalClosed)="$event.result ? filtrarPublicaciones() : ''"></app-deck>
+			(statusChanged)="filtrarPublicaciones($event)" (modalClosed)="$event && $event.result ? filtrarPublicaciones() : ''"></app-deck>
 	</div>
 	<div class="floating-button-container" *ngIf="origin != 'myCompras'">
 		<button mat-fab color="primary" aria-label="Agregar Publicación" (click)="addPublicacion()"

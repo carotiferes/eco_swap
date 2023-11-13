@@ -2,7 +2,7 @@ import { CurrencyPipe, DOCUMENT } from '@angular/common';
 import { AfterViewInit, Component, Inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CardModel } from 'src/app/models/card.model';
+import { CardButtonModel, CardModel } from 'src/app/models/card.model';
 import { PublicacionModel } from 'src/app/models/publicacion.model';
 import { TruequeModel } from 'src/app/models/trueque.model';
 import { AuthService } from 'src/app/services/auth.service';
@@ -248,13 +248,13 @@ export class PublicacionComponent implements AfterViewInit {
 		}
 	}
 
-	getButtonsForCards() {
+	getButtonsForCards(): CardButtonModel[] {
 		if(this.userType == 'publicacionPropuesta') {
-			return [{name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADO'}];
+			return [{name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADO', action: 'change_status'}];
 		} else if (this.userType == 'publicacionOrigen'){
 			return [
-				{name: 'ACEPTAR', icon: 'check', color: 'primary', status: 'APROBADO'},
-				{name: 'RECHAZAR', icon: 'close', color: 'warn', status: 'RECHAZADO'},
+				{name: 'ACEPTAR', icon: 'check', color: 'primary', status: 'APROBADO', action: 'change_status'},
+				{name: 'RECHAZAR', icon: 'close', color: 'warn', status: 'RECHAZADO', action: 'change_status'},
 			];
 		} else return [];
 	}
@@ -289,7 +289,7 @@ export class PublicacionComponent implements AfterViewInit {
 
 			if(publicacion.estadoTrueque == 'APROBADO') {
 				// ACEPTADO
-				item.buttons = this.userType == 'publicacionOrigen' ? [{name: 'RECIBIDO', icon: 'done_all', color: 'primary', status: 'RECIBIDA'}] : [],
+				item.buttons = this.userType == 'publicacionOrigen' ? [{name: 'RECIBIDO', icon: 'done_all', color: 'primary', status: 'RECIBIDA', action: 'change_status'}] : [],
 				auxList1.push(item)
 				const trueque = this.trueques.find(item => item.publicacionDTOpropuesta.idPublicacion == publicacion.idPublicacion && item.estadoTrueque == 'APROBADO')
 				if(trueque) {
@@ -325,7 +325,7 @@ export class PublicacionComponent implements AfterViewInit {
 				localidad: this.publicacion.particularDTO.direcciones[0].localidad
 			},
 			action: 'detail',
-			buttons: this.userType == 'publicacionPropuesta' ? [{name: 'RECIBIDO', icon: 'done_all', color: 'primary', status: 'RECIBIDA'}] : [],
+			buttons: this.userType == 'publicacionPropuesta' ? [{name: 'RECIBIDO', icon: 'done_all', color: 'primary', status: 'RECIBIDA', action: 'change_status'}] : [],
 			estado: this.publicacion.estadoPublicacion,
 			idAuxiliar: this.trueques.find(item => item.publicacionDTOpropuesta.idPublicacion == this.publicacion.idPublicacion)?.idTrueque
 		}

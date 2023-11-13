@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { CardModel } from 'src/app/models/card.model';
+import { CardButtonModel, CardModel } from 'src/app/models/card.model';
 import { MainCardPublicacionComponent } from 'src/app/pages/publicacion/main-card-publicacion/main-card-publicacion.component';
 import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
@@ -19,12 +19,15 @@ import { ColectaModel } from 'src/app/models/colecta.model';
 export class CardComponent {
 
 	@Input() app: 'colectas' | 'donaciones' | 'publicaciones' = 'colectas';
+	@Input() mine: boolean = false;
 	@Input() cardData?: CardModel; //ColectaModel | DonacionModel | PublicacionModel;
 
 	@Output() statusChanged = new EventEmitter<any>();
 	@Output() cardSelected = new EventEmitter<any>();
 	@Output() cardUnselected = new EventEmitter<any>();
 	@Output() modalClosed = new EventEmitter<any>();
+
+	idUserLoggedIn: number;
 
 	iconMap: { [key: string]: string } = {
 		'APROBADO': 'verified', 'APROBADA': 'verified',
@@ -44,11 +47,14 @@ export class CardComponent {
 	constructor(private truequesService: TruequesService, private router: Router,
 		public dialog: MatDialog, private auth: AuthService, private donacionesService: DonacionesService) {
 			this.isSwapper = auth.isUserSwapper()
+			this.idUserLoggedIn = auth.getUserID()
 		}
 
 	clicked(card: CardModel) {
 		switch (card.action) {
 			case 'select':
+				console.log(this.cardData);
+				
 				if(this.cardData){
 					this.cardData.isSelected = !this.cardData.isSelected;
 					if(this.cardData.isSelected) this.cardSelected.emit(card.id);
@@ -104,8 +110,38 @@ export class CardComponent {
 		})
 	}
 
-	buttonClicked(card: CardModel, button: any) {
-		if (button.status == 'INFO') {
+	buttonClicked(card: CardModel, button: CardButtonModel) {
+		switch (button.action) {
+			case 'list':
+				this.openDialog(ListComponent, card);
+				break;
+			case 'add_or_remove':
+				this.clicked(card)
+				break;
+			case 'navigate':
+				this.router.navigate(['publicacion/' + card.idAuxiliar]);
+				break;
+			case 'ver_envio':
+				if(this.app == 'donaciones') this.openDialog(EnvioModalComponent, { cards: [card] }, '70vh', '60vw');
+				else this.openDialog(EnvioModalComponent, { card }, '70vh', '60vw')
+				break;
+			case 'configurar_envio':
+				this.openDialog(EnvioModalComponent, { card }, '70vh', '60vw')
+				return;
+			case 'change_status':
+				this.changeStatus(card, button.status);
+				break;
+			case 'click_card':
+				this.clicked(card)
+				break;
+			case 'opinar':
+				this.router.navigate(['perfil/' + card.usuario.id]);
+				break;
+			default:
+				this.changeStatus(card, button.status);
+				break;
+		}
+		/* if (button.status == 'INFO') {
 			if (card.action == 'trueque') this.router.navigate(['publicacion/' + card.idAuxiliar])
 			else if (card.codigo == 'Compra' || this.app == 'donaciones' && button.name == 'Configurar envío') {
 				this.openDialog(EnvioModalComponent, { card }, '70vh', '60vw')
@@ -118,7 +154,7 @@ export class CardComponent {
 			else if (card.action == 'list') this.openDialog(ListComponent, card);
 		} else {
 			this.changeStatus(card, button.status)
-		}
+		} */
 	}
 
 	changeStatus(card: CardModel, newStatus: string) {
@@ -212,7 +248,7 @@ export class CardComponent {
 				if(newStatus == 'CERRADA') {
 					this.truequesService.cerrarPublicacion(card.id).subscribe({
 						next: (res: any) => {
-							//console.log(res);
+							console.log(res);
 							Swal.fire('Se cambió el estado!', 'Se guardó el nuevo estado de la ' + palabra, 'success').then(() => {
 								this.statusChanged.emit()
 							})

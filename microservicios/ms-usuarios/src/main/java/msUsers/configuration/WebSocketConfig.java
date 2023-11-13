@@ -21,7 +21,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(chatHandler, "/chat-socket")
-                .setAllowedOrigins("http://localhost:4200", "chrome-extension://pfdhoblngboilpfeibdedpjgfnlcodoo")
+                .setAllowedOrigins("https://ecoswap.com.ar", "https://www.ecoswap.com.ar")
                 .addInterceptors(jwtHandshakeInterceptor);
     }
 }

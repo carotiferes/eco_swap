@@ -73,6 +73,7 @@ public class PublicacionController {
         publicacion.setDescripcion(requestPublicacion.getDescripcion());
         publicacion.setPeso(requestPublicacion.getPeso());
         publicacion.setTipoPublicacion(requestPublicacion.getTipoPublicacion());
+        publicacion.setTipoProducto(requestPublicacion.getTipoProducto());
 
         List<CaracteristicaProducto> listaCaracteristicas = requestPublicacion.getCaracteristicasProducto()
                 .stream()

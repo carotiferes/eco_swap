@@ -38,6 +38,8 @@ export class DeckComponent {
 	}
 
 	cardStatusChanged(event:any) {
+		console.log('status', event);
+		
 		this.statusChanged.emit(event)
 	}
 
