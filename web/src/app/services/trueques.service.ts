@@ -55,4 +55,12 @@ export class TruequesService {
 	getTruequesParticular(id_particular: number) {
 		return this.backendService.get(URL_NAME, `api/trueques/particular/${id_particular}`);
 	}
+
+	cerrarPublicacion(id_publicacion: number) {
+		return this.backendService.patch(URL_NAME, `api/publicacion/${id_publicacion}`, {});
+	}
+
+	recibirPublicacion(id_publicacion: number) {
+		return this.backendService.patch(URL_NAME, `api/publicacion/${id_publicacion}/recibido`, {});
+	}
 }

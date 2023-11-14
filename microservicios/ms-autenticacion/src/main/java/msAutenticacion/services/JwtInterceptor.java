@@ -1,5 +1,10 @@
 package msAutenticacion.services;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,11 +49,11 @@ public class JwtInterceptor implements HandlerInterceptor {
             objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
             if (jwtToken == null || !jwtToken.startsWith("Bearer ")) {
-                log.warn("ERROR 401: Acceso no autorizado: " + uri);
+                log.error("ERROR 401: Acceso no autorizado: " + uri);
                 UnauthorizedAccessResponse unauthorizedAccessResponse = new UnauthorizedAccessResponse(
-                        "ERROR 401: Acceso no autorizado.",
+                        "ERROR 401: Acceso no autorizado",
                         System.currentTimeMillis(),
-                        HttpStatus.UNAUTHORIZED);
+                        HttpStatus.FORBIDDEN);
 
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write(objectMapper.writeValueAsString(unauthorizedAccessResponse));
@@ -60,12 +65,13 @@ public class JwtInterceptor implements HandlerInterceptor {
             try {
                 Usuario usuario = jwtService.getUsuarioPorJwt(token); // Ajusta esto según tu token
                 UsuarioContext.setUsuario(usuario); // Configurar el ThreadLocal
+                this.validateJWT(token, usuario.getSecretJWT());
                 return true;
             } catch (Exception e) {
                 UnauthorizedAccessResponse unauthorizedAccessResponse = new UnauthorizedAccessResponse(
-                        "ERROR 401: Acceso no autorizado: ",
+                        "ERROR 401: Acceso no autorizado",
                         System.currentTimeMillis(),
-                        HttpStatus.UNAUTHORIZED);
+                        HttpStatus.FORBIDDEN);
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write(objectMapper.writeValueAsString(unauthorizedAccessResponse));
                 return false;
@@ -73,5 +79,21 @@ public class JwtInterceptor implements HandlerInterceptor {
         }
         else
             return true;
+    }
+
+    private void validateJWT(String jwtAuth, String secretJWT) {
+        try {
+            DecodedJWT decode = JWT.decode(jwtAuth);
+            Algorithm algorithm = Algorithm.HMAC256(secretJWT);
+            log.debug("ISSUER: {}", decode.getIssuer());
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer(decode.getIssuer())
+                    .build();
+            //SI TODO SALE BIEN, ENTONCES EL VERIFICADOR NO DEBE SALTAR LA EXCEPCION DE ABAJO.
+            verifier.verify(jwtAuth);
+        } catch (SignatureVerificationException e) {
+            log.error("Error durante la validacion del JWT Token del usuario");
+            throw e;
+        }
     }
 }

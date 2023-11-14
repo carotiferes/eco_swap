@@ -2,6 +2,7 @@ package msUsers.controllers;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.Tuple;
 import jakarta.persistence.criteria.*;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -10,8 +11,10 @@ import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.repositories.OpinionesRepository;
 import msUsers.domain.repositories.UsuariosRepository;
 import msUsers.domain.requests.RequestNuevaOpinion;
+import msUsers.domain.requests.RequestPuedeOpinar;
 import msUsers.domain.responses.DTOs.OpinionDTO;
 import msUsers.domain.responses.ResponsePostEntityCreation;
+import msUsers.domain.responses.ResponseRequestQuery;
 import msUsers.exceptions.OpinionCreationException;
 import msUsers.services.CriteriaBuilderQueries;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,8 +62,6 @@ public class OpinionController {
     public ResponseEntity<List<OpinionDTO>> getMisOpiniones() {
 
         final Usuario user = UsuarioContext.getUsuario();
-        Optional<Particular> optionalParticular = criteriaBuilderQueries.getParticularPorUsuario(user.getIdUsuario());
-        Particular particular = optionalParticular.orElseThrow(() -> new EntityNotFoundException("¡El particular no existe!"));
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Opinion> query = cb.createQuery(Opinion.class);
@@ -68,7 +69,7 @@ public class OpinionController {
         Predicate predicate = cb.conjunction();
 
         Join<Opinion, Usuario> join = from.join("usuarioOpinado");
-        predicate = cb.and(predicate, cb.equal(join.get("idUsuario"), particular.getIdParticular()));
+        predicate = cb.and(predicate, cb.equal(join.get("idUsuario"), user.getIdUsuario()));
 
         query.where(predicate);
 
@@ -98,14 +99,77 @@ public class OpinionController {
         return ResponseEntity.ok(opinionesDTOS);
     }
 
+    @GetMapping(path = "/puedeOpinar/{id_usuario}", produces = json)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<ResponseRequestQuery> puedeOpinar(@PathVariable(name = "id_usuario") Long idUsuarioOpinado) {
+
+        final Usuario usuarioOpinador = UsuarioContext.getUsuario();
+        final Usuario usuarioOpinado = this.usuariosRepository.findById(idUsuarioOpinado)
+                .orElseThrow(() -> new EntityNotFoundException("No fue encontrado el usuario: " + idUsuarioOpinado));
+        ResponseRequestQuery responseRequestQuery = new ResponseRequestQuery();
+
+        if (usuarioOpinado.getIdUsuario() == usuarioOpinador.getIdUsuario()) {
+            responseRequestQuery.setStatus(HttpStatus.CONFLICT.name());
+            responseRequestQuery.setDescripcion("Un usuario no puede opinarse a sí mismo.");
+            return ResponseEntity.ok(responseRequestQuery);
+        }
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        Root<Compra> compraRoot = criteriaQuery.from(Compra.class);
+        Root<Donacion> donacionRoot = criteriaQuery.from(Donacion.class);
+        Root<Trueque> truequeRoot = criteriaQuery.from(Trueque.class);
+
+        // Utilizamos un solo countDistinct para todas las entidades
+        criteriaQuery.select(criteriaBuilder.countDistinct(
+                criteriaBuilder.selectCase()
+                        .when(criteriaBuilder.equal(compraRoot.get("particularComprador").get("usuario").get("idUsuario"), usuarioOpinador.getIdUsuario()), 1)
+                        .when(criteriaBuilder.equal(compraRoot.get("publicacion").get("particular").get("usuario").get("idUsuario"), usuarioOpinador.getIdUsuario()), 1)
+                        .when(criteriaBuilder.equal(donacionRoot.get("particular").get("usuario").get("idUsuario"), usuarioOpinador.getIdUsuario()), 1)
+                        .when(criteriaBuilder.equal(donacionRoot.get("producto").get("colecta").get("fundacion").get("usuario").get("idUsuario"), usuarioOpinador.getIdUsuario()), 1)
+                        .when(criteriaBuilder.equal(truequeRoot.get("publicacionOrigen").get("particular").get("usuario").get("idUsuario"), usuarioOpinador.getIdUsuario()), 1)
+                        .when(criteriaBuilder.equal(truequeRoot.get("publicacionPropuesta").get("particular").get("usuario").get("idUsuario"), usuarioOpinador.getIdUsuario()), 1)
+                        .otherwise(0)
+        ));
+
+        Predicate predicate = criteriaBuilder.or(
+                criteriaBuilder.equal(compraRoot.get("particularComprador").get("usuario").get("idUsuario"), usuarioOpinado.getIdUsuario()),
+                criteriaBuilder.equal(compraRoot.get("publicacion").get("particular").get("usuario").get("idUsuario"), usuarioOpinado.getIdUsuario()),
+                criteriaBuilder.equal(donacionRoot.get("particular").get("usuario").get("idUsuario"), usuarioOpinado.getIdUsuario()),
+                criteriaBuilder.equal(donacionRoot.get("producto").get("colecta").get("fundacion").get("usuario").get("idUsuario"), usuarioOpinado.getIdUsuario()),
+                criteriaBuilder.equal(truequeRoot.get("publicacionOrigen").get("particular").get("usuario").get("idUsuario"), usuarioOpinado.getIdUsuario()),
+                criteriaBuilder.equal(truequeRoot.get("publicacionPropuesta").get("particular").get("usuario").get("idUsuario"), usuarioOpinado.getIdUsuario())
+        );
+
+        criteriaQuery.where(predicate);
+
+        Long count = entityManager.createQuery(criteriaQuery).getSingleResult();
+        log.info("Count: {}", count);
+
+
+        if (count > 0) {
+            responseRequestQuery.setStatus(HttpStatus.OK.name());
+            responseRequestQuery.setDescripcion("Los usuarios " + usuarioOpinador.getUsername() + " y " + usuarioOpinado.getUsername() + " pueden opinar entre sí.");
+        } else {
+            responseRequestQuery.setStatus(HttpStatus.FORBIDDEN.name());
+            responseRequestQuery.setDescripcion("Los usuarios " + usuarioOpinador.getUsername() + " y " + usuarioOpinado.getUsername() + " no pueden opinar entre sí.");
+        }
+
+        return ResponseEntity.ok(responseRequestQuery);
+    }
+
+
+
+
+
+
+
     @PostMapping(path = "/opiniones/crearOpinion", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public ResponseEntity<ResponsePostEntityCreation> createOpinion(@Valid @RequestBody RequestNuevaOpinion requestNuevaOpinion) {
 
         final Usuario userOpinador = UsuarioContext.getUsuario();
-        Optional<Particular> optionalParticular = criteriaBuilderQueries.getParticularPorUsuario(userOpinador.getIdUsuario());
-        Particular particularOpinador = optionalParticular.orElseThrow(() -> new EntityNotFoundException("¡El particular no existe!"));
 
         var usuarioOpinado = this.usuariosRepository.findById(requestNuevaOpinion.getIdUsuarioOpinado()).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrado el usuario: " + requestNuevaOpinion.getIdUsuarioOpinado()));

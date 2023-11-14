@@ -9,11 +9,11 @@ import jakarta.persistence.criteria.*;
 import msUsers.domain.entities.*;
 import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.repositories.ColectasRepository;
-import msUsers.domain.repositories.FundacionesRepository;
 import msUsers.domain.requests.RequestFilterColectas;
 import msUsers.domain.requests.RequestColecta;
 import msUsers.domain.responses.ResponsePostEntityCreation;
 import msUsers.services.CriteriaBuilderQueries;
+import msUsers.services.DonacionService;
 import msUsers.services.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import msUsers.domain.responses.DTOs.ColectaDTO;
@@ -38,7 +38,8 @@ import java.util.stream.Collectors;
 public class ColectaController {
     @Autowired
     ColectasRepository colectasRepository;
-    @Autowired FundacionesRepository fundacionesRepository;
+    @Autowired
+    DonacionService donacionService;
     @Autowired EntityManager entityManager;
     @Autowired
     ImageService imageService;
@@ -150,6 +151,7 @@ public class ColectaController {
         final var colecta = this.colectasRepository.findById(id).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrado la colecta: " + id));
         ColectaDTO colectaDTO = colecta.toDTO(true);
+        colectaDTO.getProductos().forEach(productoDTO -> productoDTO.setCantidadEnCamino(donacionService.getCantidadEnCaminoPorProducto(productoDTO.getIdProducto())));
         return ResponseEntity.ok(colectaDTO);
     }
 

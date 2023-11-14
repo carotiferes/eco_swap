@@ -39,6 +39,9 @@ public class Direccion {
     @NotNull
     private String localidad;
 
+    @NotNull
+    private String codigoPostal;
+
     public DireccionDTO toDTO(){
         DireccionDTO direccionDTO = new DireccionDTO();
         direccionDTO.setCalle(calle);
@@ -46,6 +49,7 @@ public class Direccion {
         direccionDTO.setPiso(piso);
         direccionDTO.setAltura(altura);
         direccionDTO.setLocalidad(localidad);
+        direccionDTO.setCodigoPostal(codigoPostal);
         return direccionDTO;
     }
 }

@@ -50,4 +50,7 @@ public class RequestPublicacion {
     public boolean isValorMaximoValido() {
         return valorTruequeMax > valorTruequeMin;
     }
+
+    @Positive(message = "El peso debe ser mayor a cero.")
+    private Double peso;
 }

@@ -130,7 +130,7 @@
 					</mat-form-field>
 				</div>
 				<div class="form-input">
-					<mat-form-field floatLabel="always">
+					<mat-form-field floatLabel="always" appearance="outline">
 						<mat-label>Fecha de Nacimiento</mat-label>
 						<input matInput formControlName="fechaNacimiento" [matDatepicker]="picker" readonly>
 						<mat-hint>DD/MM/YYYY</mat-hint>
@@ -225,6 +225,20 @@
 					<mat-form-field appearance="outline">
 						<mat-label>Departamento</mat-label>
 						<input matInput formControlName="departamento">
+					</mat-form-field>
+				</div>
+				<div class="form-input capitalize-input">
+					<mat-form-field appearance="outline">
+						<mat-label>Código Postal</mat-label>
+						<input matInput formControlName="codigoPostal">
+						<mat-error *ngIf="direccionForm.get('codigoPostal')!.hasError('required')">
+							Campo obligatorio
+						</mat-error>
+						<div matSuffix style="width: 30px;" matTooltip="Clickeá acá para consultar tu código postal en la página oficial del Correo Argentino">
+							<a href="https://www.correoargentino.com.ar/formularios/cpa" target="_blank">
+								<span class="material-icons-outlined" style="font-size: 22px !important; color: black;">info</span>
+							</a>
+						</div>
 					</mat-form-field>
 				</div>
 			</form>

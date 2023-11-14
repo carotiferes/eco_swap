@@ -42,6 +42,8 @@ export class ColectasComponent implements OnInit {
 	localidades: string[] = [];
 	allLocalidades: string[] = [];
 
+	screenWidth: number;
+
 	constructor(private router: Router, private auth: AuthService,
 		private donacionesService: DonacionesService, private fundacionesService: FundacionesService,
 		private fb: FormBuilder, private productosService: ProductosService,
@@ -68,6 +70,7 @@ export class ColectasComponent implements OnInit {
 			startWith(''),
 			map((localidad: string | null) => (localidad ? this._filterLocalidad(localidad) : this.allLocalidades.slice())),
 		);
+		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 	}
 
 	ngOnInit() {
@@ -137,6 +140,7 @@ export class ColectasComponent implements OnInit {
 				valorPrincipal: stringProductos,
 				fechaString: this.parseVigencia(colecta),
 				usuario: {
+					id: colecta.fundacionDTO.usuarioDTO.idUsuario,
 					imagen: colecta.fundacionDTO.usuarioDTO.avatar,
 					nombre: colecta.fundacionDTO.nombre,
 					puntaje: colecta.fundacionDTO.puntaje,

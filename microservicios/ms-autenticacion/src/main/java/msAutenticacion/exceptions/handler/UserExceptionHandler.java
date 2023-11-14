@@ -1,5 +1,7 @@
 package msAutenticacion.exceptions.handler;
 
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import lombok.extern.slf4j.Slf4j;
 import msAutenticacion.exceptions.PasswordUpdateException;
 import msAutenticacion.exceptions.UserCreationException;
@@ -75,5 +77,27 @@ public class UserExceptionHandler {
         response.setHttpStatus(HttpStatus.CONFLICT);
         log.error(">> ERROR. El registro que intentas crear ya existe en la base de datos: {} ", exception.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(SignatureVerificationException.class)
+    public ResponseEntity<UserCreationExceptionResponse> handleDataSignatureVerificationException(SignatureVerificationException exception) {
+        UserCreationExceptionResponse response = new UserCreationExceptionResponse();
+        response.setDescripcion("La firma del JWT es incorrecta");
+        Date date = new Date();
+        response.setTimestamp(date.getTime());
+        response.setHttpStatus(HttpStatus.FORBIDDEN);
+        log.error(">> ERROR. El token JWT no es válido: {} ", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<UserCreationExceptionResponse> handleDataSignatureVerificationException(TokenExpiredException exception) {
+        UserCreationExceptionResponse response = new UserCreationExceptionResponse();
+        response.setDescripcion(exception.getMessage());
+        Date date = new Date();
+        response.setTimestamp(date.getTime());
+        response.setHttpStatus(HttpStatus.FORBIDDEN);
+        log.error(">> ERROR. El token JWT está exírado: {} ", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 }

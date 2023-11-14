@@ -16,6 +16,7 @@ export class DeckComponent {
 	@Output() statusChanged = new EventEmitter<any>();
 	@Output() cardSelected = new EventEmitter<any>();
 	@Output() cardUnselected = new EventEmitter<any>();
+	@Output() modalClosed = new EventEmitter<any>();
 
 	paginatedCardList: CardModel[] = [];
 
@@ -37,15 +38,21 @@ export class DeckComponent {
 	}
 
 	cardStatusChanged(event:any) {
+		console.log('status', event);
+		
 		this.statusChanged.emit(event)
 	}
 
 	cardWasSelected(event: any){
-		this.cardList.map(item => { if(item != event) item.isSelected = false })
+		if(this.app != 'donaciones') this.cardList.map(item => { if(item.id != event) item.isSelected = false })
 		this.cardSelected.emit(event)
 	}
 
 	cardWasUnselected(event: any){
 		this.cardUnselected.emit(event)
+	}
+
+	modalWasClosed(event: any) {
+		this.modalClosed.emit(event)
 	}
 }

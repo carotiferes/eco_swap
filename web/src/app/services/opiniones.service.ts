@@ -22,6 +22,10 @@ export class OpinionesService {
 		return this.backendService.get(URL_NAME, `api/misOpiniones`);
 	}
 
+	puedeOpinar(id_usuario: number) { // usuario AL QUE quiere opinar
+		return this.backendService.get(URL_NAME, `api/puedeOpinar/${id_usuario}`);
+	}
+
 	crearOpinion(opinion: any) {
 		return this.backendService.post(URL_NAME, `api/opiniones/crearOpinion`, opinion);
 	}

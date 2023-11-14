@@ -13,7 +13,7 @@ import java.util.Date;
 
 @Slf4j
 @ControllerAdvice
-@Order(2)
+@Order(3)
 public class ColectaExceptionsHandler {
     @ExceptionHandler(DonacionCreationException.class)
     public ResponseEntity<DonationCreationExceptionResponse> handle(DonacionCreationException exception){

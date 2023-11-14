@@ -1,6 +1,5 @@
 package msUsers.controllers;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.entities.Notificacion;
 import msUsers.domain.entities.Usuario;
@@ -19,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,7 +39,11 @@ public class NotificacionController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<NotificacionDTO>> getMisNotificaciones() {
         final Usuario user = UsuarioContext.getUsuario();
-        List<NotificacionDTO> notificacionesDTOS = user.getNotificaciones().stream().map(Notificacion::toDTO).collect(Collectors.toList());
+        List<NotificacionDTO> notificacionesDTOS = user.getNotificaciones()
+                .stream()
+                .map(Notificacion::toDTO)
+                .sorted(Comparator.comparing(NotificacionDTO::getFechaHoraNotificacion).reversed())
+                .collect(Collectors.toList());
         log.info("El usuario {} tiene {} notificaciones", user.getEmail(), user.getNotificaciones().size());
         return ResponseEntity.ok(notificacionesDTOS);
     }

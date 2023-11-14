@@ -6,6 +6,7 @@ import lombok.Data;
 import msUsers.domain.entities.enums.EstadoPublicacion;
 import msUsers.domain.entities.enums.TipoProducto;
 import msUsers.domain.entities.enums.TipoPublicacion;
+import msUsers.domain.logistica.enums.EstadoEnvio;
 import msUsers.domain.responses.DTOs.PublicacionDTO;
 
 import java.time.LocalDate;
@@ -50,7 +51,12 @@ public class Publicacion {
     @Enumerated(EnumType.STRING)
     private TipoProducto tipoProducto;
 
+    @Enumerated(EnumType.STRING)
+    private EstadoEnvio estadoEnvio;
+
     private String imagenes;
+
+    private Double peso;
 
     public PublicacionDTO toDTO() {
         PublicacionDTO publicacionDTO = new PublicacionDTO();
@@ -61,11 +67,14 @@ public class Publicacion {
         publicacionDTO.setImagenes(imagenes);
         publicacionDTO.setDescripcion(descripcion);
         publicacionDTO.setTipoPublicacion(tipoPublicacion);
+        publicacionDTO.setTipoProducto(tipoProducto);
         publicacionDTO.setEstadoPublicacion(estadoPublicacion);
+        publicacionDTO.setEstadoEnvio(estadoEnvio);
         publicacionDTO.setPrecioVenta(precioVenta);
         publicacionDTO.setValorTruequeMax(valorTruequeMax);
         publicacionDTO.setValorTruequeMin(valorTruequeMin);
         publicacionDTO.setCaracteristicaProducto(caracteristicaProducto);
+        publicacionDTO.setPeso(peso);
         return publicacionDTO;
     }
 

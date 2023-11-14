@@ -33,6 +33,12 @@ public class AllowedUrlsProvider {
                 "/api/productos/*",
                 // COMPRAS
                 "/comprar/*",
-                "/ms-users/api/webhook");
+                "/ms-users/api/webhook",
+                // LOGISTICA
+                "/ms-transacciones/api/logistica/ping",
+                // CHAT
+                "/chat",
+                // ERROR
+                "/error");
     }
 }

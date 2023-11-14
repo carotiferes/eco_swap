@@ -74,6 +74,8 @@ public class Usuario {
     @OneToMany(mappedBy = "usuarioOpina", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Opinion> opiniones;
 
+    private String secretJWT;
+
     @Column(name = "avatar")
     private String avatar;
 

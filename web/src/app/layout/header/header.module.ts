@@ -16,7 +16,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 		NgbModule,
 		FormsModule,
 		ReactiveFormsModule,
-		SharedModule
+		//SharedModule
 	]
 })
 export class HeaderModule { }

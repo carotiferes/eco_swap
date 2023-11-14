@@ -7,7 +7,9 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.entities.*;
 import msUsers.domain.entities.enums.EstadoPublicacion;
+import msUsers.domain.entities.enums.EstadoTrueque;
 import msUsers.domain.entities.enums.TipoPublicacion;
+import msUsers.domain.logistica.enums.EstadoEnvio;
 import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.repositories.ParticularesRepository;
 import msUsers.domain.repositories.PublicacionesRepository;
@@ -15,6 +17,7 @@ import msUsers.domain.requests.RequestFilterPublicaciones;
 import msUsers.domain.requests.RequestPublicacion;
 import msUsers.domain.responses.DTOs.PublicacionDTO;
 import msUsers.domain.responses.ResponsePostEntityCreation;
+import msUsers.domain.responses.ResponseUpdateEntity;
 import msUsers.services.CriteriaBuilderQueries;
 import msUsers.services.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +71,9 @@ public class PublicacionController {
         publicacion.setValorTruequeMax(requestPublicacion.getValorTruequeMax());
         publicacion.setValorTruequeMin(requestPublicacion.getValorTruequeMin());
         publicacion.setDescripcion(requestPublicacion.getDescripcion());
+        publicacion.setPeso(requestPublicacion.getPeso());
+        publicacion.setTipoPublicacion(requestPublicacion.getTipoPublicacion());
+        publicacion.setTipoProducto(requestPublicacion.getTipoProducto());
 
         List<CaracteristicaProducto> listaCaracteristicas = requestPublicacion.getCaracteristicasProducto()
                 .stream()
@@ -173,5 +179,61 @@ public class PublicacionController {
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrada la publicacion: " + idPublicacion));
 
         return ResponseEntity.ok(publicacion.toDTO());
+    }
+
+    @PatchMapping(path = "/publicacion/{id_publicacion}", produces = json)
+    @ResponseStatus(HttpStatus.OK)
+    @Transactional
+    public ResponseEntity<ResponseUpdateEntity> cerrarPublicacion(@PathVariable("id_publicacion") Long idPublicacion) {
+        log.info(">> Se va a cerrar la publicacion: {}", idPublicacion);
+
+        final var publicacion = this.publicacionesRepository.findById(idPublicacion).
+                orElseThrow(() -> new EntityNotFoundException("No fue encontrada la publicacion: " + idPublicacion));
+
+        // Anulo todas sus propuestas de trueques
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Trueque> query = criteriaBuilder.createQuery(Trueque.class);
+        Root<Trueque> from = query.from(Trueque.class);
+
+        Predicate predicate = criteriaBuilder.or(
+                        criteriaBuilder.equal(from.get("publicacionOrigen"), publicacion),
+                        criteriaBuilder.equal(from.get("publicacionPropuesta"), publicacion)
+        );
+
+        query.where(predicate);
+        List<Trueque> truequesRelacionados = entityManager.createQuery(query).getResultList();
+        truequesRelacionados.forEach(t -> t.setEstadoTrueque(EstadoTrueque.ANULADO));
+        truequesRelacionados.forEach(entityManager::merge);
+
+        // Cierro publicación
+        publicacion.setEstadoPublicacion(EstadoPublicacion.CERRADA);
+        entityManager.merge(publicacion);
+
+        ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
+        responseUpdateEntity.setDescripcion("Publicacion y trueques relacionados cerrados exitósamente");
+        responseUpdateEntity.setStatus(HttpStatus.OK.name());
+        log.info("<< Publicacion cerrada");
+
+        return ResponseEntity.ok(responseUpdateEntity);
+    }
+
+    @PatchMapping(path = "/publicacion/{id_publicacion}/recibido", produces = json)
+    @ResponseStatus(HttpStatus.OK)
+    @Transactional
+    public ResponseEntity<ResponseUpdateEntity> marcarRecibidoPublicacion(@PathVariable("id_publicacion") Long idPublicacion) {
+        log.info(">> Se va a marcar como recibida la publicacion: {}", idPublicacion);
+
+        final var publicacion = this.publicacionesRepository.findById(idPublicacion).
+                orElseThrow(() -> new EntityNotFoundException("No fue encontrada la publicacion: " + idPublicacion));
+
+        publicacion.setEstadoEnvio(EstadoEnvio.RECIBIDO);
+        entityManager.merge(publicacion);
+
+        ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
+        responseUpdateEntity.setDescripcion("Publicación marcada como recibida exitosamente.");
+        responseUpdateEntity.setStatus(HttpStatus.OK.name());
+        log.info("<< Publicacion marcada como recibida.");
+
+        return ResponseEntity.ok(responseUpdateEntity);
     }
 }

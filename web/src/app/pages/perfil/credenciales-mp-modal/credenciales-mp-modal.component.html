@@ -1,22 +1,22 @@
 
+<div class="header">
+	<span style="width: 30px;"></span>
+	<span>Credenciales de Mercado Pago</span>
+	<mat-icon (click)="dialogRef.close()" style="margin-left: 10px; cursor: pointer;">close</mat-icon>
+</div>
 <div id="main-credenciales-mp">
-	<div style="margin: 20px;">
-		<h2>Configurá tus credenciales de Mercado Pago!</h2>
-	</div>
-	<div style="margin: 25px;">
-		<mat-icon (click)="downloadFile()" matTooltip="Clickeá acá para descargar el tutorial">info</mat-icon>
-	</div>
+	<mat-icon (click)="downloadFile()" matTooltip="Clickeá acá para descargar el tutorial" matTooltipPosition="right">help_outline</mat-icon>
 </div>
 <div style="display: flex; justify-content: center;">
 	<mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
 </div>
 <div *ngIf="!loading">
-	<form [formGroup]="credencialesForm" id="credenciales-form">
-		<mat-form-field>
+	<form [formGroup]="credencialesForm" id="credenciales-form" class="dense-3">
+		<mat-form-field appearance="outline">
 			<mat-label>Public Key</mat-label>
 			<input matInput formControlName="publicKey">
 		</mat-form-field>
-		<mat-form-field>
+		<mat-form-field appearance="outline">
 			<mat-label>Access Token</mat-label>
 			<input matInput formControlName="accessToken">
 		</mat-form-field>

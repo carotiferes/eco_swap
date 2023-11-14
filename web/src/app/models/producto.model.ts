@@ -7,6 +7,7 @@ export interface ProductoModel {
 	tipoProducto: string,
 	cantidadSolicitada: number,
 	cantidadRecibida: number,
+	cantidadEnCamino: number,
 	estado?: string,
 	publicacion?: number,
 	colectaDTO: ColectaModel,

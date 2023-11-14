@@ -15,6 +15,7 @@ export class MainCardPublicacionComponent {
 	@Input() publicacion?: PublicacionModel;
 	@Input() userData: any;
 	@Input() userType: 'notLoggedIn' | 'publicacionOrigen' | 'publicacionPropuesta' = 'notLoggedIn';
+	@Input() compras: any;
 
 	@Output() intercambiarEvent = new EventEmitter<any>();
 	@Output() comprarEvent = new EventEmitter<any>();
@@ -52,14 +53,5 @@ export class MainCardPublicacionComponent {
 
 	comprar() {
 		this.comprarEvent.emit()
-	}
-
-	getCostoEnvio() {
-		this.logisticaService.getCostoEnvio().subscribe({
-			next: (res: any) => {
-				console.log(res);
-				
-			}
-		})
 	}
 }

@@ -25,7 +25,9 @@ export class ImagesModalComponent implements OnInit{
 				name:`assets/perfiles/perfiles-${index}.jpg`
 			})
 		}
-		this.loading = false;
+		setTimeout(() => {
+			this.loading = false;
+		}, 3300);
 	}
 
 	selectImage(id: number) {

@@ -20,6 +20,9 @@ public class RequestDireccion {
     @NotNull(message = "La dirección debe tener una calle.")
     private String calle;
 
+    @NotNull(message = "La dirección debe tener un código postal.")
+    private String codigoPostal;
+
     private String departamento;
 
     private String piso;

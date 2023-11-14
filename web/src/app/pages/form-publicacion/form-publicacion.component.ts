@@ -5,6 +5,10 @@ import { AuthService } from 'src/app/services/auth.service';
 import { TruequesService } from 'src/app/services/trueques.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import Swal from 'sweetalert2';
+import { CredencialesMpModalComponent } from '../perfil/credenciales-mp-modal/credenciales-mp-modal.component';
+import { MatDialog } from '@angular/material/dialog';
+import { UsuarioModel } from 'src/app/models/usuario.model';
+import { ProductosService } from 'src/app/services/productos.service';
 
 @Component({
   selector: 'app-form-publicacion',
@@ -25,28 +29,52 @@ export class FormPublicacionComponent {
 	focusVenta: boolean = false;
 
 	hasMPCredentials: boolean = false;
+	user?: UsuarioModel;
+
+	tipos_productos: any[] = []
 
 	constructor(private fb: FormBuilder, private truequeService: TruequesService, private router: Router,
-		private auth: AuthService, private usuarioService: UsuarioService){
+		private auth: AuthService, private usuarioService: UsuarioService, private dialog: MatDialog,
+		private productosService: ProductosService){
 		this.publicacionForm = fb.group({
 			titulo: ['', Validators.required],
 			descripcion: ['', Validators.required],
 			valorMinimo: ['', Validators.required],
 			valorMaximo: ['', Validators.required],
-			finalidadVenta: [{value: false, disabled: this.hasMPCredentials == false}],
+			finalidadVenta: [false],
 			precioVenta: [''],
+			peso: [''],
+			//disponibilidadHoraria: [''],
 			caracteristicas: this.fb.array([]),
 			file: ['', Validators.required],
 			file_source: [''],
-			tipoProducto: [''],
+			tipoProducto: ['', Validators.required],
 			idParticular: [''],
 		})
 
 		usuarioService.getUserByID(auth.getUserID()).subscribe({
 			next: (res: any) => {
 				this.hasMPCredentials = !!res && !!res.particularDTO && !!res.particularDTO.accessToken && !!res.particularDTO.publicKey
+				this.user = res;
+				console.log(this.user);
+				
 			}
 		})
+		this.getTiposProductos()
+	}
+
+	getTiposProductos() {
+		this.productosService.getTiposProductos().subscribe({
+			next: (v: any) => {
+				console.log('productos', v);
+				this.tipos_productos = v;
+			},
+			error: (e) => {
+				console.error('error', e);
+				//this.showErrorService.show('Error!', 'Ha ocurrido un error al traer los tipos de producto')
+			},
+			complete: () => console.info('complete')
+		});
 	}
 
 	get getCaracteristicasArray() {
@@ -109,14 +137,14 @@ export class FormPublicacionComponent {
 				titulo: this.publicacionForm.controls['titulo'].value,
 				descripcion: this.publicacionForm.controls['descripcion'].value,
 				imagen: this.publicacionForm.controls['file_source'].value,
-				tipoProducto: 'OTROS' ,//TODO: this.publicacionForm.controls['tipoProducto'].value,
+				tipoProducto: this.publicacionForm.controls['tipoProducto'].value,
 				caracteristicasProducto: sendCaracteristicas,
-				fechaPublicacion: new Date(),//this.publicacionForm.controls['fechaPublicacion'].value,
+				fechaPublicacion: new Date(),
 				esVenta: this.publicacionForm.controls['finalidadVenta'].value,
 				precioVenta: this.publicacionForm.controls['precioVenta'].value,
+				peso: this.publicacionForm.controls['peso'].value,
 				valorTruequeMin: this.publicacionForm.controls['valorMinimo'].value,
 				valorTruequeMax: this.publicacionForm.controls['valorMaximo'].value,
-				//valorMaximoValido: this.publicacionForm.controls['valorMaximoValido'].value,
 			}
 	
 			console.log('body', body);
@@ -143,7 +171,28 @@ export class FormPublicacionComponent {
 	}
 
 	allowVenta(event: any) {
-		if(event.checked) this.publicacionForm.controls['precioVenta'].addValidators(Validators.required);
-		else this.publicacionForm.controls['precioVenta'].removeValidators(Validators.required)
+		if(event.checked) {
+			this.publicacionForm.controls['precioVenta'].addValidators(Validators.required);
+			this.publicacionForm.controls['peso'].addValidators(Validators.required);
+		}
+		else {
+			this.publicacionForm.controls['precioVenta'].removeValidators(Validators.required);
+			this.publicacionForm.controls['peso'].removeValidators(Validators.required);
+		}
+	}
+
+	credencialesMP() {
+		const dialogRef = this.dialog.open(CredencialesMpModalComponent, {
+			maxWidth: '60vw',
+			maxHeight: '60vh',
+			height: '100%',
+			width: '100%',
+			panelClass: 'full-screen-modal',
+			data: {user: this.user, publicKey: this.user?.particularDTO.publicKey, accessToken: this.user?.particularDTO.accessToken}
+		});
+		dialogRef.afterClosed().subscribe((result) => {
+			console.log('closed', result);
+			if(result) this.hasMPCredentials = true
+		})
 	}
 }

@@ -19,5 +19,6 @@ export interface PublicacionModel {
 	caracteristicaProducto: any[],
 	estadoTrueque?: string,
 	idCompra?: number,
-	estadoCompra?: string
+	estadoCompra?: string,
+	estadoEnvio?: string
 }

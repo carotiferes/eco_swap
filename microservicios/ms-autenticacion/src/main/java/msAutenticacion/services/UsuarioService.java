@@ -1,8 +1,11 @@
 package msAutenticacion.services;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -22,6 +25,7 @@ import msAutenticacion.domain.responses.ResponseUpdateEntity;
 import msAutenticacion.exceptions.*;
 import msAutenticacion.exceptions.events.UsuarioCreadoEvent;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -32,10 +36,7 @@ import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -188,15 +189,18 @@ public class UsuarioService {
                 }
                 log.error("Cantidad de intentos actual: {}", usuario.getIntentos());
                 usuarioRepository.save(usuario);
-                throw new LoginUserWrongCredentialsException("Usuario y/o contraseña invalido");
+                throw new LoginUserWrongCredentialsException("Usuario y/o contraseña inválido");
             }
         }
         else
             throw new LoginUserBlockedException("El usuario fue bloqueado");
         log.info(("login: Login EXITOSO para username: " + request.getUsername()));
         usuario.setIntentos(0);
+
+        String secretJWT = this.crearSalt();
+        usuario.setSecretJWT(secretJWT);
         usuarioRepository.save(usuario);
-        return this.crearJWT(usuario);
+        return this.crearJWT(usuario, secretJWT);
     }
 
     private Boolean compararContrasenias(String passwordHashIngresado, String passwordHashGuardado) {
@@ -245,6 +249,7 @@ public class UsuarioService {
                 .altura(direccionCrear.getAltura())
                 .dpto(direccionCrear.getDepartamento())
                 .piso(direccionCrear.getPiso())
+                .codigoPostal(direccionCrear.getCodigoPostal())
                 .build();
     }
 
@@ -262,30 +267,38 @@ public class UsuarioService {
                 .puntaje(0)
                 .validado(false)
                 .bloqueado(false)
+                .avatar(String.valueOf(RandomUtils.nextInt(15,26)))
                 .build();
     }
     
 
-    private String crearJWT(Usuario usuario) throws NoSuchAlgorithmException {
+    private String crearJWT(Usuario usuario, String secretJWT) throws NoSuchAlgorithmException {
         try {
             KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
-            kpg.initialize(2048);
+            kpg.initialize(1024);
             KeyPair kp = kpg.generateKeyPair();
-            Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) kp.getPublic(), (RSAPrivateKey) kp.getPrivate());
-            return JWT.create()
-                    .withIssuer("ecoswap")
-                    .withExpiresAt(Instant.now().plusSeconds(604800))
-                    .withClaim("email", usuario.getEmail())
-                    .withClaim("id", usuario.getIdUsuario())
-                    .withClaim("esParticular", usuario.isSwapper())
-                    .withClaim("usuarioValidado", usuario.isValidado())
+           // Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) kp.getPublic(), null); // (RSAPrivateKey) kp.getPrivate());
+            Algorithm algorithm = Algorithm.HMAC256(secretJWT);
+          //  log.info("DATA JWT: public {}; private {}", kp.getPublic(), kp.getPrivate());
+            //return JWT.create()
+            String email = usuario.getEmail();
+            Long userId = usuario.getIdUsuario();
+            Boolean esParticular = usuario.isSwapper();
+            Boolean userValidado = usuario.isValidado();
+            String jwtCreated = JWT.create()
+                    .withIssuer(email)
+                    .withExpiresAt(Instant.now().plusSeconds(86400))
+                    .withClaim("email", email)
+                    .withClaim("id", userId)
+                    .withClaim("esParticular", esParticular)
+                    .withClaim("usuarioValidado", userValidado)
                     .sign(algorithm);
+            return jwtCreated;
         } catch (JWTCreationException | NoSuchAlgorithmException exception){
             log.error(("login: JWT dió error durante la creación: " + exception.getMessage()));
-            return "";
+            throw exception;
         }
     }
-
     private void eliminarDireccionesAntiguas(Usuario user) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaDelete<Direccion> delete = criteriaBuilder.createCriteriaDelete(Direccion.class);
@@ -297,11 +310,13 @@ public class UsuarioService {
     private void crearNuevaDireccion(RequestEditProfile requestEditProfile, Usuario user) {
         Direccion nuevaDireccion = new Direccion();
         nuevaDireccion.setUsuario(user);
+        nuevaDireccion.setCodigoPostal(requestEditProfile.getDireccion().getCodigoPostal());
         nuevaDireccion.setCalle(requestEditProfile.getDireccion().getCalle());
         nuevaDireccion.setPiso(requestEditProfile.getDireccion().getPiso());
         nuevaDireccion.setDpto(requestEditProfile.getDireccion().getDepartamento());
         nuevaDireccion.setAltura(requestEditProfile.getDireccion().getAltura());
         nuevaDireccion.setLocalidad(requestEditProfile.getDireccion().getLocalidad());
+        nuevaDireccion.setCodigoPostal(requestEditProfile.getDireccion().getCodigoPostal());
 
         List<Direccion> direcciones = new ArrayList<>();
         direcciones.add(nuevaDireccion);

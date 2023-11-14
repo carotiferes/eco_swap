@@ -1,142 +1,127 @@
 <app-header></app-header>
 
-<ngb-carousel *ngIf="images" [interval]="3500">
-	<ng-template ngbSlide *ngFor="let img of images">
-		<div class="picsum-img-wrapper">
-			<img [src]="img" />
-		</div>
-		<div class="carousel-caption">
-		</div>
-	</ng-template>
-</ngb-carousel>
-
-<section id="quienes-somos">
-	<div class="quienes-somos-content">
-		<!-- <img class="img-back" src="assets/home/economia-circular-grande.jpg" alt="">
-		<h1 class="topleft">Quiénes Somos</h1>
-		<div class="middle">
-			<div class="text">
-				Ecoswap es una comunidad que busca promover e implementar la economía circular para sus usuarios.
-				Desde nuestra plataforma vas a poder <b>DONAR</b> a fundaciones que lo necesitan, conociendo sus
-				distintas <b>COLECTAS</b>.
-				También podrás hacer <b>INTERCAMBIOS</b> con otros <b>SWAPPERS</b>, lo que logrará que no solo
-				reduzcas tus residuos sino que también te dará la posibilidad de obtener otro producto!
+<div id="all">
+	<ngb-carousel *ngIf="images" [interval]="3500">
+		<ng-template ngbSlide *ngFor="let img of images">
+			<div class="picsum-img-wrapper">
+				<img [src]="img" />
 			</div>
-		</div> -->
-		<div class="row">
-			<div class="col-xs-12 col-sm-6">
-				<h1>Quiénes Somos</h1>
-				<h3>
-					Ecoswap es una comunidad que busca promover e implementar la economía circular para sus usuarios.
-					Desde nuestra plataforma vas a poder <b>DONAR</b> a fundaciones que lo necesitan, conociendo sus
-					distintas <b>COLECTAS</b>.
-					También podrás hacer <b>INTERCAMBIOS</b> con otros <b>SWAPPERS</b>, lo que logrará que no solo
-					reduzcas tus residuos sino que también te dará la posibilidad de obtener otro producto!
-				</h3>
+			<div class="carousel-caption">
 			</div>
-			<img src="assets/logo_green_small.png" alt="" class="col-xs-12 col-sm-6">
+		</ng-template>
+	</ngb-carousel>
+	
+	<section id="quienes-somos">
+		<div class="quienes-somos-content">
+			<div class="row">
+				<div class="col-xs-12 col-sm-6">
+					<h1>Quiénes Somos</h1>
+					<h3>
+						Ecoswap es una comunidad que busca promover e implementar la economía circular para sus usuarios.
+						Desde nuestra plataforma vas a poder <b>DONAR</b> a fundaciones que lo necesitan, conociendo sus
+						distintas <b>COLECTAS</b>.
+						También podrás hacer <b>INTERCAMBIOS</b> con otros <b>SWAPPERS</b>, lo que logrará que no solo
+						reduzcas tus residuos sino que también te dará la posibilidad de obtener otro producto!
+					</h3>
+				</div>
+				<img src="assets/logo_green_small.png" alt="" class="col-xs-12 col-sm-6">
+			</div>
+			<div style="text-align: center; font-style: italic;"><h2>LA SEGUNDA OPORTUNIDAD DE TUS COSAS</h2></div>
 		</div>
-		<div style="text-align: center;"><h2>LA SEGUNDA OPORTUNIDAD DE TUS COSAS</h2></div>
-	</div>
-</section>
-
-<section id="accesos">
-	<div id="colectas" class="card" (click)="goTo('colectas')">
-		<!-- <div class="card-body"> -->
-			<img src="assets/home/donacion.avif" alt="" class="card-img small">
-			<div class="card-img-overlay">
-				<h1>Colectas</h1>
-				<p>
-					Clickeá acá para ver todas las colectas disponibles en fundaciones.
-					<br>
-					Realizá donaciones fácilmente!
-				</p>
-			</div>
-			<div class="card-bottom colecta">
+	</section>
+	
+	<section id="accesos">
+		<div id="colectas" class="card" (click)="goTo('colectas')">
+			<!-- <div class="card-body"> -->
+				<img src="assets/home/donacion.avif" alt="" class="card-img small">
+				<div class="card-img-overlay">
+					<h1>Colectas</h1>
+					<p>
+						Clickeá acá para ver todas las colectas disponibles en fundaciones.
+						<br>
+						Realizá donaciones fácilmente!
+					</p>
+				</div>
+				<div class="card-bottom colecta">
+					<mat-icon>open_in_new</mat-icon>
+				</div>
+	
+			<!-- </div> -->
+		</div>
+	
+		<div id="publicaciones" class="card" (click)="goTo('publicaciones')"
+		*ngIf="!userData.isLoggedIn || (userData.isLoggedIn && userData.isSwapper)">
+			<!-- <div class="card-body"> -->
+				<img src="assets/home/intercambio.avif" alt="" class="card-img small">
+				<div class="card-img-overlay">
+					<h1>Publicaciones</h1>
+					<p>
+						Clickeá acá para ver todas las publicaciones de los Swappers.
+						<br>
+						Realizá intercambios fácilmente!
+						
+					</p>
+				</div>
+			<!-- </div> -->
+			<div class="card-bottom publicacion">
 				<mat-icon>open_in_new</mat-icon>
 			</div>
-
-		<!-- </div> -->
-	</div>
-
-	<div id="publicaciones" class="card" (click)="goTo('publicaciones')"
-    *ngIf="!userData.isLoggedIn || (userData.isLoggedIn && userData.isSwapper)">
-		<!-- <div class="card-body"> -->
-			<img src="assets/home/intercambio.avif" alt="" class="card-img small">
-			<div class="card-img-overlay">
-				<h1>Publicaciones</h1>
-				<p>
-					Clickeá acá para ver todas las publicaciones de los Swappers.
-					<br>
-					Realizá intercambios fácilmente!
-					
-				</p>
+		</div>
+	</section>
+	
+	<section id="valores">
+		<h1 style="text-align: center;">Nuestros Valores</h1>
+	
+		<div class="content-valores">
+			<div>
+				<mat-icon>groups</mat-icon>
+				<h3>Comunidad Ecológica</h3>
+				<p class="p-text">EcoSwap promueve la creación de una comunidad de usuarios comprometidos con la sostenibilidad y la protección del medio ambiente. Fomenta la colaboración y la participación activa de sus miembros en la búsqueda de soluciones para reducir residuos y promover la reutilización.
 			</div>
-		<!-- </div> -->
-		<div class="card-bottom publicacion">
-			<mat-icon>open_in_new</mat-icon>
-		</div>
-	</div>
-</section>
-
-<section id="valores">
-	<h1 style="text-align: center;">Nuestros Valores</h1>
-
-	<div class="content-valores">
-		<div>
-			<mat-icon>room_preferences</mat-icon>
-			<h3>Valor 1</h3>
-			<p class="p-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fringilla laoreet
-				condimentum. Donec varius tortor mi, vel cursus lacus porttitor quis. Sed mollis velit neque, eget
-				faucibus orci volutpat tincidunt.
-		</div>
-
-		<div>
-			<mat-icon>room_preferences</mat-icon>
-			<h3>Valor 2</h3>
-			<p class="p-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fringilla laoreet
-				condimentum. Donec varius tortor mi, vel cursus lacus porttitor quis. Sed mollis velit neque, eget
-				faucibus orci volutpat tincidunt.
-		</div>
-
-		<div>
-			<mat-icon>room_preferences</mat-icon>
-			<h3>Valor 3</h3>
-			<p class="p-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fringilla laoreet
-				condimentum. Donec varius tortor mi, vel cursus lacus porttitor quis. Sed mollis velit neque, eget
-				faucibus orci volutpat tincidunt.
-		</div>
-	</div>
-
-</section>
-
-
-<section id="beneficios">
-	<h1 style="text-align: center;">BENEFICIOS DE ECOSWAP</h1>
-	<div class="beneficios-content">
-		<div class="card">
-			<img src="assets/home/economia-circular.jpg" alt="" class="card-img">
-			<div class="card-img-overlay">
-				<h2>ECONOMÍA CIRCULAR</h2>
+	
+			<div>
+				<mat-icon>energy_savings_leaf</mat-icon>
+				<h3>Uso eficiente de recursos</h3>
+				<p class="p-text">EcoSwap incentiva a sus usuarios a dejar de acumular objetos no deseados en sus hogares. En lugar de dejar que los productos se conviertan en residuos, la plataforma ofrece la posibilidad de darles una segunda vida a través de donaciones, trueques o ventas. Este valor está en línea con el concepto de economía circular, donde los productos y recursos se mantienen en uso y en movimiento en lugar de ser acumulados o desechados.
+			</div>
+	
+			<div>
+				<mat-icon>near_me</mat-icon>
+				<h3>Fácil distribución</h3>
+				<p class="p-text">EcoSwap aborda uno de los desafíos clave en la reutilización y donación de productos: la logística. La plataforma facilita la logística al ofrecer soluciones para el envío de productos desde los usuarios a las fundaciones o entre los propios usuarios. Esto elimina barreras logísticas y hace que el proceso de compartir y reutilizar objetos sea más accesible y eficiente.
 			</div>
 		</div>
-		<div class="card">
-			<img src="assets/home/ahorrar.jpg" alt="" class="card-img">
-			<div class="card-img-overlay">
-				<h2>AHORRÁ Y EVITÁ COMPRAR</h2>
+	
+	</section>
+	
+	
+	<section id="beneficios">
+		<h1 style="text-align: center;">BENEFICIOS DE ECOSWAP</h1>
+		<div class="beneficios-content">
+			<div class="card">
+				<img src="assets/home/economia-circular.jpg" alt="" class="card-img">
+				<div class="card-img-overlay">
+					<h2>ECONOMÍA CIRCULAR</h2>
+				</div>
+			</div>
+			<div class="card">
+				<img src="assets/home/ahorrar.jpg" alt="" class="card-img">
+				<div class="card-img-overlay">
+					<h2>AHORRÁ Y EVITÁ COMPRAR</h2>
+				</div>
+			</div>
+			<div class="card">
+				<img src="assets/home/residuos.jpg" alt="" class="card-img">
+				<div class="card-img-overlay">
+					<h2>REDUCÍ TUS RESIDUOS</h2>
+				</div>
+			</div>
+			<div class="card">
+				<img src="assets/home/comunidad.jpg" alt="" class="card-img">
+				<div class="card-img-overlay">
+					<h2>SÉ PARTE DE LA COMUNIDAD</h2>
+				</div>
 			</div>
 		</div>
-		<div class="card">
-			<img src="assets/home/residuos.jpg" alt="" class="card-img">
-			<div class="card-img-overlay">
-				<h2>REDUCÍ TUS RESIDUOS</h2>
-			</div>
-		</div>
-		<div class="card">
-			<img src="assets/home/comunidad.jpg" alt="" class="card-img">
-			<div class="card-img-overlay">
-				<h2>SÉ PARTE DE LA COMUNIDAD</h2>
-			</div>
-		</div>
-	</div>
-</section>
+	</section>
+</div>

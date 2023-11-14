@@ -1,14 +1,9 @@
 package msUsers.domain.logistica.enums;
 
 public enum CheckInStatusEnum {
-    CREATED("created"),
-    RECEIVED("received"),
-    PROCESSING("processing"),
-    COMPLETED("completed");
+    CREATED,
+    RECEIVED,
+    PROCESSING,
+    COMPLETED;
 
-    public final String name;
-
-    private CheckInStatusEnum(String name) {
-        this.name = name;
-    }
 }

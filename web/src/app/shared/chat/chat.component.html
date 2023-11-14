@@ -1,0 +1,32 @@
+<div class="header" *ngIf="origin == 'modal'"  (mouseover)="initChat == 0 ? scrollToBottom() : ''">
+	Chateá con {{elOtroSwapper.nombre}} {{elOtroSwapper.apellido}}
+	<mat-icon style="position: absolute; right: 2rem;" (click)="dialogRef.close()">close</mat-icon>
+</div>
+<!-- {{mensajes | json}} -->
+<div style="margin-bottom: 20px; overflow: auto; scrollbar-color: #888 #f1f1f1; scrollbar-width: thin;"
+	#chatContainer [id]="origin == 'inline' ? 'chatContainer' : 'modal-chat-container'" [class.main-div]="origin == 'modal'" (mouseover)="initChat == 0 ? scrollToBottom() : ''"
+	[style.max-height.px]="origin == 'inline' ? 200 : 300">
+	<div *ngFor="let mensaje of mensajes" class="mensaje"
+		[ngClass]="mensaje.usuarioReceptor.idUsuario == userData.id_user || mensaje.usuarioReceptor == userData.id_user ? 'otro' : 'mio'">
+		<span style="width: 100%;">{{mensaje.mensaje}}</span>
+		<span style="font-size: 10px;">{{mensaje.fechaHoraEnvio | date: 'dd/MM HH:mm'}}</span>
+		<mat-icon class="arrow-globo">arrow_drop_down</mat-icon>
+	</div>
+</div>
+
+<div style="display: flex;" [class.main-div]="origin == 'modal'"  (mouseover)="initChat == 0 ? scrollToBottom() : ''"
+[style.flex-direction]="origin =='inline' ? 'column' : 'row'">
+	<mat-form-field appearance="outline" style="min-width: 210px; width: 100%;" floatLabel="always">
+		<!-- <mat-label>Nuevo Mensaje</mat-label> -->
+		<textarea matInput [placeholder]="'Enviar mensaje a '+elOtroSwapper.nombre +' '+elOtroSwapper.apellido"
+			[(ngModel)]="nuevoMensaje" style="resize: none;" *ngIf="elOtroSwapper"
+			(keyup.enter)="sendMensaje()"></textarea>
+		<!-- <input matInput formControlName="tipoProducto"> -->
+		
+	</mat-form-field>
+	<button mat-fab color="primary" (click)="sendMensaje()" *ngIf="origin =='modal'" style="margin-top: 10px;">
+		<mat-icon>send</mat-icon>
+	</button>
+
+	<button mat-fab extended color="primary" (click)="sendMensaje()" *ngIf="origin =='inline'">Enviar</button>
+</div>

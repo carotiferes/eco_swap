@@ -1,14 +1,17 @@
+import { CurrencyPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Router } from '@angular/router';
 import { Observable, map, startWith } from 'rxjs';
-import { CardModel } from 'src/app/models/card.model';
+import { CardButtonModel, CardModel } from 'src/app/models/card.model';
+import { OrdenModel } from 'src/app/models/orden.model';
 import { PublicacionModel } from 'src/app/models/publicacion.model';
 import { TruequeModel } from 'src/app/models/trueque.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { ComprasService } from 'src/app/services/compras.service';
+import { LogisticaService } from 'src/app/services/logistica.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { ShowErrorService } from 'src/app/services/show-error.service';
 import { TruequesService } from 'src/app/services/trueques.service';
@@ -38,10 +41,14 @@ export class PublicacionesComponent {
 	filteredPublicacionesCardList: CardModel[] = []
 
 	trueques: TruequeModel[] = [];
+	screenWidth: number;
+
+	userOrders: OrdenModel[] = [];
 
 	constructor(private router: Router, private auth: AuthService, private fb: FormBuilder,
 		private productosService: ProductosService, private showErrorService: ShowErrorService,
-		private truequesService: TruequesService, private comprasService: ComprasService){
+		private truequesService: TruequesService, private comprasService: ComprasService,
+		private currencyPipe: CurrencyPipe, private logisticaService: LogisticaService){
 
 		this.formFiltros = fb.group({
 			fundacion: [''],
@@ -56,7 +63,7 @@ export class PublicacionesComponent {
 			startWith(''),
 			map((localidad: string | null) => (localidad ? this._filterLocalidad(localidad) : this.allLocalidades.slice())),
 		);
-
+		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 	}
 	
 	ngOnInit(): void {
@@ -90,8 +97,11 @@ export class PublicacionesComponent {
 		});
 	}
 
-	filtrarPublicaciones() {
+	filtrarPublicaciones(event?:any) {
+		console.log(event);
+		
 		this.loading = true;
+		this.publicacionesToShow.splice(0)
 		if(this.origin == 'all'){
 			this.filtros = {};
 			const tipoProducto = this.formFiltros.controls['tipoProducto'].value;
@@ -121,48 +131,66 @@ export class PublicacionesComponent {
 					})
 					
 				}, complete: () => {
-					this.truequesService.getTruequesParticular(this.publicacionesToShow[0].particularDTO.idParticular).subscribe({
-						next: (res: any) => {
-							this.trueques = res;
-						}, complete: () => this.generateCardList()
-					})
+					if(this.publicacionesToShow.length > 0) {
+						this.truequesService.getTruequesParticular(this.publicacionesToShow[0].particularDTO.idParticular).subscribe({
+							next: (res: any) => {
+								this.trueques = res;
+							}, complete: () => this.generateCardList()
+						})
+					} else this.loading = false;
 				}, error: ()=> this.loading = false
 			})
 		} else { // myCompras
-			this.comprasService.getMyCompras().subscribe({
-				next: (data: any) => {
-					console.log(data);
-					for (const publicacion of data) {
-						publicacion.publicacionDTO.idCompra = publicacion.idCompra;
-						publicacion.publicacionDTO.estadoCompra = publicacion.estadoCompra;
-						this.publicacionesToShow.push(publicacion.publicacionDTO);
+			this.logisticaService.obtenerMisOrdenes('publicaciones').subscribe({
+				next: (res: any) => {
+					if (res.length > 0) {
+						this.userOrders = res;
 					}
-					this.publicacionesToShow.map(item => {
-						item.parsedImagenes = item.imagenes.split('|')
+					this.comprasService.getMyCompras().subscribe({
+						next: (data: any) => {
+							console.log(data);
+							for (const publicacion of data) {
+								publicacion.publicacionDTO.idCompra = publicacion.idCompra;
+								publicacion.publicacionDTO.estadoCompra = publicacion.estadoCompra;
+								this.publicacionesToShow.push(publicacion.publicacionDTO);
+							}
+							this.publicacionesToShow.map(item => {
+								item.parsedImagenes = item.imagenes.split('|')
+							})
+						}, complete: () => this.generateCardList(),
+						error: ()=> this.loading = false
 					})
-				}, complete: () => this.generateCardList(),
-				error: ()=> this.loading = false
+				}
 			})
 		}
 	}
 
 	generateCardList() {
-		this.publicacionesCardList.splice(0)
+		this.publicacionesCardList.splice(0);
+		this.publicacionesToShow.sort((a, b) => new Date(b.fechaPublicacion).getTime() - new Date(a.fechaPublicacion).getTime());
 		const auxList: CardModel[] = [];
 		for (const publicacion of this.publicacionesToShow) {
 
-			let idPublicacionOrigen: number | undefined;
+			let idPublicacionOrigen: number | undefined = undefined;
+			let idPublicacionPropuesta: number | undefined = undefined;
+			
 			if(publicacion.estadoPublicacion == 'CERRADA') {
 				const trueque = this.trueques.find(item => item.estadoTrueque == 'APROBADO' && item.publicacionDTOpropuesta.idPublicacion == publicacion.idPublicacion)
-				if(trueque) idPublicacionOrigen = trueque.publicacionDTOorigen.idPublicacion
+				if(trueque != undefined) idPublicacionOrigen = trueque.publicacionDTOorigen.idPublicacion
+				else {
+					const trueque = this.trueques.find(item => item.estadoTrueque == 'APROBADO' && item.publicacionDTOorigen.idPublicacion == publicacion.idPublicacion)
+					if(trueque) idPublicacionPropuesta = trueque.publicacionDTOpropuesta.idPublicacion
+				}
 			}
+
+			const matchingOrders = this.userOrders.some(order => order.publicacionId == publicacion.idPublicacion);
 
 			auxList.push({
 				id: publicacion.idPublicacion,
 				imagen: publicacion.parsedImagenes? publicacion.parsedImagenes[0] : 'no_image',
 				titulo: publicacion.titulo,
-				valorPrincipal: `$${publicacion.valorTruequeMin} - $${publicacion.valorTruequeMax}`,
-				valorSecundario: !!publicacion.particularDTO.accessToken ? (publicacion.precioVenta ? `$${publicacion.precioVenta}` : undefined) : undefined,
+				valorPrincipal: `${this.currencyPipe.transform(publicacion.valorTruequeMin)} - ${this.currencyPipe.transform(publicacion.valorTruequeMax)}`,
+				valorSecundario: !!publicacion.particularDTO.accessToken ? (publicacion.precioVenta ? `${this.currencyPipe.transform(publicacion.precioVenta)}` : undefined) : undefined,
 				fecha: publicacion.fechaPublicacion,
 				usuario: {
 					id: publicacion.particularDTO.usuarioDTO.idUsuario,
@@ -171,16 +199,34 @@ export class PublicacionesComponent {
 					puntaje: publicacion.particularDTO.puntaje,
 					localidad: publicacion.particularDTO.direcciones[0].localidad
 				},
-				action: !!idPublicacionOrigen ? 'trueque' : this.origin == 'myPublicaciones' ? 'list' : 'access',
-				idAuxiliar: !!idPublicacionOrigen ? idPublicacionOrigen : publicacion.idCompra ? publicacion.idCompra : undefined,
-				buttons: [],
+				action: !!idPublicacionOrigen || !!idPublicacionPropuesta ? 'trueque' : this.origin == 'myPublicaciones' ? 'list' : 'access',
+				idAuxiliar: !!idPublicacionOrigen ? idPublicacionOrigen : !!idPublicacionPropuesta ? publicacion.idPublicacion : publicacion.idCompra ? publicacion.idCompra : undefined,
+				buttons: this.getButtonsForCard(publicacion, !!idPublicacionOrigen || !!idPublicacionPropuesta, matchingOrders),
 				estado: this.origin == 'myPublicaciones' ? publicacion.estadoPublicacion : publicacion.estadoCompra ? publicacion.estadoCompra : undefined,
-				codigo: publicacion.idCompra ? 'Compra' : 'Publicación'
+				codigo: publicacion.idCompra ? 'Compra' : this.origin != 'all' ? !!publicacion.estadoEnvio ? 'Venta' : 'Publicación' : 'Publicación',
+				estadoAux: publicacion.estadoEnvio
 			})
 		}
 		this.publicacionesCardList = auxList;
 		this.filteredPublicacionesCardList = this.publicacionesCardList;
 		this.loading = false;
+	}
+
+	getButtonsForCard(publicacion: PublicacionModel, truequeAprobado: boolean = false, matchingOrders: boolean = false): CardButtonModel[] {
+		if(this.origin == 'myPublicaciones' && !publicacion.idCompra && !publicacion.estadoEnvio) {
+			const list: CardButtonModel[] = [{ name: !truequeAprobado ? '¿Dónde lo propuse?' : 'Ver trueque', icon: 'info', color: 'primary', status: 'INFO', action: !truequeAprobado ? 'list' : 'navigate'}]
+			if (publicacion.estadoPublicacion == 'ABIERTA') list.push({name: 'Cerrar publicación', icon: 'close', color: 'warn', status: 'CERRADA', action: 'change_status'});
+			return list;
+		} /* else if(this.origin == 'myPublicaciones' && publicacion.estadoEnvio) {
+			if(publicacion.estadoEnvio == 'EN_ENVIO') return [{name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO'}];
+			else return []
+		} */ 
+		else if (this.origin == 'myCompras'){
+			console.log(publicacion);
+			if(publicacion.estadoEnvio == 'RECIBIDA') return [];
+			else if(matchingOrders) return [{name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO', action: 'ver_envio'}];
+			else return [{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO', action: 'configurar_envio'}];
+		} else return [];
 	}
 
 	limpiarFiltros() {

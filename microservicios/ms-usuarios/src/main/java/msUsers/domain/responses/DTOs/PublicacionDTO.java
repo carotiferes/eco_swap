@@ -1,13 +1,11 @@
 package msUsers.domain.responses.DTOs;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 import msUsers.domain.entities.CaracteristicaProducto;
-import msUsers.domain.entities.Particular;
-import msUsers.domain.entities.Producto;
 import msUsers.domain.entities.enums.EstadoPublicacion;
+import msUsers.domain.entities.enums.TipoProducto;
 import msUsers.domain.entities.enums.TipoPublicacion;
+import msUsers.domain.logistica.enums.EstadoEnvio;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,7 +17,9 @@ public class PublicacionDTO {
     private String titulo;
     private String descripcion;
     private EstadoPublicacion estadoPublicacion;
+    private EstadoEnvio estadoEnvio;
     private TipoPublicacion tipoPublicacion;
+    private TipoProducto tipoProducto;
     private LocalDate fechaPublicacion;
     private Double precioVenta;
     private Double valorTruequeMax;
@@ -27,4 +27,5 @@ public class PublicacionDTO {
     private ParticularDTO particularDTO;
     private List<CaracteristicaProducto> caracteristicaProducto;
     private String imagenes;
+    private Double peso;
 }

@@ -1,3 +1,14 @@
+.header {
+	text-align: center;
+	margin: 20px;
+	padding-bottom: 20px;
+	border-bottom: 1px solid var(--light-grey);
+	font-size: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
 #main-opinar {
 	.content {
 		display: flex;
@@ -16,6 +27,7 @@
 		gap: 10px;
 		justify-content: center;
 		align-items: center;
+		margin: 10px 20px 30px;
 	
 		.confirm {
 			background-color: var(--opiniones);

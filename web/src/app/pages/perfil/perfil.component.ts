@@ -47,6 +47,8 @@ export class PerfilComponent {
 
 	refreshHeader: number = 0;
 
+	puedeOpinar = false;
+
 	constructor(private auth: AuthService, private usuarioService: UsuarioService,
 		public router: Router, private particularService: ParticularesService,
 		public dialog: MatDialog, private opinionesService: OpinionesService) {
@@ -56,6 +58,7 @@ export class PerfilComponent {
 		if (url != '/mi-perfil' && id_user != this.auth.getUserID()) { // PERFIL DE OTRO USUARIO
 			this.myProfile = false;
 			this.getUserInformation(id_user);
+			this.checkPuedeOpinar(id_user);
 			this.getOpiniones(id_user)
 		} else { // MI PERFIL
 			this.userData = { isSwapper: auth.isUserSwapper(), id: this.auth.getUserID() }
@@ -110,6 +113,15 @@ export class PerfilComponent {
 					publicKey: particular.publicKey
 				}
 			}
+		})
+	}
+
+	checkPuedeOpinar(id_user: string) {
+		this.opinionesService.puedeOpinar(Number(id_user)).subscribe({
+			next: (res: any) => {
+				if(res.status == 'OK') this.puedeOpinar = true;
+			},
+			error: (error: any) => console.log(error)
 		})
 	}
 
@@ -174,10 +186,8 @@ export class PerfilComponent {
 
 	selectImage() {
 		const dialogRef = this.dialog.open(ImagesModalComponent, {
-			maxWidth: '80vw',
-			maxHeight: '75vh',
-			height: '100%',
-			width: '100%',
+			minWidth: '50vw',
+			minHeight: '40vw',
 			panelClass: 'full-screen-modal'
 		});
 		dialogRef.afterClosed().subscribe((result) => {
@@ -192,10 +202,8 @@ export class PerfilComponent {
 
 	credencialesMP() {
 		const dialogRef = this.dialog.open(CredencialesMpModalComponent, {
-			maxWidth: '60vw',
-			maxHeight: '60vh',
-			height: '100%',
-			width: '100%',
+			minWidth: '50vw',
+			minHeight: '40vw',
 			panelClass: 'full-screen-modal',
 			data: {user: this.user, publicKey: this.userToShow?.publicKey, accessToken: this.userToShow?.accessToken}
 		});
@@ -207,10 +215,8 @@ export class PerfilComponent {
 
 	changePassword() {
 		const dialogRef = this.dialog.open(ChangePasswordModalComponent, {
-			maxWidth: '50vw',
-			maxHeight: '60vh',
-			height: '100%',
-			width: '100%',
+			minWidth: '50vw',
+			minHeight: '40vw',
 			panelClass: 'full-screen-modal',
 		});
 		dialogRef.afterClosed().subscribe((result) => {
@@ -221,10 +227,8 @@ export class PerfilComponent {
 
 	opinar() {
 		const dialogRef = this.dialog.open(OpinarModalComponent, {
-			maxWidth: '50vw',
-			maxHeight: '60vh',
-			height: '100%',
-			width: '100%',
+			minWidth: '50vw',
+			minHeight: '40vw',
 			panelClass: 'full-screen-modal',
 			data: {usuario: this.user, user: this.userToShow}
 		});

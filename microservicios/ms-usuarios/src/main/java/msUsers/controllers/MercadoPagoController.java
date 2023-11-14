@@ -17,6 +17,7 @@ import msUsers.domain.entities.Particular;
 import msUsers.domain.entities.Usuario;
 import msUsers.domain.entities.enums.EstadoCompra;
 import msUsers.domain.entities.enums.EstadoPublicacion;
+import msUsers.domain.logistica.enums.EstadoEnvio;
 import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.repositories.ComprasRepository;
 import msUsers.domain.repositories.PublicacionesRepository;
@@ -81,41 +82,48 @@ public class MercadoPagoController {
 
         // Creamos la compra
         if(publicacion.getCompras().stream().noneMatch(compra -> compra.getEstadoCompra() == EstadoCompra.APROBADA)) {
+            if(publicacion.getEstadoPublicacion() != EstadoPublicacion.CERRADA) {
+                Compra compra = new Compra();
+                compra.setPublicacion(publicacion);
+                compra.setParticularComprador(particular);
+                compra.setEstadoCompra(EstadoCompra.PENDIENTE);
+                var entity = this.comprasRepository.save(compra);
 
-            Compra compra = new Compra();
-            compra.setPublicacion(publicacion);
-            compra.setParticularComprador(particular);
-            compra.setEstadoCompra(EstadoCompra.PENDIENTE);
-            var entity = this.comprasRepository.save(compra);
+                publicacion.setEstadoEnvio(EstadoEnvio.POR_CONFIGURAR);
+                publicacionesRepository.save(publicacion);
 
-            // MP
-            MercadoPagoConfig.setAccessToken(globalAccessToken);
-            PreferenceClient client = new PreferenceClient();
-            List<PreferenceItemRequest> items = new ArrayList<>();
-            PreferenceItemRequest item = PreferenceItemRequest.builder()
-                    .title(publicacion.getTitulo().trim() + " " + publicacion.getDescripcion().trim())
-                    .description(publicacion.getDescripcion().trim())
-                    .pictureUrl(imageService.getImage(publicacion.getImagenes().split("\\|")[0]))
-                    .quantity(1)
-                    .currencyId("ARS")
-                    .unitPrice(BigDecimal.valueOf(publicacion.getPrecioVenta()))
-                    .build();
-            items.add(item);
+                // MP
+                MercadoPagoConfig.setAccessToken(globalAccessToken);
+                PreferenceClient client = new PreferenceClient();
+                List<PreferenceItemRequest> items = new ArrayList<>();
+                PreferenceItemRequest item = PreferenceItemRequest.builder()
+                        .title(publicacion.getTitulo().trim() + " " + publicacion.getDescripcion().trim())
+                        .description(publicacion.getDescripcion().trim())
+                        .pictureUrl(imageService.getImage(publicacion.getImagenes().split("\\|")[0]))
+                        .quantity(1)
+                        .currencyId("ARS")
+                        .unitPrice(BigDecimal.valueOf(publicacion.getPrecioVenta()))
+                        .build();
+                items.add(item);
 
 
-            PreferenceRequest request = PreferenceRequest.builder()
-                    .items(items)
-                    .externalReference(String.valueOf(entity.getIdCompra()))
-                    .notificationUrl("https://www.ecoswap.com.ar:8080/ms-users/api/webhook") // Esto cambia cada vez que use ngrok
-                    .build();
+                PreferenceRequest request = PreferenceRequest.builder()
+                        .items(items)
+                        .externalReference(String.valueOf(entity.getIdCompra()))
+                        .notificationUrl("https://www.ecoswap.com.ar:8080/ms-users/api/webhook") // Esto cambia cada vez que use ngrok
+                        .build();
 
-            Preference preference = client.create(request);
+                Preference preference = client.create(request);
 
-            compra.setIdPreferenceMercadoPago(preference.getId());
-            this.comprasRepository.save(compra);
+                compra.setIdPreferenceMercadoPago(preference.getId());
+                this.comprasRepository.save(compra);
 
-            log.info("<< Link de MercadoPago generado: {}", preference.getId());
-            return ResponseEntity.ok(preference);
+                log.info("<< Link de MercadoPago generado: {}", preference.getId());
+                return ResponseEntity.ok(preference);
+            }
+            else{
+                throw new EntityExistsException("La publicación ya se encuentra cerrada. Disculpa las molestias.");
+            }
         }else
             throw new EntityExistsException("La publicación ya fue comprada");
     }

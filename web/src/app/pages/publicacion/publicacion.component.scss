@@ -15,11 +15,17 @@
 					height: 40px;
 					font-size: 14px;
 					padding: 10px;
+					display: flex;
+					justify-content: space-between;
+
+					.open-chat {
+						background-color: var(--info);
+					}
 				}
 			}
 
 			.accordion-body {
-				max-height: 340px;
+				//max-height: 340px;
 				scrollbar-color: #888 #f1f1f1; // Firefox scrollbar styling
 				scrollbar-width: thin;
 
@@ -52,7 +58,10 @@
 				//width: 90%;
 				position: relative;
 				margin: 10px 5px 25px;
-				
+				display: flex;
+				flex-direction: column;
+				align-items: flex-end;
+
 				&.mio {
 					background: var(--primary-color);
 					.arrow-globo {
@@ -64,6 +73,7 @@
 
 				&.otro {
 					background-color: var(--light-grey);
+					* {text-align: left;}
 					.arrow-globo {
 						left: 0px;
 						bottom: -25px;
@@ -157,3 +167,10 @@
 		grid-template-columns: 1fr !important;
 	}
 }
+
+@media (min-width: 768px) {
+	.accordion-button::after {
+		display: none;
+	}
+}
+

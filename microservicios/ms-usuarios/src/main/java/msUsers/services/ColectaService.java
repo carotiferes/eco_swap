@@ -32,8 +32,6 @@ public class ColectaService {
     @Autowired
     private DonacionesRepository donacionesRepository;
     @Autowired
-    private MensajeRespuestaRepository mensajeRespuestaRepository;
-    @Autowired
     private CaracteristicaDonacionRepository caracteristicaDonacionRepository;
 
     public Donacion crearDonacion(RequestComunicarDonacionColectaModel request, Long idColecta, Long idParticular) {

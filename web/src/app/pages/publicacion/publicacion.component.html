@@ -4,38 +4,31 @@
 	<app-spinner [loading]="loading"></app-spinner>
 
 	<div *ngIf="!loading">
-		<div *ngIf="truequeAceptado.length == 0">
+		<div *ngIf="truequeAceptado.length == 0 && userCompras">
 			<!-- <div> [class]="userData.isLoggedIn && truequeAceptado.length == 1 ? 'col-sm-12 col-md-8' : ''" -->
 			<app-main-card-publicacion [publicacion]="publicacion" [userData]="userData" [userType]="userType"
-			(intercambiarEvent)="intercambiar()" (comprarEvent)="comprar()"></app-main-card-publicacion>
+			(intercambiarEvent)="intercambiar()" (comprarEvent)="comprar()" [compras]="userCompras"></app-main-card-publicacion>
 			<!-- </div> -->
 		</div>
 		<div *ngIf="userData.isLoggedIn && truequeAceptado.length == 1 && mainPublicacionCard" class="main-row">
-			<div ngbAccordion #accordion="ngbAccordion" class="dense-3">
-				<div ngbAccordionItem="first" #first="ngbAccordionItem" [collapsed]="false">
+			<div ngbAccordion #accordion="ngbAccordion" class="dense-3" style="min-width: 255px;">
+				<div ngbAccordionItem="first" #first="ngbAccordionItem" [collapsed]="false" [disabled]="screenWidth > 576">
 					<h2 ngbAccordionHeader>
 						<button ngbAccordionButton class="bg-transparent accordion-header-button">
-							<mat-icon>question_answer</mat-icon> <span style="margin-left: 10px;">Chat</span>
+							<mat-icon>question_answer</mat-icon>
+							<span style="margin-left: 10px; display: flex; align-items: center; gap: 10px;">
+								<span>Chat</span>
+							</span>
+							<button mat-mini-fab *ngIf="screenWidth > 576" (click)="openChat()" class="open-chat"><mat-icon>open_in_full</mat-icon></button>
+							
 						</button>
 					</h2>
 					<div ngbAccordionCollapse>
 						<div ngbAccordionBody>
 							<ng-template>
-								<div style="margin-bottom: 20px; max-height: 200px; overflow: auto; scrollbar-color: #888 #f1f1f1; scrollbar-width: thin;"
-								#chatContainer id="chatContainer">
-									<div *ngFor="let mensaje of mensajes" class="mensaje"
-									[ngClass]="mensaje.id_user == 1 ? 'mio' : 'otro'">
-										{{mensaje.text}}
-										<mat-icon class="arrow-globo">arrow_drop_down</mat-icon>
-									</div>
-								</div>
-									
-								<mat-form-field appearance="outline" style="min-width: 210px; width: 100%;" floatLabel="always">
-									<!-- <mat-label>Nuevo Mensaje</mat-label> -->
-									<textarea matInput [placeholder]="'Enviar mensaje a '+mainPublicacionCard.usuario.nombre" [(ngModel)]="nuevoMensaje" style="resize: none;"></textarea>
-									<!-- <input matInput formControlName="tipoProducto"> -->
-								</mat-form-field>
-									
+								<app-chat [mensajes]="mensajes" [userData]="userData" [elOtroSwapper]="elOtroSwapper"
+								[trueques]="trueques" [userType]="userType" [publicacion]="publicacion"
+								(sentMessage)="getMessages($event)"></app-chat> 
 								
 							</ng-template>
 						</div>
@@ -45,7 +38,7 @@
 			<div class="row">
 				<div class="col-sm-12 col-lg-5">
 					<!-- <h3 style="margin: 20px 0 0 5px; font-weight: bold;"> Trueque Aceptado! </h3> -->
-					<app-card [cardData]="mainPublicacionCard" app="publicaciones"></app-card>
+					<app-card [cardData]="mainPublicacionCard" app="publicaciones" (statusChanged)="getTrueques()"></app-card>
 				</div>
 				<div class="col-sm-12 col-lg-2" style="display: flex; align-items: center; justify-content: center;">
 					<mat-icon class="swap-icon">
@@ -55,15 +48,14 @@
 				</div>
 				<div class="col-sm-12 col-lg-5">
 					<!-- <h3 style="margin: 20px 0 0 5px; font-weight: bold;"> Trueque Aceptado! </h3> -->
-					<app-card [cardData]="truequeAceptado[0]" app="publicaciones"></app-card>
+					<app-card [cardData]="truequeAceptado[0]" app="publicaciones" (statusChanged)="getTrueques()"></app-card>
 				</div>
 			</div>
 		</div>
 	</div>
 
-
 	<div *ngIf="userData.isLoggedIn && truequeAceptado.length == 0 && mainPublicacionCard && mainPublicacionCard.estado == 'ABIERTA'">
-		<div ><!-- *ngIf="truequeAceptado.length == 0" -->
+		<div>
 			<h3 style="margin: 20px 0 0 5px; font-weight: bold;">
 				{{this.userType == 'publicacionPropuesta' ? 'Mi Trueque Activo' : 'Propuestas de Trueque'}}
 			</h3>

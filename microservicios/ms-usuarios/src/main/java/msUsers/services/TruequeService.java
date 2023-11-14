@@ -53,8 +53,10 @@ public class TruequeService {
 
         Predicate condicionEstadoPendiente  = criteriaBuilder.and(criteriaBuilder.notEqual(root.get("estadoTrueque"), EstadoTrueque.PENDIENTE));
         Predicate condicionEstadoAnulado = criteriaBuilder.and(criteriaBuilder.notEqual(root.get("estadoTrueque"), EstadoTrueque.ANULADO));
+        Predicate condicionEstadoRechazado = criteriaBuilder.and(criteriaBuilder.notEqual(root.get("estadoTrueque"), EstadoTrueque.RECHAZADO));
+        Predicate condicionEstadoCancelado = criteriaBuilder.and(criteriaBuilder.notEqual(root.get("estadoTrueque"), EstadoTrueque.CANCELADO));
 
-        condicionFinal = criteriaBuilder.and(condicionFinal, condicionEstadoAnulado, condicionEstadoPendiente);
+        condicionFinal = criteriaBuilder.and(condicionFinal, condicionEstadoAnulado, condicionEstadoPendiente, condicionEstadoCancelado, condicionEstadoRechazado);
 
         query.select(criteriaBuilder.count(root));
         query.where(condicionFinal);

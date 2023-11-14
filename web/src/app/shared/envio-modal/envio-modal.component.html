@@ -1,38 +1,83 @@
-<div id="main-envios">
+<!-- <div id="main-envios">
 	<div style="margin: 20px;">
-		<h2>Configurá los datos de tu producto para el Envío</h2>
+		<h2>{{yaTieneEnvio ? 'Datos de tu envío para: ' + yaTieneEnvio.titulo : 'Configurá los datos de tu producto para el Envío'}}</h2>
 	</div>
-	<!-- <div style="margin: 25px;">
-		<mat-icon (click)="downloadFile()" matTooltip="Clickeá acá para descargar el tutorial">info</mat-icon>
-	</div> -->
+</div> -->
+<div class="header">
+	<span style="width: 30px;"></span>
+	<span *ngIf="yaTieneEnvio">Datos de tu envío para: <br> {{yaTieneEnvio.titulo}}</span>
+	<span *ngIf="!yaTieneEnvio">Configurá el envío de tu producto</span>
+	<!-- <span>{{yaTieneEnvio ? 'Datos de tu envío para: ' + yaTieneEnvio.titulo : 'Configurá los datos de tu producto para el Envío'}}</span> -->
+	<mat-icon (click)="dialogRef.close()" style="margin-left: 10px; cursor: pointer;">close</mat-icon>
 </div>
 <div style="display: flex; justify-content: center;">
-	<mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+	<mat-spinner *ngIf="loading" diameter="20" style="margin-bottom: 60px;"></mat-spinner>
 </div>
-<div *ngIf="!loading">
+<div *ngIf="!loading && !yaTieneEnvio">
+	<div *ngIf="this.type == 'compra' && compra" style="margin: 0 20px 20px; text-align: center;">
+		El peso de este producto es: <b>{{compra.publicacionDTO.peso}} gramos</b>
+	</div>
 	<form [formGroup]="ordenForm" id="envio-form">
-		<mat-form-field>
+		<mat-form-field *ngIf="this.type != 'compra'">
 			<mat-label>Peso Aproximado del Producto</mat-label>
 			<input matInput formControlName="peso" type="number" class="number-input">
-			<span matSuffix style="margin: 20px;">kg</span>
+			<span matSuffix style="margin: 20px;">gramos</span>
 			<mat-error *ngIf="ordenForm.get('peso')!.hasError('required')">
 				Campo obligatorio
 			</mat-error>
 		</mat-form-field>
-		<mat-form-field>
-			<mat-label>Código Postal</mat-label>
-			<input matInput formControlName="codigoPostal">
-			<mat-error *ngIf="ordenForm.get('codigoPostal')!.hasError('required')">
-				Campo obligatorio
-			</mat-error>
-		</mat-form-field>
+		<div style="width: 70%; display: flex; justify-content: center;">
+			<mat-form-field>
+				<mat-label>Disponibilidad Horaria</mat-label>
+				<!-- <input matInput formControlName="disponibilidad"> -->
+				<mat-select formControlName="disponibilidad">
+					<mat-option value="9-12"> 9hs a 12hs</mat-option>
+					<mat-option value="13-16"> 13hs a 16hs</mat-option>
+					<mat-option value="17-20"> 17hs a 20hs</mat-option>
+				</mat-select>
+				<mat-error *ngIf="ordenForm.get('disponibilidad')!.hasError('required')">
+					Campo obligatorio
+				</mat-error>
+			</mat-form-field>
+			<span class="material-icons-outlined" style="margin-top: 15px; margin-left: 15px; cursor: default;" *ngIf="type == 'compra'"
+			matTooltip="Shipnow buscará el producto en los próximos 2 días y luego te lo llevará." matTooltipPosition="right">info</span>
+			<span class="material-icons-outlined" style="margin-top: 15px; margin-left: 15px; cursor: default;" *ngIf="type != 'compra'"
+			matTooltip="Shipnow buscará tu donación en los próximos 2 días." matTooltipPosition="right">info</span>
+		</div>
 	</form>
+	<div *ngIf="user" class="direccion">
+		<span>El envío se calcula utilizando tu dirección:</span>
+		<span><b>{{user.particularDTO.direcciones[0].calle}} {{user.particularDTO.direcciones[0].altura}}, {{user.particularDTO.direcciones[0].localidad}} (CP{{user.particularDTO.direcciones[0].codigoPostal}})</b></span>
+	</div>
+	<div *ngIf="ordenForm.valid" class="costo-envio">
+		<div>Costo de envío:</div>
+		<b style="font-size: 14px;" *ngIf="!loadingCosto">{{costoEnvio ? (costoEnvio | currency) : '-'}}</b>
+		<mat-spinner diameter="20" *ngIf="loadingCosto" color="secondary"></mat-spinner>
+		<button mat-fab extended class="confirm" (click)="calcularEnvio()">Calcular</button>
+	</div>
 	<div class="buttons">
 		<button mat-fab extended color="light" (click)="dialogRef.close()">CANCELAR</button>
 		<button mat-fab extended class="confirm" [disabled]="loadingSave || !ordenForm.valid"
 		(click)="crearOrden();ordenForm.markAllAsTouched(); ordenForm.valid">
-			<span>GUARDAR</span>
+			<span>CONFIRMAR</span>
 		</button>
 		<mat-spinner diameter="20" *ngIf="loadingSave"></mat-spinner>
+	</div>
+</div>
+
+<div *ngIf="!loading && yaTieneEnvio" class="main-data">
+	<!-- <h2>{{yaTieneEnvio.titulo}}</h2> -->
+	<p><mat-icon>numbers</mat-icon>Número de órden: <b>{{yaTieneEnvio.idOrden}}</b></p>
+	<p><mat-icon>credit_card</mat-icon>Precio de envío: <b>{{yaTieneEnvio.precioEnvio | currency}}</b></p>
+	<p><mat-icon>place</mat-icon>Origen: <b>{{yaTieneEnvio.nombreUserOrigen}}</b></p>
+	<p><mat-icon>place</mat-icon>Destino: <b>{{yaTieneEnvio.nombreUserDestino}}</b></p>
+	<!-- <p>Fecha a despachar: {{yaTieneEnvio.fechaADespachar}}</p> -->
+	<div>
+		<h3><mat-icon>route</mat-icon>Estados del envío:</h3>
+		<div style="display: flex; flex-direction: column; gap: 10px; margin-left: 25px;">
+			<div *ngFor="let estado of yaTieneEnvio.listaFechaEnvios" class="item">
+				<mat-icon>chevron_right</mat-icon>{{estado.estado.replace('_', ' ')}} - {{estado.fechaEnvio}}
+			</div>
+		</div>
 	</div>
 </div>

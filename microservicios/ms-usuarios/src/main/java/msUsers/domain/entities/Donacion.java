@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import msUsers.domain.entities.enums.EstadoDonacion;
+import msUsers.domain.logistica.enums.EstadoEnvio;
 import msUsers.domain.responses.DTOs.DonacionDTO;
 
 import java.time.LocalDate;
@@ -32,6 +33,9 @@ public class Donacion {
     @Enumerated(value = EnumType.STRING)
     private EstadoDonacion estadoDonacion;
 
+    @Enumerated(value = EnumType.STRING)
+    private EstadoEnvio estadoEnvio;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JsonBackReference
     private Particular particular;
@@ -53,6 +57,7 @@ public class Donacion {
         donacionDTO.setDescripcion(descripcion);
         donacionDTO.setCaracteristicaDonacion(caracteristicaDonacion);
         donacionDTO.setEstadoDonacion(estadoDonacion);
+        donacionDTO.setEstadoEnvio(estadoEnvio);
         donacionDTO.setImagenes(imagenes);
         donacionDTO.setParticularDTO(particular.toDTO());
         donacionDTO.setProducto(producto.toDTO(true));

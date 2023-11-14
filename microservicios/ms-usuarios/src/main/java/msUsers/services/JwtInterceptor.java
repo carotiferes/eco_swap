@@ -1,5 +1,9 @@
 package msUsers.services;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,7 +51,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             if (jwtToken == null || !jwtToken.startsWith("Bearer ")) {
                 log.warn("ERROR 401: Acceso no autorizado: " + uri);
                 UnauthorizedAccessResponse unauthorizedAccessResponse = new UnauthorizedAccessResponse(
-                        "ERROR 401: Acceso no autorizado.",
+                        "4011",
                         System.currentTimeMillis(),
                         HttpStatus.UNAUTHORIZED);
 
@@ -56,19 +60,30 @@ public class JwtInterceptor implements HandlerInterceptor {
                 return false;
             }
 
+
             String token = jwtToken.substring(7);
 
             try {
                 Usuario usuario = jwtService.getUsuarioPorJwt(token); // Ajusta esto según tu token
+
+                DecodedJWT decode = JWT.decode(token);
+                Algorithm algorithm = Algorithm.HMAC256(usuario.getSecretJWT());
+                log.info("ISSUER: {}", decode.getIssuer());
+                JWTVerifier verifier = JWT.require(algorithm)
+                        .withIssuer(decode.getIssuer())
+                        .build();
+                verifier.verify(token);
+
                 UsuarioContext.setUsuario(usuario); // Configurar el ThreadLocal
                 return true;
             } catch (Exception e) {
                 UnauthorizedAccessResponse unauthorizedAccessResponse = new UnauthorizedAccessResponse(
-                        "ERROR 401: Acceso no autorizado: ",
+                        "4011",
                         System.currentTimeMillis(),
                         HttpStatus.UNAUTHORIZED);
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write(objectMapper.writeValueAsString(unauthorizedAccessResponse));
+                log.error("ERROR 401: {}", e.getMessage());
                 return false;
             }
         }

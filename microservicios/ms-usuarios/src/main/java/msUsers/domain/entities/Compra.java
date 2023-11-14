@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import msUsers.converters.ZonedDateTimeConverter;
 import msUsers.domain.entities.enums.EstadoCompra;
+import msUsers.domain.logistica.enums.EstadoEnvio;
 import msUsers.domain.responses.DTOs.CompraDTO;
 
 import java.time.ZonedDateTime;
@@ -41,6 +42,9 @@ public class Compra {
     @Convert(converter = ZonedDateTimeConverter.class)
     private ZonedDateTime dateApproved;
 
+    @Enumerated(EnumType.STRING)
+    private EstadoEnvio estadoEnvio;
+
     public CompraDTO toDTO(){
         CompraDTO compraDTO = new CompraDTO();
         compraDTO.setIdCompra(idCompra);
@@ -49,6 +53,7 @@ public class Compra {
         compraDTO.setEstadoCompra(estadoCompra);
         compraDTO.setIdPreferenceMercadoPago(idPreferenceMercadoPago);
         compraDTO.setIdPaymentMercadoPago(idPaymentMercadoPago);
+        compraDTO.setEstadoEnvio(estadoEnvio);
         return compraDTO;
     }
 }
