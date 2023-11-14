@@ -42,14 +42,16 @@ public class Direccion {
     @NotNull
     private String codigoPostal;
 
+    private String horarioDisponibilidad;
+
     public DireccionDTO toDTO(){
         DireccionDTO direccionDTO = new DireccionDTO();
         direccionDTO.setCalle(calle);
-        direccionDTO.setDpto(dpto);
         direccionDTO.setPiso(piso);
         direccionDTO.setAltura(altura);
         direccionDTO.setLocalidad(localidad);
         direccionDTO.setCodigoPostal(codigoPostal);
+        direccionDTO.setHorarioDisponibilidad(horarioDisponibilidad);
         return direccionDTO;
     }
 }

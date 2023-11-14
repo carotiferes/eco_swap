@@ -11,9 +11,9 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
+import msUsers.components.events.NuevoEstadoOrdenEnvioEvent;
 import msUsers.domain.client.shipnow.ResponseOrder;
 import msUsers.domain.entities.*;
-import msUsers.domain.entities.enums.EstadoDonacion;
 import msUsers.domain.logistica.Order;
 import msUsers.domain.logistica.PingPong;
 import msUsers.domain.logistica.enums.EstadoEnvio;
@@ -24,8 +24,10 @@ import msUsers.domain.requests.logistica.PutOrderRequest;
 import msUsers.domain.responses.logistica.resultResponse.ResultShippingOptions;
 import msUsers.domain.responses.logisticaResponse.ResponseFechasEnvio;
 import msUsers.domain.responses.logisticaResponse.ResponseOrdenDeEnvio;
+import msUsers.exceptions.OrdenDeEnvioException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +42,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,10 +69,15 @@ public class LogisticaService {
     private OrdenesRepository ordenesRepository;
     @Autowired
     private ColectasRepository colectasRepository;
+
+    @Autowired
+    private DonacionesRepository donacionesRepository;
     @Autowired
     private CriteriaBuilderQueries criteriaBuilderQueries;
     @Autowired
     private EntityManager entityManager;
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     public PingPong pingpong() {
         HttpsURLConnection connection = null;
@@ -152,55 +160,73 @@ public class LogisticaService {
 
     @Transactional
     public void actualizarEstadoDeOrdenXOrdenId(String ordenId, PutOrderRequest putOrderRequest, Usuario usuario) throws Exception {
-        //FALTA EL TEMA DE LOS OPTIONALS
         log.info(">> Actualizar el estado de OrdenId {} al estado: {}", ordenId, putOrderRequest.getNuevoEstado());
+
         OrdenDeEnvio orderAEnviar = ordenesRepository.findById(Long.valueOf(ordenId))
-                .orElseThrow(() -> new EntityNotFoundException("No fue encontrada la orden de envio: " + ordenId));
-        if (usuario.getIdUsuario() != 999 || this.userPuedeHacerOrdenes(usuario, orderAEnviar)) {               // TODO: Solo cambié la negación del puedeHacerOrdenes (REVISAR)
-            throw new Exception("No se tiene permiso para realizar modificación en la orden de envio.");
+                .orElseThrow(() -> new EntityNotFoundException("No fue encontrada la orden de envío: " + ordenId));
+
+        // Validación de permisos
+        if (!(usuario.getIdUsuario() == 999 || this.userPuedeHacerOrdenes(usuario, orderAEnviar))) {
+            throw new Exception("No se tiene permiso para realizar modificación en la orden de envío.");
         }
+
         List<FechaEnvios> listadoFechasEnvios = orderAEnviar.getListaFechaEnvios();
-        FechaEnvios ultimoEstado = listadoFechasEnvios.get(listadoFechasEnvios.isEmpty() ? 0 : listadoFechasEnvios.size() - 1);
-        log.info(">> Cambio de estado de orden {} desde actual {} al nuevo {}", ordenId, ultimoEstado.getEstado().name(), putOrderRequest.getNuevoEstado());
+        EstadoEnvio ultimoEstado = listadoFechasEnvios.isEmpty() ? null : listadoFechasEnvios.get(listadoFechasEnvios.size() - 1).getEstado();
+
+        log.info(">> Cambio de estado de orden {} desde actual {} al nuevo {}", ordenId, ultimoEstado, putOrderRequest.getNuevoEstado());
 
         boolean esPublicacion = orderAEnviar.getEsPublicacion();
+        String estado = putOrderRequest.getNuevoEstado();
+        EstadoEnvio estadoEnvio = EstadoEnvio.valueOf(estado);
 
         LocalDate today = LocalDate.now();
-        // - Custom Pattern
-        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        String formattedDate = today.format(pattern);  //17-02-2022
+        String formattedDate = today.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
-        if(esPublicacion){
+        // Validación de cancelación
+        if (estadoEnvio == EstadoEnvio.CANCELADO && ultimoEstado != EstadoEnvio.POR_DESPACHAR) {
+            throw new OrdenDeEnvioException("Ya está en transcurso de envío. No se puede cancelar el mismo.");
+        }
 
-            String estado = putOrderRequest.getNuevoEstado();
-            EstadoEnvio estadoEnvio;
-            estadoEnvio = EstadoEnvio.valueOf(estado);
+        // Actualización de estado para publicación o donación
+        if (esPublicacion) {
             Publicacion publicacion = publicacionesRepository.findById(orderAEnviar.getPublicacionId())
                     .orElseThrow(() -> new EntityNotFoundException("No fue encontrada la publicación: " + ordenId));
-            publicacion.setEstadoEnvio(estadoEnvio);
+
+            publicacion.setEstadoEnvio(estadoEnvio == EstadoEnvio.CANCELADO ? EstadoEnvio.POR_CONFIGURAR : estadoEnvio);
             entityManager.merge(publicacion);
 
-        }
-        else{
-            String estado = putOrderRequest.getNuevoEstado();
-            EstadoEnvio estadoEnvio;
-            estadoEnvio = EstadoEnvio.valueOf(estado);
-            orderAEnviar.getProductosADonarDeOrdenList().forEach(p -> setDonacionEstadoEnvio(estadoEnvio, p.getIdDonacion()));
+            NuevoEstadoOrdenEnvioEvent nuevoEstadoOrdenEnvioEventCompra = new NuevoEstadoOrdenEnvioEvent(this, publicacion.getParticular().getUsuario(), estadoEnvio, publicacion);
+            applicationEventPublisher.publishEvent(nuevoEstadoOrdenEnvioEventCompra);
+        } else {
+            orderAEnviar.getProductosADonarDeOrdenList().forEach(p -> setDonacionEstadoEnvio(
+                    estadoEnvio == EstadoEnvio.CANCELADO ? EstadoEnvio.POR_CONFIGURAR : estadoEnvio,
+                    p.getIdDonacion())
+            );
+
             entityManager.merge(orderAEnviar);
-        } //else orderAEnviar.getProductosADonarDeOrdenList().forEach(p -> setDonacionEstadoDonacion(EstadoDonacion.valueOf(putOrderRequest.getNuevoEstado()), p.getIdDonacion()));
 
-    FechaEnvios nuevaFechaEnvio = FechaEnvios.builder()
-            .fechaEnvio(formattedDate)
-            .estado(EstadoEnvio.valueOf(putOrderRequest.getNuevoEstado()))
-            .build();
+            for (ProductosADonarDeOrden p : orderAEnviar.getProductosADonarDeOrdenList()) {
+                Donacion donacion = donacionesRepository.findById(p.getIdDonacion())
+                        .orElseThrow(() -> new EntityNotFoundException("No fue encontrada la donación: " + p.getIdDonacion()));
 
-    List<FechaEnvios> listadoFechasEnviosNuevo = orderAEnviar.getListaFechaEnvios();
-    listadoFechasEnviosNuevo.add(nuevaFechaEnvio);
-    orderAEnviar.setListaFechaEnvios(listadoFechasEnviosNuevo);
-    ordenesRepository.save(orderAEnviar);
-    log.info("<< Actualizacion de orden finalizada");
+                NuevoEstadoOrdenEnvioEvent nuevoEstadoOrdenEnvioEventDonacion = new NuevoEstadoOrdenEnvioEvent(this, donacion.getParticular().getUsuario(), estadoEnvio, donacion);
+                applicationEventPublisher.publishEvent(nuevoEstadoOrdenEnvioEventDonacion);
+            }
+        }
 
-}
+        // Agregar nueva fecha de envío
+        FechaEnvios nuevaFechaEnvio = FechaEnvios.builder()
+                .fechaEnvio(formattedDate)
+                .estado(estadoEnvio)
+                .build();
+
+        List<FechaEnvios> listadoFechasEnviosNuevo = orderAEnviar.getListaFechaEnvios();
+        listadoFechasEnviosNuevo.add(nuevaFechaEnvio);
+        orderAEnviar.setListaFechaEnvios(listadoFechasEnviosNuevo);
+        ordenesRepository.save(orderAEnviar);
+        log.info("<< Actualizacion de orden finalizada");
+    }
+
 
     public OrdenDeEnvio obtenerDetallesDeOrdenXOrdenId(Long ordenId) throws Exception {
         log.info(">> Obtener Detalles de ORDEN dado a OrdenId: {}", ordenId);

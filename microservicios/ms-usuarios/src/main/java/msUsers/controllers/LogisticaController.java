@@ -15,6 +15,7 @@ import msUsers.domain.responses.logistica.resultResponse.ResultShippingOptions;
 import msUsers.domain.responses.logisticaResponse.ResponseCostoEnvio;
 import msUsers.domain.responses.logisticaResponse.ResponseOrdenDeEnvio;
 import msUsers.services.LogisticaService;
+import msUsers.services.ProductoADonarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,8 @@ public class LogisticaController {
 
     @Autowired
     private LogisticaService logisticaService;
+    @Autowired
+    private ProductoADonarService productoADonarService;
     private static final String json = "application/json";
 
     @PostMapping(path = "/orden", consumes = json, produces = json)
@@ -79,17 +82,17 @@ public class LogisticaController {
         log.info(">> GET ORDER PARA EXTERNAL_REFERENCE: {}", userId);
         List<OrdenDeEnvio> ordenes = logisticaService.obtenerMisOrdenes(userId, type);
         log.info("<< ORDENES OBTENIDAS PARA {} con la cantidad de {} ordenes", userId, ordenes.size());
-        return ResponseEntity.ok(ordenes.stream().map(OrdenDeEnvio::toDTO).toList());
+        return ResponseEntity.ok(ordenes.stream().map(ordenDeEnvio -> ordenDeEnvio.toDTO(productoADonarService)).toList());
     }
 
-    @GetMapping(path = "/orden/{orderId}", consumes = json, produces = json)
+    @GetMapping(path = "/orden/{orderId}", produces = json)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<OrdenDeEnvio> obtenerOrdenesSegunOrderId(
+    public ResponseEntity<OrdenDeEnvioDTO> obtenerOrdenesSegunOrderId(
             @PathVariable(value = "orderId", required = true)  String orderId) throws Exception {
         log.info(">> GET ORDER PARA EXTERNAL_REFERENCE: {}", orderId);
         OrdenDeEnvio order = logisticaService.obtenerDetallesDeOrdenXOrdenId(Long.valueOf(orderId));
         log.info("<< ORDENES OBTENIDAS PARA {} con detalle {}", orderId, order);
-        return ResponseEntity.ok(order);
+        return ResponseEntity.ok(order.toDTO(productoADonarService));
     }
 
     @PutMapping(path = "/orden/{orderId}", consumes = json, produces = json)

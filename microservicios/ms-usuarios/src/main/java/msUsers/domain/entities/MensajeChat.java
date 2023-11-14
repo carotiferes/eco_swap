@@ -2,9 +2,10 @@ package msUsers.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import msUsers.converters.ZonedDateTimeConverter;
 import msUsers.domain.responses.DTOs.MensajeChatDTO;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Data
@@ -26,7 +27,8 @@ public class MensajeChat {
     private String mensaje;
 
     @Column(name = "timestampEnvio")
-    private LocalDateTime fechaHoraEnvio;
+    @Convert(converter = ZonedDateTimeConverter.class)
+    private ZonedDateTime fechaHoraEnvio;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_trueque")
