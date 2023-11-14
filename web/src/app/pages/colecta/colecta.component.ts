@@ -115,6 +115,8 @@ export class ColectaComponent {
 		this.donacionesCerradas.splice(0);
 		const auxListAbierta: CardModel[] = [];
 		const auxListCerrada: CardModel[] = [];
+
+		this.donaciones.sort((a, b) => new Date(b.fechaDonacion).getTime() - new Date(a.fechaDonacion).getTime());
 		for (const donacion of this.donacionesToShow) {
 			console.log(donacion);
 

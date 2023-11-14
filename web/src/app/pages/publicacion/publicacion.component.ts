@@ -267,6 +267,7 @@ export class PublicacionComponent implements AfterViewInit {
 		const auxList2: CardModel[] = [];
 		const auxList3: CardModel[] = [];
 
+		this.publicacionesToShow.sort((a, b) => new Date(b.fechaPublicacion).getTime() - new Date(a.fechaPublicacion).getTime());
 		for (const publicacion of this.publicacionesToShow) {
 			const item: CardModel = {
 				id: publicacion.idPublicacion,
@@ -289,7 +290,13 @@ export class PublicacionComponent implements AfterViewInit {
 
 			if(publicacion.estadoTrueque == 'APROBADO') {
 				// ACEPTADO
-				item.buttons = this.userType == 'publicacionOrigen' ? [{name: 'RECIBIDO', icon: 'done_all', color: 'primary', status: 'RECIBIDA', action: 'change_status'}] : [],
+				item.buttons = this.userType == 'publicacionOrigen' && publicacion.estadoEnvio != 'RECIBIDO' ? 
+					[{name: 'RECIBIDO', icon: 'done_all', color: 'primary', status: 'RECIBIDA', action: 'change_status'}] : 
+					this.userType == 'publicacionOrigen' && publicacion.estadoEnvio == 'RECIBIDO' ? 
+					[{ name: 'OPINAR', icon: 'rate_review', color: 'opinion', status: 'OPINAR', action: 'opinar' }] : [];
+				item.codigo = 'Publicación'; item.estadoAux = publicacion.estadoEnvio;
+				console.log(item);
+				
 				auxList1.push(item)
 				const trueque = this.trueques.find(item => item.publicacionDTOpropuesta.idPublicacion == publicacion.idPublicacion && item.estadoTrueque == 'APROBADO')
 				if(trueque) {
@@ -325,9 +332,14 @@ export class PublicacionComponent implements AfterViewInit {
 				localidad: this.publicacion.particularDTO.direcciones[0].localidad
 			},
 			action: 'detail',
-			buttons: this.userType == 'publicacionPropuesta' ? [{name: 'RECIBIDO', icon: 'done_all', color: 'primary', status: 'RECIBIDA', action: 'change_status'}] : [],
+			codigo: 'Publicación',
+			buttons: this.userType == 'publicacionPropuesta' && this.publicacion.estadoEnvio != 'RECIBIDO' ? 
+				[{name: 'RECIBIDO', icon: 'done_all', color: 'primary', status: 'RECIBIDA', action: 'change_status'}] : 
+				this.userType == 'publicacionPropuesta' && this.publicacion.estadoEnvio == 'RECIBIDO' ? 
+				[{ name: 'OPINAR', icon: 'rate_review', color: 'opinion', status: 'OPINAR', action: 'opinar' }] : [],
 			estado: this.publicacion.estadoPublicacion,
-			idAuxiliar: this.trueques.find(item => item.publicacionDTOpropuesta.idPublicacion == this.publicacion.idPublicacion)?.idTrueque
+			idAuxiliar: this.trueques.find(item => item.publicacionDTOpropuesta.idPublicacion == this.publicacion.idPublicacion)?.idTrueque,
+			estadoAux: this.publicacion.estadoEnvio
 		}
 		this.truequeAceptado = auxList1;
 		this.truequesActivos = auxList2;

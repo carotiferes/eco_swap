@@ -74,6 +74,7 @@ export class TrocarModalComponent {
 		this.publicacionesCardList.splice(0);
 		const auxList: CardModel[] = [];
 		
+		this.misPublicaciones.sort((a, b) => new Date(b.fechaPublicacion).getTime() - new Date(a.fechaPublicacion).getTime());
 		for (const publicacion of this.misPublicaciones) {
 			const item: CardModel = {
 				id: publicacion.idPublicacion,

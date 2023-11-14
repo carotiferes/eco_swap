@@ -166,7 +166,8 @@ export class PublicacionesComponent {
 	}
 
 	generateCardList() {
-		this.publicacionesCardList.splice(0)
+		this.publicacionesCardList.splice(0);
+		this.publicacionesToShow.sort((a, b) => new Date(b.fechaPublicacion).getTime() - new Date(a.fechaPublicacion).getTime());
 		const auxList: CardModel[] = [];
 		for (const publicacion of this.publicacionesToShow) {
 

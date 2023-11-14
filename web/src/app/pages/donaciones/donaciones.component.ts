@@ -67,6 +67,7 @@ export class DonacionesComponent {
 
 	generateCardList() {
 		this.donacionesCardList.splice(0);
+		this.donaciones.sort((a, b) => new Date(b.fechaDonacion).getTime() - new Date(a.fechaDonacion).getTime());
 		const auxDonaciones: CardModel[] = [];
 		for (const donacion of this.donaciones) {
 			let stringCaracteristicas = '';

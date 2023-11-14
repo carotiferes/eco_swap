@@ -164,6 +164,8 @@ export class CardComponent {
 		let cancel = '';
 		let deny = '';
 		let icon: 'success' | 'warning' = 'warning';
+		console.log(card, newStatus);
+		
 
 		const palabra = card.codigo ? card.codigo.toLowerCase() : this.app == 'publicaciones' ? 'propuesta de trueque' : 'donación';
 
@@ -249,6 +251,15 @@ export class CardComponent {
 					this.truequesService.cerrarPublicacion(card.id).subscribe({
 						next: (res: any) => {
 							console.log(res);
+							Swal.fire('Se cambió el estado!', 'Se guardó el nuevo estado de la ' + palabra, 'success').then(() => {
+								this.statusChanged.emit()
+							})
+						}
+					})
+				} else if (this.app == 'publicaciones' && newStatus == 'RECIBIDA') {
+					this.truequesService.recibirPublicacion(card.id).subscribe({
+						next: (res: any) => {
+							//console.log(res);
 							Swal.fire('Se cambió el estado!', 'Se guardó el nuevo estado de la ' + palabra, 'success').then(() => {
 								this.statusChanged.emit()
 							})

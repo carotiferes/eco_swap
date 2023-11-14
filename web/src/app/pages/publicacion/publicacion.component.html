@@ -38,7 +38,7 @@
 			<div class="row">
 				<div class="col-sm-12 col-lg-5">
 					<!-- <h3 style="margin: 20px 0 0 5px; font-weight: bold;"> Trueque Aceptado! </h3> -->
-					<app-card [cardData]="mainPublicacionCard" app="publicaciones"></app-card>
+					<app-card [cardData]="mainPublicacionCard" app="publicaciones" (statusChanged)="getTrueques()"></app-card>
 				</div>
 				<div class="col-sm-12 col-lg-2" style="display: flex; align-items: center; justify-content: center;">
 					<mat-icon class="swap-icon">
@@ -48,7 +48,7 @@
 				</div>
 				<div class="col-sm-12 col-lg-5">
 					<!-- <h3 style="margin: 20px 0 0 5px; font-weight: bold;"> Trueque Aceptado! </h3> -->
-					<app-card [cardData]="truequeAceptado[0]" app="publicaciones"></app-card>
+					<app-card [cardData]="truequeAceptado[0]" app="publicaciones" (statusChanged)="getTrueques()"></app-card>
 				</div>
 			</div>
 		</div>

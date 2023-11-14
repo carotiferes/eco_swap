@@ -1,5 +1,4 @@
-<div class="card" (click)="clicked(cardData)" *ngIf="cardData" [class.selected-card]="cardData.isSelected == true"
-	[ngClass]="app == 'publicaciones' && cardData.buttons.length == 0 ? 'small' : 'big'"
+<div class="card big" (click)="clicked(cardData)" *ngIf="cardData" [class.selected-card]="cardData.isSelected == true"
 	[class.is-donacion]="cardData.codigo == 'Donación'">
 	<mat-chip class="chip-localidad" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'">
 		<span> {{cardData.usuario.localidad}} </span>
@@ -36,29 +35,35 @@
 		</button>
 	</div>
 
-	<span *ngIf="cardData.estado == 'EN ESPERA' && isSwapper && idUserLoggedIn == cardData.usuario.id" class="llevar-donacion" >
-		¡Llevá tu donación!
-		<span class="material-icons-outlined" matTooltip="Cuando entregues la donación, la fundación podrá marcarla como RECIBIDA." >info</span>
-	</span>
-	<span *ngIf="cardData.estado == 'EN ENVIO' && !isSwapper" class="llevar-donacion" >
-		¡En envío!
-		<span class="material-icons-outlined" matTooltip="La donación está en proceso de envío.">info</span>
-	</span>
-	<span *ngIf="cardData.estado == 'APROBADA' && cardData.codigo == 'Donación' && !isSwapper" class="llevar-donacion" >
-		¡En envío!
-		<span class="material-icons-outlined" [matTooltip]="cardData.estadoAux == 'POR_CONFIGURAR' ? 'El swapper debe configurar el envío. Te avisaremos cuando lo haga.' : 'El envío está activo. Shipnow buscará el producto en los próximos 2 días habiles, y luego te lo llevará.'">info</span>
-	</span>
+	<!-- DONACIONES -->
+	<!-- {{cardData.estado}} || {{cardData.estadoAux}} -->
+	<div *ngIf="cardData.codigo == 'Donación'" style="width: 100%;">
+		<span *ngIf="cardData.estado == 'EN ESPERA' && isSwapper && idUserLoggedIn == cardData.usuario.id" class="llevar-donacion" >
+			¡Llevá tu donación!
+			<span class="material-icons-outlined" matTooltip="Cuando entregues la donación, la fundación podrá marcarla como RECIBIDA." >info</span>
+		</span>
+		<span *ngIf="cardData.estado == 'EN ENVIO' && !isSwapper" class="llevar-donacion" >
+			¡En envío!
+			<span class="material-icons-outlined" matTooltip="La donación está en proceso de envío.">info</span>
+		</span>
+		<span *ngIf="cardData.estado == 'APROBADA' && !isSwapper" class="llevar-donacion" >
+			¡En envío!
+			<span class="material-icons-outlined" [matTooltip]="cardData.estadoAux == 'POR_CONFIGURAR' ? 'El swapper debe configurar el envío. Te avisaremos cuando lo haga.' : 'El envío está activo. Shipnow buscará el producto en los próximos 2 días habiles, y luego te lo llevará.'">info</span>
+		</span>
+	</div>
 
-	<span *ngIf="!!cardData.estadoAux && cardData.estadoAux != 'RECIBIDO' && cardData.codigo == 'Venta'" class="llevar-donacion" >
-		¡En envío!
-		<span class="material-icons-outlined"
-		[matTooltip]="cardData.estadoAux == 'POR_CONFIGURAR' ? 'El swapper debe configurar el envío. Te avisaremos cuando lo haga.' : 'El envío está activo. Shipnow buscará tu producto en los próximos 2 días habiles, en el horario que configuraste.'" >info</span>
-	</span>
-
-	<span *ngIf="!!cardData.estadoAux && cardData.estadoAux == 'RECIBIDA'" class="llevar-donacion" >
-		<span class="material-icons-outlined">done_all</span>
-		¡Producto recibido!
-	</span>
+	<div *ngIf="cardData.codigo != 'Donación'" style="width: 100%;">
+		<span *ngIf="!!cardData.estadoAux && cardData.estadoAux != 'RECIBIDO' && cardData.codigo == 'Venta'" class="llevar-donacion">
+			{{cardData.estadoAux == 'POR_CONFIGURAR' ? '¡Envío pendiente!' :'¡En envío!'}}
+			<span class="material-icons-outlined"
+			[matTooltip]="cardData.estadoAux == 'POR_CONFIGURAR' ? 'El swapper debe configurar el envío. Te avisaremos cuando lo haga.' : 'El envío está activo. Shipnow buscará tu producto en los próximos 2 días habiles, en el horario que configuraste.'" >info</span>
+		</span>
+	
+		<span *ngIf="!!cardData.estadoAux && cardData.estadoAux == 'RECIBIDO'" class="llevar-donacion">
+			<span class="material-icons-outlined">done_all</span>
+			¡Producto recibido!
+		</span>
+	</div>
 
 	<div class="user-data" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'">
 		<img class="user-img" [src]="'assets/perfiles/perfiles-'+cardData.usuario.imagen+'.jpg'">
