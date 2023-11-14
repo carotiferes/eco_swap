@@ -3,12 +3,14 @@
 	<mat-chip class="chip-localidad" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'">
 		<span> {{cardData.usuario.localidad}} </span>
 	</mat-chip>
-	<div style="position: absolute; top: 10px; left: 10px;">
+	<div style="position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column;">
 		<span *ngIf="cardData.estado" class="material-icons-outlined result-icon"
 			[ngClass]="cardData.codigo != 'Venta' ? colorMap[cardData.estado] || 'red' : 'green'" [matTooltip]=" cardData.codigo && cardData.codigo == 'Venta' ? 'VENDIDO' : cardData.codigo ? cardData.codigo+' '+cardData.estado :
 			app == 'donaciones' ? 'Donación '+ cardData.estado : 'Trueque '+ cardData.estado">
 			{{ cardData.codigo != 'Venta' ? iconMap[cardData.estado] || 'pending' : 'shopping_cart' }}
 		</span>
+		<span class="result-icon" style="font-size: 14px;" *ngIf="cardData.estado && screenWidth <= 500" [ngClass]="cardData.codigo != 'Venta' ? colorMap[cardData.estado] || 'red' : 'green'">
+			{{cardData.codigo && cardData.codigo == 'Venta' ? 'VENDIDO' : cardData.estado}}</span>
 	</div>
 	<div class="img-div" style="display: flex; justify-content: center;">
 		<img class="card-img" [src]="getImagen(cardData.imagen)">
