@@ -15,17 +15,20 @@ export interface CardModel {
 		puntaje: number;
 		localidad: string;
 	};
-	buttons: {
-		name: string;
-		icon: string;
-		color: string;
-		status: string;
-		disabled?: boolean;
-	}[];
+	buttons: CardButtonModel[];
 	action: 'select' | 'access' | 'detail' | 'list' | 'trueque';
 	disabled?: boolean;
 	idAuxiliar?: number;
 	codigo?: string;
 	isSelected?: boolean;
 	estadoAux?: string;
+}
+
+export interface CardButtonModel {
+	name: string;
+	icon: string;
+	color: string;
+	status: string;
+	action: 'navigate' | 'ver_envio' | 'configurar_envio' | 'change_status' | 'click_card' | 'add_or_remove' | 'list' | 'opinar'; 
+	disabled?: boolean;
 }

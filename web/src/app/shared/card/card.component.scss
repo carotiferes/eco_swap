@@ -194,7 +194,7 @@
 		//flex-direction: column;
 		gap: 10px;
 		margin: 10px auto;
-		
+		justify-content: space-evenly;
 		/* button {
 			text-transform: uppercase;
 			width: 100%;
@@ -233,7 +233,7 @@
 		
 		button {
 			text-transform: uppercase;
-			width: 100%;
+			//width: 100%;
 		}
 	}
 }

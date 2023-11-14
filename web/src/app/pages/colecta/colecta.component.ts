@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CardModel } from 'src/app/models/card.model';
+import { CardButtonModel, CardModel } from 'src/app/models/card.model';
 import { ColectaModel } from 'src/app/models/colecta.model';
 import { DonacionModel } from 'src/app/models/donacion.model';
 import { OrdenModel } from 'src/app/models/orden.model';
@@ -115,6 +115,8 @@ export class ColectaComponent {
 		this.donacionesCerradas.splice(0);
 		const auxListAbierta: CardModel[] = [];
 		const auxListCerrada: CardModel[] = [];
+
+		this.donaciones.sort((a, b) => new Date(b.fechaDonacion).getTime() - new Date(a.fechaDonacion).getTime());
 		for (const donacion of this.donacionesToShow) {
 			console.log(donacion);
 
@@ -148,7 +150,8 @@ export class ColectaComponent {
 				buttons: this.getButtonsForCard(donacion, matchingOrders),
 				estado: donacion.estadoDonacion.replace('_',' '),
 				idAuxiliar: this.colecta.idColecta,
-				codigo: 'Donación'
+				codigo: 'Donación',
+				estadoAux: donacion.estadoEnvio
 			}
 			if(donacion.estadoDonacion == 'PENDIENTE') auxListAbierta.push(item)//this.donacionesAbiertas.push(item)
 			else auxListCerrada.push(item)//this.donacionesCerradas.push(item)
@@ -168,25 +171,24 @@ export class ColectaComponent {
 
 	}
 
-	getButtonsForCard(donacion: DonacionModel, matchingOrders: boolean) {
+	getButtonsForCard(donacion: DonacionModel, matchingOrders: boolean): CardButtonModel[] {
 		if(donacion.estadoDonacion == 'PENDIENTE') {
-			if(this.userData.isSwapper) return [{name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADA'}]
+			if(this.userData.isSwapper) return [{name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADA', action: 'change_status'}]
 			else {
 				return [
-					{name: 'ACEPTAR', icon: 'check', color: 'primary', status: 'APROBADA'},
-					{name: 'RECHAZAR', icon: 'close', color: 'warn', status: 'RECHAZADA'},
+					{name: 'ACEPTAR', icon: 'check', color: 'primary', status: 'APROBADA', action: 'change_status'},
+					{name: 'RECHAZAR', icon: 'close', color: 'warn', status: 'RECHAZADA', action: 'change_status'},
 				]
 			}
-		}
-		else if (donacion.estadoDonacion == 'EN_ESPERA' && !this.userData.isSwapper) {
-			return [{name: 'DONACIÓN RECIBIDA', icon: 'done_all', color: 'primary', status: 'RECIBIDA'}]
+		} else if (donacion.estadoDonacion == 'EN_ESPERA' && !this.userData.isSwapper) { // la lleva en persona
+			return [{name: 'DONACIÓN RECIBIDA', icon: 'done_all', color: 'primary', status: 'RECIBIDA', action: 'change_status'}]
 		} else if(donacion.estadoDonacion == 'APROBADA') {
 			if(this.userData.isSwapper && !matchingOrders) return [
-				{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO'},
-				{name: 'Llevar en persona', icon: 'directions_walk', color: 'info', status: 'EN_ESPERA'}
+				{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO', action: 'configurar_envio'},
+				{name: 'Llevar en persona', icon: 'directions_walk', color: 'info', status: 'EN_ESPERA', action: 'change_status'}
 			]
-			else if (this.userData.isSwapper && matchingOrders)
-				return [{name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO'}]
+			else if (this.userData.isSwapper && matchingOrders) // ya configuro el envio
+				return [{name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO', action: 'ver_envio'}]
 			else return []
 		} else return [];
 	}

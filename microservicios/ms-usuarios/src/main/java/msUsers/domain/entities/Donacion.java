@@ -57,6 +57,7 @@ public class Donacion {
         donacionDTO.setDescripcion(descripcion);
         donacionDTO.setCaracteristicaDonacion(caracteristicaDonacion);
         donacionDTO.setEstadoDonacion(estadoDonacion);
+        donacionDTO.setEstadoEnvio(estadoEnvio);
         donacionDTO.setImagenes(imagenes);
         donacionDTO.setParticularDTO(particular.toDTO());
         donacionDTO.setProducto(producto.toDTO(true));

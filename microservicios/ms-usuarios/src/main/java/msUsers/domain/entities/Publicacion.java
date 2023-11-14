@@ -67,6 +67,7 @@ public class Publicacion {
         publicacionDTO.setImagenes(imagenes);
         publicacionDTO.setDescripcion(descripcion);
         publicacionDTO.setTipoPublicacion(tipoPublicacion);
+        publicacionDTO.setTipoProducto(tipoProducto);
         publicacionDTO.setEstadoPublicacion(estadoPublicacion);
         publicacionDTO.setEstadoEnvio(estadoEnvio);
         publicacionDTO.setPrecioVenta(precioVenta);

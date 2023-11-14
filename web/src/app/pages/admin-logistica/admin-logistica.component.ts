@@ -15,7 +15,7 @@ export class AdminLogisticaComponent {
 	estados: {name: string, value: string}[] = [
 		{name: 'Cancelado', value: 'CANCELADO'},
 		{name: 'Enviado', value: 'ENVIADO'},
-		{name: 'Por Despachar', value: 'POR_DESPACHAR'},
+		/* {name: 'Por Despachar', value: 'POR_DESPACHAR'}, */
 		{name: 'Recibido', value: 'RECIBIDO'}
 	];
 

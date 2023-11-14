@@ -59,4 +59,8 @@ export class TruequesService {
 	cerrarPublicacion(id_publicacion: number) {
 		return this.backendService.patch(URL_NAME, `api/publicacion/${id_publicacion}`, {});
 	}
+
+	recibirPublicacion(id_publicacion: number) {
+		return this.backendService.patch(URL_NAME, `api/publicacion/${id_publicacion}/recibido`, {});
+	}
 }

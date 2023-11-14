@@ -3,6 +3,7 @@ package msUsers.domain.responses.DTOs;
 import lombok.Data;
 import msUsers.domain.entities.CaracteristicaProducto;
 import msUsers.domain.entities.enums.EstadoPublicacion;
+import msUsers.domain.entities.enums.TipoProducto;
 import msUsers.domain.entities.enums.TipoPublicacion;
 import msUsers.domain.logistica.enums.EstadoEnvio;
 
@@ -18,6 +19,7 @@ public class PublicacionDTO {
     private EstadoPublicacion estadoPublicacion;
     private EstadoEnvio estadoEnvio;
     private TipoPublicacion tipoPublicacion;
+    private TipoProducto tipoProducto;
     private LocalDate fechaPublicacion;
     private Double precioVenta;
     private Double valorTruequeMax;

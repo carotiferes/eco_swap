@@ -76,7 +76,7 @@
 		<h3><mat-icon>route</mat-icon>Estados del envío:</h3>
 		<div style="display: flex; flex-direction: column; gap: 10px; margin-left: 25px;">
 			<div *ngFor="let estado of yaTieneEnvio.listaFechaEnvios" class="item">
-				<mat-icon>chevron_right</mat-icon>{{estado.estado}} - {{estado.fechaEnvio}}
+				<mat-icon>chevron_right</mat-icon>{{estado.estado.replace('_', ' ')}} - {{estado.fechaEnvio}}
 			</div>
 		</div>
 	</div>

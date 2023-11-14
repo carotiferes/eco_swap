@@ -1,15 +1,16 @@
-<div class="card" (click)="clicked(cardData)" *ngIf="cardData" [class.selected-card]="cardData.isSelected == true"
-	[ngClass]="app == 'publicaciones' && cardData.buttons.length == 0 ? 'small' : 'big'"
+<div class="card big" (click)="clicked(cardData)" *ngIf="cardData" [class.selected-card]="cardData.isSelected == true"
 	[class.is-donacion]="cardData.codigo == 'Donación'">
 	<mat-chip class="chip-localidad" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'">
 		<span> {{cardData.usuario.localidad}} </span>
 	</mat-chip>
-	<div style="position: absolute; top: 10px; left: 10px;">
+	<div style="position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column;">
 		<span *ngIf="cardData.estado" class="material-icons-outlined result-icon"
-			[ngClass]="cardData.codigo != 'Venta' ? colorMap[cardData.estado] || 'red' : 'green'" [matTooltip]=" cardData.codigo && cardData.codigo == 'Venta' ? 'COMPRADO' : cardData.codigo ? cardData.codigo+' '+cardData.estado :
+			[ngClass]="cardData.codigo != 'Venta' ? colorMap[cardData.estado] || 'red' : 'green'" [matTooltip]=" cardData.codigo && cardData.codigo == 'Venta' ? 'VENDIDO' : cardData.codigo ? cardData.codigo+' '+cardData.estado :
 			app == 'donaciones' ? 'Donación '+ cardData.estado : 'Trueque '+ cardData.estado">
 			{{ cardData.codigo != 'Venta' ? iconMap[cardData.estado] || 'pending' : 'shopping_cart' }}
 		</span>
+		<span class="result-icon" style="font-size: 14px;" *ngIf="cardData.estado && screenWidth <= 500" [ngClass]="cardData.codigo != 'Venta' ? colorMap[cardData.estado] || 'red' : 'green'">
+			{{cardData.codigo && cardData.codigo == 'Venta' ? 'VENDIDO' : cardData.estado}}</span>
 	</div>
 	<div class="img-div" style="display: flex; justify-content: center;">
 		<img class="card-img" [src]="getImagen(cardData.imagen)">
@@ -30,43 +31,41 @@
 
 	<div class="buttons" *ngIf="cardData.buttons.length > 0">
 		<button *ngFor="let button of cardData.buttons" mat-mini-fab [color]="button.color"
-			[matTooltip]="button.name" matTooltipPosition="above" [style]="button.color == 'info' ? 'background-color: var(--info)' :''"
+			[matTooltip]="button.name" matTooltipPosition="above" [style]="button.color == 'info' ? 'background-color: var(--info)' : button.color == 'opinion' ? 'background-color: var(--opiniones); color: white;' :''"
 			(click)="buttonClicked(cardData, button); $event.stopPropagation()">
 			<mat-icon>{{button.icon}}</mat-icon>
 		</button>
-		<!-- <button *ngIf="cardData.estado == 'RECIBIDO' || cardData.estado == 'RECIBIDA'">
-				OPINAR
-		</button> -->
-	</div> <!-- (button.status != 'RECIBIDO' && button.status != 'RECIBIDA') ? (cardData.estado != 'PENDIENTE' && button.status != 'INFO' && button.status != 'EN_ESPERA') : (cardData.estado != 'APROBADO' && cardData.estado != 'APROBADA') -->
+	</div>
 
-	<span *ngIf="cardData.estado == 'EN ESPERA' && isSwapper" class="llevar-donacion" >
-		¡Llevá tu donación!
-		<span class="material-icons-outlined" matTooltip="Cuando entregues la donación, la fundación podrá marcarla como RECIBIDA." >info</span>
-	</span>
-	<span *ngIf="cardData.estado == 'EN ENVIO' && !isSwapper" class="llevar-donacion" >
-		¡En envío!
-		<span class="material-icons-outlined" matTooltip="La donación está en proceso de envío.">info</span>
-	</span>
-	<!-- NO PORQUE VA A TENER EL BOTON DE RECIBIDO
-		<span *ngIf="cardData.estado == 'EN_ESPERA' && !isSwapper" class="llevar-donacion" >
-		¡En envío!
-		<span class="material-icons-outlined" matTooltip="El swapper llevará la donación a la fundación.">info</span>
-	</span> -->
-	<span *ngIf="cardData.estado == 'APROBADA' && cardData.codigo == 'Donación' && !isSwapper" class="llevar-donacion" >
-		¡En envío!
-		<span class="material-icons-outlined" matTooltip="El swapper debe configurar el envío. Te avisaremos cuando lo haga." >info</span>
-	</span>
+	<!-- DONACIONES -->
+	<!-- {{cardData.estado}} || {{cardData.estadoAux}} -->
+	<div *ngIf="cardData.codigo == 'Donación'" style="width: 100%;">
+		<span *ngIf="cardData.estado == 'EN ESPERA' && isSwapper && idUserLoggedIn == cardData.usuario.id" class="llevar-donacion" >
+			¡Llevá tu donación!
+			<span class="material-icons-outlined" matTooltip="Cuando entregues la donación, la fundación podrá marcarla como RECIBIDA." >info</span>
+		</span>
+		<span *ngIf="cardData.estado == 'EN ENVIO' && !isSwapper" class="llevar-donacion" >
+			¡En envío!
+			<span class="material-icons-outlined" matTooltip="La donación está en proceso de envío.">info</span>
+		</span>
+		<span *ngIf="cardData.estado == 'APROBADA' && !isSwapper" class="llevar-donacion" >
+			¡En envío!
+			<span class="material-icons-outlined" [matTooltip]="cardData.estadoAux == 'POR_CONFIGURAR' ? 'El swapper debe configurar el envío. Te avisaremos cuando lo haga.' : 'El envío está activo. Shipnow buscará el producto en los próximos 2 días habiles, y luego te lo llevará.'">info</span>
+		</span>
+	</div>
 
-	<span *ngIf="!!cardData.estadoAux && cardData.estadoAux != 'RECIBIDA' && cardData.codigo == 'Venta'" class="llevar-donacion" >
-		¡En envío!
-		<span class="material-icons-outlined"
-		[matTooltip]="cardData.estadoAux == 'POR_CONFIGURAR' ? 'El swapper debe configurar el envío. Te avisaremos cuando lo haga.' : 'El envío está activo. Shipnow buscará tu producto en los próximos 2 días habiles, en el horario que configuraste.'" >info</span>
-	</span>
-
-	<span *ngIf="!!cardData.estadoAux && cardData.estadoAux == 'RECIBIDA'" class="llevar-donacion" >
-		<span class="material-icons-outlined">done_all</span>
-		¡Producto recibido!
-	</span>
+	<div *ngIf="cardData.codigo != 'Donación'" style="width: 100%;">
+		<span *ngIf="!!cardData.estadoAux && cardData.estadoAux != 'RECIBIDO' && cardData.codigo == 'Venta'" class="llevar-donacion">
+			{{cardData.estadoAux == 'POR_CONFIGURAR' ? '¡Envío pendiente!' :'¡En envío!'}}
+			<span class="material-icons-outlined"
+			[matTooltip]="cardData.estadoAux == 'POR_CONFIGURAR' ? 'El swapper debe configurar el envío. Te avisaremos cuando lo haga.' : 'El envío está activo. Shipnow buscará tu producto en los próximos 2 días habiles, en el horario que configuraste.'" >info</span>
+		</span>
+	
+		<span *ngIf="!!cardData.estadoAux && cardData.estadoAux == 'RECIBIDO'" class="llevar-donacion">
+			<span class="material-icons-outlined">done_all</span>
+			¡Producto recibido!
+		</span>
+	</div>
 
 	<div class="user-data" [ngClass]="app == 'publicaciones' ? 'background-verde' : 'background-lila'">
 		<img class="user-img" [src]="'assets/perfiles/perfiles-'+cardData.usuario.imagen+'.jpg'">

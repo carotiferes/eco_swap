@@ -5,7 +5,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Router } from '@angular/router';
 import { Observable, map, startWith } from 'rxjs';
-import { CardModel } from 'src/app/models/card.model';
+import { CardButtonModel, CardModel } from 'src/app/models/card.model';
 import { OrdenModel } from 'src/app/models/orden.model';
 import { PublicacionModel } from 'src/app/models/publicacion.model';
 import { TruequeModel } from 'src/app/models/trueque.model';
@@ -97,8 +97,11 @@ export class PublicacionesComponent {
 		});
 	}
 
-	filtrarPublicaciones() {
+	filtrarPublicaciones(event?:any) {
+		console.log(event);
+		
 		this.loading = true;
+		this.publicacionesToShow.splice(0)
 		if(this.origin == 'all'){
 			this.filtros = {};
 			const tipoProducto = this.formFiltros.controls['tipoProducto'].value;
@@ -163,7 +166,8 @@ export class PublicacionesComponent {
 	}
 
 	generateCardList() {
-		this.publicacionesCardList.splice(0)
+		this.publicacionesCardList.splice(0);
+		this.publicacionesToShow.sort((a, b) => new Date(b.fechaPublicacion).getTime() - new Date(a.fechaPublicacion).getTime());
 		const auxList: CardModel[] = [];
 		for (const publicacion of this.publicacionesToShow) {
 
@@ -199,7 +203,7 @@ export class PublicacionesComponent {
 				idAuxiliar: !!idPublicacionOrigen ? idPublicacionOrigen : !!idPublicacionPropuesta ? publicacion.idPublicacion : publicacion.idCompra ? publicacion.idCompra : undefined,
 				buttons: this.getButtonsForCard(publicacion, !!idPublicacionOrigen || !!idPublicacionPropuesta, matchingOrders),
 				estado: this.origin == 'myPublicaciones' ? publicacion.estadoPublicacion : publicacion.estadoCompra ? publicacion.estadoCompra : undefined,
-				codigo: publicacion.idCompra ? 'Compra' : !!publicacion.estadoEnvio ? 'Venta' : 'Publicación',
+				codigo: publicacion.idCompra ? 'Compra' : this.origin != 'all' ? !!publicacion.estadoEnvio ? 'Venta' : 'Publicación' : 'Publicación',
 				estadoAux: publicacion.estadoEnvio
 			})
 		}
@@ -208,15 +212,10 @@ export class PublicacionesComponent {
 		this.loading = false;
 	}
 
-	getButtonsForCard(publicacion: PublicacionModel, truequeAprobado: boolean = false, matchingOrders: boolean = false) {
+	getButtonsForCard(publicacion: PublicacionModel, truequeAprobado: boolean = false, matchingOrders: boolean = false): CardButtonModel[] {
 		if(this.origin == 'myPublicaciones' && !publicacion.idCompra && !publicacion.estadoEnvio) {
-			const list =[{
-				name: !truequeAprobado ? '¿Dónde lo propuse?' : 'Ver trueque',
-				icon: 'info',
-				color: 'primary',
-				status: 'INFO'
-			}]
-			if (publicacion.estadoPublicacion == 'ABIERTA') list.push({name: 'Cerrar publicación', icon: 'close', color: 'warn', status: 'CERRADA'});
+			const list: CardButtonModel[] = [{ name: !truequeAprobado ? '¿Dónde lo propuse?' : 'Ver trueque', icon: 'info', color: 'primary', status: 'INFO', action: !truequeAprobado ? 'list' : 'navigate'}]
+			if (publicacion.estadoPublicacion == 'ABIERTA') list.push({name: 'Cerrar publicación', icon: 'close', color: 'warn', status: 'CERRADA', action: 'change_status'});
 			return list;
 		} /* else if(this.origin == 'myPublicaciones' && publicacion.estadoEnvio) {
 			if(publicacion.estadoEnvio == 'EN_ENVIO') return [{name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO'}];
@@ -225,8 +224,8 @@ export class PublicacionesComponent {
 		else if (this.origin == 'myCompras'){
 			console.log(publicacion);
 			if(publicacion.estadoEnvio == 'RECIBIDA') return [];
-			else if(matchingOrders) return [{name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO'}];
-			else return [{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO'}];
+			else if(matchingOrders) return [{name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO', action: 'ver_envio'}];
+			else return [{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO', action: 'configurar_envio'}];
 		} else return [];
 	}
 

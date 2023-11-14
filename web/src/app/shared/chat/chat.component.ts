@@ -37,6 +37,7 @@ export class ChatComponent {
 			this.origin = 'modal'
 		}
 
+		
 		websocketService.connect().subscribe({
 			next: (message) => {
 				console.log('message subscription', message);
@@ -72,6 +73,10 @@ export class ChatComponent {
 				fechaHoraEnvio: new Date()//(new Date()).toISOString().replace('T', ' ').replace('Z', ' ')
 			});
 		}
+		this.nuevoMensaje = '';
+		const id = this.origin == 'inline' ? 'chatContainer' : 'modal-chat-container';
+		const elem = this.document.getElementById(id)
+		if(elem) elem.scrollTop = elem.scrollHeight;
 	}
 
 	/* sendMensaje() {

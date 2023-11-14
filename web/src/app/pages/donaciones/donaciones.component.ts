@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { CardModel } from 'src/app/models/card.model';
+import { CardButtonModel, CardModel } from 'src/app/models/card.model';
 import { DonacionModel } from 'src/app/models/donacion.model';
 import { OrdenModel } from 'src/app/models/orden.model';
 import { AuthService } from 'src/app/services/auth.service';
@@ -67,6 +67,7 @@ export class DonacionesComponent {
 
 	generateCardList() {
 		this.donacionesCardList.splice(0);
+		this.donaciones.sort((a, b) => new Date(b.fechaDonacion).getTime() - new Date(a.fechaDonacion).getTime());
 		const auxDonaciones: CardModel[] = [];
 		for (const donacion of this.donaciones) {
 			let stringCaracteristicas = '';
@@ -97,8 +98,10 @@ export class DonacionesComponent {
 				},
 				action: 'access',
 				buttons: this.getButtonsForCard(donacion, matchingOrders),
-				estado: donacion.estadoDonacion.replace('_',' '),
-				idAuxiliar: donacion.producto.colectaDTO.idColecta
+				estado: donacion.estadoEnvio == 'RECIBIDO' ? 'RECIBIDA' : donacion.estadoDonacion.replace('_',' '),
+				idAuxiliar: donacion.producto.colectaDTO.idColecta,
+				codigo: 'Donación',
+				estadoAux: donacion.estadoEnvio
 			}
 			auxDonaciones.push(item)
 			this.loading = false;
@@ -106,15 +109,18 @@ export class DonacionesComponent {
 		this.donacionesCardList = auxDonaciones;
 	}
 
-	getButtonsForCard(donacion: DonacionModel, matchingOrders: boolean) {
-		if(donacion.estadoDonacion == 'APROBADA') {
-			if(matchingOrders) return [{ name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO' }]
+	getButtonsForCard(donacion: DonacionModel, matchingOrders: boolean): CardButtonModel[] {
+		if(donacion.estadoEnvio == 'RECIBIDO' || donacion.estadoDonacion == 'RECIBIDA') {
+			return [{ name: 'OPINAR', icon: 'rate_review', color: 'opinion', status: 'OPINAR', action: 'opinar' }];
+		} else if(donacion.estadoDonacion == 'APROBADA') {
+			if(matchingOrders) // ya tiene una orden de envio
+				return [{ name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO', action: 'ver_envio' }]
 			else return [
-				{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO'},
-				{name: 'Llevar en persona', icon: 'directions_walk', color: 'info', status: 'EN_ESPERA'}
+				{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO', action: 'configurar_envio'},
+				{name: 'Llevar en persona', icon: 'directions_walk', color: 'info', status: 'EN_ESPERA', action: 'change_status'}
 			]
-		} else if (donacion.estadoDonacion != 'EN_ESPERA' && donacion.estadoDonacion != 'EN_ENVIO' && donacion.estadoDonacion != 'RECIBIDA')
-			return [{ name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADA' }];
+		} else if (donacion.estadoDonacion == 'PENDIENTE')
+			return [{ name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADA', action: 'change_status' }]
 		else return [];
 	}
 
@@ -137,7 +143,7 @@ export class DonacionesComponent {
 			if (donacion.estado == 'APROBADA' && !matchingOrders) {
 				donacion.action = 'select';
 				donacion.codigo = 'Donación';
-				donacion.buttons = [{ name: 'Agregar', icon: 'add', color: 'info', status: 'INFO' }]
+				donacion.buttons = [{ name: 'Agregar', icon: 'add', color: 'info', status: 'INFO', action: 'add_or_remove' }]
 			} else {
 				donacion.buttons = []
 			}
@@ -167,7 +173,7 @@ export class DonacionesComponent {
 						donacion.codigo = undefined;
 						donacion.buttons = [];
 					} else if (this.selectedCards.includes(donacionSeleccionada) && donacion.id == donacionSeleccionada.id) {
-						donacion.buttons = [{ name: 'Quitar', icon: 'remove', color: 'info', status: 'INFO' }]
+						donacion.buttons = [{ name: 'Quitar', icon: 'remove', color: 'info', status: 'INFO', action: 'add_or_remove' }]
 					}
 				});
 				this.donacionesCardList = auxDonaciones;
@@ -178,7 +184,7 @@ export class DonacionesComponent {
 					this.selectedCards.push(donacionSeleccionada)
 					this.donacionesCardList.map(donacion => {
 						if(donacion.id == donacionSeleccionada.id) {
-							donacion.buttons = [{ name: 'Quitar', icon: 'remove', color: 'info', status: 'INFO' }]
+							donacion.buttons = [{ name: 'Quitar', icon: 'remove', color: 'info', status: 'INFO', action: 'add_or_remove' }]
 						}
 					})
 
@@ -196,20 +202,19 @@ export class DonacionesComponent {
 				this.colectaParaEnvio = undefined;
 				const auxDonaciones = this.donacionesCardList;
 				auxDonaciones.map(donacion => {
-					// Get the list of unique idDonacion values from the cards array
-					const uniqueIdDonacionValues = [...new Set(this.donaciones.map((card: DonacionModel) => card.idDonacion))];
-
 					// Find the orders that match the idDonacion from the cards array
 					const matchingOrders = this.userOrders.find(order => {
 						return order.productosADonarDeOrdenList.some((producto: any) => {
-							return uniqueIdDonacionValues.includes(producto.idDonacion);
+							return producto.idDonacion == donacion.id
 						});
 					});
 					//if(matchingOrders.length > 0) this.yaTieneEnvio = matchingOrders;
+					console.log(donacion, matchingOrders);
+					
 					if (donacion.estado == 'APROBADA' && !matchingOrders) {
 						donacion.action = 'select';
 						donacion.codigo = 'Donación';
-						donacion.buttons = [{ name: 'Agregar', icon: 'add', color: 'info', status: 'INFO' }]
+						donacion.buttons = [{ name: 'Agregar', icon: 'add', color: 'info', status: 'INFO', action: 'add_or_remove' }]
 					} else {
 						donacion.action = 'detail';
 						donacion.codigo = undefined;
@@ -225,7 +230,7 @@ export class DonacionesComponent {
 					if(donacion.id == cardID) {
 						donacion.action = 'select';
 						donacion.codigo = 'Donación';
-						donacion.buttons = [{ name: 'Agregar', icon: 'add', color: 'info', status: 'INFO' }]
+						donacion.buttons = [{ name: 'Agregar', icon: 'add', color: 'info', status: 'INFO', action: 'add_or_remove' }]
 					}
 				})
 			}
@@ -248,7 +253,7 @@ export class DonacionesComponent {
 
 			donacion.action = 'detail';
 			donacion.codigo = undefined;
-			donacion.buttons = donacion.estado == 'APROBADA' && matchingOrders ? [{ name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO' }] : [];
+			donacion.buttons = donacion.estado == 'APROBADA' && matchingOrders ? [{ name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO', action: 'ver_envio' }] : [];
 
 		});
 		this.donacionesCardList = auxDonaciones;
