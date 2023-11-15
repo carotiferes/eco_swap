@@ -20,6 +20,8 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+
 @Controller
 @Slf4j
 public class ChatController {
@@ -48,7 +50,7 @@ public class ChatController {
         MensajeChat mensaje = new MensajeChat();
         mensaje.setMensaje(requestMensajeChat.getMensaje());
         mensaje.setTrueque(trueque);
-        mensaje.setFechaHoraEnvio(LocalDateTime.now());
+        mensaje.setFechaHoraEnvio(ZonedDateTime.now());
         mensaje.setUsuarioEmisor(usuarioEmisor);
         mensaje.setUsuarioReceptor(usuarioReceptor);
         //var entitiy = this.mensajesChatRepository.save(mensaje);
@@ -74,7 +76,7 @@ public class ChatController {
         MensajeChat mensaje = new MensajeChat();
         mensaje.setMensaje(requestMensajeChat.getMensaje());
         mensaje.setTrueque(trueque);
-        mensaje.setFechaHoraEnvio(LocalDateTime.now());
+        mensaje.setFechaHoraEnvio(ZonedDateTime.now());
         mensaje.setUsuarioEmisor(usuarioEmisor);
         mensaje.setUsuarioReceptor(usuarioReceptor);
         //var entitiy = this.mensajesChatRepository.save(mensaje);

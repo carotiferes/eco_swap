@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.domain.responses.DTOs.OrdenDeEnvioDTO;
 import msUsers.domain.responses.DTOs.ParticularDTO;
+import msUsers.services.ProductoADonarService;
 
 import java.util.List;
 
@@ -78,7 +79,7 @@ public class OrdenDeEnvio {
 
     private String fechaADespachar;
 
-    public OrdenDeEnvioDTO toDTO() {
+    public OrdenDeEnvioDTO toDTO(ProductoADonarService productoADonarService) {
         OrdenDeEnvioDTO ordenDeEnvioDTO = new OrdenDeEnvioDTO();
         ordenDeEnvioDTO.setIdOrden(idOrden);
         ordenDeEnvioDTO.setDescripcion(descripcion);
@@ -101,7 +102,7 @@ public class OrdenDeEnvio {
         ordenDeEnvioDTO.setIdUsuarioDestino(idUsuarioDestino);
         ordenDeEnvioDTO.setIdUsuarioOrigen(idUsuarioOrigen);
         ordenDeEnvioDTO.setListaFechaEnvios(listaFechaEnvios.stream().map(FechaEnvios::toDTO).toList());
-        ordenDeEnvioDTO.setProductosADonarDeOrdenList(productosADonarDeOrdenList.stream().map(ProductosADonarDeOrden::toDTO).toList());
+        ordenDeEnvioDTO.setProductosADonarDeOrdenList(productosADonarDeOrdenList.stream().map(productoADonarService::obtenerProductoDTO).toList());
         return ordenDeEnvioDTO;
     }
 }

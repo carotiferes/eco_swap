@@ -8,6 +8,8 @@ import java.util.List;
 public class UsuarioEnOpinionDTO {
 
     private long idUsuario;
+    private String nombre;
+    private String apellido;
     private String username;
     private List<DireccionDTO> direcciones;
     private String telefono;
