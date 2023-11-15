@@ -12,6 +12,7 @@ import com.mercadopago.resources.preference.Preference;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import msUsers.components.events.NuevaCompraEvent;
 import msUsers.domain.entities.Compra;
 import msUsers.domain.entities.Particular;
 import msUsers.domain.entities.Usuario;
@@ -26,6 +27,7 @@ import msUsers.domain.responses.ResponseWebhook;
 import msUsers.services.CriteriaBuilderQueries;
 import msUsers.services.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,6 +62,8 @@ public class MercadoPagoController {
 
     @Autowired
     private ImageService imageService;
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     private static String globalAccessToken;
 
@@ -162,8 +166,12 @@ public class MercadoPagoController {
                     this.comprasRepository.save(compra);
                     log.info("<< Compra actualizada correctamente en la base de datos.");
 
+
                     final var publicacion = this.publicacionesRepository.findById(compra.getPublicacion().getIdPublicacion()).
                             orElseThrow(() -> new EntityNotFoundException("No fue encontrada la publicación: " + compra.getPublicacion().getIdPublicacion()));
+
+                    NuevaCompraEvent nuevaCompraEvent = new NuevaCompraEvent(this, compra, publicacion.getParticular().getUsuario(), publicacion);
+                    applicationEventPublisher.publishEvent(nuevaCompraEvent);
 
                     publicacion.setEstadoPublicacion(EstadoPublicacion.CERRADA);
                     this.publicacionesRepository.save(publicacion);

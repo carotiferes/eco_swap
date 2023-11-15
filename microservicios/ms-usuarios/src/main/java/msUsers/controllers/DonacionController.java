@@ -53,7 +53,6 @@ public class DonacionController {
     CriteriaBuilderQueries criteriaBuilderQueries;
     @Autowired
     ParticularesRepository particularesRepository;
-
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 

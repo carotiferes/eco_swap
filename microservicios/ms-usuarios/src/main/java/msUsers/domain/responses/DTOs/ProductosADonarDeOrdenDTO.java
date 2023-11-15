@@ -11,9 +11,9 @@ import msUsers.domain.requests.logistica.PostProductosRequest;
 
 @Data
 public class ProductosADonarDeOrdenDTO {
+    private long idProductoADonar; // Es la primary key de la tabla, no es un dato.
     private long idOrden;
-    private long idProductoADonar;
-    private long idProducto;
+    private ProductoDTO producto;
     private long cantidad;
     private Long idDonacion;
 }

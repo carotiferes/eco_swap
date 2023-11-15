@@ -88,6 +88,9 @@ export class RegistroComponent {
 			this.mainForm.controls['password'].disable();
 			this.mainForm.controls['confirmPassword'].disable();
 			this.mainForm.controls['email'].disable();
+			const isUserSwapper = auth.isUserSwapper();
+			if(isUserSwapper) this.isSwapper = true;
+			else this.isSwapper = false;
 		} else this.mainForm.controls['telefono'].addValidators(Validators.required)
 	}
 

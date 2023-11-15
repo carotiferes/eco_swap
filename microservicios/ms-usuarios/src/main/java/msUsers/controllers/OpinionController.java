@@ -17,6 +17,7 @@ import msUsers.domain.responses.ResponsePostEntityCreation;
 import msUsers.domain.responses.ResponseRequestQuery;
 import msUsers.exceptions.OpinionCreationException;
 import msUsers.services.CriteriaBuilderQueries;
+import msUsers.services.OpinionesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +47,9 @@ public class OpinionController {
     @Autowired
     private EntityManager entityManager;
 
+    @Autowired
+    private OpinionesService opinionesService;
+
 
     private static final String json = "application/json";
     @GetMapping(path = "/opinion/{id_opinion}", produces = json)
@@ -53,7 +57,7 @@ public class OpinionController {
     public ResponseEntity<OpinionDTO> getOpinionXID(@PathVariable("id_opinion") Long id) {
         final var opinion = this.opinionesRepository.findById(id).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrada la opinión: " + id));
-        OpinionDTO opinionDTO = opinion.toDTO();
+        OpinionDTO opinionDTO = this.opinionesService.obtenerOpinionDTO(opinion);
         return ResponseEntity.ok(opinionDTO);
     }
 
@@ -74,7 +78,7 @@ public class OpinionController {
         query.where(predicate);
 
         List<Opinion> opiniones = entityManager.createQuery(query).getResultList();
-        List<OpinionDTO> opinionesDTOS = opiniones.stream().map(Opinion::toDTO).toList();;
+        List<OpinionDTO> opinionesDTOS = opiniones.stream().map(opinion -> this.opinionesService.obtenerOpinionDTO(opinion)).toList();
 
         return ResponseEntity.ok(opinionesDTOS);
     }
@@ -94,7 +98,7 @@ public class OpinionController {
         query.where(predicate);
 
         List<Opinion> opiniones = entityManager.createQuery(query).getResultList();
-        List<OpinionDTO> opinionesDTOS = opiniones.stream().map(Opinion::toDTO).toList();;
+        List<OpinionDTO> opinionesDTOS = opiniones.stream().map(opinion -> this.opinionesService.obtenerOpinionDTO(opinion)).toList();
 
         return ResponseEntity.ok(opinionesDTOS);
     }
@@ -157,12 +161,6 @@ public class OpinionController {
 
         return ResponseEntity.ok(responseRequestQuery);
     }
-
-
-
-
-
-
 
     @PostMapping(path = "/opiniones/crearOpinion", consumes = json, produces = json)
     @ResponseStatus(HttpStatus.CREATED)

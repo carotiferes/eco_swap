@@ -43,11 +43,13 @@ export class CardComponent {
 	};
 
 	isSwapper: boolean = false;
+	screenWidth: number;
 
 	constructor(private truequesService: TruequesService, private router: Router,
 		public dialog: MatDialog, private auth: AuthService, private donacionesService: DonacionesService) {
 			this.isSwapper = auth.isUserSwapper()
 			this.idUserLoggedIn = auth.getUserID()
+			this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 		}
 
 	clicked(card: CardModel) {

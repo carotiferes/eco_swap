@@ -11,4 +11,5 @@ public class DireccionDTO {
     private String dpto;
     private String localidad;
     private String codigoPostal;
+    private String horarioDisponibilidad;
 }

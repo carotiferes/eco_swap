@@ -2,10 +2,7 @@ package msUsers.components;
 
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
-import msUsers.components.events.NuevaDonacionEvent;
-import msUsers.components.events.NuevaPropuestaTruequeEvent;
-import msUsers.components.events.NuevoEstadoDonacionEvent;
-import msUsers.components.events.NuevoEstadoTruequeEvent;
+import msUsers.components.events.*;
 import msUsers.domain.entities.*;
 import msUsers.domain.entities.enums.EstadoDonacion;
 import msUsers.domain.entities.enums.EstadoNotificacion;
@@ -97,6 +94,52 @@ public class NotificacionesListener {
         notificacion.setMensaje("El trueque de tu propuesta " + event.getPublicacion().getTitulo() + " cambio de estado a "
                 + event.getEstadoTrueque().toString().toLowerCase());
         notificacion.setTipoNotificacion(TipoNotificacion.NUEVO_ESTADO_TRUEQUE);
+        notificacion.setFechaHoraNotificacion(LocalDateTime.now());
+        notificacion.setUsuario(usuario);
+        usuario.getNotificaciones().add(notificacion);
+        entityManager.merge(usuario);
+        log.info(">> Creada la notificación para el user: {}", usuario.getEmail());
+    }
+
+    @EventListener
+    public void handleNuevaCompraEvent(NuevaCompraEvent event){
+        Compra compra = event.getCompra();
+        Usuario usuario = event.getUsuario();
+        Publicacion publicacion = event.getPublicacion();
+        Notificacion notificacion = new Notificacion();
+        notificacion.setEstadoNotificacion(EstadoNotificacion.NO_LEIDO);
+        notificacion.setIdReferenciaNotificacion(compra.getIdCompra());
+        notificacion.setTitulo("Compra de tu publicación " + publicacion.getTitulo());
+        notificacion.setMensaje("El usuario " + compra.getParticularComprador().getUsuario().getUsername()
+                + " compró tu publicación " + event.getPublicacion().getTitulo());
+        notificacion.setTipoNotificacion(TipoNotificacion.NUEVA_COMPRA);
+        notificacion.setFechaHoraNotificacion(LocalDateTime.now());
+        notificacion.setUsuario(usuario);
+        usuario.getNotificaciones().add(notificacion);
+        entityManager.merge(usuario);
+        log.info(">> Creada la notificación para el user: {}", usuario.getEmail());
+    }
+
+    @EventListener
+    public void handleNuevoEstadoOrdenEnvioEvent(NuevoEstadoOrdenEnvioEvent event){
+        Usuario usuario = event.getUsuario();
+        Notificacion notificacion = new Notificacion();
+        notificacion.setEstadoNotificacion(EstadoNotificacion.NO_LEIDO);
+        notificacion.setTipoNotificacion(TipoNotificacion.NUEVO_ESTADO_ORDEN_ENVIO);
+
+        if(event.isEsPublicacion()){
+            Publicacion publicacion = event.getPublicacion();
+            notificacion.setTitulo("Cambio de estado en el envio de tu compra.");
+            notificacion.setMensaje("El envio de tu compra " + publicacion.getTitulo() + " está en estado " + event.getEstadoEnvio().toString());
+            notificacion.setIdReferenciaNotificacion(publicacion.getIdPublicacion());
+        }
+        else{
+            Donacion donacion = event.getDonacion();
+            notificacion.setTitulo("Cambio de estado en el envio de tu donación.");
+            notificacion.setMensaje("El envio de tu donación " + donacion.getProducto().getDescripcion() + " está en estado " + event.getEstadoEnvio().toString());
+            notificacion.setIdReferenciaNotificacion(donacion.getIdDonacion());
+        }
+
         notificacion.setFechaHoraNotificacion(LocalDateTime.now());
         notificacion.setUsuario(usuario);
         usuario.getNotificaciones().add(notificacion);

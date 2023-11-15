@@ -46,13 +46,4 @@ public class ProductosADonarDeOrden {
                 .build();
     }
 
-    public ProductosADonarDeOrdenDTO toDTO() {
-        ProductosADonarDeOrdenDTO productosADonarDeOrdenDTO = new ProductosADonarDeOrdenDTO();
-        productosADonarDeOrdenDTO.setIdProductoADonar(idProductoADonar);
-        productosADonarDeOrdenDTO.setIdOrden(ordenDeEnvio.getIdOrden());
-        productosADonarDeOrdenDTO.setIdProducto(idProducto);
-        productosADonarDeOrdenDTO.setIdDonacion(idDonacion);
-        productosADonarDeOrdenDTO.setCantidad(cantidad);
-        return productosADonarDeOrdenDTO;
-    }
 }

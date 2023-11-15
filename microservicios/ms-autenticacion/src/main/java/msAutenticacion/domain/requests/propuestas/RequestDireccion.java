@@ -26,4 +26,6 @@ public class RequestDireccion {
     private String departamento;
 
     private String piso;
+
+    private String horarioDisponibilidad;
 }
