@@ -2,6 +2,7 @@ package msUsers.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import msUsers.domain.entities.Fundacion;
 import msUsers.domain.entities.Opinion;
 import msUsers.domain.entities.Particular;
 import msUsers.domain.entities.Usuario;
@@ -23,21 +24,37 @@ public class OpinionesService {
     @Autowired
     private CriteriaBuilderQueries criteriaBuilderQueries;
 
-    public OpinionDTO obtenerOpinionDTO(Opinion op) {
-        Opinion opinion = this.opinionesRepository.findById(op.getIdOpinion())
-                .orElseThrow(() -> new EntityNotFoundException("No fue encontrada la opinion: " + op.getIdOpinion()));
-        Particular particularOpina = this.criteriaBuilderQueries.getParticularPorUsuario(op.getUsuarioOpina().getIdUsuario())
-                .orElseThrow(() -> new EntityNotFoundException("No fue encontrado el particular: " + op.getUsuarioOpina().getIdUsuario()));
-        Particular particularOpinado = this.criteriaBuilderQueries.getParticularPorUsuario(op.getUsuarioOpinado().getIdUsuario())
-                .orElseThrow(() -> new EntityNotFoundException("No fue encontrado el particular: " + op.getUsuarioOpinado().getIdUsuario()));
+    public OpinionDTO obtenerOpinionDTO(Opinion opinion) {
 
-        UsuarioEnOpinionDTO usuarioOpinaDTO = op.getUsuarioOpina().toUsuarioEnOpinionDTO();
-        usuarioOpinaDTO.setApellido(particularOpina.getApellido());
-        usuarioOpinaDTO.setNombre(particularOpina.getNombre());
+        Particular particularOpina;
+        Particular particularOpinado;
+        Fundacion fundacionOpina;
+        Fundacion fundacionOpinado;
+        UsuarioEnOpinionDTO usuarioOpinaDTO = opinion.getUsuarioOpina().toUsuarioEnOpinionDTO();
+        UsuarioEnOpinionDTO usuarioOpinadoDTO = opinion.getUsuarioOpinado().toUsuarioEnOpinionDTO();
 
-        UsuarioEnOpinionDTO usuarioOpinadoDTO = op.getUsuarioOpinado().toUsuarioEnOpinionDTO();
-        usuarioOpinadoDTO.setApellido(particularOpinado.getApellido());
-        usuarioOpinadoDTO.setNombre(particularOpinado.getNombre());
+        if(opinion.getUsuarioOpina().isSwapper()){
+            particularOpina = this.criteriaBuilderQueries.getParticularPorUsuario(opinion.getUsuarioOpina().getIdUsuario())
+                    .orElseThrow(() -> new EntityNotFoundException("No fue encontrado el particular: " + opinion.getUsuarioOpina().getIdUsuario()));
+            usuarioOpinaDTO.setNombre(particularOpina.getNombre());
+            usuarioOpinaDTO.setApellido(particularOpina.getApellido());
+        }
+        else {
+            fundacionOpina = this.criteriaBuilderQueries.getFundacionPorUsuario(opinion.getUsuarioOpina().getIdUsuario())
+                    .orElseThrow(() -> new EntityNotFoundException("No fue encontrado la fundación: " + opinion.getUsuarioOpina().getIdUsuario()));
+            usuarioOpinaDTO.setNombre(fundacionOpina.getNombre());
+        }
+
+        if(opinion.getUsuarioOpinado().isSwapper()){
+            particularOpinado = this.criteriaBuilderQueries.getParticularPorUsuario(opinion.getUsuarioOpinado().getIdUsuario())
+                    .orElseThrow(() -> new EntityNotFoundException("No fue encontrado el particular: " + opinion.getUsuarioOpinado().getIdUsuario()));
+            usuarioOpinadoDTO.setApellido(particularOpinado.getApellido());
+            usuarioOpinadoDTO.setNombre(particularOpinado.getNombre());
+        }else{
+            fundacionOpinado = this.criteriaBuilderQueries.getFundacionPorUsuario(opinion.getUsuarioOpinado().getIdUsuario())
+                    .orElseThrow(() -> new EntityNotFoundException("No fue encontrado la fundación: " + opinion.getUsuarioOpina().getIdUsuario()));
+            usuarioOpinaDTO.setNombre(fundacionOpinado.getNombre());
+        }
 
         OpinionDTO opinionDTO = new OpinionDTO();
         opinionDTO.setIdOpinion(opinion.getIdOpinion());
@@ -47,7 +64,5 @@ public class OpinionesService {
         opinionDTO.setUsuarioOpinado(usuarioOpinadoDTO);
         opinionDTO.setFechaHoraOpinion(opinion.getFechaHoraOpinion());
         return opinionDTO;
-
     }
-
 }

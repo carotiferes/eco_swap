@@ -8,6 +8,7 @@ import msUsers.components.events.NuevaDonacionEvent;
 import msUsers.components.events.NuevoEstadoDonacionEvent;
 import msUsers.domain.entities.*;
 import msUsers.domain.entities.enums.EstadoDonacion;
+import msUsers.domain.logistica.enums.EstadoEnvio;
 import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.repositories.ColectasRepository;
 import msUsers.domain.repositories.DonacionesRepository;
@@ -67,6 +68,8 @@ public class DonacionController {
             @RequestBody @Valid RequestCambiarEstadoDonacion request) {
 
         final Usuario user = UsuarioContext.getUsuario();
+        final var colecta = this.colectasRepository.findById(idColecta).
+                orElseThrow(() -> new EntityNotFoundException("No fue encontrada la colecta: " + idColecta));
 
         log.info(">> Se va cambiar el estado de la donacion {} a {}", idDonacion, request.getNuevoEstado());
         final var donacion = this.donacionesRepository.findById(idDonacion).
@@ -76,45 +79,46 @@ public class DonacionController {
 
         try {
             EstadoDonacion nuevoEstado = EstadoDonacion.valueOf(request.getNuevoEstado());
-        } catch (IllegalArgumentException  e) {
+        } catch (IllegalArgumentException e) {
             log.error(request.getNuevoEstado() + " no es un estado valido");
             ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
             responseUpdateEntity.setStatus(HttpStatus.BAD_REQUEST.name());
             responseUpdateEntity.setDescripcion(request.getNuevoEstado() + " no es un estado valido");
             return ResponseEntity.badRequest().body(responseUpdateEntity);
         }
-            EstadoDonacion nuevoEstado = EstadoDonacion.valueOf(request.getNuevoEstado());
-            donacion.setEstadoDonacion(nuevoEstado);
+        EstadoDonacion nuevoEstado = EstadoDonacion.valueOf(request.getNuevoEstado());
+        donacion.setEstadoDonacion(nuevoEstado);
 
-            this.donacionesRepository.save(donacion);
-
-            if(nuevoEstado.equals(EstadoDonacion.RECIBIDA)){
-                final var colecta = this.colectasRepository.findById(idColecta).
-                        orElseThrow(() -> new EntityNotFoundException("No fue encontrada la colecta: " + idColecta));
-                colecta.getProductos().forEach(prod -> {
-                    if(prod.getIdProducto() == donacion.getProducto().getIdProducto()){
-                        prod.setCantidadRecibida(prod.getCantidadRecibida() + donacion.getCantidadDonacion());
-                        log.info("Ahora son {} unidades recibidas del producto {}", prod.getCantidadRecibida(), prod.getDescripcion());
-                    }
-                });
-                this.entityManager.merge(colecta);
-            }
-
-            ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
-            responseUpdateEntity.setStatus(HttpStatus.OK.name());
-            responseUpdateEntity.setDescripcion("Se cambio el estado de la donacion de " + anteriorEstado + " a " + request.getNuevoEstado());
-
-            NuevoEstadoDonacionEvent nuevoEstadoDonacionEvent;
-            if(nuevoEstado == EstadoDonacion.EN_ESPERA) 
-                nuevoEstadoDonacionEvent = new NuevoEstadoDonacionEvent(this, donacion, donacion.getProducto().getColecta(), donacion.getProducto().getColecta().getFundacion().getUsuario(), nuevoEstado);
-            else 
-                nuevoEstadoDonacionEvent = new NuevoEstadoDonacionEvent(this, donacion, donacion.getProducto().getColecta(), donacion.getParticular().getUsuario(), nuevoEstado);
-
-            applicationEventPublisher.publishEvent(nuevoEstadoDonacionEvent);
-            log.info("<< Notificación creada para el usuario: {}", user.getEmail());
-
-            return ResponseEntity.ok(responseUpdateEntity);
+        this.donacionesRepository.save(donacion);
+        if (nuevoEstado.equals(EstadoDonacion.APROBADA)){
+            donacion.setEstadoEnvio(EstadoEnvio.POR_CONFIGURAR);
         }
+
+        if (nuevoEstado.equals(EstadoDonacion.RECIBIDA)) {
+            colecta.getProductos().forEach(prod -> {
+                if (prod.getIdProducto() == donacion.getProducto().getIdProducto()) {
+                    prod.setCantidadRecibida(prod.getCantidadRecibida() + donacion.getCantidadDonacion());
+                    log.info("Ahora son {} unidades recibidas del producto {}", prod.getCantidadRecibida(), prod.getDescripcion());
+                }
+            });
+            this.entityManager.merge(colecta);
+        }
+
+        ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
+        responseUpdateEntity.setStatus(HttpStatus.OK.name());
+        responseUpdateEntity.setDescripcion("Se cambio el estado de la donacion de " + anteriorEstado + " a " + request.getNuevoEstado());
+
+        NuevoEstadoDonacionEvent nuevoEstadoDonacionEvent;
+        if (nuevoEstado == EstadoDonacion.EN_ESPERA)
+            nuevoEstadoDonacionEvent = new NuevoEstadoDonacionEvent(this, donacion, donacion.getProducto().getColecta(), donacion.getProducto().getColecta().getFundacion().getUsuario(), nuevoEstado);
+        else
+            nuevoEstadoDonacionEvent = new NuevoEstadoDonacionEvent(this, donacion, donacion.getProducto().getColecta(), donacion.getParticular().getUsuario(), nuevoEstado);
+
+        applicationEventPublisher.publishEvent(nuevoEstadoDonacionEvent);
+        log.info("<< Notificación creada para el usuario: {}", user.getEmail());
+
+        return ResponseEntity.ok(responseUpdateEntity);
+    }
 
     @GetMapping(path = "/particular/misDonaciones", produces = json)
     public ResponseEntity<List<DonacionDTO>> listarDonacionesPorParticular(){
