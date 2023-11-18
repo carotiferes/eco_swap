@@ -6,7 +6,9 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.components.events.NuevaDonacionEvent;
 import msUsers.components.events.NuevoEstadoDonacionEvent;
-import msUsers.domain.entities.*;
+import msUsers.domain.entities.Donacion;
+import msUsers.domain.entities.Particular;
+import msUsers.domain.entities.Usuario;
 import msUsers.domain.entities.enums.EstadoDonacion;
 import msUsers.domain.logistica.enums.EstadoEnvio;
 import msUsers.domain.model.UsuarioContext;
@@ -31,8 +33,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-
-import static java.util.Arrays.stream;
 
 @RestController
 @Slf4j
@@ -89,20 +89,25 @@ public class DonacionController {
         EstadoDonacion nuevoEstado = EstadoDonacion.valueOf(request.getNuevoEstado());
         donacion.setEstadoDonacion(nuevoEstado);
 
-        this.donacionesRepository.save(donacion);
-        if (nuevoEstado.equals(EstadoDonacion.APROBADA)){
-            donacion.setEstadoEnvio(EstadoEnvio.POR_CONFIGURAR);
+        // Segun el estado
+        switch (nuevoEstado){
+            case APROBADA:
+                donacion.setEstadoEnvio(EstadoEnvio.POR_CONFIGURAR);
+                break;
+            case RECIBIDA:
+                colecta.getProductos().forEach(prod -> {
+                    if (prod.getIdProducto() == donacion.getProducto().getIdProducto()) {
+                        prod.setCantidadRecibida(prod.getCantidadRecibida() + donacion.getCantidadDonacion());
+                        log.info("Ahora son {} unidades recibidas del producto {}", prod.getCantidadRecibida(), prod.getDescripcion());
+                    }
+                });
+                this.entityManager.merge(colecta);
+                break;
+            default:
+                break;
         }
 
-        if (nuevoEstado.equals(EstadoDonacion.RECIBIDA)) {
-            colecta.getProductos().forEach(prod -> {
-                if (prod.getIdProducto() == donacion.getProducto().getIdProducto()) {
-                    prod.setCantidadRecibida(prod.getCantidadRecibida() + donacion.getCantidadDonacion());
-                    log.info("Ahora son {} unidades recibidas del producto {}", prod.getCantidadRecibida(), prod.getDescripcion());
-                }
-            });
-            this.entityManager.merge(colecta);
-        }
+        this.donacionesRepository.save(donacion);
 
         ResponseUpdateEntity responseUpdateEntity = new ResponseUpdateEntity();
         responseUpdateEntity.setStatus(HttpStatus.OK.name());

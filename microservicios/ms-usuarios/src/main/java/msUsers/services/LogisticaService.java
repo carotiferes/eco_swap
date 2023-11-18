@@ -37,12 +37,12 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
@@ -184,7 +184,7 @@ public class LogisticaService {
 
         // Validación de cancelación
         if (estadoEnvio == EstadoEnvio.CANCELADO && ultimoEstado != EstadoEnvio.POR_DESPACHAR) {
-            throw new OrdenDeEnvioException("Ya está en transcurso de envío. No se puede cancelar el mismo.");
+            throw new OrdenDeEnvioException("Ya está en transcurso de envío o fue entregado. No se puede cancelar la orden de envío.");
         }
 
         // Actualización de estado para publicación o donación
@@ -365,6 +365,7 @@ public class LogisticaService {
                             .fechaEnvio(formattedDate)
                             .build()))
                     .fechaADespachar(this.crearFechaDespache())
+                    .fechaCreacionOrdenEnvio(ZonedDateTime.now())
                     .build();
 
             if(!esPublicacion) {

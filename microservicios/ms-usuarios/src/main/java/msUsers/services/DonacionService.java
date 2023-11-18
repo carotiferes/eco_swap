@@ -1,12 +1,11 @@
 package msUsers.services;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import lombok.extern.slf4j.Slf4j;
+import msUsers.domain.entities.Colecta;
 import msUsers.domain.entities.Donacion;
+import msUsers.domain.entities.Producto;
 import msUsers.domain.entities.enums.EstadoDonacion;
 import msUsers.domain.logistica.enums.EstadoEnvio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,5 +70,20 @@ public class DonacionService {
         List<Donacion> donaciones = entityManager.createQuery(query).getResultList();
         log.info("Cantidad en envio: {}", donaciones.stream().mapToInt(Donacion::getCantidadDonacion).sum());
         return donaciones.stream().mapToInt(Donacion::getCantidadDonacion).sum();
+    }
+
+    public Colecta getColectaPorIdDonacion(Long idDonacion){
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Colecta> query = cb.createQuery(Colecta.class);
+        Root<Colecta> from = query.from(Colecta.class);
+        Join<Colecta, Producto> colectaJoin = from.join("productos");
+        Join<Producto, Donacion> donacionJoin = colectaJoin.join("donaciones");
+        Predicate predicate;
+
+        predicate = cb.and(cb.equal(donacionJoin.get("idDonacion"), idDonacion));
+
+        query.where(predicate);
+
+        return entityManager.createQuery(query).getSingleResult();
     }
 }
