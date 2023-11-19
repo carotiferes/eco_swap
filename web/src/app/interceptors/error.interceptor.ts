@@ -4,6 +4,7 @@ import { Observable, throwError, timer } from 'rxjs';
 import { catchError, finalize, map, mergeMap } from 'rxjs/operators';
 import { ShowErrorService } from '../services/show-error.service';
 import { AuthService } from '../services/auth.service';
+import Swal from 'sweetalert2';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
@@ -43,7 +44,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 					console.log('Server error with code: ', err, err.error.descripcion);
 					if(err.error.descripcion == '4011') {
 						console.log('token vencido');
-						this.showErrorService.show('Error!', 'Se venció tu token de acceso, es necesario que vuelvas a iniciar sesión!')
+						Swal.fire('Error!', 'Se venció tu token de acceso, es necesario que vuelvas a iniciar sesión!', 'warning')
 						this.authService.logout();
 					}
 					else if(err.status >= 500)

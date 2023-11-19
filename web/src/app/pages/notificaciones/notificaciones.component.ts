@@ -74,6 +74,13 @@ export class NotificacionesComponent {
 			case 'NUEVO_ESTADO_TRUEQUE': // CAMBIA ESTADO TRUEQUE --> VA A LA PUBLICACION ORIGEN
 				this.router.navigate(['publicacion', notificacion.idReferenciaNotificacion])
 				break;
+			case 'NUEVO_ESTADO_ORDEN_ENVIO': // CAMBIA ESTADO ENVIO
+				if(notificacion.titulo.includes('donación')) {
+					this.router.navigate(['mis-donaciones'])
+				} else {
+					this.router.navigate(['mis-compras'])
+				}
+				break;
 			default:
 				break;
 		}

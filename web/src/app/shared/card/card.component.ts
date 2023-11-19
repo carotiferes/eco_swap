@@ -33,7 +33,7 @@ export class CardComponent {
 		'APROBADO': 'verified', 'APROBADA': 'verified',
 		'RECIBIDO': 'add_task', 'RECIBIDA': 'add_task',
 		'PENDIENTE': 'pending', 'EN ESPERA': 'schedule', 'EN ENVIO': 'schedule',
-		'ABIERTA': 'lock_open', 'CERRADA': 'lock'
+		'ABIERTA': 'lock_open', 'CERRADA': 'lock', 'CANCELADA': 'cancel', 'ANULADA': 'cancel'
 	};
 	colorMap: { [key: string]: string } = {
 		'APROBADO': 'green', 'APROBADA': 'green',
@@ -108,7 +108,9 @@ export class CardComponent {
 			data
 		});
 		dialogRef.afterClosed().subscribe((result) => {
-			this.modalClosed.emit({result, componente: component.name})
+			if(result == 'newEnvio') {
+				this.openDialog(EnvioModalComponent, { card: this.cardData, newEnvio: true }, '70vh', '60vw')
+			} else this.modalClosed.emit({result, componente: component.name})
 		})
 	}
 

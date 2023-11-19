@@ -16,5 +16,8 @@ export interface UsuarioModel {
 	direcciones: any[],
 	particularDTO: ParticularModel,
 	fundacionDTO: FundacionModel,
-	avatar: string
+	avatar: string,
+
+	nombre?: string,
+	apellido: string
 }

@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -23,37 +22,46 @@ export class EnvioModalComponent {
 	loadingSave: boolean = false;
 	ordenForm: FormGroup;
 
-	userOrders: OrdenModel[] = []
+	userOrders: OrdenModel[] = [];
+	ordersToShow: OrdenModel[] = [];
 
 	costoEnvio?: number;
 
-	yaTieneEnvio: any;
 	user?: UsuarioModel;
 	loadingCosto: boolean = false;
 	type: 'compra' | 'unaDonacion' | 'variasDonaciones' = 'compra';
 
 	compra: any;
 
+	hasCancelledEnvio: boolean = false;
+	isNuevoEnvio: boolean = false;
+
 	// SE LLAMA DESDE EL card.component.ts
 
 	constructor(private fb: FormBuilder, public dialogRef: MatDialogRef<EnvioModalComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: any, private logisticaService: LogisticaService,
 		private compraService: ComprasService, private usuarioService: UsuarioService,
-		private auth: AuthService, private donacionesService: DonacionesService,
-		private datePipe: DatePipe) {
+		private auth: AuthService, private donacionesService: DonacionesService) {
 		console.log(data);
 
 		this.ordenForm = fb.group({
 			peso: ['', Validators.required],
 			disponibilidad: ['', Validators.required]
 		})
+	}
 
-		if (data.cards) this.type = 'variasDonaciones';
-		else if (data.card.codigo == 'Donación') this.type = 'unaDonacion';
+	ngOnInit(): void {
+		if (this.data.cards) this.type = 'variasDonaciones';
+		else if (this.data.card.codigo == 'Donación') this.type = 'unaDonacion';
+		if(this.data.newEnvio) {
+			this.isNuevoEnvio = true;
+			this.loading = false;
+		} 
 		this.getUserOrders()
 	}
 
 	getUserOrders() {
+		this.ordersToShow.splice(0)
 		this.logisticaService.obtenerMisOrdenes(this.type != 'compra' ? 'donaciones' : 'publicaciones').subscribe({
 			next: (res: any) => {
 				if (res.length > 0) {
@@ -66,12 +74,15 @@ export class EnvioModalComponent {
 					console.log(uniqueIdDonacionValues);
 
 					// Find the orders that match the idDonacion from the cards array
-					const matchingOrders = this.userOrders.find(order => {
+					this.ordersToShow = this.userOrders.filter(order => {
 						return order.productosADonarDeOrdenList.some((producto: any) => {
 							return uniqueIdDonacionValues.includes(producto.idDonacion);
 						});
 					});
-					if (matchingOrders) this.yaTieneEnvio = matchingOrders;
+					this.ordersToShow.sort((a, b) => new Date(a.fechaCreacionOrdenEnvio).getTime() - new Date(b.fechaCreacionOrdenEnvio).getTime());
+					if(!this.isNuevoEnvio && this.ordersToShow.length > 0 && this.ordersToShow[this.ordersToShow.length - 1].listaFechaEnvios.find(item => item.estado == 'CANCELADO')){
+						this.hasCancelledEnvio = true;
+					}
 
 				} else {
 					this.compraService.getMyCompras().subscribe({
@@ -82,12 +93,12 @@ export class EnvioModalComponent {
 								this.compra = compra;
 								this.ordenForm.controls['peso'].setValue(compra.publicacionDTO.peso)
 							}
-							this.yaTieneEnvio = this.userOrders.find(order => order.publicacionId == this.data.card.id)
+							this.ordersToShow = this.userOrders.filter(order => order.publicacionId == this.data.card.id)
 						}
 					})
 				}
 
-				if (!this.yaTieneEnvio) {
+				if (this.ordersToShow.length == 0) {
 					this.usuarioService.getUserByID(this.auth.getUserID()).subscribe({
 						next: (res: any) => {
 							this.user = res;
@@ -194,6 +205,10 @@ export class EnvioModalComponent {
 				this.dialogRef.close(true)
 			}
 		})
+	}
+
+	nuevoEnvio() {
+		this.dialogRef.close('newEnvio');
 	}
 
 }

@@ -48,8 +48,8 @@
 			¡En envío!
 			<span class="material-icons-outlined" matTooltip="La donación está en proceso de envío.">info</span>
 		</span>
-		<span *ngIf="cardData.estado == 'APROBADA' && !isSwapper" class="llevar-donacion" >
-			¡En envío!
+		<span *ngIf="cardData.estado == 'APROBADA' && !isSwapper && !!cardData.estadoAux && cardData.estadoAux != 'RECIBIDO'" class="llevar-donacion" >
+			{{cardData.estadoAux == 'POR_CONFIGURAR' ? '¡Envío pendiente!' :'¡En envío!'}}
 			<span class="material-icons-outlined" [matTooltip]="cardData.estadoAux == 'POR_CONFIGURAR' ? 'El swapper debe configurar el envío. Te avisaremos cuando lo haga.' : 'El envío está activo. Shipnow buscará el producto en los próximos 2 días habiles, y luego te lo llevará.'">info</span>
 		</span>
 	</div>
