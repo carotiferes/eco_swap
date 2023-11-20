@@ -7,6 +7,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { DonacionesService } from 'src/app/services/donaciones.service';
 import Swal from 'sweetalert2';
 import { DateAdapter } from '@angular/material/core';
+import { ProductosService } from 'src/app/services/productos.service';
 const TIPOS = ['COLCHONES_Y_FRAZADAS','LIBROS','MUEBLES','OTROS','SALUD','TECNOLOGIA']
 const ESTADOS = ['BUEN_ESTADO','ROTO_PERO_UTIL','ROTO']
 
@@ -26,7 +27,7 @@ export class FormColectaComponent  {
 	fileName: any = 'Subir Imagen';
 	images: any[] = [];
 
-	tipos_productos: string[];
+	tipos_productos: any[] = [];
 	estados_productos: string[];
 
 	loadingImg: boolean = false;
@@ -34,10 +35,10 @@ export class FormColectaComponent  {
 	loadingSave: boolean = false;
 
 	constructor(private fb: FormBuilder, private route: ActivatedRoute, private donacionesService: DonacionesService,
-		private auth: AuthService, private router: Router, private dateAdapter: DateAdapter<Date>) {
+		private auth: AuthService, private router: Router, private dateAdapter: DateAdapter<Date>,
+		private productosService: ProductosService) {
 
 		this.dateAdapter.setLocale('es');
-		this.tipos_productos = TIPOS;
 		this.estados_productos = ESTADOS;
 
 		this.colectaForm = fb.group({
@@ -53,6 +54,23 @@ export class FormColectaComponent  {
 		})
 
 		this.screenWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+
+		this.getTiposProductos()
+		
+	}
+
+	getTiposProductos() {
+		this.productosService.getTiposProductos().subscribe({
+			next: (v: any) => {
+				//console.log('productos', v);
+				this.tipos_productos = v;
+			},
+			error: (e) => {
+				console.error('error', e);
+				//this.showErrorService.show('Error!', 'Ha ocurrido un error al traer los tipos de producto')
+			},
+			complete: () => console.info('complete')
+		});
 	}
 
 	get getProductosArray() {

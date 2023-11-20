@@ -33,7 +33,8 @@ export class CardComponent {
 		'APROBADO': 'verified', 'APROBADA': 'verified',
 		'RECIBIDO': 'add_task', 'RECIBIDA': 'add_task',
 		'PENDIENTE': 'pending', 'EN ESPERA': 'schedule', 'EN ENVIO': 'schedule',
-		'ABIERTA': 'lock_open', 'CERRADA': 'lock', 'CANCELADA': 'cancel', 'ANULADA': 'cancel'
+		'ABIERTA': 'lock_open', 'CERRADA': 'lock', 'CANCELADA': 'cancel', 'ANULADA': 'cancel',
+		'RECHAZADA': 'cancel'
 	};
 	colorMap: { [key: string]: string } = {
 		'APROBADO': 'green', 'APROBADA': 'green',

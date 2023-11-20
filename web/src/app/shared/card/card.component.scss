@@ -6,7 +6,7 @@
 	max-width: 515px !important;
 	
 	&.big {
-		height: 500px !important;
+		height: 515px !important;
 		h2 {
 			font-size: 18px !important;
 		}
@@ -148,6 +148,7 @@
 		width: 100%;
 		//background: #bceba1;
 		border-radius: 0 0 10px 10px;
+		min-height: 95px;
 
 		* {margin: 0;}
 

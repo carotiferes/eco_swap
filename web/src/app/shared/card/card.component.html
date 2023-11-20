@@ -52,6 +52,10 @@
 			{{cardData.estadoAux == 'POR_CONFIGURAR' ? '¡Envío pendiente!' :'¡En envío!'}}
 			<span class="material-icons-outlined" [matTooltip]="cardData.estadoAux == 'POR_CONFIGURAR' ? 'El swapper debe configurar el envío. Te avisaremos cuando lo haga.' : 'El envío está activo. Shipnow buscará el producto en los próximos 2 días habiles, y luego te lo llevará.'">info</span>
 		</span>
+		<span *ngIf="!!cardData.estadoAux && cardData.estadoAux == 'RECIBIDO'" class="llevar-donacion">
+			<span class="material-icons-outlined">done_all</span>
+			¡Donación recibida!
+		</span>
 	</div>
 
 	<div *ngIf="cardData.codigo != 'Donación'" style="width: 100%;">
