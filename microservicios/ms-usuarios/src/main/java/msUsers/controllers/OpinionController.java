@@ -120,32 +120,69 @@ public class OpinionController {
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
-        Root<Compra> compraRoot = criteriaQuery.from(Compra.class);
-        Root<Donacion> donacionRoot = criteriaQuery.from(Donacion.class);
-        Root<Trueque> truequeRoot = criteriaQuery.from(Trueque.class);
 
-        // Utilizamos un solo countDistinct para todas las entidades
-        criteriaQuery.select(criteriaBuilder.countDistinct(
-                criteriaBuilder.selectCase()
-                        .when(criteriaBuilder.equal(compraRoot.get("particularComprador").get("usuario").get("idUsuario"), usuarioOpinador.getIdUsuario()), 1)
-                        .when(criteriaBuilder.equal(compraRoot.get("publicacion").get("particular").get("usuario").get("idUsuario"), usuarioOpinador.getIdUsuario()), 1)
-                        .when(criteriaBuilder.equal(donacionRoot.get("particular").get("usuario").get("idUsuario"), usuarioOpinador.getIdUsuario()), 1)
-                        .when(criteriaBuilder.equal(donacionRoot.get("producto").get("colecta").get("fundacion").get("usuario").get("idUsuario"), usuarioOpinador.getIdUsuario()), 1)
-                        .when(criteriaBuilder.equal(truequeRoot.get("publicacionOrigen").get("particular").get("usuario").get("idUsuario"), usuarioOpinador.getIdUsuario()), 1)
-                        .when(criteriaBuilder.equal(truequeRoot.get("publicacionPropuesta").get("particular").get("usuario").get("idUsuario"), usuarioOpinador.getIdUsuario()), 1)
-                        .otherwise(0)
-        ));
+        Subquery<Long> subqueryCompra = criteriaQuery.subquery(Long.class);
+        Subquery<Long> subqueryTrueque = criteriaQuery.subquery(Long.class);
+        Subquery<Long> subqueryDonacion = criteriaQuery.subquery(Long.class);
 
-        Predicate predicate = criteriaBuilder.or(
-                criteriaBuilder.equal(compraRoot.get("particularComprador").get("usuario").get("idUsuario"), usuarioOpinado.getIdUsuario()),
-                criteriaBuilder.equal(compraRoot.get("publicacion").get("particular").get("usuario").get("idUsuario"), usuarioOpinado.getIdUsuario()),
-                criteriaBuilder.equal(donacionRoot.get("particular").get("usuario").get("idUsuario"), usuarioOpinado.getIdUsuario()),
-                criteriaBuilder.equal(donacionRoot.get("producto").get("colecta").get("fundacion").get("usuario").get("idUsuario"), usuarioOpinado.getIdUsuario()),
-                criteriaBuilder.equal(truequeRoot.get("publicacionOrigen").get("particular").get("usuario").get("idUsuario"), usuarioOpinado.getIdUsuario()),
-                criteriaBuilder.equal(truequeRoot.get("publicacionPropuesta").get("particular").get("usuario").get("idUsuario"), usuarioOpinado.getIdUsuario())
+        Root<Compra> compraSubRoot = subqueryCompra.from(Compra.class);
+        Root<Donacion> donacionSubRoot = subqueryDonacion.from(Donacion.class);
+        Root<Trueque> truequeSubRoot = subqueryTrueque.from(Trueque.class);
+
+        subqueryCompra.select(criteriaBuilder.count(compraSubRoot));
+        subqueryDonacion.select(criteriaBuilder.count(donacionSubRoot));
+        subqueryTrueque.select(criteriaBuilder.count(truequeSubRoot));
+
+        Predicate predicateCompra;
+        Predicate predicateTrueque;
+        Predicate predicateDonacion;
+
+        if (usuarioOpinador.isSwapper() && usuarioOpinado.isSwapper()) {
+            predicateCompra = criteriaBuilder.or(
+                    criteriaBuilder.and(
+                            criteriaBuilder.equal(compraSubRoot.get("particularComprador").get("usuario").get("idUsuario"), usuarioOpinador.getIdUsuario()),
+                            criteriaBuilder.equal(compraSubRoot.get("publicacion").get("particular").get("usuario").get("idUsuario"), usuarioOpinado.getIdUsuario())
+                    ),
+                    criteriaBuilder.and(
+                            criteriaBuilder.equal(compraSubRoot.get("particularComprador").get("usuario").get("idUsuario"), usuarioOpinado.getIdUsuario()),
+                            criteriaBuilder.equal(compraSubRoot.get("publicacion").get("particular").get("usuario").get("idUsuario"), usuarioOpinador.getIdUsuario())
+                    )
+            );
+            predicateTrueque = criteriaBuilder.or(
+                    criteriaBuilder.and(
+                            criteriaBuilder.equal(truequeSubRoot.get("publicacionOrigen").get("particular").get("usuario").get("idUsuario"), usuarioOpinador.getIdUsuario()),
+                            criteriaBuilder.equal(truequeSubRoot.get("publicacionPropuesta").get("particular").get("usuario").get("idUsuario"), usuarioOpinado.getIdUsuario())
+                    ),
+                    criteriaBuilder.and(
+                            criteriaBuilder.equal(truequeSubRoot.get("publicacionOrigen").get("particular").get("usuario").get("idUsuario"), usuarioOpinado.getIdUsuario()),
+                            criteriaBuilder.equal(truequeSubRoot.get("publicacionPropuesta").get("particular").get("usuario").get("idUsuario"), usuarioOpinador.getIdUsuario())
+                    )
+            );
+
+            subqueryCompra.where(predicateCompra);
+            subqueryTrueque.where(predicateTrueque);
+
+        } else {
+            predicateDonacion = criteriaBuilder.or(
+                    criteriaBuilder.and(
+                            criteriaBuilder.equal(donacionSubRoot.get("particular").get("usuario").get("idUsuario"), usuarioOpinador.getIdUsuario()),
+                            criteriaBuilder.equal(donacionSubRoot.get("producto").get("colecta").get("fundacion").get("usuario").get("idUsuario"), usuarioOpinado.getIdUsuario())
+                    ),
+                    criteriaBuilder.and(
+                            criteriaBuilder.equal(donacionSubRoot.get("particular").get("usuario").get("idUsuario"), usuarioOpinado.getIdUsuario()),
+                            criteriaBuilder.equal(donacionSubRoot.get("producto").get("colecta").get("fundacion").get("usuario").get("idUsuario"), usuarioOpinador.getIdUsuario())
+                    )
+            );
+
+            subqueryDonacion.where(predicateDonacion);
+        }
+
+        Expression<Long> sumExpr = criteriaBuilder.sum(
+                subqueryCompra.getSelection(),
+                criteriaBuilder.sum(subqueryTrueque.getSelection(), subqueryDonacion.getSelection())
         );
 
-        criteriaQuery.where(predicate);
+        criteriaQuery.select(sumExpr);
 
         Long count = entityManager.createQuery(criteriaQuery).getSingleResult();
         log.info("Count: {}", count);

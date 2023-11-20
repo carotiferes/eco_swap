@@ -141,7 +141,7 @@ export class ColectaComponent {
 				else stringCaracteristicas += ' - '+caract.caracteristica
 			}
 
-			const matchingOrders = this.userOrders.some(order => {
+			const matchingOrders = this.userOrders.filter(order => {
 				return order.productosADonarDeOrdenList.some((producto: any) => {
 					return producto.idDonacion == donacion.idDonacion;
 				});
@@ -186,7 +186,7 @@ export class ColectaComponent {
 
 	}
 
-	getButtonsForCard(donacion: DonacionModel, matchingOrders: boolean): CardButtonModel[] {
+	getButtonsForCard(donacion: DonacionModel, matchingOrders: OrdenModel[]): CardButtonModel[] {
 		if(donacion.estadoDonacion == 'PENDIENTE') {
 			if(this.userData.isSwapper) return [{name: 'CANCELAR', icon: 'close', color: 'warn', status: 'CANCELADA', action: 'change_status'}]
 			else {
@@ -198,13 +198,18 @@ export class ColectaComponent {
 		} else if (donacion.estadoDonacion == 'EN_ESPERA' && !this.userData.isSwapper) { // la lleva en persona
 			return [{name: 'DONACIÓN RECIBIDA', icon: 'done_all', color: 'primary', status: 'RECIBIDA', action: 'change_status'}]
 		} else if(donacion.estadoDonacion == 'APROBADA') {
-			if(this.userData.isSwapper && !matchingOrders) return [
+			if(this.userData.isSwapper && matchingOrders.length == 0) return [
 				{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO', action: 'configurar_envio'},
 				{name: 'Llevar en persona', icon: 'directions_walk', color: 'info', status: 'EN_ESPERA', action: 'change_status'}
 			]
-			else if (this.userData.isSwapper && matchingOrders) // ya configuro el envio
-				return [{name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO', action: 'ver_envio'}]
-			else return []
+			else if (this.userData.isSwapper && matchingOrders.length > 0) {// ya configuro el envio
+				const lastOrderCancelled = matchingOrders[matchingOrders.length - 1].listaFechaEnvios.find(item => item.estado == 'CANCELADO');
+				if(lastOrderCancelled){ return [
+					{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO', action: 'configurar_envio'},
+					{name: 'Llevar en persona', icon: 'directions_walk', color: 'info', status: 'EN_ESPERA', action: 'change_status'}
+				]}
+				else return [{ name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO', action: 'ver_envio' }]
+			} else return []
 		} else return [];
 	}
 

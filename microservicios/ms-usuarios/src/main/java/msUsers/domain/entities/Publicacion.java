@@ -75,6 +75,7 @@ public class Publicacion {
         publicacionDTO.setValorTruequeMin(valorTruequeMin);
         publicacionDTO.setCaracteristicaProducto(caracteristicaProducto);
         publicacionDTO.setPeso(peso);
+        publicacionDTO.setVendido(!compras.isEmpty());
         return publicacionDTO;
     }
 

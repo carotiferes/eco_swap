@@ -203,7 +203,7 @@ export class PublicacionesComponent {
 				idAuxiliar: !!idPublicacionOrigen ? idPublicacionOrigen : !!idPublicacionPropuesta ? publicacion.idPublicacion : publicacion.idCompra ? publicacion.idCompra : undefined,
 				buttons: this.getButtonsForCard(publicacion, !!idPublicacionOrigen || !!idPublicacionPropuesta, matchingOrders),
 				estado: this.origin == 'myPublicaciones' ? publicacion.estadoPublicacion : publicacion.estadoCompra ? publicacion.estadoCompra : undefined,
-				codigo: publicacion.idCompra ? 'Compra' : this.origin != 'all' ? !!publicacion.estadoEnvio ? 'Venta' : 'Publicación' : 'Publicación',
+				codigo: publicacion.idCompra ? 'Compra' : this.origin != 'all' ? publicacion.vendido ? 'Venta' : 'Publicación' : 'Publicación',
 				estadoAux: publicacion.estadoEnvio
 			})
 		}

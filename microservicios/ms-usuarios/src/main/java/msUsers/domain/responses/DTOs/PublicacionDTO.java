@@ -28,4 +28,5 @@ public class PublicacionDTO {
     private List<CaracteristicaProducto> caracteristicaProducto;
     private String imagenes;
     private Double peso;
+    private Boolean vendido;
 }

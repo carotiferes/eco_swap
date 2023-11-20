@@ -20,5 +20,6 @@ export interface PublicacionModel {
 	estadoTrueque?: string,
 	idCompra?: number,
 	estadoCompra?: string,
-	estadoEnvio?: string
+	estadoEnvio?: string,
+	vendido: boolean
 }

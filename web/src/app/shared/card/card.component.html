@@ -38,7 +38,7 @@
 	</div>
 
 	<!-- DONACIONES -->
-	<!-- {{cardData.estado}} || {{cardData.estadoAux}} -->
+	<!-- {{cardData.estado}} || {{cardData.estadoAux}} || {{cardData.codigo}} -->
 	<div *ngIf="cardData.codigo == 'Donación'" style="width: 100%;">
 		<span *ngIf="cardData.estado == 'EN ESPERA' && isSwapper && idUserLoggedIn == cardData.usuario.id" class="llevar-donacion" >
 			¡Llevá tu donación!
