@@ -98,12 +98,14 @@ public class DonacionController {
                 colecta.getProductos().forEach(prod -> {
                     if (prod.getIdProducto() == donacion.getProducto().getIdProducto()) {
                         prod.setCantidadRecibida(prod.getCantidadRecibida() + donacion.getCantidadDonacion());
+                        donacion.setEstadoEnvio(EstadoEnvio.RECIBIDO);
                         log.info("Ahora son {} unidades recibidas del producto {}", prod.getCantidadRecibida(), prod.getDescripcion());
                     }
                 });
                 this.entityManager.merge(colecta);
                 break;
             default:
+                donacion.setEstadoEnvio(EstadoEnvio.POR_DESPACHAR);
                 break;
         }
 

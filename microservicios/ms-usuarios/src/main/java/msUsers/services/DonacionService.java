@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -69,6 +70,7 @@ public class DonacionService {
         query.where(predicate);
         List<Donacion> donaciones = entityManager.createQuery(query).getResultList();
         log.info("Cantidad en envio: {}", donaciones.stream().mapToInt(Donacion::getCantidadDonacion).sum());
+        log.info("Donaciones en envio: {}", Arrays.toString(donaciones.stream().mapToLong(Donacion::getIdDonacion).toArray()));
         return donaciones.stream().mapToInt(Donacion::getCantidadDonacion).sum();
     }
 
