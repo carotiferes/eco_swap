@@ -58,8 +58,8 @@
 							<mat-form-field>
 								<mat-label>Tipo</mat-label>
 								<mat-select formControlName="tipo_producto">
-									<mat-option *ngFor="let tipo of tipos_productos" [value]="tipo">
-										{{tipo}}
+									<mat-option *ngFor="let tipo of tipos_productos" [value]="tipo.nombre">
+										{{tipo.descripcion}}
 									</mat-option>
 								</mat-select>
 								<mat-error *ngIf="producto.get('tipo_producto')!.hasError('required')">
@@ -92,7 +92,7 @@
 						Agregar Imagen
 					</button>
 					<input formControlName="file" id="file" type="file" class="form-control hidden"
-						(change)="onFileChange($event)" #file>
+						(change)="onFileChange($event)" #file accept=".jpg, .jpeg, .png, .webp">
 					<mat-error *ngIf="colectaForm.get('file')!.hasError('required') && showErrors">
 						La colecta debe tener al menos 1 imagen
 					</mat-error>

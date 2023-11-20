@@ -1,11 +1,11 @@
 
 export interface OrdenModel {
-	idOrden: Number;
-    precioEnvio: Number;
+	idOrden: number;
+    precioEnvio: number;
     titulo: String;
     descripcion: String;
-    idUsuarioOrigen: Number;
-    idUsuarioDestino: Number;
+    idUsuarioOrigen: number;
+    idUsuarioDestino: number;
     nombreCalle: String;
     altura: String;
     piso: String;
@@ -17,9 +17,10 @@ export interface OrdenModel {
     nombreUserOrigen: String;
     telefono: String;
     productosADonarDeOrdenList: any;
-    publicacionId: Number;
-    colectaId: Number;
+    publicacionId: number;
+    colectaId: number;
     esPublicacion: Boolean;
-    fechaEnviosDTO: any;
+    listaFechaEnvios: any[];
     fechaADespachar: String;
+	fechaCreacionOrdenEnvio: Date;
 }

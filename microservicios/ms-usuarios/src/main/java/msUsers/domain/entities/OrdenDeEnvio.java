@@ -1,6 +1,5 @@
 package msUsers.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -9,10 +8,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import msUsers.converters.ZonedDateTimeConverter;
 import msUsers.domain.responses.DTOs.OrdenDeEnvioDTO;
-import msUsers.domain.responses.DTOs.ParticularDTO;
 import msUsers.services.ProductoADonarService;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Entity
@@ -79,6 +79,9 @@ public class OrdenDeEnvio {
 
     private String fechaADespachar;
 
+    @Convert(converter = ZonedDateTimeConverter.class)
+    private ZonedDateTime fechaCreacionOrdenEnvio;
+
     public OrdenDeEnvioDTO toDTO(ProductoADonarService productoADonarService) {
         OrdenDeEnvioDTO ordenDeEnvioDTO = new OrdenDeEnvioDTO();
         ordenDeEnvioDTO.setIdOrden(idOrden);
@@ -103,6 +106,7 @@ public class OrdenDeEnvio {
         ordenDeEnvioDTO.setIdUsuarioOrigen(idUsuarioOrigen);
         ordenDeEnvioDTO.setListaFechaEnvios(listaFechaEnvios.stream().map(FechaEnvios::toDTO).toList());
         ordenDeEnvioDTO.setProductosADonarDeOrdenList(productosADonarDeOrdenList.stream().map(productoADonarService::obtenerProductoDTO).toList());
+        ordenDeEnvioDTO.setFechaCreacionOrdenEnvio(fechaCreacionOrdenEnvio);
         return ordenDeEnvioDTO;
     }
 }

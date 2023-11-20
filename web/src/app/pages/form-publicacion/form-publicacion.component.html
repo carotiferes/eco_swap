@@ -32,7 +32,7 @@
 					<mat-form-field>
 						<mat-label>Valor <b>mínimo</b> de trueque</mat-label>
 						<input matInput formControlName="valorMinimo" type="number" [min]="0"
-						[max]="publicacionForm.get('valorMaximo')!.value || null"
+						[max]="publicacionForm.get('valorMaximo')!.value || 1000000"
 						(focus)="focusMin = true" (focusout)="!publicacionForm.get('valorMinimo')!.value ? focusMin = false : ''" >
 						<span matTextPrefix *ngIf="focusMin">$&nbsp;</span>
 						<mat-error *ngIf="publicacionForm.get('valorMinimo')!.hasError('required')">
@@ -179,7 +179,7 @@
 						Agregar Imagen
 					</button>
 					<input formControlName="file" id="file" type="file" class="form-control hidden" multiple=""
-						(change)="onFileChange($event)" #file>
+						(change)="onFileChange($event)" #file accept=".jpg, .jpeg, .png, .webp">
 					<mat-error *ngIf="publicacionForm.get('file')!.hasError('required') && showErrors">
 						La publicación debe tener al menos 1 imagen
 					</mat-error>

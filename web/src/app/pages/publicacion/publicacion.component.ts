@@ -90,6 +90,7 @@ export class PublicacionComponent implements AfterViewInit {
 	}
 
 	getPublicacion(id: number) {
+		this.loading = true;
 		this.truequeService.getPublicacion(id).subscribe({
 			next: (res: any) => {
 				this.publicacion = res;
@@ -263,6 +264,7 @@ export class PublicacionComponent implements AfterViewInit {
 		this.truequesActivos.splice(0);
 		this.historialTrueques.splice(0);
 		this.truequeAceptado.splice(0);
+		this.mainPublicacionCard = undefined;
 		const auxList1: CardModel[] = [];
 		const auxList2: CardModel[] = [];
 		const auxList3: CardModel[] = [];
@@ -294,7 +296,7 @@ export class PublicacionComponent implements AfterViewInit {
 					[{name: 'RECIBIDO', icon: 'done_all', color: 'primary', status: 'RECIBIDA', action: 'change_status'}] : 
 					this.userType == 'publicacionOrigen' && publicacion.estadoEnvio == 'RECIBIDO' ? 
 					[{ name: 'OPINAR', icon: 'rate_review', color: 'opinion', status: 'OPINAR', action: 'opinar' }] : [];
-				item.codigo = 'Publicación'; item.estadoAux = publicacion.estadoEnvio;
+				item.estadoAux = publicacion.estadoEnvio;
 				console.log(item);
 				
 				auxList1.push(item)

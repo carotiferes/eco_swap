@@ -117,6 +117,21 @@ export class ColectaComponent {
 		const auxListCerrada: CardModel[] = [];
 
 		this.donaciones.sort((a, b) => new Date(b.fechaDonacion).getTime() - new Date(a.fechaDonacion).getTime());
+		this.donaciones.sort((a, b) => {
+			if (a.estadoDonacion === 'PENDIENTE' && b.estadoDonacion !== 'PENDIENTE') {
+			  return -1; // a comes first
+			} else if (a.estadoDonacion !== 'PENDIENTE' && b.estadoDonacion === 'PENDIENTE') {
+			  return 1; // b comes first
+			}
+	  
+			if (a.estadoEnvio !== 'RECIBIDO' && b.estadoEnvio === 'RECIBIDO') {
+			  return -1; // a comes first
+			} else if (a.estadoEnvio === 'RECIBIDO' && b.estadoEnvio !== 'RECIBIDO') {
+			  return 1; // b comes first
+			}
+	  
+			return 0;
+		  });
 		for (const donacion of this.donacionesToShow) {
 			console.log(donacion);
 
@@ -148,8 +163,8 @@ export class ColectaComponent {
 				},
 				action: 'detail',
 				buttons: this.getButtonsForCard(donacion, matchingOrders),
-				estado: donacion.estadoDonacion.replace('_',' '),
-				idAuxiliar: this.colecta.idColecta,
+				estado: donacion.estadoEnvio == 'RECIBIDO' ? 'RECIBIDA' : donacion.estadoDonacion.replace('_',' '),
+				idAuxiliar: donacion.producto.colectaDTO.idColecta,
 				codigo: 'Donación',
 				estadoAux: donacion.estadoEnvio
 			}

@@ -76,7 +76,7 @@ export class DonacionesComponent {
 				else stringCaracteristicas += ' - ' + caract.caracteristica
 			}
 			
-			const matchingOrders = this.userOrders.some(order => {
+			const matchingOrders = this.userOrders.filter(order => {
 				return order.productosADonarDeOrdenList.some((producto: any) => {
 					return producto.idDonacion == donacion.idDonacion;
 				});
@@ -109,13 +109,18 @@ export class DonacionesComponent {
 		this.donacionesCardList = auxDonaciones;
 	}
 
-	getButtonsForCard(donacion: DonacionModel, matchingOrders: boolean): CardButtonModel[] {
+	getButtonsForCard(donacion: DonacionModel, matchingOrders: OrdenModel[]): CardButtonModel[] {
 		if(donacion.estadoEnvio == 'RECIBIDO' || donacion.estadoDonacion == 'RECIBIDA') {
 			return [{ name: 'OPINAR', icon: 'rate_review', color: 'opinion', status: 'OPINAR', action: 'opinar' }];
 		} else if(donacion.estadoDonacion == 'APROBADA') {
-			if(matchingOrders) // ya tiene una orden de envio
-				return [{ name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO', action: 'ver_envio' }]
-			else return [
+			if(matchingOrders.length > 0) { // ya tiene una orden de envio
+				const lastOrderCancelled = matchingOrders[matchingOrders.length - 1].listaFechaEnvios.find(item => item.estado == 'CANCELADO');
+				if(lastOrderCancelled) return [
+					{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO', action: 'configurar_envio'},
+					{name: 'Llevar en persona', icon: 'directions_walk', color: 'info', status: 'EN_ESPERA', action: 'change_status'}
+				]
+				else return [{ name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO', action: 'ver_envio' }]
+			} else return [
 				{name: 'Configurar envío', icon: 'local_shipping', color: 'info', status: 'INFO', action: 'configurar_envio'},
 				{name: 'Llevar en persona', icon: 'directions_walk', color: 'info', status: 'EN_ESPERA', action: 'change_status'}
 			]
@@ -134,13 +139,13 @@ export class DonacionesComponent {
 		const auxDonaciones = this.donacionesCardList;
 		auxDonaciones.map(donacion => {
 			// Find the orders that match the idDonacion from the cards array
-			const matchingOrders = this.userOrders.some(order => {
+			const matchingOrders = this.userOrders.filter(order => {
 				return order.productosADonarDeOrdenList.some((producto: any) => {
 					return producto.idDonacion == donacion.id;
 				});
 			});
 			
-			if (donacion.estado == 'APROBADA' && !matchingOrders) {
+			if (donacion.estado == 'APROBADA' && matchingOrders.length == 0) {
 				donacion.action = 'select';
 				donacion.codigo = 'Donación';
 				donacion.buttons = [{ name: 'Agregar', icon: 'add', color: 'info', status: 'INFO', action: 'add_or_remove' }]
@@ -198,12 +203,12 @@ export class DonacionesComponent {
 	unselectCard(cardID: number) {
 		const donacionDeseleccionada = this.donacionesCardList.find(item => item.id == cardID)
 		if (donacionDeseleccionada) {
-			if (this.selectedCards.length == 1) { // last one selected
+			if (this.selectedCards.length == 1) { // last one unselected
 				this.colectaParaEnvio = undefined;
 				const auxDonaciones = this.donacionesCardList;
 				auxDonaciones.map(donacion => {
 					// Find the orders that match the idDonacion from the cards array
-					const matchingOrders = this.userOrders.find(order => {
+					const matchingOrders = this.userOrders.filter(order => {
 						return order.productosADonarDeOrdenList.some((producto: any) => {
 							return producto.idDonacion == donacion.id
 						});
@@ -211,7 +216,7 @@ export class DonacionesComponent {
 					//if(matchingOrders.length > 0) this.yaTieneEnvio = matchingOrders;
 					console.log(donacion, matchingOrders);
 					
-					if (donacion.estado == 'APROBADA' && !matchingOrders) {
+					if (donacion.estado == 'APROBADA' && matchingOrders.length == 0) {
 						donacion.action = 'select';
 						donacion.codigo = 'Donación';
 						donacion.buttons = [{ name: 'Agregar', icon: 'add', color: 'info', status: 'INFO', action: 'add_or_remove' }]
@@ -245,15 +250,17 @@ export class DonacionesComponent {
 		auxDonaciones.map(donacion => {
 
 			// Find the orders that match the idDonacion from the cards array
-			const matchingOrders = this.userOrders.find(order => {
+			const matchingOrders = this.userOrders.filter(order => {
 				return order.productosADonarDeOrdenList.some((producto: any) => {
 					return donacion.id == producto.idDonacion
 				});
 			});
 
+			const donacModel = this.donaciones.find(d => d.idDonacion == donacion.id)
+
 			donacion.action = 'detail';
 			donacion.codigo = undefined;
-			donacion.buttons = donacion.estado == 'APROBADA' && matchingOrders ? [{ name: 'Ver envío', icon: 'local_shipping', color: 'info', status: 'INFO', action: 'ver_envio' }] : [];
+			if(donacModel) donacion.buttons = this.getButtonsForCard(donacModel, matchingOrders)
 
 		});
 		this.donacionesCardList = auxDonaciones;

@@ -9,6 +9,7 @@ import lombok.Data;
 import msUsers.domain.entities.FechaEnvios;
 import msUsers.domain.entities.ProductosADonarDeOrden;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Data
@@ -36,4 +37,5 @@ public class OrdenDeEnvioDTO {
     private Boolean esPublicacion;
     private List<FechaEnviosDTO> listaFechaEnvios;
     private String fechaADespachar;
+    private ZonedDateTime fechaCreacionOrdenEnvio;
 }

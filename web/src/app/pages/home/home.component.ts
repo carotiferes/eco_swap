@@ -21,8 +21,8 @@ export class HomeComponent {
 		if(this.screenWidth < 576) {
 			this.folder = 'banners-mobile';
 		}
-		for (let index = 1; index <= 4; index++) {
-			this.images.push(`assets/${this.folder}/0${index}.jpg`)
+		for (let index = 1; index <= 5; index++) {
+			this.images.push(`assets/${this.folder}/banners-3${index}.png`)
 		}
 		this.userData = {isLoggedIn: auth.isUserLoggedIn, isSwapper: auth.isUserSwapper()}
 	}

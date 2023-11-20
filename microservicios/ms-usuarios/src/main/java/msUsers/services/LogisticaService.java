@@ -37,12 +37,12 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
@@ -184,7 +184,7 @@ public class LogisticaService {
 
         // Validación de cancelación
         if (estadoEnvio == EstadoEnvio.CANCELADO && ultimoEstado != EstadoEnvio.POR_DESPACHAR) {
-            throw new OrdenDeEnvioException("Ya está en transcurso de envío. No se puede cancelar el mismo.");
+            throw new OrdenDeEnvioException("Ya está en transcurso de envío o fue entregado. No se puede cancelar la orden de envío.");
         }
 
         // Actualización de estado para publicación o donación
@@ -202,6 +202,9 @@ public class LogisticaService {
                     estadoEnvio == EstadoEnvio.CANCELADO ? EstadoEnvio.POR_CONFIGURAR : estadoEnvio,
                     p.getIdDonacion())
             );
+
+            if(estadoEnvio == EstadoEnvio.RECIBIDO)
+                orderAEnviar.getProductosADonarDeOrdenList().forEach(p -> aumentarCantidadRecibidaDonacion(estadoEnvio, p.getIdDonacion()));
 
             entityManager.merge(orderAEnviar);
 
@@ -365,6 +368,7 @@ public class LogisticaService {
                             .fechaEnvio(formattedDate)
                             .build()))
                     .fechaADespachar(this.crearFechaDespache())
+                    .fechaCreacionOrdenEnvio(ZonedDateTime.now())
                     .build();
 
             if(!esPublicacion) {
@@ -462,6 +466,25 @@ public class LogisticaService {
 
         Donacion donacion = entityManager.createQuery(query).getSingleResult();
         donacion.setEstadoEnvio(estadoEnvio);
+        entityManager.merge(donacion);
+
+    }
+
+    private void aumentarCantidadRecibidaDonacion(EstadoEnvio estadoEnvio, Long idDonacion) {
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Donacion> query = cb.createQuery(Donacion.class);
+        Root<Donacion> from = query.from(Donacion.class);
+        Predicate predicate = cb.conjunction();
+
+        predicate = cb.and(predicate, cb.equal(from.get("idDonacion"), idDonacion));
+
+        query.where(predicate);
+
+        Donacion donacion = entityManager.createQuery(query).getSingleResult();
+
+        Producto producto = donacion.getProducto();
+        producto.setCantidadRecibida(producto.getCantidadRecibida() + donacion.getCantidadDonacion());
         entityManager.merge(donacion);
 
     }

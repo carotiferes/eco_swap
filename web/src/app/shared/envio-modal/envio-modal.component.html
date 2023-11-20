@@ -5,15 +5,15 @@
 </div> -->
 <div class="header">
 	<span style="width: 30px;"></span>
-	<span *ngIf="yaTieneEnvio">Datos de tu envío para: <br> {{yaTieneEnvio.titulo}}</span>
-	<span *ngIf="!yaTieneEnvio">Configurá el envío de tu producto</span>
+	<span *ngIf="ordersToShow.length > 0">Datos de tu envío para: <br> {{ordersToShow[0].titulo}}</span>
+	<span *ngIf="ordersToShow.length == 0">Configurá el envío de tu producto</span>
 	<!-- <span>{{yaTieneEnvio ? 'Datos de tu envío para: ' + yaTieneEnvio.titulo : 'Configurá los datos de tu producto para el Envío'}}</span> -->
 	<mat-icon (click)="dialogRef.close()" style="margin-left: 10px; cursor: pointer;">close</mat-icon>
 </div>
 <div style="display: flex; justify-content: center;">
 	<mat-spinner *ngIf="loading" diameter="20" style="margin-bottom: 60px;"></mat-spinner>
 </div>
-<div *ngIf="!loading && !yaTieneEnvio">
+<div *ngIf="!loading && (ordersToShow.length == 0 || isNuevoEnvio)">
 	<div *ngIf="this.type == 'compra' && compra" style="margin: 0 20px 20px; text-align: center;">
 		El peso de este producto es: <b>{{compra.publicacionDTO.peso}} gramos</b>
 	</div>
@@ -65,19 +65,28 @@
 	</div>
 </div>
 
-<div *ngIf="!loading && yaTieneEnvio" class="main-data">
+<div *ngIf="!loading && ordersToShow.length > 0 && !isNuevoEnvio" class="main-data">
 	<!-- <h2>{{yaTieneEnvio.titulo}}</h2> -->
-	<p><mat-icon>numbers</mat-icon>Número de órden: <b>{{yaTieneEnvio.idOrden}}</b></p>
-	<p><mat-icon>credit_card</mat-icon>Precio de envío: <b>{{yaTieneEnvio.precioEnvio | currency}}</b></p>
-	<p><mat-icon>place</mat-icon>Origen: <b>{{yaTieneEnvio.nombreUserOrigen}}</b></p>
-	<p><mat-icon>place</mat-icon>Destino: <b>{{yaTieneEnvio.nombreUserDestino}}</b></p>
-	<!-- <p>Fecha a despachar: {{yaTieneEnvio.fechaADespachar}}</p> -->
-	<div>
-		<h3><mat-icon>route</mat-icon>Estados del envío:</h3>
-		<div style="display: flex; flex-direction: column; gap: 10px; margin-left: 25px;">
-			<div *ngFor="let estado of yaTieneEnvio.listaFechaEnvios" class="item">
-				<mat-icon>chevron_right</mat-icon>{{estado.estado.replace('_', ' ')}} - {{estado.fechaEnvio}}
+	<div *ngFor="let order of ordersToShow; let i = index">
+		<p style="text-align: center; justify-content: center; padding: 5px; font-size: 16px; letter-spacing: 1px; background-color: #fde074;"
+		[style]="i > 0 ? 'margin-top: 15px;': ''">
+			<mat-icon>numbers</mat-icon>Número de órden: <b>{{order.idOrden}}</b></p>
+		<p><mat-icon>event</mat-icon>Fecha: <b>{{order.fechaCreacionOrdenEnvio | date: 'dd/MM/yyyy'}}</b></p>
+		<p><mat-icon>credit_card</mat-icon>Precio de envío: <b>{{order.precioEnvio | currency}}</b></p>
+		<p><mat-icon>place</mat-icon>Origen: <b>{{order.nombreUserOrigen}}</b></p>
+		<p><mat-icon>place</mat-icon>Destino: <b>{{order.nombreUserDestino}}</b></p>
+		<!-- <p>Fecha a despachar: {{yaTieneEnvio.fechaADespachar}}</p> -->
+		<div>
+			<h3><mat-icon>route</mat-icon>Estados del envío:</h3>
+			<div style="display: flex; flex-direction: column; gap: 10px; margin-left: 25px;">
+				<div *ngFor="let estado of order.listaFechaEnvios" class="item">
+					<mat-icon>chevron_right</mat-icon>
+					<span [style.color]="estado.estado == 'CANCELADO' ? 'var(--warn-color)' : estado.estado == 'POR_DESPACHAR' ? 'var(--donaciones-dark)' : 'var(--primary-color)' "><b>{{estado.estado.replace('_', ' ')}}</b> - {{estado.fechaEnvio}}</span>
+				</div>
 			</div>
 		</div>
+	</div>
+	<div *ngIf="hasCancelledEnvio" style="display: flex; margin: 20px; justify-content: center;">
+		<button mat-fab extended style="background-color: var(--info);" (click)="nuevoEnvio()">NUEVO ENVÍO</button>
 	</div>
 </div>

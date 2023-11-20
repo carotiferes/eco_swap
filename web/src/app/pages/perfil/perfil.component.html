@@ -81,8 +81,11 @@
 								<div style="margin: 0 10px; display: flex; align-items: center;">
 									<app-rating [puntuacion]="opinion.valoracion"></app-rating>
 								</div>
-								<div>
-									({{opinion.usuarioOpina.username}} - {{opinion.fechaHoraOpinion | date : 'dd/MM/yyyy'}})
+								<div *ngIf="opinion.usuarioOpina.swapper">
+									({{opinion.usuarioOpina.nombre}} {{opinion.usuarioOpina.apellido}} - {{opinion.fechaHoraOpinion | date : 'dd/MM/yyyy'}})
+								</div>
+								<div *ngIf="!opinion.usuarioOpina.swapper">
+									({{opinion.usuarioOpina.nombre}} - {{opinion.fechaHoraOpinion | date : 'dd/MM/yyyy'}})
 								</div>
 							</div>
 							<!-- <div class="usuario-opinion">

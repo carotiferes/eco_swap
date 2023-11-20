@@ -174,10 +174,10 @@ export class RegistroComponent {
 			text: `Nos alegra que te sumes a nuestra comunidad, antes de seguir, 
 			necesitamos saber si te querés registrar como fundación o como Particular`,
 			confirmButtonText: 'Represento a una fundación',
-			confirmButtonColor: '#87db59',
+			confirmButtonColor: '#ae59db',
 			cancelButtonText: 'No soy de una fundación',
 			showCancelButton: true,
-			cancelButtonColor: '#ae59db',
+			cancelButtonColor: '#87db59',
 			icon: 'question',
 			allowOutsideClick: false,
 			allowEscapeKey: false

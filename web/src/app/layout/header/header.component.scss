@@ -42,9 +42,15 @@ mat-toolbar-row div {
 	min-width: 30%;
 }
 
+.mat-badge-content {
+	font-size: 14px !important;
+}
+
 .navbar {
 	background-color: var(--primary-color);
 	padding: 15px 30px;
+
+	* {font-size: 16px;}
 
 	.navbar-brand {
 		margin-left: 20px;
@@ -99,7 +105,7 @@ mat-toolbar-row div {
 			.name {
 				color: #007707 !important;
 				letter-spacing: 1px;
-				font-size: 18px;
+				font-size: 18px !important;
 				text-wrap: balance;
 				//white-space: nowrap;
 				overflow: hidden;
