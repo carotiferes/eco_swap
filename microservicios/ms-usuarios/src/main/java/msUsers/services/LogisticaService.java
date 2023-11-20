@@ -203,6 +203,9 @@ public class LogisticaService {
                     p.getIdDonacion())
             );
 
+            if(estadoEnvio == EstadoEnvio.RECIBIDO)
+                orderAEnviar.getProductosADonarDeOrdenList().forEach(p -> aumentarCantidadRecibidaDonacion(estadoEnvio, p.getIdDonacion()));
+
             entityManager.merge(orderAEnviar);
 
             for (ProductosADonarDeOrden p : orderAEnviar.getProductosADonarDeOrdenList()) {
@@ -463,6 +466,25 @@ public class LogisticaService {
 
         Donacion donacion = entityManager.createQuery(query).getSingleResult();
         donacion.setEstadoEnvio(estadoEnvio);
+        entityManager.merge(donacion);
+
+    }
+
+    private void aumentarCantidadRecibidaDonacion(EstadoEnvio estadoEnvio, Long idDonacion) {
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Donacion> query = cb.createQuery(Donacion.class);
+        Root<Donacion> from = query.from(Donacion.class);
+        Predicate predicate = cb.conjunction();
+
+        predicate = cb.and(predicate, cb.equal(from.get("idDonacion"), idDonacion));
+
+        query.where(predicate);
+
+        Donacion donacion = entityManager.createQuery(query).getSingleResult();
+
+        Producto producto = donacion.getProducto();
+        producto.setCantidadRecibida(producto.getCantidadRecibida() + donacion.getCantidadDonacion());
         entityManager.merge(donacion);
 
     }
