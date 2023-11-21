@@ -38,15 +38,17 @@ export class ChatComponent {
 		}
 
 		
-		websocketService.connect().subscribe({
-			next: (message) => {
-				console.log('message subscription', message);
-				this.mensajes.push(message);
-			},
-			error: (error) => {
-			  console.error('WebSocket error:', error);
-			}
-		});
+		if(this.origin == 'inline') { // si lo conecto siempre, se llama 2 veces por estar en la misma pagina
+			websocketService.connect().subscribe({
+				next: (message) => {
+					console.log('message subscription', message, this.origin);
+					this.mensajes.push(message);
+				},
+				error: (error) => {
+				  console.error('WebSocket error:', error);
+				}
+			});
+		}
 	}
 
 	ngOnDestroy() {

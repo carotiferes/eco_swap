@@ -2,7 +2,7 @@
 	<mat-card-header style="border-bottom: solid 1px var(--light-grey); padding-bottom: 10px;">
 		<div class="div-header">
 			<div class="header-info">
-				<div mat-card-avatar class="example-header-image"></div>
+				<img mat-card-avatar class="example-header-image" [src]="'assets/perfiles/perfiles-'+publicacion.particularDTO.usuarioDTO.avatar +'.jpg'">
 				<div>
 					<mat-card-title style="display: flex; align-items: center;">
 						<a [href]="'/perfil/'+publicacion.particularDTO.usuarioDTO.idUsuario" *ngIf="userData.isLoggedIn">
@@ -35,7 +35,7 @@
 				<ng-template ngbSlide *ngFor="let img of publicacion.parsedImagenes">
 					<div class="picsum-img-wrapper">
 						<img [src]="getImage(img)" style="height: 250px !important;
-						object-fit: contain;
+						object-fit: contain; width: 100%;
 						object-position: center;"/>
 					</div>
 					<div class="carousel-caption">

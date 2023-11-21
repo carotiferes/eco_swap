@@ -95,7 +95,7 @@ export class FormDonacionComponent implements OnInit {
 				next: (res) => {
 					console.log(res);
 					if(JSON.parse(JSON.stringify(res)).descripcion)	{
-						this.showMessage('Donación Creada!', 'La donacion se creó exitosamente. Ahora te toca a vos! Llevá tu donación a la fundación para que la puedan empezar a usar.', 'success')
+						this.showMessage('Donación Creada!', 'La donacion se creó exitosamente. Ahora te toca a vos! Configurá el envío que quieras para tu donación.', 'success')
 						this.router.navigateByUrl('colecta/'+ this.id_colecta)
 					}
 					else this.showMessage('Ocurrió un error', 'No pudimos crear la donacion. Intentá nuevamente luego.', 'error')

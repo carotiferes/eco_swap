@@ -186,8 +186,8 @@ export class PerfilComponent {
 
 	selectImage() {
 		const dialogRef = this.dialog.open(ImagesModalComponent, {
-			minWidth: '50vw',
-			minHeight: '40vw',
+			maxWidth: '60vw',
+			height: 'auto',
 			panelClass: 'full-screen-modal'
 		});
 		dialogRef.afterClosed().subscribe((result) => {
@@ -202,9 +202,8 @@ export class PerfilComponent {
 
 	credencialesMP() {
 		const dialogRef = this.dialog.open(CredencialesMpModalComponent, {
-			minWidth: '50vw',
-			minHeight: '40vw',
-			panelClass: 'full-screen-modal',
+			width: '50vw',
+			height: 'auto',
 			data: {user: this.user, publicKey: this.userToShow?.publicKey, accessToken: this.userToShow?.accessToken}
 		});
 		dialogRef.afterClosed().subscribe((result) => {
@@ -215,9 +214,8 @@ export class PerfilComponent {
 
 	changePassword() {
 		const dialogRef = this.dialog.open(ChangePasswordModalComponent, {
-			minWidth: '50vw',
-			minHeight: '40vw',
-			panelClass: 'full-screen-modal',
+			width: '50vw',
+			height: 'auto',
 		});
 		dialogRef.afterClosed().subscribe((result) => {
 			console.log('closed', result);
@@ -227,9 +225,8 @@ export class PerfilComponent {
 
 	opinar() {
 		const dialogRef = this.dialog.open(OpinarModalComponent, {
-			minWidth: '50vw',
-			minHeight: '40vw',
-			panelClass: 'full-screen-modal',
+			width: '50vw',
+			height: 'auto',
 			data: {usuario: this.user, user: this.userToShow}
 		});
 		dialogRef.afterClosed().subscribe((result) => {

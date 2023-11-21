@@ -2,7 +2,7 @@
 	<mat-card-header style="border-bottom: solid 1px var(--light-grey); padding-bottom: 10px;">
 		<div class="div-header">
 			<div class="header-info">
-				<div mat-card-avatar class="example-header-image"></div>
+				<img mat-card-avatar class="example-header-image" [src]="'assets/perfiles/perfiles-'+colecta.fundacionDTO.usuarioDTO.avatar +'.jpg'">
 				<div>
 					<mat-card-title style="display: flex; align-items: center; flex-wrap: wrap;">
 						<a [href]="'/perfil/'+colecta.fundacionDTO.usuarioDTO.idUsuario">{{colecta.fundacionDTO.nombre}}</a>

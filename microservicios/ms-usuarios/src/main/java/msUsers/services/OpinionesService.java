@@ -53,7 +53,7 @@ public class OpinionesService {
         }else{
             fundacionOpinado = this.criteriaBuilderQueries.getFundacionPorUsuario(opinion.getUsuarioOpinado().getIdUsuario())
                     .orElseThrow(() -> new EntityNotFoundException("No fue encontrado la fundación: " + opinion.getUsuarioOpina().getIdUsuario()));
-            usuarioOpinaDTO.setNombre(fundacionOpinado.getNombre());
+            usuarioOpinadoDTO.setNombre(fundacionOpinado.getNombre());
         }
 
         OpinionDTO opinionDTO = new OpinionDTO();
