@@ -3,12 +3,13 @@ package msUsers.domain.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import msUsers.converters.ZonedDateTimeConverter;
 import msUsers.domain.entities.enums.EstadoNotificacion;
 import msUsers.domain.entities.enums.TipoNotificacion;
 import msUsers.domain.responses.DTOs.NotificacionDTO;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+
 
 @Entity
 @Table(name = "Notificaciones")
@@ -39,7 +40,8 @@ public class Notificacion {
     @Enumerated(value = EnumType.STRING)
     private TipoNotificacion tipoNotificacion;
 
-    private LocalDateTime fechaHoraNotificacion;
+    @Convert(converter = ZonedDateTimeConverter.class)
+    private ZonedDateTime fechaHoraNotificacion;
 
     public NotificacionDTO toDTO(){
         NotificacionDTO notificacionDTO = new NotificacionDTO();

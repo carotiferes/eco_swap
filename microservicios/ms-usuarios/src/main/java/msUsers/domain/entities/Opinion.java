@@ -1,13 +1,13 @@
 package msUsers.domain.entities;
 
-import jakarta.mail.Part;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import msUsers.converters.ZonedDateTimeConverter;
 import msUsers.domain.responses.DTOs.OpinionDTO;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Data
@@ -31,7 +31,8 @@ public class Opinion{
     private Usuario usuarioOpinado;
 
     @Column(columnDefinition = "TIMESTAMP")
-    private LocalDateTime fechaHoraOpinion;
+    @Convert(converter = ZonedDateTimeConverter.class)
+    private ZonedDateTime fechaHoraOpinion;
 
     public OpinionDTO toDTO(){
         OpinionDTO opinionDTO = new OpinionDTO();

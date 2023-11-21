@@ -30,6 +30,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -81,7 +82,7 @@ public class PublicacionController {
                 .toList();
 
         publicacion.setCaracteristicaProducto(listaCaracteristicas);
-        publicacion.setFechaPublicacion(LocalDate.now());
+        publicacion.setFechaPublicacion(LocalDate.now(ZoneId.of("GMT-3")));
 
         if(requestPublicacion.getEsVenta()) {
             publicacion.setTipoPublicacion(TipoPublicacion.VENTA_Y_TRUEQUE);

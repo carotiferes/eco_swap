@@ -1,9 +1,8 @@
 package msUsers.domain.responses.DTOs;
 
 import lombok.Data;
-import msUsers.domain.entities.Usuario;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Data
 public class OpinionDTO {
@@ -12,5 +11,5 @@ public class OpinionDTO {
     private String descripcion;
     private UsuarioEnOpinionDTO usuarioOpina;
     private UsuarioEnOpinionDTO usuarioOpinado;
-    private LocalDateTime fechaHoraOpinion;
+    private ZonedDateTime fechaHoraOpinion;
 }

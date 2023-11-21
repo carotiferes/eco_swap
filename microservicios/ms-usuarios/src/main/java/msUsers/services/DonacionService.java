@@ -13,8 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
@@ -30,8 +29,8 @@ public class DonacionService {
     @Transactional
     public void verificarDonacionesExpiradas() {
 
-        log.info(">> Expiracion automatica de donaciones del día: {}", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        LocalDateTime fechaExpiracion = LocalDateTime.now().minusDays(3);
+        log.info(">> Expiracion automatica de donaciones del día: {}", ZonedDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        ZonedDateTime fechaExpiracion = ZonedDateTime.now().minusDays(3);
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Donacion> query = criteriaBuilder.createQuery(Donacion.class);

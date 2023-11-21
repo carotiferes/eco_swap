@@ -2,7 +2,6 @@ package msUsers.controllers;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.Tuple;
 import jakarta.persistence.criteria.*;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +10,6 @@ import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.repositories.OpinionesRepository;
 import msUsers.domain.repositories.UsuariosRepository;
 import msUsers.domain.requests.RequestNuevaOpinion;
-import msUsers.domain.requests.RequestPuedeOpinar;
 import msUsers.domain.responses.DTOs.OpinionDTO;
 import msUsers.domain.responses.ResponsePostEntityCreation;
 import msUsers.domain.responses.ResponseRequestQuery;
@@ -25,9 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @Slf4j
@@ -215,7 +212,7 @@ public class OpinionController {
         Opinion opinion = new Opinion();
         opinion.setDescripcion(requestNuevaOpinion.getDescripcion());
         opinion.setValoracion(requestNuevaOpinion.getValoracion());
-        opinion.setFechaHoraOpinion(LocalDateTime.now());
+        opinion.setFechaHoraOpinion(ZonedDateTime.now());
         opinion.setUsuarioOpina(userOpinador);
         opinion.setUsuarioOpinado(usuarioOpinado);
         var entity = this.opinionesRepository.save(opinion);
