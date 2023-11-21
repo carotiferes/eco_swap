@@ -36,7 +36,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -179,7 +179,7 @@ public class LogisticaService {
         String estado = putOrderRequest.getNuevoEstado();
         EstadoEnvio estadoEnvio = EstadoEnvio.valueOf(estado);
 
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of("GMT-3"));
         String formattedDate = today.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
         // Validación de cancelación
@@ -316,7 +316,7 @@ public class LogisticaService {
     }
 
     private String maximumDelivery() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of("GMT-3"));
         LocalDate maximumDelivery = today.plusDays(7);
         // - Custom Pattern
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -340,7 +340,7 @@ public class LogisticaService {
             Direccion direccionDestino = usuarioDestino.getDirecciones().get(0);
             List<PostProductosRequest> requestList = postOrderRequest.getListProductos();
 
-            LocalDate today = LocalDate.now();
+            LocalDate today = LocalDate.now(ZoneId.of("GMT-3"));
             // - Custom Pattern
             DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             String formattedDate = today.format(pattern);  //17-02-2022
@@ -402,7 +402,7 @@ public class LogisticaService {
         } else {
             calendar.add(Calendar.DATE, 1);
         }
-        LocalDate localDate = LocalDateTime.ofInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId()).toLocalDate();
+        LocalDate localDate = ZonedDateTime.ofInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId()).toLocalDate();
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         return localDate.format(dateTimeFormatter);
     }

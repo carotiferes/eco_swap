@@ -1,35 +1,22 @@
 package msUsers.controllers;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import msUsers.domain.entities.Compra;
 import msUsers.domain.entities.MensajeChat;
-import msUsers.domain.entities.Usuario;
-import msUsers.domain.entities.enums.EstadoTrueque;
-import msUsers.domain.model.UsuarioContext;
 import msUsers.domain.repositories.MensajesChatRepository;
 import msUsers.domain.repositories.TruequesRepository;
 import msUsers.domain.repositories.UsuariosRepository;
-import msUsers.domain.requests.RequestMensajeChat;
 import msUsers.domain.responses.DTOs.MensajeChatDTO;
-import msUsers.domain.responses.ResponsePostEntityCreation;
-import msUsers.domain.responses.ResponseUpdateEntity;
-import msUsers.exceptions.ChatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;

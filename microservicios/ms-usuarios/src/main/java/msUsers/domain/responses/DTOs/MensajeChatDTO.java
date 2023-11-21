@@ -2,7 +2,6 @@ package msUsers.domain.responses.DTOs;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 @Data

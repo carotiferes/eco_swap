@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,10 +53,10 @@ public class ColectaService {
         if(request.getCantidadOfrecida() > producto.getCantidadSolicitada()-producto.getCantidadRecibida() &&  producto.getCantidadSolicitada() > 0) {
             throw new DonacionCreationException("Error: Cantidad ofrecida mayor a la requerida.");
         }
-        if(LocalDate.now().isBefore(colecta.getFechaInicio())) {
+        if(LocalDate.now(ZoneId.of("GMT-3")).isBefore(colecta.getFechaInicio())) {
             throw new DonacionCreationException("Colecta aun iniciada.");
         }
-        if(LocalDate.now().isAfter(colecta.getFechaFin())) {
+        if(LocalDate.now(ZoneId.of("GMT-3")).isAfter(colecta.getFechaFin())) {
             throw new DonacionCreationException("Colecta expirada.");
         }
 
@@ -66,7 +67,7 @@ public class ColectaService {
             donacionNueva.setParticular(particular);
             donacionNueva.setProducto(producto);
             donacionNueva.setCaracteristicaDonacion(lista);
-            donacionNueva.setFechaDonacion(LocalDate.now());
+            donacionNueva.setFechaDonacion(LocalDate.now(ZoneId.of("GMT-3")));
 
             List<String> nombreImagenes = new ArrayList<>();
             for (int i = 0; i < request.getImagenes().size(); i++) {
@@ -102,48 +103,5 @@ public class ColectaService {
         return donacionesRepository.findById(idDonacion).
                 orElseThrow(() -> new EntityNotFoundException("No fue encontrado la donacion con ID: " + idDonacion));
     }
-
-/* POSTERGAMOS ESTE DESARROLLO
-    //PUEDE ACTUALIZAR LA DONACION E INCLUSO LA colecta
-    public void agregarMensajeParaDonacionComunicacion(
-            RequestMensajeRespuesta request, Long idcolecta, Long idDonacion) {
-        log.info(">> Service crear mensaje para comunicacion de donacion con request: {}", request.toString());
-
-        Donacion donacion = donacionesRepository.findById(idDonacion).get();
-        donacion.setCaracteristicaDonacion();
-
-        MensajeRespuesta respuesta = caracteristicaDonacionRepository.save(
-                CaracteristicaDonacion.builder()
-            //            .fechaYHora(LocalDateTime.now())
-           //             .idEmisor(request.getIdEmisor())
-                        .mensaje(request.getMensaje())
-                        .build()
-        );
-        log.info("<< Mensaje para comunicacion de donacion con CREADO");
-        caracteristicaDonacionRepository.addNuevaRespuesta(respuesta);
-
-        if(request.getEstadoDonacion()!= null) {
-            donacioncolecta.setEstadoDonacion(request.getEstadoDonacion());
-            if(request.getEstadoDonacion().equals(EstadoDonacion.RECIBIDA)) {
-                //ACTULIZA LA colecta LA CANTDIDAD YA OBTENIDA
-         //       donacioncolecta.set
-
-                Colecta colecta = colectaRepository.findById(idcolecta).get();
-                colecta.setActiva(false);
-                Producto productoAActualizar = colecta.getProductos()
-                        .stream()
-                        .filter(producto ->
-                                producto.getIdProducto()==donacioncolecta.getIdProducto())
-                        .toList().get(0);
-                Integer sumatoriaProductosSolicitados = productoAActualizar.getCantidadRecibida()
-                        + donacioncolecta.getCantidadOfrecida();
-                productoAActualizar.setCantidadRecibida(sumatoriaProductosSolicitados);
-                colectaRepository.save(colecta);
-            }
-        }
-        donacioncolectaRepository.save(donacioncolecta);
-        log.info("<< Mensaje añadido a la lista de donacion id {}", idcolecta);
-    }
-    */
 
 }

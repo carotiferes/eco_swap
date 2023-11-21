@@ -4,7 +4,6 @@ import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import msUsers.components.events.*;
 import msUsers.domain.entities.*;
-import msUsers.domain.entities.enums.EstadoDonacion;
 import msUsers.domain.entities.enums.EstadoNotificacion;
 import msUsers.domain.entities.enums.TipoNotificacion;
 import msUsers.services.DonacionService;
@@ -12,7 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+
 
 @Component
 @Slf4j
@@ -32,7 +32,7 @@ public class NotificacionesListener {
         notificacion.setTitulo("¡Nueva donación!");
         notificacion.setMensaje("Recibiste una nueva donación en la colecta: " + event.getColecta().getTitulo());
         notificacion.setTipoNotificacion(TipoNotificacion.DONACION);
-        notificacion.setFechaHoraNotificacion(LocalDateTime.now());
+        notificacion.setFechaHoraNotificacion(ZonedDateTime.now());
         notificacion.setUsuario(usuario);
         usuario.getNotificaciones().add(notificacion);
         entityManager.merge(usuario);
@@ -50,7 +50,7 @@ public class NotificacionesListener {
         notificacion.setTitulo("¡Nueva propuesta de trueque!");
         notificacion.setMensaje("Recibiste una nueva propuesta de trueque para tu publicación: " + publicacionOrigen.getTitulo());
         notificacion.setTipoNotificacion(TipoNotificacion.TRUEQUE);
-        notificacion.setFechaHoraNotificacion(LocalDateTime.now());
+        notificacion.setFechaHoraNotificacion(ZonedDateTime.now());
         notificacion.setUsuario(usuario);
         usuario.getNotificaciones().add(notificacion);
         entityManager.merge(usuario);
@@ -86,7 +86,7 @@ public class NotificacionesListener {
         }
 
         notificacion.setTipoNotificacion(TipoNotificacion.NUEVO_ESTADO_DONACION);
-        notificacion.setFechaHoraNotificacion(LocalDateTime.now());
+        notificacion.setFechaHoraNotificacion(ZonedDateTime.now());
         notificacion.setUsuario(usuario);
         usuario.getNotificaciones().add(notificacion);
         entityManager.merge(usuario);
@@ -104,7 +104,7 @@ public class NotificacionesListener {
         notificacion.setMensaje("El trueque de tu propuesta " + event.getPublicacion().getTitulo() + " cambio de estado a "
                 + event.getEstadoTrueque().toString().toLowerCase());
         notificacion.setTipoNotificacion(TipoNotificacion.NUEVO_ESTADO_TRUEQUE);
-        notificacion.setFechaHoraNotificacion(LocalDateTime.now());
+        notificacion.setFechaHoraNotificacion(ZonedDateTime.now());
         notificacion.setUsuario(usuario);
         usuario.getNotificaciones().add(notificacion);
         entityManager.merge(usuario);
@@ -123,7 +123,7 @@ public class NotificacionesListener {
         notificacion.setMensaje("El usuario " + compra.getParticularComprador().getUsuario().getUsername()
                 + " compró tu publicación " + event.getPublicacion().getTitulo());
         notificacion.setTipoNotificacion(TipoNotificacion.NUEVA_COMPRA);
-        notificacion.setFechaHoraNotificacion(LocalDateTime.now());
+        notificacion.setFechaHoraNotificacion(ZonedDateTime.now());
         notificacion.setUsuario(usuario);
         usuario.getNotificaciones().add(notificacion);
         entityManager.merge(usuario);
@@ -177,7 +177,7 @@ public class NotificacionesListener {
         }
 
         notificacion.setMensaje(msjBuilder.toString());
-        notificacion.setFechaHoraNotificacion(LocalDateTime.now());
+        notificacion.setFechaHoraNotificacion(ZonedDateTime.now());
         notificacion.setUsuario(usuario);
         usuario.getNotificaciones().add(notificacion);
         entityManager.merge(usuario);
