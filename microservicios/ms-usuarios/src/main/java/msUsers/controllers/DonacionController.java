@@ -104,6 +104,9 @@ public class DonacionController {
                 });
                 this.entityManager.merge(colecta);
                 break;
+            case RECHAZADA:
+                donacion.setEstadoEnvio(null);
+                break;
             default:
                 donacion.setEstadoEnvio(EstadoEnvio.POR_DESPACHAR);
                 break;
